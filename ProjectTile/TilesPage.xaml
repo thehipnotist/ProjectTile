@@ -32,15 +32,6 @@
                 <Label x:Name="Welcome" Content="Welcome to ProjectTile." HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" MinHeight="475" MinWidth="655" 
                        MouseDown="mouseOffButtons" Padding="20" Height="{Binding ElementName=MiddleRow, Path=ActualHeight}" Width="{Binding ElementName=CentreColumn, Path=ActualWidth}"  />
 
-                <Button x:Name="StaffButton" HorizontalAlignment="Left" Height="120" Margin="345,80,0,0" VerticalAlignment="Top" Width="120" FontWeight="Bold" Background="{StaticResource PtBrushGold2}" 
-                        MouseEnter="buttonMouseOver" MouseLeave="buttonMouseOut" GotFocus="buttonGotFocus" LostFocus="buttonLostFocus" Click="button_Click" ToolTip="{StaticResource StaffTip}">
-                    <Label VerticalContentAlignment="Center" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center">
-                        <Label.Background>
-                            <RadialGradientBrush GradientStops="{StaticResource PtGradientGold}"/>
-                        </Label.Background>
-                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Staff"/>
-                    </Label>
-                </Button>
                 <Button x:Name="EntityButton" HorizontalAlignment="Left" Height="120" Margin="15,80,0,0" VerticalAlignment="Top" Width="120" FontWeight="Bold" Background="{StaticResource PtBrushGreen2}" 
                         MouseEnter="buttonMouseOver" MouseLeave="buttonMouseOut" GotFocus="buttonGotFocus" LostFocus="buttonLostFocus" Click="button_Click" ToolTip="{StaticResource EntitiesTip}">
                     <Label VerticalContentAlignment="Center" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center"
@@ -48,7 +39,7 @@
                         <Label.Background>
                             <RadialGradientBrush GradientStops="{StaticResource PtGradientGreen}"/>
                         </Label.Background>
-                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Entity"/>
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Entities" Foreground="White"/>
                     </Label>
                 </Button>
                 <Button x:Name="AdminButton" HorizontalAlignment="Left" Height="120" Margin="180,80,0,0" VerticalAlignment="Top" Width="120" FontWeight="Bold" Background="{StaticResource PtBrushRed2}" 
@@ -57,9 +48,27 @@
                         <Label.Background>
                             <RadialGradientBrush GradientStops="{StaticResource PtGradientRed}"/>
                         </Label.Background>
-                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Admin"/>
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Admin" Foreground="White"/>
                     </Label>
                 </Button>
+                <Button x:Name="StaffButton" HorizontalAlignment="Left" Height="120" Margin="345,80,0,0" VerticalAlignment="Top" Width="120" FontWeight="Bold" Background="{StaticResource PtBrushGold2}" 
+                        MouseEnter="buttonMouseOver" MouseLeave="buttonMouseOut" GotFocus="buttonGotFocus" LostFocus="buttonLostFocus" Click="button_Click" ToolTip="{StaticResource StaffTip}">
+                    <Label VerticalContentAlignment="Center" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center">
+                        <Label.Background>
+                            <RadialGradientBrush GradientStops="{StaticResource PtGradientGold}"/>
+                        </Label.Background>
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Staff" Foreground="White"/>
+                    </Label>
+                </Button>
+                <Button x:Name="ProductButton" HorizontalAlignment="Left" Height="120" Margin="510,80,0,0" VerticalAlignment="Top" Width="120" FontWeight="Bold" Background="{StaticResource PtBrushBlue2}" 
+                        MouseEnter="buttonMouseOver" MouseLeave="buttonMouseOut" GotFocus="buttonGotFocus" LostFocus="buttonLostFocus" Click="button_Click" ToolTip="{StaticResource ProductsTip}">
+                    <Label VerticalContentAlignment="Center" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center">
+                        <Label.Background>
+                            <RadialGradientBrush GradientStops="{StaticResource PtGradientBlue}"/>
+                        </Label.Background>
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Products" Foreground="#FFFFFEFE"/>
+                    </Label>
+                </Button>                
 
                 <Button x:Name="AdminButton_Login" HorizontalAlignment="Left" Height="120" Margin="300,80,0,0" VerticalAlignment="Top" Width="120" Background="{StaticResource PtBrushRed1}" 
                         MouseLeave="buttonMouseOut" Click="AdminButton_Login_Click" Visibility="Hidden">
@@ -138,6 +147,13 @@
                         <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Staff Entity Links"/>
                     </Label>
                 </Button>
+                <Button x:Name="ProductButton_View" Height="120" Width="120" Margin="390,80,0,0" Background="{StaticResource PtBrushBlue1}" MouseLeave="buttonMouseOut" HorizontalAlignment="Left" 
+                        VerticalAlignment="Top" Visibility="Hidden">
+                    <Label VerticalContentAlignment="Center" Background="{StaticResource PtBrushBlue2}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           HorizontalContentAlignment="Center">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="View Products"/>
+                    </Label>
+                </Button>                
 
 
             </Grid>
