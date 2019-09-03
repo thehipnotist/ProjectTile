@@ -64,11 +64,27 @@
             <GradientStop Color="{StaticResource PtColorGold2}" Offset="0"/>
             <GradientStop Color="{StaticResource PtColorGold3}" Offset="1"/>
         </GradientStopCollection>
-        
+
+        <!-- Blues -->
+        <Color x:Key="PtColorBlue3" R="50" G="55" B="255"  A="255"/>
+        <SolidColorBrush x:Key="PtBrushBlue3" Color="{StaticResource PtColorBlue3}"/>
+
+        <Color x:Key="PtColorBlue2" R="120" G="123" B="255" A="255"/>
+        <SolidColorBrush x:Key="PtBrushBlue2" Color="{StaticResource PtColorBlue2}"/>
+
+        <Color x:Key="PtColorBlue1" R="187" G="189" B="255" A="255"/>
+        <SolidColorBrush x:Key="PtBrushBlue1" Color="{StaticResource PtColorBlue1}"/>
+
+        <GradientStopCollection x:Key="PtGradientBlue">
+            <GradientStop Color="{StaticResource PtColorBlue2}" Offset="0"/>
+            <GradientStop Color="{StaticResource PtColorBlue3}" Offset="1"/>
+        </GradientStopCollection>
+
         <!-- Tooltips -->
         <ToolTip x:Key="EntitiesTip" Content="Entities are logical divisions of the business such as Companies, Legal Entities or Business Units"/>
         <ToolTip x:Key="AdminTip" Content="Functions relating to your ProjectTile login details"/>
         <ToolTip x:Key="StaffTip" Content="Staff includes ProjectTile users, and also other staff members who may work on projects"/>
-
+        <ToolTip x:Key="ProductsTip" Content="Products are the software packages used by clients, and implemented or amended via projects"/>
+        
     </Application.Resources>
 </Application>
