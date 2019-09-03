@@ -33,7 +33,7 @@ namespace ProjectTile
         List<Button> entityButtons = new List<Button>();
         List<Button> adminButtons = new List<Button>();
         List<Button> staffButtons = new List<Button>();
-
+        List<Button> productButtons = new List<Button>();
 
         /* ----------------------
            -- Page Management ---
@@ -78,6 +78,7 @@ namespace ProjectTile
                 mainButtons.Add(EntityButton);
                 mainButtons.Add(AdminButton);
                 mainButtons.Add(StaffButton);
+                mainButtons.Add(ProductButton);
 
                 entityButtons.Add(EntityButton_Change);
                 entityButtons.Add(EntityButton_Default);
@@ -95,6 +96,8 @@ namespace ProjectTile
                 else { StaffButton_Amend.Margin = StaffButton_New.Margin; }
                 if (myPermissions.Allow("AddStaff")) { staffButtons.Add(StaffButton_New); }
                 if (myPermissions.Allow("ViewStaffEntities")) { staffButtons.Add(StaffButton_Entities); }
+
+                if (myPermissions.Allow("ViewProducts")) { productButtons.Add(ProductButton_View); }
 
                 // More to come...
             }
@@ -145,6 +148,10 @@ namespace ProjectTile
                     if (thisButton.Name == "EntityButton") { toggleChildButtons(true, ref entityButtons); }
                     else if (thisButton.Name == "AdminButton") { toggleChildButtons(true, ref adminButtons); }
                     else if (thisButton.Name == "StaffButton") { toggleChildButtons(true, ref staffButtons); }
+                    else if (thisButton.Name == "ProductButton") { toggleChildButtons(true, ref productButtons); }
+
+                    // More to come...
+
                 }
                 catch
                 {
@@ -157,17 +164,9 @@ namespace ProjectTile
         {            
             if (sender is Button)
             {
-                //if (keepExpansion)
-                //{
-                    //keepExpansion = false;
-                    //movedElsewhere();
-                //}
-                //else
-                //{
                 Button thisButton = (Button)sender;
                 thisButton.BorderThickness = fatBorder;                    
                 keepExpansion = true;                   
-                //}
             }
         }
 
