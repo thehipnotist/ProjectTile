@@ -17,46 +17,29 @@
 
         <Menu x:Name="MainMenu" Height="20" VerticalAlignment="Top" Background="{StaticResource PtBrushMenuBlue}" Visibility="Visible" VerticalContentAlignment="Center" Margin="0,5,0,0" 
               FontFamily="Yu Gothic" Foreground="White">
-            <MenuItem x:Name="EntityMenu" Header="_Entity" FontWeight="Bold" ToolTip="{StaticResource EntitiesTip}" BorderBrush="{x:Null}">
-                <MenuItem.Background>
-                    <SolidColorBrush Color="{DynamicResource PtColorBackgroundBlue}"/>
-                </MenuItem.Background>
-                <MenuItem.Foreground>
-                    <SolidColorBrush Color="{DynamicResource PtColorGreen3}"/>
-                </MenuItem.Foreground>
+            <MenuItem x:Name="EntityMenu" Header="_Entities" FontWeight="Bold" ToolTip="{StaticResource EntitiesTip}" BorderBrush="{x:Null}" 
+                      Padding="6,0,6,0" HorizontalContentAlignment="Center" Background="{StaticResource PtBrushBackgroundBlue}" Foreground="{StaticResource PtBrushGreen3}" >
                 <MenuItem x:Name="ChangeEntity" Header="Change Current Entity" Click="ChangeEntity_Click" FontWeight="Normal" Background="{StaticResource PtBrushGreen1}" Foreground="Black"/>
                 <MenuItem x:Name="DefaultEntity" Header="Change Default Entity" Click="DefaultEntity_Click" FontWeight="Normal" Background="{StaticResource PtBrushGreen1}" Foreground="Black"/>
                 <MenuItem x:Name="NewEntity" Header="Create New Entity" Click="NewEntity_Click" FontWeight="Normal" Background="{StaticResource PtBrushGreen1}" Foreground="Black"/>
                 <MenuItem x:Name="AmendEntity" Header="Amend Existing Entity" Click="AmendEntity_Click" FontWeight="Normal" Background="{StaticResource PtBrushGreen1}" Foreground="Black"/>
             </MenuItem>
-            <MenuItem x:Name="AdminMenu" Header="_Admin" FontWeight="Bold" ToolTip="{StaticResource AdminTip}" BorderBrush="{x:Null}">
-                <MenuItem.Background>
-                    <SolidColorBrush Color="{DynamicResource PtColorBackgroundBlue}"/>
-                </MenuItem.Background>
-                <MenuItem.Foreground>
-                    <SolidColorBrush Color="{DynamicResource PtColorRed3}"/>
-                </MenuItem.Foreground>
+            <MenuItem x:Name="AdminMenu" Header="_Admin" FontWeight="Bold" ToolTip="{StaticResource AdminTip}" BorderBrush="{x:Null}"
+                      Padding="6,0,6,0" HorizontalContentAlignment="Center" Background ="{StaticResource PtBrushBackgroundBlue}" Foreground="{StaticResource PtBrushRed3}">
                 <MenuItem x:Name="ChangeLogin" Header="Change Login" Click="AdminMenu_Login_Click" FontWeight="Normal" Background="{StaticResource PtBrushRed1}" Foreground="Black"/>
                 <MenuItem x:Name="ChangePassword" Header="Change Password" Click="AdminMenu_Password_Click" FontWeight="Normal" Background="{StaticResource PtBrushRed1}" Foreground="Black"/>
                 <MenuItem x:Name="Exit" Header="Exit ProjectTile" Click="AdminMenu_Exit_Click" FontWeight="Normal" Background="{StaticResource PtBrushRed1}" Foreground="Black"/>
             </MenuItem>
-            <MenuItem x:Name="StaffMenu" Header="_Staff" FontWeight="Bold" ToolTip="{StaticResource StaffTip}" BorderBrush="{x:Null}" Foreground="{DynamicResource PtBrushGold3}">
-                <MenuItem.Background>
-                    <SolidColorBrush Color="{DynamicResource PtColorBackgroundBlue}"/>
-                </MenuItem.Background>
+            <MenuItem x:Name="StaffMenu" Header="_Staff" FontWeight="Bold" ToolTip="{StaticResource StaffTip}" BorderBrush="{x:Null}" Foreground="{StaticResource PtBrushGold3}" 
+                      Padding="6,0,6,0" HorizontalContentAlignment="Center" Background="{StaticResource PtBrushBackgroundBlue}">
                 <MenuItem x:Name="ViewStaff" Header="View Staff Details" FontWeight="Normal" Background="{StaticResource PtBrushGold1}" Click="ViewStaff_Click" Foreground="Black"/>
                 <MenuItem x:Name="NewStaff" Header="Create New Staff Member" FontWeight="Normal" Background="{StaticResource PtBrushGold1}" Click="NewStaff_Click" Foreground="Black"/>
                 <MenuItem x:Name="AmendStaff" Header="Amend Staff Details" FontWeight="Normal" Background="{StaticResource PtBrushGold1}" Click="AmendStaff_Click" Foreground="Black"/>
                 <MenuItem x:Name="StaffEntities" Header="Staff Entity Links" FontWeight="Normal" Background="{DynamicResource PtBrushGold1}" Click="StaffEntities_Click" Foreground="Black"/>
             </MenuItem>
-            <MenuItem x:Name="ProductsMenu" Header="_Products" FontWeight="Bold" ToolTip="{StaticResource AdminTip}" BorderBrush="{x:Null}">
-                <MenuItem.Background>
-                    <SolidColorBrush Color="{DynamicResource PtColorBackgroundBlue}"/>
-                </MenuItem.Background>
-                <MenuItem.Foreground>
-                    <SolidColorBrush Color="{DynamicResource PtColorRed3}"/>
-                </MenuItem.Foreground>
-                <MenuItem x:Name="ViewProducts" Header="View Products" FontWeight="Normal" Background="{StaticResource PtBrushRed1}" Foreground="Black"/>
+            <MenuItem x:Name="ProductsMenu" Header="_Products" FontWeight="Bold" ToolTip="{StaticResource ProductsTip}" BorderBrush="{x:Null}"
+                      Padding="6,0,6,0" HorizontalContentAlignment="Center" Background="{StaticResource PtBrushBackgroundBlue}" Foreground="{StaticResource PtBrushBlue3}">
+                <MenuItem x:Name="ViewProducts" Header="View Products" FontWeight="Normal" Background="{StaticResource PtBrushBlue1}" Foreground="Black"/>
             </MenuItem>
         </Menu>
 
