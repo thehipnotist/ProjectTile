@@ -40,8 +40,9 @@ namespace ProjectTile
                 ViewStaff.Visibility = myPermissions.ShowOrCollapse("ViewStaff");
                 NewStaff.Visibility = myPermissions.ShowOrCollapse("AddStaff");
                 AmendStaff.Visibility = myPermissions.ShowOrCollapse("EditStaff");
-
                 StaffEntities.Visibility = myPermissions.ShowOrCollapse("ViewStaffEntities");
+
+                ViewProducts.Visibility = myPermissions.ShowOrCollapse("ViewProducts");
 
                 // More to come...
             }
