@@ -1,0 +1,74 @@
+﻿<Application x:Class="ProjectTile.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>        
+        
+        <!-- Main Colours -->
+        <Color x:Key="PtColorMenuBlue" R="160"  G="200" B="253"  A="255"/>
+        <SolidColorBrush x:Key="PtBrushMenuBlue" Color="{StaticResource PtColorMenuBlue}"/>
+        
+        <Color x:Key="PtColorHeaderBlue" R="149" G="175" B="220" A="255"/>
+        <SolidColorBrush x:Key="PtBrushHeaderBlue" Color="{StaticResource PtColorHeaderBlue}"/>
+
+        <Color x:Key="PtColorFrameBlue" R="193" G="217" B="251" A="255"/>
+        <SolidColorBrush x:Key="PtBrushFrameBlue" Color="{StaticResource PtColorFrameBlue}"/>
+
+        <Color x:Key="PtColorBackgroundBlue" R="246" G="249" B="255" A="255"/>
+        <SolidColorBrush x:Key="PtBrushBackgroundBlue" Color="{StaticResource PtColorBackgroundBlue}"/>
+
+        <Color x:Key="PtColorButtonGrey" R="215" G="225" B="240" A="255"/>
+        <SolidColorBrush x:Key="PtBrushButtonGrey" Color="{StaticResource PtColorButtonGrey}"/>        
+        
+        <!-- Greens -->
+        <Color x:Key="PtColorGreen3" G="200" A="255"/>
+        <SolidColorBrush x:Key="PtBrushGreen3" Color="{StaticResource PtColorGreen3}"/>
+        
+        <Color x:Key="PtColorGreen2" R="77" G="217" B="77" A="255"/>
+        <SolidColorBrush x:Key="PtBrushGreen2" Color="{StaticResource PtColorGreen2}"/>
+
+        <Color x:Key="PtColorGreen1" R="153" G="233" B="153" A="255"/>
+        <SolidColorBrush x:Key="PtBrushGreen1" Color="{StaticResource PtColorGreen1}"/>
+
+        <GradientStopCollection x:Key="PtGradientGreen">
+            <GradientStop Color="{StaticResource PtColorGreen2}" Offset="0"/>
+            <GradientStop Color="{StaticResource PtColorGreen3}" Offset="1"/>
+        </GradientStopCollection>
+
+        <!-- Reds -->
+        <Color x:Key="PtColorRed3" R="255" A="255"/>
+        <SolidColorBrush x:Key="PtBrushRed3" Color="{StaticResource PtColorRed3}"/>
+
+        <Color x:Key="PtColorRed2" R="255" G="87" B="87" A="255"/>
+        <SolidColorBrush x:Key="PtBrushRed2" Color="{StaticResource PtColorRed2}"/>
+
+        <Color x:Key="PtColorRed1" R="255" G="171" B="171" A="255"/>
+        <SolidColorBrush x:Key="PtBrushRed1" Color="{StaticResource PtColorRed1}"/>
+
+        <GradientStopCollection x:Key="PtGradientRed">
+            <GradientStop Color="{StaticResource PtColorRed2}" Offset="0"/>
+            <GradientStop Color="{StaticResource PtColorRed3}" Offset="1"/>
+        </GradientStopCollection>
+
+        <!-- Golds -->
+        <Color x:Key="PtColorGold3" R="255" G="215"  A="255"/>
+        <SolidColorBrush x:Key="PtBrushGold3" Color="{StaticResource PtColorGold3}"/>
+
+        <Color x:Key="PtColorGold2" R="255" G="227" B="77" A="255"/>
+        <SolidColorBrush x:Key="PtBrushGold2" Color="{StaticResource PtColorGold2}"/>
+
+        <Color x:Key="PtColorGold1" R="255" G="239" B="153" A="255"/>
+        <SolidColorBrush x:Key="PtBrushGold1" Color="{StaticResource PtColorGold1}"/>
+
+        <GradientStopCollection x:Key="PtGradientGold">
+            <GradientStop Color="{StaticResource PtColorGold2}" Offset="0"/>
+            <GradientStop Color="{StaticResource PtColorGold3}" Offset="1"/>
+        </GradientStopCollection>
+        
+        <!-- Tooltips -->
+        <ToolTip x:Key="EntitiesTip" Content="Entities are logical divisions of the business such as Companies, Legal Entities or Business Units"/>
+        <ToolTip x:Key="AdminTip" Content="Functions relating to your ProjectTile login details"/>
+        <ToolTip x:Key="StaffTip" Content="Staff includes ProjectTile users, and also other staff members who may work on projects"/>
+
+    </Application.Resources>
+</Application>

@@ -1,0 +1,2928 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="ProjectTileModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AuditEntries">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ActionType" Type="varchar" MaxLength="20" />
+          <Property Name="UserName" Type="varchar" MaxLength="50" />
+          <Property Name="ChangeTime" Type="datetime" />
+          <Property Name="TableName" Type="varchar" MaxLength="50" />
+          <Property Name="PrimaryColumn" Type="varchar" MaxLength="50" />
+          <Property Name="PrimaryValue" Type="varchar" MaxLength="50" />
+          <Property Name="ChangeColumn" Type="varchar" MaxLength="50" />
+          <Property Name="OldValue" Type="varchar" MaxLength="400" />
+          <Property Name="NewValue" Type="varchar" MaxLength="400" />
+        </EntityType>
+        <EntityType Name="ClientProducts">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ClientID" Type="int" />
+          <Property Name="ProductID" Type="int" />
+          <Property Name="ProductVersion" Type="decimal" Precision="9" Scale="1" />
+          <Property Name="Live" Type="bit" />
+        </EntityType>
+        <EntityType Name="Clients">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EntityID" Type="int" Nullable="false" />
+          <Property Name="ClientCode" Type="varchar" MaxLength="15" Nullable="false" />
+          <Property Name="ClientName" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="AccountManagerID" Type="int" />
+          <Property Name="Active" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ClientStaff">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ClientID" Type="int" Nullable="false" />
+          <Property Name="FirstName" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Surname" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="JobTitle" Type="varchar" MaxLength="100" />
+          <Property Name="PhoneNumber" Type="varchar" MaxLength="50" />
+          <Property Name="Email" Type="varchar" MaxLength="100" />
+          <Property Name="Active" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ClientTeamRoles">
+          <Key>
+            <PropertyRef Name="RoleCode" />
+          </Key>
+          <Property Name="RoleCode" Type="varchar" MaxLength="5" Nullable="false" />
+          <Property Name="RoleDescription" Type="varchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ClientTeams">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProjectID" Type="int" Nullable="false" />
+          <Property Name="ClientStaffID" Type="int" Nullable="false" />
+          <Property Name="ClientTeamRoleCode" Type="varchar" MaxLength="5" />
+          <Property Name="FromDate" Type="date" />
+          <Property Name="ToDate" Type="date" />
+        </EntityType>
+        <EntityType Name="Entities">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="EntityDescription" Type="varchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Products">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProductName" Type="varchar" MaxLength="100" />
+          <Property Name="LatestVersion" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="ProductDescription" Type="varchar" MaxLength="300" />
+        </EntityType>
+        <EntityType Name="ProjectProducts">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProjectID" Type="int" />
+          <Property Name="ProductID" Type="int" />
+          <Property Name="OldVersion" Type="decimal" Precision="9" Scale="1" />
+          <Property Name="NewVersion" Type="decimal" Precision="9" Scale="1" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ProjectRoles">
+          <Key>
+            <PropertyRef Name="RoleCode" />
+          </Key>
+          <Property Name="RoleCode" Type="varchar" MaxLength="5" Nullable="false" />
+          <Property Name="RoleDescription" Type="varchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Projects">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EntityID" Type="int" Nullable="false" />
+          <Property Name="ProjectCode" Type="varchar" MaxLength="9" StoreGeneratedPattern="Computed" />
+          <Property Name="TypeCode" Type="varchar" MaxLength="5" Nullable="false" />
+          <Property Name="ProjectName" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="ClientID" Type="int" />
+          <Property Name="StartDate" Type="date" />
+          <Property Name="StageCode" Type="int" Nullable="false" />
+          <Property Name="ProjectSummary" Type="varchar" MaxLength="400" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ProjectStages">
+          <Key>
+            <PropertyRef Name="StageCode" />
+          </Key>
+          <Property Name="StageCode" Type="int" Nullable="false" />
+          <Property Name="StageName" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="StageDescription" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="ProjectStatus" Type="varchar" MaxLength="20" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ProjectTeams">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProjectID" Type="int" Nullable="false" />
+          <Property Name="StaffID" Type="int" Nullable="false" />
+          <Property Name="ProjectRoleCode" Type="varchar" MaxLength="5" />
+          <Property Name="FromDate" Type="date" />
+          <Property Name="ToDate" Type="date" />
+        </EntityType>
+        <EntityType Name="ProjectTypes">
+          <Key>
+            <PropertyRef Name="TypeCode" />
+          </Key>
+          <Property Name="TypeCode" Type="varchar" MaxLength="5" Nullable="false" />
+          <Property Name="TypeName" Type="varchar" MaxLength="100" />
+          <Property Name="TypeDescription" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="Staff">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EmployeeID" Type="varchar" MaxLength="7" StoreGeneratedPattern="Computed" />
+          <Property Name="FirstName" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Surname" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="RoleCode" Type="varchar" MaxLength="5" />
+          <Property Name="StartDate" Type="date" Nullable="false" />
+          <Property Name="LeaveDate" Type="date" />
+          <Property Name="UserID" Type="varchar" MaxLength="50" />
+          <Property Name="Passwd" Type="varchar" MaxLength="50" />
+          <Property Name="PasswordHash" Type="binary" MaxLength="64" />
+          <Property Name="Active" Type="bit" Nullable="false" />
+          <Property Name="DefaultEntity" Type="int" />
+        </EntityType>
+        <EntityType Name="StaffEntities">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StaffID" Type="int" />
+          <Property Name="EntityID" Type="int" />
+        </EntityType>
+        <EntityType Name="StaffRoles">
+          <Key>
+            <PropertyRef Name="RoleCode" />
+          </Key>
+          <Property Name="RoleCode" Type="varchar" MaxLength="5" Nullable="false" />
+          <Property Name="RoleDescription" Type="varchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TablePermissions">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TableName" Type="varchar" MaxLength="50" />
+          <Property Name="RoleCode" Type="varchar" MaxLength="5" />
+          <Property Name="ViewTable" Type="bit" />
+          <Property Name="UpdateRows" Type="bit" />
+          <Property Name="InsertRows" Type="bit" />
+          <Property Name="ChangeStatus" Type="bit" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'ProjectTile.dbo.vi_ClientStaff' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vi_ClientStaff">
+          <Key>
+            <PropertyRef Name="EntityName" />
+            <PropertyRef Name="ClientCode" />
+            <PropertyRef Name="ClientName" />
+            <PropertyRef Name="StaffName" />
+          </Key>
+          <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="ClientCode" Type="varchar" MaxLength="15" Nullable="false" />
+          <Property Name="ClientName" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="StaffName" Type="varchar" MaxLength="201" Nullable="false" />
+          <Property Name="JobTitle" Type="varchar" MaxLength="100" />
+          <Property Name="PhoneNumber" Type="varchar" MaxLength="50" />
+          <Property Name="Email" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'ProjectTile.dbo.vi_ClientsWithAccountManagers' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vi_ClientsWithAccountManagers">
+          <Key>
+            <PropertyRef Name="EntityName" />
+            <PropertyRef Name="ID" />
+            <PropertyRef Name="ClientCode" />
+            <PropertyRef Name="ClientName" />
+            <PropertyRef Name="Active" />
+            <PropertyRef Name="AccountManagerName" />
+          </Key>
+          <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="ClientCode" Type="varchar" MaxLength="15" Nullable="false" />
+          <Property Name="ClientName" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="Active" Type="bit" Nullable="false" />
+          <Property Name="AccountManagerName" Type="varchar" MaxLength="201" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'ProjectTile.dbo.vi_ClientsWithProducts' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vi_ClientsWithProducts">
+          <Key>
+            <PropertyRef Name="EntityName" />
+            <PropertyRef Name="ClientCode" />
+            <PropertyRef Name="ClientName" />
+          </Key>
+          <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="ClientID" Type="int" />
+          <Property Name="ClientCode" Type="varchar" MaxLength="15" Nullable="false" />
+          <Property Name="ClientName" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="ProductID" Type="int" />
+          <Property Name="ProductName" Type="varchar" MaxLength="100" />
+          <Property Name="ProductVersion" Type="decimal" Precision="9" Scale="1" />
+          <Property Name="LatestVersion" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="ProductDescription" Type="varchar" MaxLength="300" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'ProjectTile.dbo.vi_ClientTeams' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vi_ClientTeams">
+          <Key>
+            <PropertyRef Name="EntityName" />
+            <PropertyRef Name="ClientName" />
+            <PropertyRef Name="ProjectName" />
+            <PropertyRef Name="StaffName" />
+            <PropertyRef Name="RoleDescription" />
+          </Key>
+          <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="ClientName" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="ProjectName" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="StaffName" Type="varchar" MaxLength="201" Nullable="false" />
+          <Property Name="JobTitle" Type="varchar" MaxLength="100" />
+          <Property Name="RoleDescription" Type="varchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'ProjectTile.dbo.vi_OpenProjectProducts' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vi_OpenProjectProducts">
+          <Key>
+            <PropertyRef Name="ClientCode" />
+            <PropertyRef Name="ClientName" />
+            <PropertyRef Name="ProjectName" />
+            <PropertyRef Name="StageName" />
+            <PropertyRef Name="ProjectStatus" />
+            <PropertyRef Name="NewVersion" />
+            <PropertyRef Name="ClientVersion" />
+          </Key>
+          <Property Name="ProjectCode" Type="varchar" MaxLength="9" />
+          <Property Name="ClientCode" Type="varchar" MaxLength="15" Nullable="false" />
+          <Property Name="ClientName" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="TypeName" Type="varchar" MaxLength="100" />
+          <Property Name="ProjectName" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="StageName" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="ProjectStatus" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="ProductName" Type="varchar" MaxLength="100" />
+          <Property Name="OldVersion" Type="decimal" Precision="9" Scale="1" />
+          <Property Name="NewVersion" Type="decimal" Precision="9" Scale="1" Nullable="false" />
+          <Property Name="ClientVersion" Type="decimal" Precision="9" Scale="1" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'ProjectTile.dbo.vi_OpenProjects' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vi_OpenProjects">
+          <Key>
+            <PropertyRef Name="EntityName" />
+            <PropertyRef Name="ClientID" />
+            <PropertyRef Name="ClientCode" />
+            <PropertyRef Name="ClientName" />
+            <PropertyRef Name="ProjectName" />
+            <PropertyRef Name="StageCode" />
+            <PropertyRef Name="StageName" />
+            <PropertyRef Name="ProjectStatus" />
+            <PropertyRef Name="ProjectSummary" />
+          </Key>
+          <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="ProjectCode" Type="varchar" MaxLength="9" />
+          <Property Name="ClientID" Type="int" Nullable="false" />
+          <Property Name="ClientCode" Type="varchar" MaxLength="15" Nullable="false" />
+          <Property Name="ClientName" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="TypeName" Type="varchar" MaxLength="100" />
+          <Property Name="ProjectName" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="StartDate" Type="date" />
+          <Property Name="StageCode" Type="int" Nullable="false" />
+          <Property Name="StageName" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="ProjectStatus" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="ProjectSummary" Type="varchar" MaxLength="400" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'ProjectTile.dbo.vi_ProjectTeams' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vi_ProjectTeams">
+          <Key>
+            <PropertyRef Name="EntityName" />
+            <PropertyRef Name="ProjectName" />
+            <PropertyRef Name="ClientName" />
+            <PropertyRef Name="StaffName" />
+            <PropertyRef Name="ProjectRoleDescription" />
+            <PropertyRef Name="JobTitle" />
+          </Key>
+          <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="ProjectName" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="ClientName" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="StaffName" Type="varchar" MaxLength="201" Nullable="false" />
+          <Property Name="ProjectRoleCode" Type="varchar" MaxLength="5" />
+          <Property Name="ProjectRoleDescription" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="JobTitle" Type="varchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'ProjectTile.dbo.vi_StaffEntities' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vi_StaffEntities">
+          <Key>
+            <PropertyRef Name="StaffName" />
+            <PropertyRef Name="EntityName" />
+            <PropertyRef Name="EntityDescription" />
+          </Key>
+          <Property Name="StaffName" Type="varchar" MaxLength="201" Nullable="false" />
+          <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="EntityDescription" Type="varchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vi_StaffWithRoles">
+          <Key>
+            <PropertyRef Name="ID" />
+            <PropertyRef Name="FirstName" />
+            <PropertyRef Name="Surname" />
+            <PropertyRef Name="StartDate" />
+            <PropertyRef Name="Active" />
+            <PropertyRef Name="RoleDescription" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="EmployeeID" Type="varchar" MaxLength="7" />
+          <Property Name="FirstName" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Surname" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="RoleCode" Type="varchar" MaxLength="5" />
+          <Property Name="StartDate" Type="date" Nullable="false" />
+          <Property Name="LeaveDate" Type="date" />
+          <Property Name="UserID" Type="varchar" MaxLength="50" />
+          <Property Name="Passwd" Type="varchar" MaxLength="50" />
+          <Property Name="PasswordHash" Type="binary" MaxLength="64" />
+          <Property Name="Active" Type="bit" Nullable="false" />
+          <Property Name="DefaultEntity" Type="int" />
+          <Property Name="RoleDescription" Type="varchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <Association Name="fk_ClientAccountManagerID">
+          <End Role="Staff" Type="Self.Staff" Multiplicity="0..1" />
+          <End Role="Clients" Type="Self.Clients" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Staff">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Clients">
+              <PropertyRef Name="AccountManagerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ClientEntityID">
+          <End Role="Entities" Type="Self.Entities" Multiplicity="1" />
+          <End Role="Clients" Type="Self.Clients" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Entities">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Clients">
+              <PropertyRef Name="EntityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ClientProductID">
+          <End Role="Products" Type="Self.Products" Multiplicity="0..1" />
+          <End Role="ClientProducts" Type="Self.ClientProducts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ClientProducts">
+              <PropertyRef Name="ProductID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ClientTeamProjectID">
+          <End Role="Projects" Type="Self.Projects" Multiplicity="1" />
+          <End Role="ClientTeams" Type="Self.ClientTeams" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ClientTeams">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ClientTeamRoleCode">
+          <End Role="ClientTeamRoles" Type="Self.ClientTeamRoles" Multiplicity="0..1" />
+          <End Role="ClientTeams" Type="Self.ClientTeams" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ClientTeamRoles">
+              <PropertyRef Name="RoleCode" />
+            </Principal>
+            <Dependent Role="ClientTeams">
+              <PropertyRef Name="ClientTeamRoleCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ClientTeamStaffID">
+          <End Role="ClientStaff" Type="Self.ClientStaff" Multiplicity="1" />
+          <End Role="ClientTeams" Type="Self.ClientTeams" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ClientStaff">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ClientTeams">
+              <PropertyRef Name="ClientStaffID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_EntityStaffID">
+          <End Role="Staff" Type="Self.Staff" Multiplicity="0..1" />
+          <End Role="StaffEntities" Type="Self.StaffEntities" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Staff">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="StaffEntities">
+              <PropertyRef Name="StaffID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_PermissionRoleCode">
+          <End Role="StaffRoles" Type="Self.StaffRoles" Multiplicity="0..1" />
+          <End Role="TablePermissions" Type="Self.TablePermissions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StaffRoles">
+              <PropertyRef Name="RoleCode" />
+            </Principal>
+            <Dependent Role="TablePermissions">
+              <PropertyRef Name="RoleCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ProductClientID">
+          <End Role="Clients" Type="Self.Clients" Multiplicity="0..1" />
+          <End Role="ClientProducts" Type="Self.ClientProducts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Clients">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ClientProducts">
+              <PropertyRef Name="ClientID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ProductProjectID">
+          <End Role="Projects" Type="Self.Projects" Multiplicity="0..1" />
+          <End Role="ProjectProducts" Type="Self.ProjectProducts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ProjectProducts">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ProjectClientID">
+          <End Role="Clients" Type="Self.Clients" Multiplicity="0..1" />
+          <End Role="Projects" Type="Self.Projects" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Clients">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Projects">
+              <PropertyRef Name="ClientID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ProjectEntityID">
+          <End Role="Entities" Type="Self.Entities" Multiplicity="1" />
+          <End Role="Projects" Type="Self.Projects" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Entities">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Projects">
+              <PropertyRef Name="EntityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ProjectProductID">
+          <End Role="Products" Type="Self.Products" Multiplicity="0..1" />
+          <End Role="ProjectProducts" Type="Self.ProjectProducts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ProjectProducts">
+              <PropertyRef Name="ProductID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ProjectStageCode">
+          <End Role="ProjectStages" Type="Self.ProjectStages" Multiplicity="1" />
+          <End Role="Projects" Type="Self.Projects" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectStages">
+              <PropertyRef Name="StageCode" />
+            </Principal>
+            <Dependent Role="Projects">
+              <PropertyRef Name="StageCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ProjectTypeCode">
+          <End Role="ProjectTypes" Type="Self.ProjectTypes" Multiplicity="1" />
+          <End Role="Projects" Type="Self.Projects" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectTypes">
+              <PropertyRef Name="TypeCode" />
+            </Principal>
+            <Dependent Role="Projects">
+              <PropertyRef Name="TypeCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_StaffClientID">
+          <End Role="Clients" Type="Self.Clients" Multiplicity="1" />
+          <End Role="ClientStaff" Type="Self.ClientStaff" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Clients">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ClientStaff">
+              <PropertyRef Name="ClientID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_StaffEntity">
+          <End Role="Entities" Type="Self.Entities" Multiplicity="0..1" />
+          <End Role="Staff" Type="Self.Staff" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Entities">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Staff">
+              <PropertyRef Name="DefaultEntity" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_StaffEntityID">
+          <End Role="Entities" Type="Self.Entities" Multiplicity="0..1" />
+          <End Role="StaffEntities" Type="Self.StaffEntities" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Entities">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="StaffEntities">
+              <PropertyRef Name="EntityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_StaffRoleCode">
+          <End Role="StaffRoles" Type="Self.StaffRoles" Multiplicity="0..1" />
+          <End Role="Staff" Type="Self.Staff" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StaffRoles">
+              <PropertyRef Name="RoleCode" />
+            </Principal>
+            <Dependent Role="Staff">
+              <PropertyRef Name="RoleCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_TeamProjectID">
+          <End Role="Projects" Type="Self.Projects" Multiplicity="1" />
+          <End Role="ProjectTeams" Type="Self.ProjectTeams" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ProjectTeams">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_TeamRoleCode">
+          <End Role="ProjectRoles" Type="Self.ProjectRoles" Multiplicity="0..1" />
+          <End Role="ProjectTeams" Type="Self.ProjectTeams" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectRoles">
+              <PropertyRef Name="RoleCode" />
+            </Principal>
+            <Dependent Role="ProjectTeams">
+              <PropertyRef Name="ProjectRoleCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_TeamStaffID">
+          <End Role="Staff" Type="Self.Staff" Multiplicity="1" />
+          <End Role="ProjectTeams" Type="Self.ProjectTeams" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Staff">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ProjectTeams">
+              <PropertyRef Name="StaffID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="cln_GetClientsByAccountManagerID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="AccountManagerID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="cln_GetClientsByClientCode" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClientCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="cln_GetClientsByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="cln_GetClientStaffByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="cln_InsertIntoClientProducts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClientID" Type="int" Mode="In" />
+          <Parameter Name="ProductID" Type="int" Mode="In" />
+          <Parameter Name="ProductVersion" Type="decimal" Mode="In" />
+          <Parameter Name="Live" Type="bit" Mode="In" />
+        </Function>
+        <Function Name="cln_InsertIntoClients" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="EntityID" Type="int" Mode="In" />
+          <Parameter Name="ClientCode" Type="varchar" Mode="In" />
+          <Parameter Name="ClientName" Type="varchar" Mode="In" />
+          <Parameter Name="AccountManagerID" Type="int" Mode="In" />
+          <Parameter Name="Active" Type="bit" Mode="In" />
+        </Function>
+        <Function Name="cln_InsertIntoClientStaff" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClientID" Type="int" Mode="In" />
+          <Parameter Name="FirstName" Type="varchar" Mode="In" />
+          <Parameter Name="Surname" Type="varchar" Mode="In" />
+          <Parameter Name="JobTitle" Type="varchar" Mode="In" />
+          <Parameter Name="PhoneNumber" Type="varchar" Mode="In" />
+          <Parameter Name="Email" Type="varchar" Mode="In" />
+          <Parameter Name="Active" Type="bit" Mode="In" />
+        </Function>
+        <Function Name="cln_UpdateAccountManagerIDInClients" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="AccountManagerID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="cln_UpdateActiveInClientStaff" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="Active" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="cln_UpdateClientNameInClients" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="ClientName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="cln_UpdateJobTitleInClientStaff" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="JobTitle" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="cln_UpdateSurnameInClientStaff" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="Surname" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="ent_GetEntitiesByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="ent_InsertIntoEntities" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="EntityName" Type="varchar" Mode="In" />
+          <Parameter Name="EntityDescription" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="ent_UpdateEntityDescriptionInEntities" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="EntityDescription" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="ent_UpdateEntityNameInEntities" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="EntityName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="pja_GetClientTeamRolesByRoleCode" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RoleCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="pja_GetProjectRolesByRoleCode" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RoleCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="pja_GetProjectStagesByStageCode" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="StageCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="pja_InsertIntoClientTeamRoles" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RoleCode" Type="varchar" Mode="In" />
+          <Parameter Name="RoleDescription" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="pja_InsertIntoProjectRoles" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RoleCode" Type="varchar" Mode="In" />
+          <Parameter Name="RoleDescription" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="pja_InsertIntoProjectStages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="StageCode" Type="int" Mode="In" />
+          <Parameter Name="StageName" Type="varchar" Mode="In" />
+          <Parameter Name="StageDescription" Type="varchar" Mode="In" />
+          <Parameter Name="ProjectStatus" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="pja_InsertIntoProjectTypes" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="TypeCode" Type="varchar" Mode="In" />
+          <Parameter Name="TypeName" Type="varchar" Mode="In" />
+          <Parameter Name="TypeDescription" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="pja_UpdateRoleDescriptionInClientTeamRoles" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RoleCode" Type="varchar" Mode="In" />
+          <Parameter Name="RoleDescription" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="pja_UpdateRoleDescriptionInProjectRoles" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RoleCode" Type="varchar" Mode="In" />
+          <Parameter Name="RoleDescription" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="pja_UpdateStageDescriptionInProjectStages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="StageCode" Type="varchar" Mode="In" />
+          <Parameter Name="StageDescription" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="pja_UpdateTypeDescriptionInProjectTypes" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="TypeName" Type="varchar" Mode="In" />
+          <Parameter Name="TypeDescription" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="pja_UpdateTypeNameInProjectTypes" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="TypeCode" Type="varchar" Mode="In" />
+          <Parameter Name="TypeName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prd_GetProductsByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prd_GetProductsByProductName" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ProductName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prd_InsertIntoProducts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ProductName" Type="varchar" Mode="In" />
+          <Parameter Name="LatestVersion" Type="decimal" Mode="In" />
+          <Parameter Name="ProductDescription" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prd_UpdateLatestVersionInProducts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="LatestVersion" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_GetClientTeamsByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_GetNewVersionByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_GetOldVersionByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_GetProjectsByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_GetProjectTeamsByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_InsertIntoClientTeams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ProjectID" Type="int" Mode="In" />
+          <Parameter Name="ClientStaffID" Type="int" Mode="In" />
+          <Parameter Name="ClientTeamRoleCode" Type="varchar" Mode="In" />
+          <Parameter Name="FromDate" Type="date" Mode="In" />
+          <Parameter Name="ToDate" Type="date" Mode="In" />
+        </Function>
+        <Function Name="prj_InsertIntoProjectProducts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ProjectID" Type="int" Mode="In" />
+          <Parameter Name="ProductID" Type="int" Mode="In" />
+          <Parameter Name="OldVersion" Type="decimal" Mode="In" />
+          <Parameter Name="NewVersion" Type="decimal" Mode="In" />
+        </Function>
+        <Function Name="prj_InsertIntoProjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="EntityID" Type="int" Mode="In" />
+          <Parameter Name="TypeCode" Type="varchar" Mode="In" />
+          <Parameter Name="ProjectName" Type="varchar" Mode="In" />
+          <Parameter Name="ClientID" Type="int" Mode="In" />
+          <Parameter Name="StartDate" Type="date" Mode="In" />
+          <Parameter Name="StageCode" Type="int" Mode="In" />
+          <Parameter Name="ProjectSummary" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_InsertIntoProjectTeams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ProjectID" Type="int" Mode="In" />
+          <Parameter Name="StaffID" Type="int" Mode="In" />
+          <Parameter Name="ProjectRoleCode" Type="varchar" Mode="In" />
+          <Parameter Name="FromDate" Type="date" Mode="In" />
+          <Parameter Name="ToDate" Type="date" Mode="In" />
+        </Function>
+        <Function Name="prj_UpdateClientStaffIDInClientTeams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="ClientStaffID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_UpdateClientTeamRoleCodeInClientTeams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="ClientTeamRoleCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_UpdateNewVersionInProjectProducts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="NewVersion" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_UpdateOldVersionInProjectProducts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="OldVersion" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_UpdateProjectNameInProjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="ProjectName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_UpdateProjectRoleCodeInProjectTeams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="ProjectRoleCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_UpdateProjectSummaryInProjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="ProjectSummary" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_UpdateStaffIDInProjectTeams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="StaffID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_UpdateToDateInClientTeams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="ToDate" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_UpdateToDateInProjectTeams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="ToDate" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="sec_GetTablePermissionsByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="sec_InsertIntoTablePermissions" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="TableName" Type="varchar" Mode="In" />
+          <Parameter Name="RoleCode" Type="varchar" Mode="In" />
+          <Parameter Name="ViewTable" Type="bit" Mode="In" />
+          <Parameter Name="UpdateRows" Type="bit" Mode="In" />
+          <Parameter Name="InsertRows" Type="bit" Mode="In" />
+          <Parameter Name="ChangeStatus" Type="bit" Mode="In" />
+        </Function>
+        <Function Name="stf_CheckHashedPassword" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserID" Type="varchar" Mode="In" />
+          <Parameter Name="Passwd" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="stf_GetStaffByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="stf_GetStaffByRoleCode" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RoleCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="stf_GetStaffRolesByRoleCode" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RoleCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="stf_InsertIntoStaff" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="FirstName" Type="varchar" Mode="In" />
+          <Parameter Name="Surname" Type="varchar" Mode="In" />
+          <Parameter Name="RoleCode" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="date" Mode="In" />
+          <Parameter Name="LeaveDate" Type="date" Mode="In" />
+          <Parameter Name="UserID" Type="varchar" Mode="In" />
+          <Parameter Name="Passwd" Type="varchar" Mode="In" />
+          <Parameter Name="PasswordHash" Type="binary" Mode="In" />
+          <Parameter Name="Active" Type="bit" Mode="In" />
+          <Parameter Name="DefaultEntity" Type="int" Mode="In" />
+        </Function>
+        <Function Name="stf_InsertIntoStaffEntities" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="StaffID" Type="int" Mode="In" />
+          <Parameter Name="EntityID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="stf_InsertIntoStaffRoles" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RoleCode" Type="varchar" Mode="In" />
+          <Parameter Name="RoleDescription" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="stf_UpdateLeaveDateInStaff" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="LeaveDate" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="stf_UpdateRoleCodeInStaff" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="RoleCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="stf_UpdateRoleDescriptionInStaffRoles" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RoleCode" Type="varchar" Mode="In" />
+          <Parameter Name="RoleDescription" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="udf_CheckClientEntity" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
+          <Parameter Name="ClientID" Type="int" Mode="In" />
+          <Parameter Name="EntityID" Type="int" Mode="In" />
+          <Parameter Name="TypeCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="udf_CheckClientStaffMember" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
+          <Parameter Name="ProjectID" Type="int" Mode="In" />
+          <Parameter Name="ClientStaffID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="udf_GetHashedPassword" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="binary">
+          <Parameter Name="Passwd" Type="varchar" Mode="In" />
+        </Function>
+        <EntityContainer Name="ProjectTileModelStoreContainer">
+          <EntitySet Name="AuditEntries" EntityType="Self.AuditEntries" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ClientProducts" EntityType="Self.ClientProducts" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Clients" EntityType="Self.Clients" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ClientStaff" EntityType="Self.ClientStaff" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ClientTeamRoles" EntityType="Self.ClientTeamRoles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ClientTeams" EntityType="Self.ClientTeams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Entities" EntityType="Self.Entities" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Products" EntityType="Self.Products" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProjectProducts" EntityType="Self.ProjectProducts" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProjectRoles" EntityType="Self.ProjectRoles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Projects" EntityType="Self.Projects" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProjectStages" EntityType="Self.ProjectStages" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProjectTeams" EntityType="Self.ProjectTeams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProjectTypes" EntityType="Self.ProjectTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Staff" EntityType="Self.Staff" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="StaffEntities" EntityType="Self.StaffEntities" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="StaffRoles" EntityType="Self.StaffRoles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TablePermissions" EntityType="Self.TablePermissions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="vi_ClientStaff" EntityType="Self.vi_ClientStaff" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vi_ClientStaff].[EntityName] AS [EntityName], 
+    [vi_ClientStaff].[ClientCode] AS [ClientCode], 
+    [vi_ClientStaff].[ClientName] AS [ClientName], 
+    [vi_ClientStaff].[StaffName] AS [StaffName], 
+    [vi_ClientStaff].[JobTitle] AS [JobTitle], 
+    [vi_ClientStaff].[PhoneNumber] AS [PhoneNumber], 
+    [vi_ClientStaff].[Email] AS [Email]
+    FROM [dbo].[vi_ClientStaff] AS [vi_ClientStaff]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vi_ClientsWithAccountManagers" EntityType="Self.vi_ClientsWithAccountManagers" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vi_ClientsWithAccountManagers].[EntityName] AS [EntityName], 
+    [vi_ClientsWithAccountManagers].[ID] AS [ID], 
+    [vi_ClientsWithAccountManagers].[ClientCode] AS [ClientCode], 
+    [vi_ClientsWithAccountManagers].[ClientName] AS [ClientName], 
+    [vi_ClientsWithAccountManagers].[Active] AS [Active], 
+    [vi_ClientsWithAccountManagers].[AccountManagerName] AS [AccountManagerName]
+    FROM [dbo].[vi_ClientsWithAccountManagers] AS [vi_ClientsWithAccountManagers]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vi_ClientsWithProducts" EntityType="Self.vi_ClientsWithProducts" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vi_ClientsWithProducts].[EntityName] AS [EntityName], 
+    [vi_ClientsWithProducts].[ClientID] AS [ClientID], 
+    [vi_ClientsWithProducts].[ClientCode] AS [ClientCode], 
+    [vi_ClientsWithProducts].[ClientName] AS [ClientName], 
+    [vi_ClientsWithProducts].[ProductID] AS [ProductID], 
+    [vi_ClientsWithProducts].[ProductName] AS [ProductName], 
+    [vi_ClientsWithProducts].[ProductVersion] AS [ProductVersion], 
+    [vi_ClientsWithProducts].[LatestVersion] AS [LatestVersion], 
+    [vi_ClientsWithProducts].[ProductDescription] AS [ProductDescription]
+    FROM [dbo].[vi_ClientsWithProducts] AS [vi_ClientsWithProducts]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vi_ClientTeams" EntityType="Self.vi_ClientTeams" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vi_ClientTeams].[EntityName] AS [EntityName], 
+    [vi_ClientTeams].[ClientName] AS [ClientName], 
+    [vi_ClientTeams].[ProjectName] AS [ProjectName], 
+    [vi_ClientTeams].[StaffName] AS [StaffName], 
+    [vi_ClientTeams].[JobTitle] AS [JobTitle], 
+    [vi_ClientTeams].[RoleDescription] AS [RoleDescription]
+    FROM [dbo].[vi_ClientTeams] AS [vi_ClientTeams]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vi_OpenProjectProducts" EntityType="Self.vi_OpenProjectProducts" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vi_OpenProjectProducts].[ProjectCode] AS [ProjectCode], 
+    [vi_OpenProjectProducts].[ClientCode] AS [ClientCode], 
+    [vi_OpenProjectProducts].[ClientName] AS [ClientName], 
+    [vi_OpenProjectProducts].[TypeName] AS [TypeName], 
+    [vi_OpenProjectProducts].[ProjectName] AS [ProjectName], 
+    [vi_OpenProjectProducts].[StageName] AS [StageName], 
+    [vi_OpenProjectProducts].[ProjectStatus] AS [ProjectStatus], 
+    [vi_OpenProjectProducts].[ProductName] AS [ProductName], 
+    [vi_OpenProjectProducts].[OldVersion] AS [OldVersion], 
+    [vi_OpenProjectProducts].[NewVersion] AS [NewVersion], 
+    [vi_OpenProjectProducts].[ClientVersion] AS [ClientVersion]
+    FROM [dbo].[vi_OpenProjectProducts] AS [vi_OpenProjectProducts]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vi_OpenProjects" EntityType="Self.vi_OpenProjects" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vi_OpenProjects].[EntityName] AS [EntityName], 
+    [vi_OpenProjects].[ProjectCode] AS [ProjectCode], 
+    [vi_OpenProjects].[ClientID] AS [ClientID], 
+    [vi_OpenProjects].[ClientCode] AS [ClientCode], 
+    [vi_OpenProjects].[ClientName] AS [ClientName], 
+    [vi_OpenProjects].[TypeName] AS [TypeName], 
+    [vi_OpenProjects].[ProjectName] AS [ProjectName], 
+    [vi_OpenProjects].[StartDate] AS [StartDate], 
+    [vi_OpenProjects].[StageCode] AS [StageCode], 
+    [vi_OpenProjects].[StageName] AS [StageName], 
+    [vi_OpenProjects].[ProjectStatus] AS [ProjectStatus], 
+    [vi_OpenProjects].[ProjectSummary] AS [ProjectSummary]
+    FROM [dbo].[vi_OpenProjects] AS [vi_OpenProjects]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vi_ProjectTeams" EntityType="Self.vi_ProjectTeams" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vi_ProjectTeams].[EntityName] AS [EntityName], 
+    [vi_ProjectTeams].[ProjectName] AS [ProjectName], 
+    [vi_ProjectTeams].[ClientName] AS [ClientName], 
+    [vi_ProjectTeams].[StaffName] AS [StaffName], 
+    [vi_ProjectTeams].[ProjectRoleCode] AS [ProjectRoleCode], 
+    [vi_ProjectTeams].[ProjectRoleDescription] AS [ProjectRoleDescription], 
+    [vi_ProjectTeams].[JobTitle] AS [JobTitle]
+    FROM [dbo].[vi_ProjectTeams] AS [vi_ProjectTeams]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vi_StaffEntities" EntityType="Self.vi_StaffEntities" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vi_StaffEntities].[StaffName] AS [StaffName], 
+    [vi_StaffEntities].[EntityName] AS [EntityName], 
+    [vi_StaffEntities].[EntityDescription] AS [EntityDescription]
+    FROM [dbo].[vi_StaffEntities] AS [vi_StaffEntities]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vi_StaffWithRoles" EntityType="Self.vi_StaffWithRoles" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vi_StaffWithRoles].[ID] AS [ID], 
+    [vi_StaffWithRoles].[EmployeeID] AS [EmployeeID], 
+    [vi_StaffWithRoles].[FirstName] AS [FirstName], 
+    [vi_StaffWithRoles].[Surname] AS [Surname], 
+    [vi_StaffWithRoles].[RoleCode] AS [RoleCode], 
+    [vi_StaffWithRoles].[StartDate] AS [StartDate], 
+    [vi_StaffWithRoles].[LeaveDate] AS [LeaveDate], 
+    [vi_StaffWithRoles].[UserID] AS [UserID], 
+    [vi_StaffWithRoles].[Passwd] AS [Passwd], 
+    [vi_StaffWithRoles].[PasswordHash] AS [PasswordHash], 
+    [vi_StaffWithRoles].[Active] AS [Active], 
+    [vi_StaffWithRoles].[DefaultEntity] AS [DefaultEntity], 
+    [vi_StaffWithRoles].[RoleDescription] AS [RoleDescription]
+    FROM [dbo].[vi_StaffWithRoles] AS [vi_StaffWithRoles]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="fk_ClientAccountManagerID" Association="Self.fk_ClientAccountManagerID">
+            <End Role="Staff" EntitySet="Staff" />
+            <End Role="Clients" EntitySet="Clients" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ClientEntityID" Association="Self.fk_ClientEntityID">
+            <End Role="Entities" EntitySet="Entities" />
+            <End Role="Clients" EntitySet="Clients" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ClientProductID" Association="Self.fk_ClientProductID">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="ClientProducts" EntitySet="ClientProducts" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ClientTeamProjectID" Association="Self.fk_ClientTeamProjectID">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="ClientTeams" EntitySet="ClientTeams" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ClientTeamRoleCode" Association="Self.fk_ClientTeamRoleCode">
+            <End Role="ClientTeamRoles" EntitySet="ClientTeamRoles" />
+            <End Role="ClientTeams" EntitySet="ClientTeams" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ClientTeamStaffID" Association="Self.fk_ClientTeamStaffID">
+            <End Role="ClientStaff" EntitySet="ClientStaff" />
+            <End Role="ClientTeams" EntitySet="ClientTeams" />
+          </AssociationSet>
+          <AssociationSet Name="fk_EntityStaffID" Association="Self.fk_EntityStaffID">
+            <End Role="Staff" EntitySet="Staff" />
+            <End Role="StaffEntities" EntitySet="StaffEntities" />
+          </AssociationSet>
+          <AssociationSet Name="fk_PermissionRoleCode" Association="Self.fk_PermissionRoleCode">
+            <End Role="StaffRoles" EntitySet="StaffRoles" />
+            <End Role="TablePermissions" EntitySet="TablePermissions" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ProductClientID" Association="Self.fk_ProductClientID">
+            <End Role="Clients" EntitySet="Clients" />
+            <End Role="ClientProducts" EntitySet="ClientProducts" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ProductProjectID" Association="Self.fk_ProductProjectID">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="ProjectProducts" EntitySet="ProjectProducts" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ProjectClientID" Association="Self.fk_ProjectClientID">
+            <End Role="Clients" EntitySet="Clients" />
+            <End Role="Projects" EntitySet="Projects" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ProjectEntityID" Association="Self.fk_ProjectEntityID">
+            <End Role="Entities" EntitySet="Entities" />
+            <End Role="Projects" EntitySet="Projects" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ProjectProductID" Association="Self.fk_ProjectProductID">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="ProjectProducts" EntitySet="ProjectProducts" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ProjectStageCode" Association="Self.fk_ProjectStageCode">
+            <End Role="ProjectStages" EntitySet="ProjectStages" />
+            <End Role="Projects" EntitySet="Projects" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ProjectTypeCode" Association="Self.fk_ProjectTypeCode">
+            <End Role="ProjectTypes" EntitySet="ProjectTypes" />
+            <End Role="Projects" EntitySet="Projects" />
+          </AssociationSet>
+          <AssociationSet Name="fk_StaffClientID" Association="Self.fk_StaffClientID">
+            <End Role="Clients" EntitySet="Clients" />
+            <End Role="ClientStaff" EntitySet="ClientStaff" />
+          </AssociationSet>
+          <AssociationSet Name="fk_StaffEntity" Association="Self.fk_StaffEntity">
+            <End Role="Entities" EntitySet="Entities" />
+            <End Role="Staff" EntitySet="Staff" />
+          </AssociationSet>
+          <AssociationSet Name="fk_StaffEntityID" Association="Self.fk_StaffEntityID">
+            <End Role="Entities" EntitySet="Entities" />
+            <End Role="StaffEntities" EntitySet="StaffEntities" />
+          </AssociationSet>
+          <AssociationSet Name="fk_StaffRoleCode" Association="Self.fk_StaffRoleCode">
+            <End Role="StaffRoles" EntitySet="StaffRoles" />
+            <End Role="Staff" EntitySet="Staff" />
+          </AssociationSet>
+          <AssociationSet Name="fk_TeamProjectID" Association="Self.fk_TeamProjectID">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="ProjectTeams" EntitySet="ProjectTeams" />
+          </AssociationSet>
+          <AssociationSet Name="fk_TeamRoleCode" Association="Self.fk_TeamRoleCode">
+            <End Role="ProjectRoles" EntitySet="ProjectRoles" />
+            <End Role="ProjectTeams" EntitySet="ProjectTeams" />
+          </AssociationSet>
+          <AssociationSet Name="fk_TeamStaffID" Association="Self.fk_TeamStaffID">
+            <End Role="Staff" EntitySet="Staff" />
+            <End Role="ProjectTeams" EntitySet="ProjectTeams" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ProjectTileModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="AuditEntries">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ActionType" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ChangeTime" Type="DateTime" Precision="3" />
+          <Property Name="TableName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PrimaryColumn" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PrimaryValue" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ChangeColumn" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="OldValue" Type="String" MaxLength="400" FixedLength="false" Unicode="false" />
+          <Property Name="NewValue" Type="String" MaxLength="400" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="ClientProducts">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ClientID" Type="Int32" />
+          <Property Name="ProductID" Type="Int32" />
+          <Property Name="ProductVersion" Type="Decimal" Precision="9" Scale="1" />
+          <Property Name="Live" Type="Boolean" />
+          <NavigationProperty Name="Products" Relationship="Self.fk_ClientProductID" FromRole="ClientProducts" ToRole="Products" />
+          <NavigationProperty Name="Clients" Relationship="Self.fk_ProductClientID" FromRole="ClientProducts" ToRole="Clients" />
+        </EntityType>
+        <EntityType Name="Clients">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EntityID" Type="Int32" Nullable="false" />
+          <Property Name="ClientCode" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="AccountManagerID" Type="Int32" />
+          <Property Name="Active" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="ClientProducts" Relationship="Self.fk_ProductClientID" FromRole="Clients" ToRole="ClientProducts" />
+          <NavigationProperty Name="Staff" Relationship="Self.fk_ClientAccountManagerID" FromRole="Clients" ToRole="Staff" />
+          <NavigationProperty Name="Entities" Relationship="Self.fk_ClientEntityID" FromRole="Clients" ToRole="Entities" />
+          <NavigationProperty Name="Projects" Relationship="Self.fk_ProjectClientID" FromRole="Clients" ToRole="Projects" />
+          <NavigationProperty Name="ClientStaff" Relationship="Self.fk_StaffClientID" FromRole="Clients" ToRole="ClientStaff" />
+        </EntityType>
+        <EntityType Name="ClientStaff">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ClientID" Type="Int32" Nullable="false" />
+          <Property Name="FirstName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Surname" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="JobTitle" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Active" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Clients" Relationship="Self.fk_StaffClientID" FromRole="ClientStaff" ToRole="Clients" />
+          <NavigationProperty Name="ClientTeams" Relationship="Self.fk_ClientTeamStaffID" FromRole="ClientStaff" ToRole="ClientTeams" />
+        </EntityType>
+        <EntityType Name="ClientTeamRoles">
+          <Key>
+            <PropertyRef Name="RoleCode" />
+          </Key>
+          <Property Name="RoleCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="RoleDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="ClientTeams" Relationship="Self.fk_ClientTeamRoleCode" FromRole="ClientTeamRoles" ToRole="ClientTeams" />
+        </EntityType>
+        <EntityType Name="ClientTeams">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProjectID" Type="Int32" Nullable="false" />
+          <Property Name="ClientStaffID" Type="Int32" Nullable="false" />
+          <Property Name="ClientTeamRoleCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="FromDate" Type="DateTime" Precision="0" />
+          <Property Name="ToDate" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="ClientStaff" Relationship="Self.fk_ClientTeamStaffID" FromRole="ClientTeams" ToRole="ClientStaff" />
+          <NavigationProperty Name="ClientTeamRoles" Relationship="Self.fk_ClientTeamRoleCode" FromRole="ClientTeams" ToRole="ClientTeamRoles" />
+          <NavigationProperty Name="Projects" Relationship="Self.fk_ClientTeamProjectID" FromRole="ClientTeams" ToRole="Projects" />
+        </EntityType>
+        <EntityType Name="Entities">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="EntityDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Clients" Relationship="Self.fk_ClientEntityID" FromRole="Entities" ToRole="Clients" />
+          <NavigationProperty Name="Projects" Relationship="Self.fk_ProjectEntityID" FromRole="Entities" ToRole="Projects" />
+          <NavigationProperty Name="Staff" Relationship="Self.fk_StaffEntity" FromRole="Entities" ToRole="Staff" />
+          <NavigationProperty Name="StaffEntities" Relationship="Self.fk_StaffEntityID" FromRole="Entities" ToRole="StaffEntities" />
+        </EntityType>
+        <EntityType Name="Products">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProductName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="LatestVersion" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="ProductDescription" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="ClientProducts" Relationship="Self.fk_ClientProductID" FromRole="Products" ToRole="ClientProducts" />
+          <NavigationProperty Name="ProjectProducts" Relationship="Self.fk_ProjectProductID" FromRole="Products" ToRole="ProjectProducts" />
+        </EntityType>
+        <EntityType Name="ProjectProducts">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProjectID" Type="Int32" />
+          <Property Name="ProductID" Type="Int32" />
+          <Property Name="OldVersion" Type="Decimal" Precision="9" Scale="1" />
+          <Property Name="NewVersion" Type="Decimal" Precision="9" Scale="1" Nullable="false" />
+          <NavigationProperty Name="Products" Relationship="Self.fk_ProjectProductID" FromRole="ProjectProducts" ToRole="Products" />
+          <NavigationProperty Name="Projects" Relationship="Self.fk_ProductProjectID" FromRole="ProjectProducts" ToRole="Projects" />
+        </EntityType>
+        <EntityType Name="ProjectRoles">
+          <Key>
+            <PropertyRef Name="RoleCode" />
+          </Key>
+          <Property Name="RoleCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="RoleDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="ProjectTeams" Relationship="Self.fk_TeamRoleCode" FromRole="ProjectRoles" ToRole="ProjectTeams" />
+        </EntityType>
+        <EntityType Name="Projects">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EntityID" Type="Int32" Nullable="false" />
+          <Property Name="ProjectCode" Type="String" MaxLength="9" FixedLength="false" Unicode="false" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="TypeCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ProjectName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ClientID" Type="Int32" />
+          <Property Name="StartDate" Type="DateTime" Precision="0" />
+          <Property Name="StageCode" Type="Int32" Nullable="false" />
+          <Property Name="ProjectSummary" Type="String" MaxLength="400" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Clients" Relationship="Self.fk_ProjectClientID" FromRole="Projects" ToRole="Clients" />
+          <NavigationProperty Name="ClientTeams" Relationship="Self.fk_ClientTeamProjectID" FromRole="Projects" ToRole="ClientTeams" />
+          <NavigationProperty Name="Entities" Relationship="Self.fk_ProjectEntityID" FromRole="Projects" ToRole="Entities" />
+          <NavigationProperty Name="ProjectProducts" Relationship="Self.fk_ProductProjectID" FromRole="Projects" ToRole="ProjectProducts" />
+          <NavigationProperty Name="ProjectStages" Relationship="Self.fk_ProjectStageCode" FromRole="Projects" ToRole="ProjectStages" />
+          <NavigationProperty Name="ProjectTypes" Relationship="Self.fk_ProjectTypeCode" FromRole="Projects" ToRole="ProjectTypes" />
+          <NavigationProperty Name="ProjectTeams" Relationship="Self.fk_TeamProjectID" FromRole="Projects" ToRole="ProjectTeams" />
+        </EntityType>
+        <EntityType Name="ProjectStages">
+          <Key>
+            <PropertyRef Name="StageCode" />
+          </Key>
+          <Property Name="StageCode" Type="Int32" Nullable="false" />
+          <Property Name="StageName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="StageDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ProjectStatus" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Projects" Relationship="Self.fk_ProjectStageCode" FromRole="ProjectStages" ToRole="Projects" />
+        </EntityType>
+        <EntityType Name="ProjectTeams">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProjectID" Type="Int32" Nullable="false" />
+          <Property Name="StaffID" Type="Int32" Nullable="false" />
+          <Property Name="ProjectRoleCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="FromDate" Type="DateTime" Precision="0" />
+          <Property Name="ToDate" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="ProjectRoles" Relationship="Self.fk_TeamRoleCode" FromRole="ProjectTeams" ToRole="ProjectRoles" />
+          <NavigationProperty Name="Projects" Relationship="Self.fk_TeamProjectID" FromRole="ProjectTeams" ToRole="Projects" />
+          <NavigationProperty Name="Staff" Relationship="Self.fk_TeamStaffID" FromRole="ProjectTeams" ToRole="Staff" />
+        </EntityType>
+        <EntityType Name="ProjectTypes">
+          <Key>
+            <PropertyRef Name="TypeCode" />
+          </Key>
+          <Property Name="TypeCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TypeName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="TypeDescription" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Projects" Relationship="Self.fk_ProjectTypeCode" FromRole="ProjectTypes" ToRole="Projects" />
+        </EntityType>
+        <EntityType Name="Staff">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EmployeeID" Type="String" MaxLength="7" FixedLength="false" Unicode="false" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="FirstName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Surname" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="RoleCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="LeaveDate" Type="DateTime" Precision="0" />
+          <Property Name="UserID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Passwd" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PasswordHash" Type="Binary" MaxLength="64" FixedLength="true" />
+          <Property Name="Active" Type="Boolean" Nullable="false" />
+          <Property Name="DefaultEntity" Type="Int32" />
+          <NavigationProperty Name="Clients" Relationship="Self.fk_ClientAccountManagerID" FromRole="Staff" ToRole="Clients" />
+          <NavigationProperty Name="Entities" Relationship="Self.fk_StaffEntity" FromRole="Staff" ToRole="Entities" />
+          <NavigationProperty Name="ProjectTeams" Relationship="Self.fk_TeamStaffID" FromRole="Staff" ToRole="ProjectTeams" />
+          <NavigationProperty Name="StaffEntities" Relationship="Self.fk_EntityStaffID" FromRole="Staff" ToRole="StaffEntities" />
+          <NavigationProperty Name="StaffRoles" Relationship="Self.fk_StaffRoleCode" FromRole="Staff" ToRole="StaffRoles" />
+        </EntityType>
+        <EntityType Name="StaffEntities">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StaffID" Type="Int32" />
+          <Property Name="EntityID" Type="Int32" />
+          <NavigationProperty Name="Entities" Relationship="Self.fk_StaffEntityID" FromRole="StaffEntities" ToRole="Entities" />
+          <NavigationProperty Name="Staff" Relationship="Self.fk_EntityStaffID" FromRole="StaffEntities" ToRole="Staff" />
+        </EntityType>
+        <EntityType Name="StaffRoles">
+          <Key>
+            <PropertyRef Name="RoleCode" />
+          </Key>
+          <Property Name="RoleCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="RoleDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Staff" Relationship="Self.fk_StaffRoleCode" FromRole="StaffRoles" ToRole="Staff" />
+          <NavigationProperty Name="TablePermissions" Relationship="Self.fk_PermissionRoleCode" FromRole="StaffRoles" ToRole="TablePermissions" />
+        </EntityType>
+        <EntityType Name="TablePermissions">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TableName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="RoleCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="ViewTable" Type="Boolean" />
+          <Property Name="UpdateRows" Type="Boolean" />
+          <Property Name="InsertRows" Type="Boolean" />
+          <Property Name="ChangeStatus" Type="Boolean" />
+          <NavigationProperty Name="StaffRoles" Relationship="Self.fk_PermissionRoleCode" FromRole="TablePermissions" ToRole="StaffRoles" />
+        </EntityType>
+        <EntityType Name="vi_ClientStaff">
+          <Key>
+            <PropertyRef Name="EntityName" />
+            <PropertyRef Name="ClientCode" />
+            <PropertyRef Name="ClientName" />
+            <PropertyRef Name="StaffName" />
+          </Key>
+          <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ClientCode" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="StaffName" Type="String" MaxLength="201" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="JobTitle" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="vi_ClientsWithAccountManagers">
+          <Key>
+            <PropertyRef Name="EntityName" />
+            <PropertyRef Name="ID" />
+            <PropertyRef Name="ClientCode" />
+            <PropertyRef Name="ClientName" />
+            <PropertyRef Name="Active" />
+            <PropertyRef Name="AccountManagerName" />
+          </Key>
+          <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="ClientCode" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Active" Type="Boolean" Nullable="false" />
+          <Property Name="AccountManagerName" Type="String" MaxLength="201" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <EntityType Name="vi_ClientsWithProducts">
+          <Key>
+            <PropertyRef Name="EntityName" />
+            <PropertyRef Name="ClientCode" />
+            <PropertyRef Name="ClientName" />
+          </Key>
+          <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ClientID" Type="Int32" />
+          <Property Name="ClientCode" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ProductID" Type="Int32" />
+          <Property Name="ProductName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ProductVersion" Type="Decimal" Precision="9" Scale="1" />
+          <Property Name="LatestVersion" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="ProductDescription" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="vi_ClientTeams">
+          <Key>
+            <PropertyRef Name="EntityName" />
+            <PropertyRef Name="ClientName" />
+            <PropertyRef Name="ProjectName" />
+            <PropertyRef Name="StaffName" />
+            <PropertyRef Name="RoleDescription" />
+          </Key>
+          <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ProjectName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="StaffName" Type="String" MaxLength="201" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="JobTitle" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="RoleDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <EntityType Name="vi_OpenProjectProducts">
+          <Key>
+            <PropertyRef Name="ClientCode" />
+            <PropertyRef Name="ClientName" />
+            <PropertyRef Name="ProjectName" />
+            <PropertyRef Name="StageName" />
+            <PropertyRef Name="ProjectStatus" />
+            <PropertyRef Name="NewVersion" />
+            <PropertyRef Name="ClientVersion" />
+          </Key>
+          <Property Name="ProjectCode" Type="String" MaxLength="9" FixedLength="false" Unicode="false" />
+          <Property Name="ClientCode" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TypeName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ProjectName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="StageName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ProjectStatus" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ProductName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="OldVersion" Type="Decimal" Precision="9" Scale="1" />
+          <Property Name="NewVersion" Type="Decimal" Precision="9" Scale="1" Nullable="false" />
+          <Property Name="ClientVersion" Type="Decimal" Precision="9" Scale="1" Nullable="false" />
+        </EntityType>
+        <EntityType Name="vi_OpenProjects">
+          <Key>
+            <PropertyRef Name="EntityName" />
+            <PropertyRef Name="ClientID" />
+            <PropertyRef Name="ClientCode" />
+            <PropertyRef Name="ClientName" />
+            <PropertyRef Name="ProjectName" />
+            <PropertyRef Name="StageCode" />
+            <PropertyRef Name="StageName" />
+            <PropertyRef Name="ProjectStatus" />
+            <PropertyRef Name="ProjectSummary" />
+          </Key>
+          <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ProjectCode" Type="String" MaxLength="9" FixedLength="false" Unicode="false" />
+          <Property Name="ClientID" Type="Int32" Nullable="false" />
+          <Property Name="ClientCode" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TypeName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ProjectName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="StartDate" Type="DateTime" Precision="0" />
+          <Property Name="StageCode" Type="Int32" Nullable="false" />
+          <Property Name="StageName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ProjectStatus" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ProjectSummary" Type="String" MaxLength="400" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <EntityType Name="vi_ProjectTeams">
+          <Key>
+            <PropertyRef Name="EntityName" />
+            <PropertyRef Name="ProjectName" />
+            <PropertyRef Name="ClientName" />
+            <PropertyRef Name="StaffName" />
+            <PropertyRef Name="ProjectRoleDescription" />
+            <PropertyRef Name="JobTitle" />
+          </Key>
+          <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ProjectName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="StaffName" Type="String" MaxLength="201" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ProjectRoleCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="ProjectRoleDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="JobTitle" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <EntityType Name="vi_StaffEntities">
+          <Key>
+            <PropertyRef Name="StaffName" />
+            <PropertyRef Name="EntityName" />
+            <PropertyRef Name="EntityDescription" />
+          </Key>
+          <Property Name="StaffName" Type="String" MaxLength="201" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="EntityDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <EntityType Name="vi_StaffWithRoles">
+          <Key>
+            <PropertyRef Name="ID" />
+            <PropertyRef Name="FirstName" />
+            <PropertyRef Name="Surname" />
+            <PropertyRef Name="StartDate" />
+            <PropertyRef Name="Active" />
+            <PropertyRef Name="RoleDescription" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="EmployeeID" Type="String" MaxLength="7" FixedLength="false" Unicode="false" />
+          <Property Name="FirstName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Surname" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="RoleCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="LeaveDate" Type="DateTime" Precision="0" />
+          <Property Name="UserID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Passwd" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PasswordHash" Type="Binary" MaxLength="64" FixedLength="true" />
+          <Property Name="Active" Type="Boolean" Nullable="false" />
+          <Property Name="DefaultEntity" Type="Int32" />
+          <Property Name="RoleDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <Association Name="fk_ClientProductID">
+          <End Role="Products" Type="Self.Products" Multiplicity="0..1" />
+          <End Role="ClientProducts" Type="Self.ClientProducts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ClientProducts">
+              <PropertyRef Name="ProductID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ProductClientID">
+          <End Role="Clients" Type="Self.Clients" Multiplicity="0..1" />
+          <End Role="ClientProducts" Type="Self.ClientProducts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Clients">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ClientProducts">
+              <PropertyRef Name="ClientID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ClientAccountManagerID">
+          <End Role="Staff" Type="Self.Staff" Multiplicity="0..1" />
+          <End Role="Clients" Type="Self.Clients" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Staff">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Clients">
+              <PropertyRef Name="AccountManagerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ClientEntityID">
+          <End Role="Entities" Type="Self.Entities" Multiplicity="1" />
+          <End Role="Clients" Type="Self.Clients" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Entities">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Clients">
+              <PropertyRef Name="EntityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ProjectClientID">
+          <End Role="Clients" Type="Self.Clients" Multiplicity="0..1" />
+          <End Role="Projects" Type="Self.Projects" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Clients">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Projects">
+              <PropertyRef Name="ClientID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_StaffClientID">
+          <End Role="Clients" Type="Self.Clients" Multiplicity="1" />
+          <End Role="ClientStaff" Type="Self.ClientStaff" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Clients">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ClientStaff">
+              <PropertyRef Name="ClientID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ClientTeamStaffID">
+          <End Role="ClientStaff" Type="Self.ClientStaff" Multiplicity="1" />
+          <End Role="ClientTeams" Type="Self.ClientTeams" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ClientStaff">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ClientTeams">
+              <PropertyRef Name="ClientStaffID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ClientTeamRoleCode">
+          <End Role="ClientTeamRoles" Type="Self.ClientTeamRoles" Multiplicity="0..1" />
+          <End Role="ClientTeams" Type="Self.ClientTeams" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ClientTeamRoles">
+              <PropertyRef Name="RoleCode" />
+            </Principal>
+            <Dependent Role="ClientTeams">
+              <PropertyRef Name="ClientTeamRoleCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ClientTeamProjectID">
+          <End Role="Projects" Type="Self.Projects" Multiplicity="1" />
+          <End Role="ClientTeams" Type="Self.ClientTeams" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ClientTeams">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ProjectEntityID">
+          <End Role="Entities" Type="Self.Entities" Multiplicity="1" />
+          <End Role="Projects" Type="Self.Projects" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Entities">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Projects">
+              <PropertyRef Name="EntityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_StaffEntity">
+          <End Role="Entities" Type="Self.Entities" Multiplicity="0..1" />
+          <End Role="Staff" Type="Self.Staff" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Entities">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Staff">
+              <PropertyRef Name="DefaultEntity" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_StaffEntityID">
+          <End Role="Entities" Type="Self.Entities" Multiplicity="0..1" />
+          <End Role="StaffEntities" Type="Self.StaffEntities" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Entities">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="StaffEntities">
+              <PropertyRef Name="EntityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ProjectProductID">
+          <End Role="Products" Type="Self.Products" Multiplicity="0..1" />
+          <End Role="ProjectProducts" Type="Self.ProjectProducts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ProjectProducts">
+              <PropertyRef Name="ProductID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ProductProjectID">
+          <End Role="Projects" Type="Self.Projects" Multiplicity="0..1" />
+          <End Role="ProjectProducts" Type="Self.ProjectProducts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ProjectProducts">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_TeamRoleCode">
+          <End Role="ProjectRoles" Type="Self.ProjectRoles" Multiplicity="0..1" />
+          <End Role="ProjectTeams" Type="Self.ProjectTeams" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectRoles">
+              <PropertyRef Name="RoleCode" />
+            </Principal>
+            <Dependent Role="ProjectTeams">
+              <PropertyRef Name="ProjectRoleCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ProjectStageCode">
+          <End Role="ProjectStages" Type="Self.ProjectStages" Multiplicity="1" />
+          <End Role="Projects" Type="Self.Projects" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectStages">
+              <PropertyRef Name="StageCode" />
+            </Principal>
+            <Dependent Role="Projects">
+              <PropertyRef Name="StageCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ProjectTypeCode">
+          <End Role="ProjectTypes" Type="Self.ProjectTypes" Multiplicity="1" />
+          <End Role="Projects" Type="Self.Projects" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectTypes">
+              <PropertyRef Name="TypeCode" />
+            </Principal>
+            <Dependent Role="Projects">
+              <PropertyRef Name="TypeCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_TeamProjectID">
+          <End Role="Projects" Type="Self.Projects" Multiplicity="1" />
+          <End Role="ProjectTeams" Type="Self.ProjectTeams" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ProjectTeams">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_TeamStaffID">
+          <End Role="Staff" Type="Self.Staff" Multiplicity="1" />
+          <End Role="ProjectTeams" Type="Self.ProjectTeams" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Staff">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ProjectTeams">
+              <PropertyRef Name="StaffID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_EntityStaffID">
+          <End Role="Staff" Type="Self.Staff" Multiplicity="0..1" />
+          <End Role="StaffEntities" Type="Self.StaffEntities" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Staff">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="StaffEntities">
+              <PropertyRef Name="StaffID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_StaffRoleCode">
+          <End Role="StaffRoles" Type="Self.StaffRoles" Multiplicity="0..1" />
+          <End Role="Staff" Type="Self.Staff" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StaffRoles">
+              <PropertyRef Name="RoleCode" />
+            </Principal>
+            <Dependent Role="Staff">
+              <PropertyRef Name="RoleCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_PermissionRoleCode">
+          <End Role="StaffRoles" Type="Self.StaffRoles" Multiplicity="0..1" />
+          <End Role="TablePermissions" Type="Self.TablePermissions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StaffRoles">
+              <PropertyRef Name="RoleCode" />
+            </Principal>
+            <Dependent Role="TablePermissions">
+              <PropertyRef Name="RoleCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ProjectTileSqlDatabase" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AuditEntries" EntityType="Self.AuditEntries" />
+          <EntitySet Name="ClientProducts" EntityType="Self.ClientProducts" />
+          <EntitySet Name="Clients" EntityType="Self.Clients" />
+          <EntitySet Name="ClientStaff" EntityType="Self.ClientStaff" />
+          <EntitySet Name="ClientTeamRoles" EntityType="Self.ClientTeamRoles" />
+          <EntitySet Name="ClientTeams" EntityType="Self.ClientTeams" />
+          <EntitySet Name="Entities" EntityType="Self.Entities" />
+          <EntitySet Name="Products" EntityType="Self.Products" />
+          <EntitySet Name="ProjectProducts" EntityType="Self.ProjectProducts" />
+          <EntitySet Name="ProjectRoles" EntityType="Self.ProjectRoles" />
+          <EntitySet Name="Projects" EntityType="Self.Projects" />
+          <EntitySet Name="ProjectStages" EntityType="Self.ProjectStages" />
+          <EntitySet Name="ProjectTeams" EntityType="Self.ProjectTeams" />
+          <EntitySet Name="ProjectTypes" EntityType="Self.ProjectTypes" />
+          <EntitySet Name="Staff" EntityType="Self.Staff" />
+          <EntitySet Name="StaffEntities" EntityType="Self.StaffEntities" />
+          <EntitySet Name="StaffRoles" EntityType="Self.StaffRoles" />
+          <EntitySet Name="TablePermissions" EntityType="Self.TablePermissions" />
+          <EntitySet Name="vi_ClientStaff" EntityType="Self.vi_ClientStaff" />
+          <EntitySet Name="vi_ClientsWithAccountManagers" EntityType="Self.vi_ClientsWithAccountManagers" />
+          <EntitySet Name="vi_ClientsWithProducts" EntityType="Self.vi_ClientsWithProducts" />
+          <EntitySet Name="vi_ClientTeams" EntityType="Self.vi_ClientTeams" />
+          <EntitySet Name="vi_OpenProjectProducts" EntityType="Self.vi_OpenProjectProducts" />
+          <EntitySet Name="vi_OpenProjects" EntityType="Self.vi_OpenProjects" />
+          <EntitySet Name="vi_ProjectTeams" EntityType="Self.vi_ProjectTeams" />
+          <EntitySet Name="vi_StaffEntities" EntityType="Self.vi_StaffEntities" />
+          <EntitySet Name="vi_StaffWithRoles" EntityType="Self.vi_StaffWithRoles" />
+          <AssociationSet Name="fk_ClientProductID" Association="Self.fk_ClientProductID">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="ClientProducts" EntitySet="ClientProducts" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ProductClientID" Association="Self.fk_ProductClientID">
+            <End Role="Clients" EntitySet="Clients" />
+            <End Role="ClientProducts" EntitySet="ClientProducts" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ClientAccountManagerID" Association="Self.fk_ClientAccountManagerID">
+            <End Role="Staff" EntitySet="Staff" />
+            <End Role="Clients" EntitySet="Clients" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ClientEntityID" Association="Self.fk_ClientEntityID">
+            <End Role="Entities" EntitySet="Entities" />
+            <End Role="Clients" EntitySet="Clients" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ProjectClientID" Association="Self.fk_ProjectClientID">
+            <End Role="Clients" EntitySet="Clients" />
+            <End Role="Projects" EntitySet="Projects" />
+          </AssociationSet>
+          <AssociationSet Name="fk_StaffClientID" Association="Self.fk_StaffClientID">
+            <End Role="Clients" EntitySet="Clients" />
+            <End Role="ClientStaff" EntitySet="ClientStaff" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ClientTeamStaffID" Association="Self.fk_ClientTeamStaffID">
+            <End Role="ClientStaff" EntitySet="ClientStaff" />
+            <End Role="ClientTeams" EntitySet="ClientTeams" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ClientTeamRoleCode" Association="Self.fk_ClientTeamRoleCode">
+            <End Role="ClientTeamRoles" EntitySet="ClientTeamRoles" />
+            <End Role="ClientTeams" EntitySet="ClientTeams" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ClientTeamProjectID" Association="Self.fk_ClientTeamProjectID">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="ClientTeams" EntitySet="ClientTeams" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ProjectEntityID" Association="Self.fk_ProjectEntityID">
+            <End Role="Entities" EntitySet="Entities" />
+            <End Role="Projects" EntitySet="Projects" />
+          </AssociationSet>
+          <AssociationSet Name="fk_StaffEntity" Association="Self.fk_StaffEntity">
+            <End Role="Entities" EntitySet="Entities" />
+            <End Role="Staff" EntitySet="Staff" />
+          </AssociationSet>
+          <AssociationSet Name="fk_StaffEntityID" Association="Self.fk_StaffEntityID">
+            <End Role="Entities" EntitySet="Entities" />
+            <End Role="StaffEntities" EntitySet="StaffEntities" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ProjectProductID" Association="Self.fk_ProjectProductID">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="ProjectProducts" EntitySet="ProjectProducts" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ProductProjectID" Association="Self.fk_ProductProjectID">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="ProjectProducts" EntitySet="ProjectProducts" />
+          </AssociationSet>
+          <AssociationSet Name="fk_TeamRoleCode" Association="Self.fk_TeamRoleCode">
+            <End Role="ProjectRoles" EntitySet="ProjectRoles" />
+            <End Role="ProjectTeams" EntitySet="ProjectTeams" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ProjectStageCode" Association="Self.fk_ProjectStageCode">
+            <End Role="ProjectStages" EntitySet="ProjectStages" />
+            <End Role="Projects" EntitySet="Projects" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ProjectTypeCode" Association="Self.fk_ProjectTypeCode">
+            <End Role="ProjectTypes" EntitySet="ProjectTypes" />
+            <End Role="Projects" EntitySet="Projects" />
+          </AssociationSet>
+          <AssociationSet Name="fk_TeamProjectID" Association="Self.fk_TeamProjectID">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="ProjectTeams" EntitySet="ProjectTeams" />
+          </AssociationSet>
+          <AssociationSet Name="fk_TeamStaffID" Association="Self.fk_TeamStaffID">
+            <End Role="Staff" EntitySet="Staff" />
+            <End Role="ProjectTeams" EntitySet="ProjectTeams" />
+          </AssociationSet>
+          <AssociationSet Name="fk_EntityStaffID" Association="Self.fk_EntityStaffID">
+            <End Role="Staff" EntitySet="Staff" />
+            <End Role="StaffEntities" EntitySet="StaffEntities" />
+          </AssociationSet>
+          <AssociationSet Name="fk_StaffRoleCode" Association="Self.fk_StaffRoleCode">
+            <End Role="StaffRoles" EntitySet="StaffRoles" />
+            <End Role="Staff" EntitySet="Staff" />
+          </AssociationSet>
+          <AssociationSet Name="fk_PermissionRoleCode" Association="Self.fk_PermissionRoleCode">
+            <End Role="StaffRoles" EntitySet="StaffRoles" />
+            <End Role="TablePermissions" EntitySet="TablePermissions" />
+          </AssociationSet>
+          <FunctionImport Name="cln_GetClientsByAccountManagerID" ReturnType="Collection(ProjectTileModel.cln_GetClientsByAccountManagerID_Result)">
+            <Parameter Name="AccountManagerID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="cln_GetClientsByClientCode" ReturnType="Collection(ProjectTileModel.cln_GetClientsByClientCode_Result)">
+            <Parameter Name="ClientCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="cln_GetClientsByID" ReturnType="Collection(ProjectTileModel.cln_GetClientsByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="cln_GetClientStaffByID" ReturnType="Collection(ProjectTileModel.cln_GetClientStaffByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="cln_InsertIntoClientProducts">
+            <Parameter Name="ClientID" Mode="In" Type="Int32" />
+            <Parameter Name="ProductID" Mode="In" Type="Int32" />
+            <Parameter Name="ProductVersion" Mode="In" Type="Decimal" />
+            <Parameter Name="Live" Mode="In" Type="Boolean" />
+          </FunctionImport>
+          <FunctionImport Name="cln_InsertIntoClients">
+            <Parameter Name="EntityID" Mode="In" Type="Int32" />
+            <Parameter Name="ClientCode" Mode="In" Type="String" />
+            <Parameter Name="ClientName" Mode="In" Type="String" />
+            <Parameter Name="AccountManagerID" Mode="In" Type="Int32" />
+            <Parameter Name="Active" Mode="In" Type="Boolean" />
+          </FunctionImport>
+          <FunctionImport Name="cln_InsertIntoClientStaff">
+            <Parameter Name="ClientID" Mode="In" Type="Int32" />
+            <Parameter Name="FirstName" Mode="In" Type="String" />
+            <Parameter Name="Surname" Mode="In" Type="String" />
+            <Parameter Name="JobTitle" Mode="In" Type="String" />
+            <Parameter Name="PhoneNumber" Mode="In" Type="String" />
+            <Parameter Name="Email" Mode="In" Type="String" />
+            <Parameter Name="Active" Mode="In" Type="Boolean" />
+          </FunctionImport>
+          <FunctionImport Name="cln_UpdateAccountManagerIDInClients">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="AccountManagerID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="cln_UpdateActiveInClientStaff">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="Active" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="cln_UpdateClientNameInClients">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="ClientName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="cln_UpdateJobTitleInClientStaff">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="JobTitle" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="cln_UpdateSurnameInClientStaff">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="Surname" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="ent_GetEntitiesByID" ReturnType="Collection(ProjectTileModel.ent_GetEntitiesByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="ent_InsertIntoEntities">
+            <Parameter Name="EntityName" Mode="In" Type="String" />
+            <Parameter Name="EntityDescription" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="ent_UpdateEntityDescriptionInEntities">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="EntityDescription" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="ent_UpdateEntityNameInEntities">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="EntityName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="pja_GetClientTeamRolesByRoleCode" ReturnType="Collection(ProjectTileModel.pja_GetClientTeamRolesByRoleCode_Result)">
+            <Parameter Name="RoleCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="pja_GetProjectRolesByRoleCode" ReturnType="Collection(ProjectTileModel.pja_GetProjectRolesByRoleCode_Result)">
+            <Parameter Name="RoleCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="pja_GetProjectStagesByStageCode" ReturnType="Collection(ProjectTileModel.pja_GetProjectStagesByStageCode_Result)">
+            <Parameter Name="StageCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="pja_InsertIntoClientTeamRoles">
+            <Parameter Name="RoleCode" Mode="In" Type="String" />
+            <Parameter Name="RoleDescription" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="pja_InsertIntoProjectRoles">
+            <Parameter Name="RoleCode" Mode="In" Type="String" />
+            <Parameter Name="RoleDescription" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="pja_InsertIntoProjectStages">
+            <Parameter Name="StageCode" Mode="In" Type="Int32" />
+            <Parameter Name="StageName" Mode="In" Type="String" />
+            <Parameter Name="StageDescription" Mode="In" Type="String" />
+            <Parameter Name="ProjectStatus" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="pja_InsertIntoProjectTypes">
+            <Parameter Name="TypeCode" Mode="In" Type="String" />
+            <Parameter Name="TypeName" Mode="In" Type="String" />
+            <Parameter Name="TypeDescription" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="pja_UpdateRoleDescriptionInClientTeamRoles">
+            <Parameter Name="RoleCode" Mode="In" Type="String" />
+            <Parameter Name="RoleDescription" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="pja_UpdateRoleDescriptionInProjectRoles">
+            <Parameter Name="RoleCode" Mode="In" Type="String" />
+            <Parameter Name="RoleDescription" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="pja_UpdateStageDescriptionInProjectStages">
+            <Parameter Name="StageCode" Mode="In" Type="String" />
+            <Parameter Name="StageDescription" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="pja_UpdateTypeDescriptionInProjectTypes">
+            <Parameter Name="TypeName" Mode="In" Type="String" />
+            <Parameter Name="TypeDescription" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="pja_UpdateTypeNameInProjectTypes">
+            <Parameter Name="TypeCode" Mode="In" Type="String" />
+            <Parameter Name="TypeName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prd_GetProductsByID" ReturnType="Collection(ProjectTileModel.prd_GetProductsByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prd_GetProductsByProductName" ReturnType="Collection(ProjectTileModel.prd_GetProductsByProductName_Result)">
+            <Parameter Name="ProductName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prd_InsertIntoProducts">
+            <Parameter Name="ProductName" Mode="In" Type="String" />
+            <Parameter Name="LatestVersion" Mode="In" Type="Decimal" />
+            <Parameter Name="ProductDescription" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prd_UpdateLatestVersionInProducts">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="LatestVersion" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prj_GetClientTeamsByID" ReturnType="Collection(ProjectTileModel.prj_GetClientTeamsByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prj_GetNewVersionByID">
+            <Parameter Name="ID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prj_GetOldVersionByID">
+            <Parameter Name="ID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prj_GetProjectsByID" ReturnType="Collection(ProjectTileModel.prj_GetProjectsByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prj_GetProjectTeamsByID" ReturnType="Collection(ProjectTileModel.prj_GetProjectTeamsByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prj_InsertIntoClientTeams">
+            <Parameter Name="ProjectID" Mode="In" Type="Int32" />
+            <Parameter Name="ClientStaffID" Mode="In" Type="Int32" />
+            <Parameter Name="ClientTeamRoleCode" Mode="In" Type="String" />
+            <Parameter Name="FromDate" Mode="In" Type="DateTime" />
+            <Parameter Name="ToDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="prj_InsertIntoProjectProducts">
+            <Parameter Name="ProjectID" Mode="In" Type="Int32" />
+            <Parameter Name="ProductID" Mode="In" Type="Int32" />
+            <Parameter Name="OldVersion" Mode="In" Type="Decimal" />
+            <Parameter Name="NewVersion" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="prj_InsertIntoProjects">
+            <Parameter Name="EntityID" Mode="In" Type="Int32" />
+            <Parameter Name="TypeCode" Mode="In" Type="String" />
+            <Parameter Name="ProjectName" Mode="In" Type="String" />
+            <Parameter Name="ClientID" Mode="In" Type="Int32" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="StageCode" Mode="In" Type="Int32" />
+            <Parameter Name="ProjectSummary" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prj_InsertIntoProjectTeams">
+            <Parameter Name="ProjectID" Mode="In" Type="Int32" />
+            <Parameter Name="StaffID" Mode="In" Type="Int32" />
+            <Parameter Name="ProjectRoleCode" Mode="In" Type="String" />
+            <Parameter Name="FromDate" Mode="In" Type="DateTime" />
+            <Parameter Name="ToDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="prj_UpdateClientStaffIDInClientTeams">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="ClientStaffID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prj_UpdateClientTeamRoleCodeInClientTeams">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="ClientTeamRoleCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prj_UpdateNewVersionInProjectProducts">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="NewVersion" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prj_UpdateOldVersionInProjectProducts">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="OldVersion" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prj_UpdateProjectNameInProjects">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="ProjectName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prj_UpdateProjectRoleCodeInProjectTeams">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="ProjectRoleCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prj_UpdateProjectSummaryInProjects">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="ProjectSummary" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prj_UpdateStaffIDInProjectTeams">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="StaffID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prj_UpdateToDateInClientTeams">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="ToDate" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prj_UpdateToDateInProjectTeams">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="ToDate" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sec_GetTablePermissionsByID" ReturnType="Collection(ProjectTileModel.sec_GetTablePermissionsByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sec_InsertIntoTablePermissions">
+            <Parameter Name="TableName" Mode="In" Type="String" />
+            <Parameter Name="RoleCode" Mode="In" Type="String" />
+            <Parameter Name="ViewTable" Mode="In" Type="Boolean" />
+            <Parameter Name="UpdateRows" Mode="In" Type="Boolean" />
+            <Parameter Name="InsertRows" Mode="In" Type="Boolean" />
+            <Parameter Name="ChangeStatus" Mode="In" Type="Boolean" />
+          </FunctionImport>
+          <FunctionImport Name="stf_CheckHashedPassword" ReturnType="Collection(Boolean)">
+            <Parameter Name="UserID" Mode="In" Type="String" />
+            <Parameter Name="Passwd" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="stf_GetStaffByID" ReturnType="Collection(ProjectTileModel.stf_GetStaffByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="stf_GetStaffByRoleCode" ReturnType="Collection(ProjectTileModel.stf_GetStaffByRoleCode_Result)">
+            <Parameter Name="RoleCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="stf_GetStaffRolesByRoleCode" ReturnType="Collection(ProjectTileModel.stf_GetStaffRolesByRoleCode_Result)">
+            <Parameter Name="RoleCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="stf_InsertIntoStaff">
+            <Parameter Name="FirstName" Mode="In" Type="String" />
+            <Parameter Name="Surname" Mode="In" Type="String" />
+            <Parameter Name="RoleCode" Mode="In" Type="String" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="LeaveDate" Mode="In" Type="DateTime" />
+            <Parameter Name="UserID" Mode="In" Type="String" />
+            <Parameter Name="Passwd" Mode="In" Type="String" />
+            <Parameter Name="PasswordHash" Mode="In" Type="Binary" />
+            <Parameter Name="Active" Mode="In" Type="Boolean" />
+            <Parameter Name="DefaultEntity" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="stf_InsertIntoStaffEntities">
+            <Parameter Name="StaffID" Mode="In" Type="Int32" />
+            <Parameter Name="EntityID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="stf_InsertIntoStaffRoles">
+            <Parameter Name="RoleCode" Mode="In" Type="String" />
+            <Parameter Name="RoleDescription" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="stf_UpdateLeaveDateInStaff">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="LeaveDate" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="stf_UpdateRoleCodeInStaff">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="RoleCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="stf_UpdateRoleDescriptionInStaffRoles">
+            <Parameter Name="RoleCode" Mode="In" Type="String" />
+            <Parameter Name="RoleDescription" Mode="In" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="cln_GetClientsByAccountManagerID_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="Int32" Name="EntityID" Nullable="false" />
+          <Property Type="String" Name="ClientCode" Nullable="false" MaxLength="15" />
+          <Property Type="String" Name="ClientName" Nullable="false" MaxLength="200" />
+          <Property Type="Int32" Name="AccountManagerID" Nullable="true" />
+          <Property Type="Boolean" Name="Active" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="cln_GetClientsByClientCode_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="Int32" Name="EntityID" Nullable="false" />
+          <Property Type="String" Name="ClientCode" Nullable="false" MaxLength="15" />
+          <Property Type="String" Name="ClientName" Nullable="false" MaxLength="200" />
+          <Property Type="Int32" Name="AccountManagerID" Nullable="true" />
+          <Property Type="Boolean" Name="Active" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="cln_GetClientsByID_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="Int32" Name="EntityID" Nullable="false" />
+          <Property Type="String" Name="ClientCode" Nullable="false" MaxLength="15" />
+          <Property Type="String" Name="ClientName" Nullable="false" MaxLength="200" />
+          <Property Type="Int32" Name="AccountManagerID" Nullable="true" />
+          <Property Type="Boolean" Name="Active" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="cln_GetClientStaffByID_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="Int32" Name="ClientID" Nullable="false" />
+          <Property Type="String" Name="FirstName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="Surname" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="JobTitle" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="PhoneNumber" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Email" Nullable="true" MaxLength="100" />
+          <Property Type="Boolean" Name="Active" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="ent_GetEntitiesByID_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="EntityName" Nullable="false" MaxLength="30" />
+          <Property Type="String" Name="EntityDescription" Nullable="false" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="pja_GetClientTeamRolesByRoleCode_Result">
+          <Property Type="String" Name="RoleCode" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="RoleDescription" Nullable="false" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="pja_GetProjectRolesByRoleCode_Result">
+          <Property Type="String" Name="RoleCode" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="RoleDescription" Nullable="false" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="pja_GetProjectStagesByStageCode_Result">
+          <Property Type="Int32" Name="StageCode" Nullable="false" />
+          <Property Type="String" Name="StageName" Nullable="false" MaxLength="20" />
+          <Property Type="String" Name="StageDescription" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="ProjectStatus" Nullable="false" MaxLength="20" />
+        </ComplexType>
+        <ComplexType Name="prd_GetProductsByID_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="ProductName" Nullable="true" MaxLength="100" />
+          <Property Type="Decimal" Name="LatestVersion" Nullable="true" Precision="10" Scale="2" />
+          <Property Type="String" Name="ProductDescription" Nullable="true" MaxLength="300" />
+        </ComplexType>
+        <ComplexType Name="prd_GetProductsByProductName_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="ProductName" Nullable="true" MaxLength="100" />
+          <Property Type="Decimal" Name="LatestVersion" Nullable="true" Precision="10" Scale="2" />
+          <Property Type="String" Name="ProductDescription" Nullable="true" MaxLength="300" />
+        </ComplexType>
+        <ComplexType Name="prj_GetClientTeamsByID_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="Int32" Name="ProjectID" Nullable="false" />
+          <Property Type="Int32" Name="ClientStaffID" Nullable="false" />
+          <Property Type="String" Name="ClientTeamRoleCode" Nullable="true" MaxLength="5" />
+          <Property Type="DateTime" Name="FromDate" Nullable="true" />
+          <Property Type="DateTime" Name="ToDate" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="prj_GetProjectsByID_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="Int32" Name="EntityID" Nullable="false" />
+          <Property Type="String" Name="ProjectCode" Nullable="true" MaxLength="9" />
+          <Property Type="String" Name="TypeCode" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="ProjectName" Nullable="false" MaxLength="100" />
+          <Property Type="Int32" Name="ClientID" Nullable="true" />
+          <Property Type="DateTime" Name="StartDate" Nullable="true" />
+          <Property Type="Int32" Name="StageCode" Nullable="false" />
+          <Property Type="String" Name="ProjectSummary" Nullable="false" MaxLength="400" />
+        </ComplexType>
+        <ComplexType Name="prj_GetProjectTeamsByID_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="Int32" Name="ProjectID" Nullable="false" />
+          <Property Type="Int32" Name="StaffID" Nullable="false" />
+          <Property Type="String" Name="ProjectRoleCode" Nullable="true" MaxLength="5" />
+          <Property Type="DateTime" Name="FromDate" Nullable="true" />
+          <Property Type="DateTime" Name="ToDate" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sec_GetTablePermissionsByID_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="TableName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="RoleCode" Nullable="true" MaxLength="5" />
+          <Property Type="Boolean" Name="ViewTable" Nullable="true" />
+          <Property Type="Boolean" Name="UpdateRows" Nullable="true" />
+          <Property Type="Boolean" Name="InsertRows" Nullable="true" />
+          <Property Type="Boolean" Name="ChangeStatus" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="stf_GetStaffByID_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="EmployeeID" Nullable="true" MaxLength="7" />
+          <Property Type="String" Name="FirstName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="Surname" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="RoleCode" Nullable="true" MaxLength="5" />
+          <Property Type="DateTime" Name="StartDate" Nullable="false" />
+          <Property Type="DateTime" Name="LeaveDate" Nullable="true" />
+          <Property Type="String" Name="UserID" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Passwd" Nullable="true" MaxLength="50" />
+          <Property Type="Binary" Name="PasswordHash" Nullable="true" MaxLength="64" />
+          <Property Type="Boolean" Name="Active" Nullable="false" />
+          <Property Type="Int32" Name="DefaultEntity" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="stf_GetStaffByRoleCode_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="EmployeeID" Nullable="true" MaxLength="7" />
+          <Property Type="String" Name="FirstName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="Surname" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="RoleCode" Nullable="true" MaxLength="5" />
+          <Property Type="DateTime" Name="StartDate" Nullable="false" />
+          <Property Type="DateTime" Name="LeaveDate" Nullable="true" />
+          <Property Type="String" Name="UserID" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Passwd" Nullable="true" MaxLength="50" />
+          <Property Type="Binary" Name="PasswordHash" Nullable="true" MaxLength="64" />
+          <Property Type="Boolean" Name="Active" Nullable="false" />
+          <Property Type="Int32" Name="DefaultEntity" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="stf_GetStaffRolesByRoleCode_Result">
+          <Property Type="String" Name="RoleCode" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="RoleDescription" Nullable="false" MaxLength="100" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ProjectTileModelStoreContainer" CdmEntityContainer="ProjectTileSqlDatabase">
+          <EntitySetMapping Name="AuditEntries">
+            <EntityTypeMapping TypeName="ProjectTileModel.AuditEntries">
+              <MappingFragment StoreEntitySet="AuditEntries">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ActionType" ColumnName="ActionType" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="ChangeTime" ColumnName="ChangeTime" />
+                <ScalarProperty Name="TableName" ColumnName="TableName" />
+                <ScalarProperty Name="PrimaryColumn" ColumnName="PrimaryColumn" />
+                <ScalarProperty Name="PrimaryValue" ColumnName="PrimaryValue" />
+                <ScalarProperty Name="ChangeColumn" ColumnName="ChangeColumn" />
+                <ScalarProperty Name="OldValue" ColumnName="OldValue" />
+                <ScalarProperty Name="NewValue" ColumnName="NewValue" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ClientProducts">
+            <EntityTypeMapping TypeName="ProjectTileModel.ClientProducts">
+              <MappingFragment StoreEntitySet="ClientProducts">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ClientID" ColumnName="ClientID" />
+                <ScalarProperty Name="ProductID" ColumnName="ProductID" />
+                <ScalarProperty Name="ProductVersion" ColumnName="ProductVersion" />
+                <ScalarProperty Name="Live" ColumnName="Live" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Clients">
+            <EntityTypeMapping TypeName="ProjectTileModel.Clients">
+              <MappingFragment StoreEntitySet="Clients">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="EntityID" ColumnName="EntityID" />
+                <ScalarProperty Name="ClientCode" ColumnName="ClientCode" />
+                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
+                <ScalarProperty Name="AccountManagerID" ColumnName="AccountManagerID" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ClientStaff">
+            <EntityTypeMapping TypeName="ProjectTileModel.ClientStaff">
+              <MappingFragment StoreEntitySet="ClientStaff">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ClientID" ColumnName="ClientID" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="Surname" ColumnName="Surname" />
+                <ScalarProperty Name="JobTitle" ColumnName="JobTitle" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ClientTeamRoles">
+            <EntityTypeMapping TypeName="ProjectTileModel.ClientTeamRoles">
+              <MappingFragment StoreEntitySet="ClientTeamRoles">
+                <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
+                <ScalarProperty Name="RoleDescription" ColumnName="RoleDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ClientTeams">
+            <EntityTypeMapping TypeName="ProjectTileModel.ClientTeams">
+              <MappingFragment StoreEntitySet="ClientTeams">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+                <ScalarProperty Name="ClientStaffID" ColumnName="ClientStaffID" />
+                <ScalarProperty Name="ClientTeamRoleCode" ColumnName="ClientTeamRoleCode" />
+                <ScalarProperty Name="FromDate" ColumnName="FromDate" />
+                <ScalarProperty Name="ToDate" ColumnName="ToDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Entities">
+            <EntityTypeMapping TypeName="ProjectTileModel.Entities">
+              <MappingFragment StoreEntitySet="Entities">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="EntityName" ColumnName="EntityName" />
+                <ScalarProperty Name="EntityDescription" ColumnName="EntityDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Products">
+            <EntityTypeMapping TypeName="ProjectTileModel.Products">
+              <MappingFragment StoreEntitySet="Products">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+                <ScalarProperty Name="LatestVersion" ColumnName="LatestVersion" />
+                <ScalarProperty Name="ProductDescription" ColumnName="ProductDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProjectProducts">
+            <EntityTypeMapping TypeName="ProjectTileModel.ProjectProducts">
+              <MappingFragment StoreEntitySet="ProjectProducts">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+                <ScalarProperty Name="ProductID" ColumnName="ProductID" />
+                <ScalarProperty Name="OldVersion" ColumnName="OldVersion" />
+                <ScalarProperty Name="NewVersion" ColumnName="NewVersion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProjectRoles">
+            <EntityTypeMapping TypeName="ProjectTileModel.ProjectRoles">
+              <MappingFragment StoreEntitySet="ProjectRoles">
+                <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
+                <ScalarProperty Name="RoleDescription" ColumnName="RoleDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Projects">
+            <EntityTypeMapping TypeName="ProjectTileModel.Projects">
+              <MappingFragment StoreEntitySet="Projects">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="EntityID" ColumnName="EntityID" />
+                <ScalarProperty Name="ProjectCode" ColumnName="ProjectCode" />
+                <ScalarProperty Name="TypeCode" ColumnName="TypeCode" />
+                <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
+                <ScalarProperty Name="ClientID" ColumnName="ClientID" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="StageCode" ColumnName="StageCode" />
+                <ScalarProperty Name="ProjectSummary" ColumnName="ProjectSummary" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProjectStages">
+            <EntityTypeMapping TypeName="ProjectTileModel.ProjectStages">
+              <MappingFragment StoreEntitySet="ProjectStages">
+                <ScalarProperty Name="StageCode" ColumnName="StageCode" />
+                <ScalarProperty Name="StageName" ColumnName="StageName" />
+                <ScalarProperty Name="StageDescription" ColumnName="StageDescription" />
+                <ScalarProperty Name="ProjectStatus" ColumnName="ProjectStatus" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProjectTeams">
+            <EntityTypeMapping TypeName="ProjectTileModel.ProjectTeams">
+              <MappingFragment StoreEntitySet="ProjectTeams">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+                <ScalarProperty Name="StaffID" ColumnName="StaffID" />
+                <ScalarProperty Name="ProjectRoleCode" ColumnName="ProjectRoleCode" />
+                <ScalarProperty Name="FromDate" ColumnName="FromDate" />
+                <ScalarProperty Name="ToDate" ColumnName="ToDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProjectTypes">
+            <EntityTypeMapping TypeName="ProjectTileModel.ProjectTypes">
+              <MappingFragment StoreEntitySet="ProjectTypes">
+                <ScalarProperty Name="TypeCode" ColumnName="TypeCode" />
+                <ScalarProperty Name="TypeName" ColumnName="TypeName" />
+                <ScalarProperty Name="TypeDescription" ColumnName="TypeDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Staff">
+            <EntityTypeMapping TypeName="ProjectTileModel.Staff">
+              <MappingFragment StoreEntitySet="Staff">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="Surname" ColumnName="Surname" />
+                <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="LeaveDate" ColumnName="LeaveDate" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="Passwd" ColumnName="Passwd" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+                <ScalarProperty Name="DefaultEntity" ColumnName="DefaultEntity" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StaffEntities">
+            <EntityTypeMapping TypeName="ProjectTileModel.StaffEntities">
+              <MappingFragment StoreEntitySet="StaffEntities">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="StaffID" ColumnName="StaffID" />
+                <ScalarProperty Name="EntityID" ColumnName="EntityID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StaffRoles">
+            <EntityTypeMapping TypeName="ProjectTileModel.StaffRoles">
+              <MappingFragment StoreEntitySet="StaffRoles">
+                <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
+                <ScalarProperty Name="RoleDescription" ColumnName="RoleDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TablePermissions">
+            <EntityTypeMapping TypeName="ProjectTileModel.TablePermissions">
+              <MappingFragment StoreEntitySet="TablePermissions">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="TableName" ColumnName="TableName" />
+                <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
+                <ScalarProperty Name="ViewTable" ColumnName="ViewTable" />
+                <ScalarProperty Name="UpdateRows" ColumnName="UpdateRows" />
+                <ScalarProperty Name="InsertRows" ColumnName="InsertRows" />
+                <ScalarProperty Name="ChangeStatus" ColumnName="ChangeStatus" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vi_ClientStaff">
+            <EntityTypeMapping TypeName="ProjectTileModel.vi_ClientStaff">
+              <MappingFragment StoreEntitySet="vi_ClientStaff">
+                <ScalarProperty Name="EntityName" ColumnName="EntityName" />
+                <ScalarProperty Name="ClientCode" ColumnName="ClientCode" />
+                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
+                <ScalarProperty Name="StaffName" ColumnName="StaffName" />
+                <ScalarProperty Name="JobTitle" ColumnName="JobTitle" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vi_ClientsWithAccountManagers">
+            <EntityTypeMapping TypeName="ProjectTileModel.vi_ClientsWithAccountManagers">
+              <MappingFragment StoreEntitySet="vi_ClientsWithAccountManagers">
+                <ScalarProperty Name="EntityName" ColumnName="EntityName" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ClientCode" ColumnName="ClientCode" />
+                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+                <ScalarProperty Name="AccountManagerName" ColumnName="AccountManagerName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vi_ClientsWithProducts">
+            <EntityTypeMapping TypeName="ProjectTileModel.vi_ClientsWithProducts">
+              <MappingFragment StoreEntitySet="vi_ClientsWithProducts">
+                <ScalarProperty Name="EntityName" ColumnName="EntityName" />
+                <ScalarProperty Name="ClientID" ColumnName="ClientID" />
+                <ScalarProperty Name="ClientCode" ColumnName="ClientCode" />
+                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
+                <ScalarProperty Name="ProductID" ColumnName="ProductID" />
+                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+                <ScalarProperty Name="ProductVersion" ColumnName="ProductVersion" />
+                <ScalarProperty Name="LatestVersion" ColumnName="LatestVersion" />
+                <ScalarProperty Name="ProductDescription" ColumnName="ProductDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vi_ClientTeams">
+            <EntityTypeMapping TypeName="ProjectTileModel.vi_ClientTeams">
+              <MappingFragment StoreEntitySet="vi_ClientTeams">
+                <ScalarProperty Name="EntityName" ColumnName="EntityName" />
+                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
+                <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
+                <ScalarProperty Name="StaffName" ColumnName="StaffName" />
+                <ScalarProperty Name="JobTitle" ColumnName="JobTitle" />
+                <ScalarProperty Name="RoleDescription" ColumnName="RoleDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vi_OpenProjectProducts">
+            <EntityTypeMapping TypeName="ProjectTileModel.vi_OpenProjectProducts">
+              <MappingFragment StoreEntitySet="vi_OpenProjectProducts">
+                <ScalarProperty Name="ProjectCode" ColumnName="ProjectCode" />
+                <ScalarProperty Name="ClientCode" ColumnName="ClientCode" />
+                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
+                <ScalarProperty Name="TypeName" ColumnName="TypeName" />
+                <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
+                <ScalarProperty Name="StageName" ColumnName="StageName" />
+                <ScalarProperty Name="ProjectStatus" ColumnName="ProjectStatus" />
+                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+                <ScalarProperty Name="OldVersion" ColumnName="OldVersion" />
+                <ScalarProperty Name="NewVersion" ColumnName="NewVersion" />
+                <ScalarProperty Name="ClientVersion" ColumnName="ClientVersion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vi_OpenProjects">
+            <EntityTypeMapping TypeName="ProjectTileModel.vi_OpenProjects">
+              <MappingFragment StoreEntitySet="vi_OpenProjects">
+                <ScalarProperty Name="EntityName" ColumnName="EntityName" />
+                <ScalarProperty Name="ProjectCode" ColumnName="ProjectCode" />
+                <ScalarProperty Name="ClientID" ColumnName="ClientID" />
+                <ScalarProperty Name="ClientCode" ColumnName="ClientCode" />
+                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
+                <ScalarProperty Name="TypeName" ColumnName="TypeName" />
+                <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="StageCode" ColumnName="StageCode" />
+                <ScalarProperty Name="StageName" ColumnName="StageName" />
+                <ScalarProperty Name="ProjectStatus" ColumnName="ProjectStatus" />
+                <ScalarProperty Name="ProjectSummary" ColumnName="ProjectSummary" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vi_ProjectTeams">
+            <EntityTypeMapping TypeName="ProjectTileModel.vi_ProjectTeams">
+              <MappingFragment StoreEntitySet="vi_ProjectTeams">
+                <ScalarProperty Name="EntityName" ColumnName="EntityName" />
+                <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
+                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
+                <ScalarProperty Name="StaffName" ColumnName="StaffName" />
+                <ScalarProperty Name="ProjectRoleCode" ColumnName="ProjectRoleCode" />
+                <ScalarProperty Name="ProjectRoleDescription" ColumnName="ProjectRoleDescription" />
+                <ScalarProperty Name="JobTitle" ColumnName="JobTitle" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vi_StaffEntities">
+            <EntityTypeMapping TypeName="ProjectTileModel.vi_StaffEntities">
+              <MappingFragment StoreEntitySet="vi_StaffEntities">
+                <ScalarProperty Name="StaffName" ColumnName="StaffName" />
+                <ScalarProperty Name="EntityName" ColumnName="EntityName" />
+                <ScalarProperty Name="EntityDescription" ColumnName="EntityDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vi_StaffWithRoles">
+            <EntityTypeMapping TypeName="ProjectTileModel.vi_StaffWithRoles">
+              <MappingFragment StoreEntitySet="vi_StaffWithRoles">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="Surname" ColumnName="Surname" />
+                <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="LeaveDate" ColumnName="LeaveDate" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="Passwd" ColumnName="Passwd" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+                <ScalarProperty Name="DefaultEntity" ColumnName="DefaultEntity" />
+                <ScalarProperty Name="RoleDescription" ColumnName="RoleDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="cln_GetClientsByAccountManagerID" FunctionName="ProjectTileModel.Store.cln_GetClientsByAccountManagerID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProjectTileModel.cln_GetClientsByAccountManagerID_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="EntityID" ColumnName="EntityID" />
+                <ScalarProperty Name="ClientCode" ColumnName="ClientCode" />
+                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
+                <ScalarProperty Name="AccountManagerID" ColumnName="AccountManagerID" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="cln_GetClientsByClientCode" FunctionName="ProjectTileModel.Store.cln_GetClientsByClientCode">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProjectTileModel.cln_GetClientsByClientCode_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="EntityID" ColumnName="EntityID" />
+                <ScalarProperty Name="ClientCode" ColumnName="ClientCode" />
+                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
+                <ScalarProperty Name="AccountManagerID" ColumnName="AccountManagerID" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="cln_GetClientsByID" FunctionName="ProjectTileModel.Store.cln_GetClientsByID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProjectTileModel.cln_GetClientsByID_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="EntityID" ColumnName="EntityID" />
+                <ScalarProperty Name="ClientCode" ColumnName="ClientCode" />
+                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
+                <ScalarProperty Name="AccountManagerID" ColumnName="AccountManagerID" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="cln_GetClientStaffByID" FunctionName="ProjectTileModel.Store.cln_GetClientStaffByID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProjectTileModel.cln_GetClientStaffByID_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ClientID" ColumnName="ClientID" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="Surname" ColumnName="Surname" />
+                <ScalarProperty Name="JobTitle" ColumnName="JobTitle" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="cln_InsertIntoClientProducts" FunctionName="ProjectTileModel.Store.cln_InsertIntoClientProducts" />
+          <FunctionImportMapping FunctionImportName="cln_InsertIntoClients" FunctionName="ProjectTileModel.Store.cln_InsertIntoClients" />
+          <FunctionImportMapping FunctionImportName="cln_InsertIntoClientStaff" FunctionName="ProjectTileModel.Store.cln_InsertIntoClientStaff" />
+          <FunctionImportMapping FunctionImportName="cln_UpdateAccountManagerIDInClients" FunctionName="ProjectTileModel.Store.cln_UpdateAccountManagerIDInClients" />
+          <FunctionImportMapping FunctionImportName="cln_UpdateActiveInClientStaff" FunctionName="ProjectTileModel.Store.cln_UpdateActiveInClientStaff" />
+          <FunctionImportMapping FunctionImportName="cln_UpdateClientNameInClients" FunctionName="ProjectTileModel.Store.cln_UpdateClientNameInClients" />
+          <FunctionImportMapping FunctionImportName="cln_UpdateJobTitleInClientStaff" FunctionName="ProjectTileModel.Store.cln_UpdateJobTitleInClientStaff" />
+          <FunctionImportMapping FunctionImportName="cln_UpdateSurnameInClientStaff" FunctionName="ProjectTileModel.Store.cln_UpdateSurnameInClientStaff" />
+          <FunctionImportMapping FunctionImportName="ent_GetEntitiesByID" FunctionName="ProjectTileModel.Store.ent_GetEntitiesByID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProjectTileModel.ent_GetEntitiesByID_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="EntityName" ColumnName="EntityName" />
+                <ScalarProperty Name="EntityDescription" ColumnName="EntityDescription" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="ent_InsertIntoEntities" FunctionName="ProjectTileModel.Store.ent_InsertIntoEntities" />
+          <FunctionImportMapping FunctionImportName="ent_UpdateEntityDescriptionInEntities" FunctionName="ProjectTileModel.Store.ent_UpdateEntityDescriptionInEntities" />
+          <FunctionImportMapping FunctionImportName="ent_UpdateEntityNameInEntities" FunctionName="ProjectTileModel.Store.ent_UpdateEntityNameInEntities" />
+          <FunctionImportMapping FunctionImportName="pja_GetClientTeamRolesByRoleCode" FunctionName="ProjectTileModel.Store.pja_GetClientTeamRolesByRoleCode">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProjectTileModel.pja_GetClientTeamRolesByRoleCode_Result">
+                <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
+                <ScalarProperty Name="RoleDescription" ColumnName="RoleDescription" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="pja_GetProjectRolesByRoleCode" FunctionName="ProjectTileModel.Store.pja_GetProjectRolesByRoleCode">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProjectTileModel.pja_GetProjectRolesByRoleCode_Result">
+                <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
+                <ScalarProperty Name="RoleDescription" ColumnName="RoleDescription" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="pja_GetProjectStagesByStageCode" FunctionName="ProjectTileModel.Store.pja_GetProjectStagesByStageCode">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProjectTileModel.pja_GetProjectStagesByStageCode_Result">
+                <ScalarProperty Name="StageCode" ColumnName="StageCode" />
+                <ScalarProperty Name="StageName" ColumnName="StageName" />
+                <ScalarProperty Name="StageDescription" ColumnName="StageDescription" />
+                <ScalarProperty Name="ProjectStatus" ColumnName="ProjectStatus" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="pja_InsertIntoClientTeamRoles" FunctionName="ProjectTileModel.Store.pja_InsertIntoClientTeamRoles" />
+          <FunctionImportMapping FunctionImportName="pja_InsertIntoProjectRoles" FunctionName="ProjectTileModel.Store.pja_InsertIntoProjectRoles" />
+          <FunctionImportMapping FunctionImportName="pja_InsertIntoProjectStages" FunctionName="ProjectTileModel.Store.pja_InsertIntoProjectStages" />
+          <FunctionImportMapping FunctionImportName="pja_InsertIntoProjectTypes" FunctionName="ProjectTileModel.Store.pja_InsertIntoProjectTypes" />
+          <FunctionImportMapping FunctionImportName="pja_UpdateRoleDescriptionInClientTeamRoles" FunctionName="ProjectTileModel.Store.pja_UpdateRoleDescriptionInClientTeamRoles" />
+          <FunctionImportMapping FunctionImportName="pja_UpdateRoleDescriptionInProjectRoles" FunctionName="ProjectTileModel.Store.pja_UpdateRoleDescriptionInProjectRoles" />
+          <FunctionImportMapping FunctionImportName="pja_UpdateStageDescriptionInProjectStages" FunctionName="ProjectTileModel.Store.pja_UpdateStageDescriptionInProjectStages" />
+          <FunctionImportMapping FunctionImportName="pja_UpdateTypeDescriptionInProjectTypes" FunctionName="ProjectTileModel.Store.pja_UpdateTypeDescriptionInProjectTypes" />
+          <FunctionImportMapping FunctionImportName="pja_UpdateTypeNameInProjectTypes" FunctionName="ProjectTileModel.Store.pja_UpdateTypeNameInProjectTypes" />
+          <FunctionImportMapping FunctionImportName="prd_GetProductsByID" FunctionName="ProjectTileModel.Store.prd_GetProductsByID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProjectTileModel.prd_GetProductsByID_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+                <ScalarProperty Name="LatestVersion" ColumnName="LatestVersion" />
+                <ScalarProperty Name="ProductDescription" ColumnName="ProductDescription" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="prd_GetProductsByProductName" FunctionName="ProjectTileModel.Store.prd_GetProductsByProductName">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProjectTileModel.prd_GetProductsByProductName_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+                <ScalarProperty Name="LatestVersion" ColumnName="LatestVersion" />
+                <ScalarProperty Name="ProductDescription" ColumnName="ProductDescription" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="prd_InsertIntoProducts" FunctionName="ProjectTileModel.Store.prd_InsertIntoProducts" />
+          <FunctionImportMapping FunctionImportName="prd_UpdateLatestVersionInProducts" FunctionName="ProjectTileModel.Store.prd_UpdateLatestVersionInProducts" />
+          <FunctionImportMapping FunctionImportName="prj_GetClientTeamsByID" FunctionName="ProjectTileModel.Store.prj_GetClientTeamsByID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProjectTileModel.prj_GetClientTeamsByID_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+                <ScalarProperty Name="ClientStaffID" ColumnName="ClientStaffID" />
+                <ScalarProperty Name="ClientTeamRoleCode" ColumnName="ClientTeamRoleCode" />
+                <ScalarProperty Name="FromDate" ColumnName="FromDate" />
+                <ScalarProperty Name="ToDate" ColumnName="ToDate" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="prj_GetNewVersionByID" FunctionName="ProjectTileModel.Store.prj_GetNewVersionByID" />
+          <FunctionImportMapping FunctionImportName="prj_GetOldVersionByID" FunctionName="ProjectTileModel.Store.prj_GetOldVersionByID" />
+          <FunctionImportMapping FunctionImportName="prj_GetProjectsByID" FunctionName="ProjectTileModel.Store.prj_GetProjectsByID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProjectTileModel.prj_GetProjectsByID_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="EntityID" ColumnName="EntityID" />
+                <ScalarProperty Name="ProjectCode" ColumnName="ProjectCode" />
+                <ScalarProperty Name="TypeCode" ColumnName="TypeCode" />
+                <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
+                <ScalarProperty Name="ClientID" ColumnName="ClientID" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="StageCode" ColumnName="StageCode" />
+                <ScalarProperty Name="ProjectSummary" ColumnName="ProjectSummary" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="prj_GetProjectTeamsByID" FunctionName="ProjectTileModel.Store.prj_GetProjectTeamsByID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProjectTileModel.prj_GetProjectTeamsByID_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+                <ScalarProperty Name="StaffID" ColumnName="StaffID" />
+                <ScalarProperty Name="ProjectRoleCode" ColumnName="ProjectRoleCode" />
+                <ScalarProperty Name="FromDate" ColumnName="FromDate" />
+                <ScalarProperty Name="ToDate" ColumnName="ToDate" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="prj_InsertIntoClientTeams" FunctionName="ProjectTileModel.Store.prj_InsertIntoClientTeams" />
+          <FunctionImportMapping FunctionImportName="prj_InsertIntoProjectProducts" FunctionName="ProjectTileModel.Store.prj_InsertIntoProjectProducts" />
+          <FunctionImportMapping FunctionImportName="prj_InsertIntoProjects" FunctionName="ProjectTileModel.Store.prj_InsertIntoProjects" />
+          <FunctionImportMapping FunctionImportName="prj_InsertIntoProjectTeams" FunctionName="ProjectTileModel.Store.prj_InsertIntoProjectTeams" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateClientStaffIDInClientTeams" FunctionName="ProjectTileModel.Store.prj_UpdateClientStaffIDInClientTeams" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateClientTeamRoleCodeInClientTeams" FunctionName="ProjectTileModel.Store.prj_UpdateClientTeamRoleCodeInClientTeams" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateNewVersionInProjectProducts" FunctionName="ProjectTileModel.Store.prj_UpdateNewVersionInProjectProducts" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateOldVersionInProjectProducts" FunctionName="ProjectTileModel.Store.prj_UpdateOldVersionInProjectProducts" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateProjectNameInProjects" FunctionName="ProjectTileModel.Store.prj_UpdateProjectNameInProjects" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateProjectRoleCodeInProjectTeams" FunctionName="ProjectTileModel.Store.prj_UpdateProjectRoleCodeInProjectTeams" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateProjectSummaryInProjects" FunctionName="ProjectTileModel.Store.prj_UpdateProjectSummaryInProjects" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateStaffIDInProjectTeams" FunctionName="ProjectTileModel.Store.prj_UpdateStaffIDInProjectTeams" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateToDateInClientTeams" FunctionName="ProjectTileModel.Store.prj_UpdateToDateInClientTeams" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateToDateInProjectTeams" FunctionName="ProjectTileModel.Store.prj_UpdateToDateInProjectTeams" />
+          <FunctionImportMapping FunctionImportName="sec_GetTablePermissionsByID" FunctionName="ProjectTileModel.Store.sec_GetTablePermissionsByID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProjectTileModel.sec_GetTablePermissionsByID_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="TableName" ColumnName="TableName" />
+                <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
+                <ScalarProperty Name="ViewTable" ColumnName="ViewTable" />
+                <ScalarProperty Name="UpdateRows" ColumnName="UpdateRows" />
+                <ScalarProperty Name="InsertRows" ColumnName="InsertRows" />
+                <ScalarProperty Name="ChangeStatus" ColumnName="ChangeStatus" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sec_InsertIntoTablePermissions" FunctionName="ProjectTileModel.Store.sec_InsertIntoTablePermissions" />
+          <FunctionImportMapping FunctionImportName="stf_CheckHashedPassword" FunctionName="ProjectTileModel.Store.stf_CheckHashedPassword" />
+          <FunctionImportMapping FunctionImportName="stf_GetStaffByID" FunctionName="ProjectTileModel.Store.stf_GetStaffByID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProjectTileModel.stf_GetStaffByID_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="Surname" ColumnName="Surname" />
+                <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="LeaveDate" ColumnName="LeaveDate" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="Passwd" ColumnName="Passwd" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+                <ScalarProperty Name="DefaultEntity" ColumnName="DefaultEntity" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="stf_GetStaffByRoleCode" FunctionName="ProjectTileModel.Store.stf_GetStaffByRoleCode">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProjectTileModel.stf_GetStaffByRoleCode_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="Surname" ColumnName="Surname" />
+                <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="LeaveDate" ColumnName="LeaveDate" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="Passwd" ColumnName="Passwd" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+                <ScalarProperty Name="DefaultEntity" ColumnName="DefaultEntity" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="stf_GetStaffRolesByRoleCode" FunctionName="ProjectTileModel.Store.stf_GetStaffRolesByRoleCode">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProjectTileModel.stf_GetStaffRolesByRoleCode_Result">
+                <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
+                <ScalarProperty Name="RoleDescription" ColumnName="RoleDescription" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="stf_InsertIntoStaff" FunctionName="ProjectTileModel.Store.stf_InsertIntoStaff" />
+          <FunctionImportMapping FunctionImportName="stf_InsertIntoStaffEntities" FunctionName="ProjectTileModel.Store.stf_InsertIntoStaffEntities" />
+          <FunctionImportMapping FunctionImportName="stf_InsertIntoStaffRoles" FunctionName="ProjectTileModel.Store.stf_InsertIntoStaffRoles" />
+          <FunctionImportMapping FunctionImportName="stf_UpdateLeaveDateInStaff" FunctionName="ProjectTileModel.Store.stf_UpdateLeaveDateInStaff" />
+          <FunctionImportMapping FunctionImportName="stf_UpdateRoleCodeInStaff" FunctionName="ProjectTileModel.Store.stf_UpdateRoleCodeInStaff" />
+          <FunctionImportMapping FunctionImportName="stf_UpdateRoleDescriptionInStaffRoles" FunctionName="ProjectTileModel.Store.stf_UpdateRoleDescriptionInStaffRoles" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

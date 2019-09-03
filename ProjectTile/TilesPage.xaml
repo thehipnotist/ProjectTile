@@ -1,0 +1,146 @@
+﻿<Page x:Name="TilesPage1" x:Class="ProjectTile.TilesPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="535" d:DesignWidth="830"
+	Title="TilesPage" Loaded="TilesPage1_Loaded">
+
+    <Grid x:Name="TilesGrid" FocusManager.IsFocusScope="True">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="15" MinWidth="15" MaxWidth="15"/>
+            <ColumnDefinition x:Name="CentreColumn" Width="655*" MinWidth="655"/>
+            <ColumnDefinition Width="160" MinWidth="160" MaxWidth="160"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="45" MinHeight="45" MaxHeight="45"/>
+            <RowDefinition x:Name="MiddleRow" Height="475*" MinHeight="475"/>
+            <RowDefinition Height="15" MinHeight="15" MaxHeight="15"/>
+        </Grid.RowDefinitions>
+        <Label x:Name="PageHeader" Content="Main Menu" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="655" FontWeight="Bold" Background="{x:Null}" Foreground="White" 
+               Grid.Column="1"/>
+        <Border Height="Auto" Width="Auto" Margin="0,0,0,0" MinHeight="475" BorderBrush="{StaticResource PtBrushMenuBlue}" MinWidth="655" BorderThickness="2" Grid.Column="1" Grid.Row="1">
+            <!-- Note that the main buttons must go at the back, otherwise they cause MouseLeave events in the other buttons -->
+            <Grid MinWidth="655" Width="{Binding ElementName=CentreColumn, Path=ActualWidth}" Focusable="True" IsManipulationEnabled="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="{Binding ElementName=MiddleRow, Path=ActualHeight}" MinHeight="475"/>
+                </Grid.RowDefinitions>
+
+                <Label x:Name="Instructions" Content="Hover over a main 'tile' to 'expand' it temporarily. Click on it to keep it expanded (click elsewhere to cancel)." 
+                       HorizontalAlignment="Left" Margin="15,40,0,0" VerticalAlignment="Top" Width="630" Height="30" Grid.Column="1" Grid.Row="1"/>
+                <Label x:Name="Welcome" Content="Welcome to ProjectTile." HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" MinHeight="475" MinWidth="655" 
+                       MouseDown="mouseOffButtons" Padding="20" Height="{Binding ElementName=MiddleRow, Path=ActualHeight}" Width="{Binding ElementName=CentreColumn, Path=ActualWidth}"  />
+
+                <Button x:Name="StaffButton" HorizontalAlignment="Left" Height="120" Margin="345,80,0,0" VerticalAlignment="Top" Width="120" FontWeight="Bold" Background="{StaticResource PtBrushGold2}" 
+                        MouseEnter="buttonMouseOver" MouseLeave="buttonMouseOut" GotFocus="buttonGotFocus" LostFocus="buttonLostFocus" Click="button_Click" ToolTip="{StaticResource StaffTip}">
+                    <Label VerticalContentAlignment="Center" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center">
+                        <Label.Background>
+                            <RadialGradientBrush GradientStops="{StaticResource PtGradientGold}"/>
+                        </Label.Background>
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Staff"/>
+                    </Label>
+                </Button>
+                <Button x:Name="EntityButton" HorizontalAlignment="Left" Height="120" Margin="15,80,0,0" VerticalAlignment="Top" Width="120" FontWeight="Bold" Background="{StaticResource PtBrushGreen2}" 
+                        MouseEnter="buttonMouseOver" MouseLeave="buttonMouseOut" GotFocus="buttonGotFocus" LostFocus="buttonLostFocus" Click="button_Click" ToolTip="{StaticResource EntitiesTip}">
+                    <Label VerticalContentAlignment="Center" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center"
+                           >
+                        <Label.Background>
+                            <RadialGradientBrush GradientStops="{StaticResource PtGradientGreen}"/>
+                        </Label.Background>
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Entity"/>
+                    </Label>
+                </Button>
+                <Button x:Name="AdminButton" HorizontalAlignment="Left" Height="120" Margin="180,80,0,0" VerticalAlignment="Top" Width="120" FontWeight="Bold" Background="{StaticResource PtBrushRed2}" 
+                        MouseEnter="buttonMouseOver" MouseLeave="buttonMouseOut" GotFocus="buttonGotFocus" LostFocus="buttonLostFocus" Click="button_Click" ToolTip="{StaticResource AdminTip}">
+                    <Label VerticalContentAlignment="Center" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center">
+                        <Label.Background>
+                            <RadialGradientBrush GradientStops="{StaticResource PtGradientRed}"/>
+                        </Label.Background>
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Admin"/>
+                    </Label>
+                </Button>
+
+                <Button x:Name="AdminButton_Login" HorizontalAlignment="Left" Height="120" Margin="300,80,0,0" VerticalAlignment="Top" Width="120" Background="{StaticResource PtBrushRed1}" 
+                        MouseLeave="buttonMouseOut" Click="AdminButton_Login_Click" Visibility="Hidden">
+                    <Label VerticalContentAlignment="Center" Background="{StaticResource PtBrushRed2}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           HorizontalContentAlignment="Center">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Change Login"/>
+                    </Label>
+                </Button>
+                <Button x:Name="AdminButton_Password" HorizontalAlignment="Left" Height="120" Margin="420,80,0,0" VerticalAlignment="Top" Width="120" Background="{StaticResource PtBrushRed1}" 
+                        MouseLeave="buttonMouseOut" Click="AdminButton_Password_Click" Visibility="Hidden">
+                    <Label VerticalContentAlignment="Center" Background="{StaticResource PtBrushRed2}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           HorizontalContentAlignment="Center">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Change Password"/>
+                    </Label>
+                </Button>
+                <Button x:Name="AdminButton_Exit" HorizontalAlignment="Left" Height="120" Margin="180,200,0,0" VerticalAlignment="Top" Width="120" Background="{StaticResource PtBrushRed1}" 
+                        MouseLeave="buttonMouseOut" Click="AdminButton_Exit_Click" Visibility="Hidden">
+                    <Label VerticalContentAlignment="Center" Background="{StaticResource PtBrushRed2}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           HorizontalContentAlignment="Center">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Exit ProjectTile"/>
+                    </Label>
+                </Button>
+                <Button x:Name="EntityButton_New" Height="120" Width="120" Margin="15,200,0,0" Background="{StaticResource PtBrushGreen1}" Click="NewEntityButton_Click" HorizontalAlignment="Left" 
+                        VerticalAlignment="Top" MouseLeave="buttonMouseOut" Visibility="Hidden">
+                    <Label VerticalContentAlignment="Center" Background="{StaticResource PtBrushGreen2}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           HorizontalContentAlignment="Center">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Create New Entity"/>
+                    </Label>
+                </Button>
+                <Button x:Name="EntityButton_Amend" Height="120" Width="120" Margin="15,320,0,0" Background="{StaticResource PtBrushGreen1}" Click="AmendEntityButton_Click" MouseLeave="buttonMouseOut" 
+                        HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden">
+                    <Label VerticalContentAlignment="Center" Background="{StaticResource PtBrushGreen2}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           HorizontalContentAlignment="Center">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Amend Existing Entity"/>
+                    </Label>
+                </Button>
+                <Button x:Name="EntityButton_Change" Height="120" Width="120" Margin="135,80,0,0" Background="{StaticResource PtBrushGreen1}" Click="ChangeCurrentEntityButton_Click" 
+                        MouseLeave="buttonMouseOut" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden">
+                    <Label VerticalContentAlignment="Center" Background="{StaticResource PtBrushGreen2}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           HorizontalContentAlignment="Center">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Change Current Entity"/>
+                    </Label>
+                </Button>
+                <Button x:Name="EntityButton_Default" Height="120" Width="120" Margin="255,80,0,0" Background="{StaticResource PtBrushGreen1}" Click="ChangeDefaultEntityButton_Click" 
+                        MouseLeave="buttonMouseOut" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden">
+                    <Label VerticalContentAlignment="Center" Background="{StaticResource PtBrushGreen2}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           HorizontalContentAlignment="Center">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Change Default Entity"/>
+                    </Label>
+                </Button>
+                <Button x:Name="StaffButton_View" Height="120" Width="120" Margin="225,80,0,0" Background="{StaticResource PtBrushGold1}" MouseLeave="buttonMouseOut" HorizontalAlignment="Left" 
+                        VerticalAlignment="Top" Visibility="Hidden" Click="StaffButton_View_Click" Grid.Column="1" Grid.Row="1">
+                    <Label VerticalContentAlignment="Center" Background="{StaticResource PtBrushGold2}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           HorizontalContentAlignment="Center">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="View Staff Details"/>
+                    </Label>
+                </Button>
+                <Button x:Name="StaffButton_Amend" Height="120" Width="120" Margin="345,320,0,0" Background="{StaticResource PtBrushGold1}" MouseLeave="buttonMouseOut" HorizontalAlignment="Left" 
+                        VerticalAlignment="Top" Click="StaffButton_Amend_Click" Visibility="Hidden" Grid.Column="1" Grid.Row="1">
+                    <Label VerticalContentAlignment="Center" Background="{StaticResource PtBrushGold2}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           HorizontalContentAlignment="Center">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Amend Staff Details"/>
+                    </Label>
+                </Button>
+                <Button x:Name="StaffButton_New" Height="120" Width="120" Margin="345,200,0,0" Background="{StaticResource PtBrushGold1}" MouseLeave="buttonMouseOut" HorizontalAlignment="Left" 
+                        VerticalAlignment="Top" Click="StaffButton_New_Click" Visibility="Hidden" Grid.Column="1" Grid.Row="1">
+                    <Label VerticalContentAlignment="Center" Background="{StaticResource PtBrushGold2}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           HorizontalContentAlignment="Center">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Create New Staff Member"/>
+                    </Label>
+                </Button>
+                <Button x:Name="StaffButton_Entities" Height="120" Width="120" Margin="465,80,0,0" Background="{StaticResource PtBrushGold1}" MouseLeave="buttonMouseOut" HorizontalAlignment="Left" 
+                        VerticalAlignment="Top" Visibility="Hidden" Click="StaffButton_Entities_Click">
+                    <Label VerticalContentAlignment="Center" Background="{StaticResource PtBrushGold2}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           HorizontalContentAlignment="Center">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Staff Entity Links"/>
+                    </Label>
+                </Button>
+
+
+            </Grid>
+        </Border>
+    </Grid>
+</Page>

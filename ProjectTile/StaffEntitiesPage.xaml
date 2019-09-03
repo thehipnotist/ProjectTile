@@ -1,0 +1,198 @@
+﻿<Page x:Class="ProjectTile.StaffEntitiesPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="535" d:DesignWidth="830"
+	Title="StaffEntities" Loaded="Page_Loaded">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="15" MinWidth="15" MaxWidth="15"/>
+            <ColumnDefinition x:Name="CentreColumn" Width="655*" MinWidth="655"/>
+            <ColumnDefinition Width="160" MinWidth="160" MaxWidth="160"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="45" MinHeight="45" MaxHeight="45"/>
+            <RowDefinition x:Name="MiddleRow" Height="400*" MinHeight="400"/>
+            <RowDefinition Height="90" MinHeight="90" MaxHeight="90"/>
+        </Grid.RowDefinitions>
+        <Label x:Name="PageHeader" Content="Staff Entities" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="655" FontWeight="Bold" Background="{x:Null}" Margin="0,0,0,0" Foreground="White" Grid.Row="0" Grid.Column="1" />
+        <Border MinHeight="400" MinWidth="655" Height="Auto" Width="Auto" Margin="0,0,0,0" BorderBrush="{StaticResource PtBrushGold3}" BorderThickness="2" Grid.Row="1" Grid.Column="1">
+            <Grid MinWidth="655" Width="{Binding ElementName=CentreColumn, Path=ActualWidth}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="{Binding ElementName=MiddleRow, Path=ActualHeight}" MinHeight="400"/>
+                </Grid.RowDefinitions>
+                <Label x:Name="NameContainsLabel" Content="Name Contains" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="95" FontWeight="Bold"/>
+                <Label x:Name="Instructions" Content="" HorizontalAlignment="Left" Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+                <TextBox x:Name="NameContains" HorizontalAlignment="Left" Height="30" Margin="115,45,0,0" VerticalAlignment="Top" Width="120" FontWeight="Normal" ToolTip="Type and tab to filter" 
+                         TabIndex="2" LostFocus="NameContains_LostFocus" KeyUp="NameContains_KeyUp"/>
+                <CheckBox x:Name="ActiveOnly_CheckBox" Content="Active Only" HorizontalAlignment="Center" Height="30" Margin="275,45,280,0" VerticalAlignment="Top" Width="100" FontWeight="Bold" 
+                          VerticalContentAlignment="Center" Checked="ActiveOnly_CheckBox_Checked" Unchecked="ActiveOnly_CheckBox_Unchecked"/>
+                <Label x:Name="EntityLabel" Content="Entity" HorizontalAlignment="Right" Height="30" Margin="0,45,200,0" VerticalAlignment="Top" Width="50" FontWeight="Bold"/>
+                <ComboBox x:Name="EntityList" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="180" SelectionChanged="EntityList_SelectionChanged"/>
+
+                <Label x:Name="StaffLabel" Content="Staff Member" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="95" FontWeight="Bold"/>
+                <ComboBox x:Name="StaffCombo" HorizontalAlignment="Left" Height="30" Margin="115,45,15,0" VerticalAlignment="Top" Width="180" SelectionChanged="StaffCombo_SelectionChanged"/>
+                <DataGrid x:Name="StaffGrid" MinHeight="290" Margin="15,90,15,15" MinWidth="625" AutoGenerateColumns="False" IsReadOnly="True" BorderBrush="{StaticResource PtBrushGold3}" SelectionChanged="StaffGrid_SelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Top" Height="256">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn x:Name="IDColumn" Binding="{Binding ID}" ClipboardContentBinding="{x:Null}" Header="ID" Visibility="Collapsed"/>
+                        <DataGridTextColumn x:Name="StaffNameColumn" Binding="{Binding StaffName}" ClipboardContentBinding="{x:Null}" Header="Name"/>
+                        <DataGridTextColumn x:Name="UserIDColumn" Binding="{Binding UserID}" ClipboardContentBinding="{x:Null}" Header="UserID"/>
+                        <DataGridTextColumn x:Name="RoleColumn" Binding="{Binding RoleDescription}" ClipboardContentBinding="{x:Null}" Header="Role"/>
+                        <DataGridTextColumn x:Name="StartDateColumn" Binding="{Binding StartDate, StringFormat=dd/MM/yyyy}" ClipboardContentBinding="{x:Null}" Header="Start Date"/>
+                        <DataGridTextColumn x:Name="LeaveDateColumn" Binding="{Binding LeaveDate, StringFormat=dd/MM/yyyy}" ClipboardContentBinding="{x:Null}" Header="Leave Date"/>
+                        <DataGridCheckBoxColumn x:Name="ActiveUserColumn" Binding="{Binding ActiveUser, Mode=OneWay}" ClipboardContentBinding="{x:Null}" Header="Active" IsReadOnly="True"/>
+                        <DataGridTextColumn x:Name="DefaultEntityColumn" Binding="{Binding DefaultEntity}" ClipboardContentBinding="{x:Null}" Header="Default Entity" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <Label x:Name="FromLabel" Content="Available Entities" HorizontalAlignment="Left" Height="30" Margin="15,90,15,0" VerticalAlignment="Top" Width="250" FontWeight="Bold"/>
+                <ListView x:Name="StaffFrom" Grid.Column="1" HorizontalAlignment="Left" Height="260"  Margin="15,120,15,15" VerticalAlignment="Top" Width="265"
+                          BorderBrush="{StaticResource PtBrushGold3}" SelectionChanged="StaffFrom_SelectionChanged" GotFocus="StaffFrom_GotFocus" >
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn x:Name="StaffIDFromCol" DisplayMemberBinding="{Binding ID}" Header="ID" Width="0"/>
+                            <GridViewColumn x:Name="StaffNameFromCol" DisplayMemberBinding="{Binding NameAndUser}" Header="Name (UserID)" Width="125"/>
+                            <GridViewColumn x:Name="StaffStatusFromCol" DisplayMemberBinding="{Binding Status}" Header="Status" Width="65"/>
+                            <GridViewColumn x:Name="StaffDefaultFromCol" DisplayMemberBinding="{Binding DefaultEntity}" Header="Default" Width="75"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <ListView x:Name="EntitiesFrom" Grid.Column="1" HorizontalAlignment="Left" Height="260"  Margin="15,120,15,15" VerticalAlignment="Top" Width="265"
+                          BorderBrush="{StaticResource PtBrushGreen3}" SelectionChanged="EntitiesFrom_SelectionChanged" GotFocus="EntitiesFrom_GotFocus" >
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn x:Name="EntitiesIDFromCol" DisplayMemberBinding="{Binding ID}" Header="ID" Width="0"/>
+                            <GridViewColumn x:Name="EntitiesNameFromCol" DisplayMemberBinding="{Binding Name}" Header="Name" Width="70"/>
+                            <GridViewColumn x:Name="EntitiesDescFromCol" DisplayMemberBinding="{Binding Description}" Header="Description" Width="195"/>
+                            <GridViewColumn x:Name="EntitiesDefaultFromCol" DisplayMemberBinding="{Binding Default}" Header="Default" Width="0"/>                            
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+
+                <Button x:Name="AddButton" HorizontalAlignment="Center" Height="45" Margin="300,150,300,0" VerticalAlignment="Top" Width="55" Background="{DynamicResource PtBrushButtonGrey}" 
+                	FontWeight="Bold" IsEnabled="False" Click="AddButton_Click">
+                    <Grid x:Name="AddPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Width="50">
+                        <Image x:Name="PlusImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="112_Plus_Blue_24x24_72.png" Margin="3,0,15,15"/>
+                        <Image x:Name="RightImage" HorizontalAlignment="Right" Height="20" VerticalAlignment="Top" Width="20" Source="112_RightArrowShort_Blue_24x24_72.png" Margin="15,0,3,15"/>
+                        <TextBlock x:Name="AddButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Add" Margin="0,0,0,0" VerticalAlignment="Bottom"/>
+                    </Grid>
+                </Button>
+                <Button x:Name="DefaultButton" HorizontalAlignment="Center" Height="45" Margin="300,110,300,0" VerticalAlignment="Center" Width="55" Background="{DynamicResource PtBrushButtonGrey}" 
+                	FontWeight="Bold" IsEnabled="False" Click="DefaultButton_Click">
+                    <Grid x:Name="DefaultPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Width="50">
+                        <Image x:Name="PinImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="25" Source="138_PushPin_24x24_72.png" Margin="3,0,15,15" Stretch="UniformToFill"/>
+                        <Image x:Name="UpImage" HorizontalAlignment="Right" Height="20" VerticalAlignment="Top" Width="20" Source="112_UpArrowShort_Blue_24x24_72.png" Margin="15,0,3,15"/>
+                        <TextBlock x:Name="DefaultButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Default" Margin="0,0,0,0" VerticalAlignment="Bottom"/>
+                    </Grid>
+                </Button>
+                <Button x:Name="RemoveButton" HorizontalAlignment="Center" Height="45" Margin="15,15,15,40" VerticalAlignment="Bottom" Width="55" Background="{DynamicResource PtBrushButtonGrey}" 
+                	FontWeight="Bold" IsEnabled="False" Click="RemoveButton_Click">
+                    <Grid x:Name="RemovePanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Width="50">
+                        <Image x:Name="LeftImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="112_LeftArrowShort_Blue_24x24_72.png" Margin="3,0,15,15"/>
+                        <Image x:Name="MinusImage" HorizontalAlignment="Right" Height="20" VerticalAlignment="Top" Width="20" Source="112_Minus_Blue_24x24_72.png" Margin="15,0,3,15"/>
+                        <TextBlock x:Name="RemoveButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Remove" Margin="0,0,0,0" VerticalAlignment="Bottom"/>
+                    </Grid>
+                </Button>
+
+                <Label x:Name="ToLabel" Content="Linked Entities (Default in Bold)" HorizontalAlignment="Right" Height="30" Margin="15,90,15,0" VerticalAlignment="Top" Width="250" FontWeight="Bold" 
+                       HorizontalContentAlignment="Right"/>
+                <ListView x:Name="StaffTo" Grid.Column="1" HorizontalAlignment="Right" Height="260" Margin="15,120,15,15" VerticalAlignment="Top" Width="265"
+                          BorderBrush="{StaticResource PtBrushGold3}" GotFocus="StaffTo_GotFocus" SelectionChanged="StaffTo_SelectionChanged" >
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn x:Name="StaffIDToCol" DisplayMemberBinding="{Binding ID}" Header="ID" Width="0"/>
+                            <GridViewColumn x:Name="StaffNameToCol" DisplayMemberBinding="{Binding NameAndUser}" Header="Name (UserID)" Width="125"/>
+                            <GridViewColumn x:Name="StaffStatusToCol" DisplayMemberBinding="{Binding Status}" Header="Status" Width="65"/>
+                            <GridViewColumn x:Name="StaffDefaultToCol" DisplayMemberBinding="{Binding DefaultEntity}" Header="Default" Width="75"/>
+                        </GridView>
+                    </ListView.View>
+                    <!--
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=Default}" Value="true">
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    -->
+                </ListView>
+                <ListView x:Name="EntitiesTo" Grid.Column="1" HorizontalAlignment="Right" Height="260"  Margin="15,120,15,15" VerticalAlignment="Top" Width="265"
+                          BorderBrush="{StaticResource PtBrushGreen3}" SelectionChanged="EntitiesTo_SelectionChanged" GotFocus="EntitiesTo_GotFocus" >
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn x:Name="EntitiesIDToCol" DisplayMemberBinding="{Binding ID}" Header="ID" Width="0"/>
+                            <GridViewColumn x:Name="EntitiesNameToCol" DisplayMemberBinding="{Binding Name}" Header="Name" Width="70"/>
+                            <GridViewColumn x:Name="EntitiesDescToCol" DisplayMemberBinding="{Binding Description}" Header="Description" Width="195"/>
+                            <GridViewColumn x:Name="EntitiesDefaultToCol" DisplayMemberBinding="{Binding Default}" Header="Default" Width="0"/>                            
+                        </GridView>
+                    </ListView.View>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=Default}" Value="true">
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>                
+
+            </Grid>
+        </Border>
+
+        <Border Height="60" Margin="0,0,0,15" BorderBrush="{StaticResource PtBrushGold3}" MinWidth="655" BorderThickness="2" Grid.Row="2" Grid.Column="1" Width="Auto" VerticalAlignment="Bottom">
+            <Grid MinWidth="655" Width="{Binding ElementName=CentreColumn, Path=ActualWidth}">
+                <Grid.RowDefinitions>
+                    <RowDefinition MinHeight="60"/>
+                </Grid.RowDefinitions>
+                <Button x:Name="CancelButton" HorizontalAlignment="Left" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="100" Background="{StaticResource PtBrushHeaderBlue}" FontWeight="Bold" Click="CancelButton_Click">
+                    <StackPanel x:Name="CancelPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                        <Image x:Name="CancelImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="1385_Disable_24x24_72.png"/>
+                        <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Close" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="BackButton" HorizontalAlignment="Left" Height="30" Margin="130,15,15,15" VerticalAlignment="Top" Width="100" Background="{StaticResource PtBrushHeaderBlue}" 
+                        FontWeight="Bold" Click="BackButton_Click" ToolTip="Return to staff list without saving">
+                    <StackPanel x:Name="BackPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                        <Image x:Name="BackImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="112_LeftArrowLong_Grey_24x24_72.png"/>
+                        <TextBlock x:Name="BackButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Back" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <Button x:Name="EntitiesButton" HorizontalAlignment="Center" Height="30" Margin="0,15,15,0" VerticalAlignment="Top" Width="110" Background="{StaticResource PtBrushHeaderBlue}" 
+                        FontWeight="Bold" ToolTip="Entities that the selected user can access" BorderThickness="2" IsEnabled="False" Click="EntitiesButton_Click">
+                    <Button.BorderBrush>
+                        <SolidColorBrush Color="{DynamicResource PtColorGreen3}"/>
+                    </Button.BorderBrush>
+                    <StackPanel x:Name="EntitiesPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                        <TextBlock x:Name="EntitiesButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Manage Entities" Margin="5,0,5,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="StaffButton" HorizontalAlignment="Center" Height="30" Margin="230,15,0,0" VerticalAlignment="Top" Width="110" Background="{StaticResource PtBrushHeaderBlue}" 
+                        FontWeight="Bold" ToolTip="Staff that the selected user can access" BorderThickness="2" IsEnabled="False" Click="StaffButton_Click">
+                    <Button.BorderBrush>
+                        <SolidColorBrush Color="{DynamicResource PtColorGold3}"/>
+                    </Button.BorderBrush>
+                    <StackPanel x:Name="StaffPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                        <TextBlock x:Name="StaffButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Manage Staff" Margin="5,0,5,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Background="{StaticResource PtBrushHeaderBlue}" 
+                        FontWeight="Bold" IsEnabled="False" Click="CommitButton_Click">
+                    <StackPanel x:Name="CommitPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                        <Image x:Name="CommitImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="112_Tick_Green_32x32_72.png"/>
+                        <TextBlock x:Name="CommitButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Save" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Border>
+
+
+    </Grid>
+</Page>

@@ -1,0 +1,336 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{991532FD-6560-4084-8D9B-2A14EA7D9355}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ProjectTile</RootNamespace>
+    <AssemblyName>ProjectTile</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AuditEntries.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ClientProducts.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Clients.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ClientStaff.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ClientTeamRoles.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ClientTeams.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="cln_GetClientsByAccountManagerID_Result.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="cln_GetClientsByClientCode_Result.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="cln_GetClientsByID_Result.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="cln_GetClientStaffByID_Result.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EntitiesSummaryRecord.cs" />
+    <Compile Include="EntityFunctions.cs" />
+    <Compile Include="EntityPage.xaml.cs">
+      <DependentUpon>EntityPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ent_GetEntitiesByID_Result.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="LoginPage.xaml.cs">
+      <DependentUpon>LoginPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MessageFunctions.cs" />
+    <Compile Include="PageFunctions.cs" />
+    <Compile Include="StaffEntitiesPage.xaml.cs">
+      <DependentUpon>StaffEntitiesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="pja_GetClientTeamRolesByRoleCode_Result.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="pja_GetProjectRolesByRoleCode_Result.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="pja_GetProjectStagesByStageCode_Result.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="prd_GetProductsByID_Result.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="prd_GetProductsByProductName_Result.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="prj_GetClientTeamsByID_Result.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="prj_GetProjectsByID_Result.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="prj_GetProjectTeamsByID_Result.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Products.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectProducts.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectRoles.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Projects.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectStages.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectTeams.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectTileDataModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ProjectTileDataModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectTileDataModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectTileDataModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ProjectTileDataModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectTypes.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sec_GetTablePermissionsByID_Result.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SqlServerConnection.cs" />
+    <Compile Include="Staff.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PageTemplate.xaml.cs">
+      <DependentUpon>PageTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StaffDetailsPage.xaml.cs">
+      <DependentUpon>StaffDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StaffEntities.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="LoginFunctions.cs" />
+    <Compile Include="StaffFunctions.cs" />
+    <Compile Include="StaffGridRecord.cs" />
+    <Compile Include="StaffPage.xaml.cs">
+      <DependentUpon>StaffPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StaffRoles.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="StaffSummaryRecord.cs" />
+    <Compile Include="stf_GetStaffByID_Result.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="stf_GetStaffByRoleCode_Result.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="stf_GetStaffRolesByRoleCode_Result.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TablePermissions.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TableSecurity.cs" />
+    <Compile Include="TilesPage.xaml.cs">
+      <DependentUpon>TilesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="vi_ClientStaff.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vi_ClientsWithAccountManagers.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vi_ClientsWithProducts.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vi_ClientTeams.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vi_OpenProjectProducts.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vi_OpenProjects.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vi_ProjectTeams.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vi_StaffEntities.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vi_StaffWithRoles.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="App.Config" />
+    <None Include="packages.config" />
+    <EntityDeploy Include="ProjectTileDataModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>ProjectTileDataModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="ProjectTileDataModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ProjectTileDataModel.edmx</DependentUpon>
+      <LastGenOutput>ProjectTileDataModel.Context.cs</LastGenOutput>
+    </None>
+    <None Include="ProjectTileDataModel.edmx.diagram">
+      <DependentUpon>ProjectTileDataModel.edmx</DependentUpon>
+    </None>
+    <None Include="ProjectTileDataModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ProjectTileDataModel.edmx</DependentUpon>
+      <LastGenOutput>ProjectTileDataModel.cs</LastGenOutput>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ItemGroup>
+    <ReferencePath Include="C:\Users\Mark\Dropbox\Coding Examples\ProjectTile\ProjectTile\packages\EntityFramework.6.1.1\lib\net40\EntityFramework.dll" />
+    <ReferencePath Include="C:\Users\Mark\Dropbox\Coding Examples\ProjectTile\ProjectTile\packages\EntityFramework.6.1.1\lib\net40\EntityFramework.SqlServer.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Microsoft.CSharp.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\mscorlib.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\PresentationCore.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\PresentationFramework.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.ComponentModel.DataAnnotations.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Core.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.DataSetExtensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.Entity.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Runtime.Serialization.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Security.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xaml.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.Linq.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\WindowsBase.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="C:\Users\Mark\Dropbox\Coding Examples\ProjectTile\ProjectTile\ProjectTile\obj\Debug\EntityPage.g.cs" />
+    <Compile Include="C:\Users\Mark\Dropbox\Coding Examples\ProjectTile\ProjectTile\ProjectTile\obj\Debug\LoginPage.g.cs" />
+    <Compile Include="C:\Users\Mark\Dropbox\Coding Examples\ProjectTile\ProjectTile\ProjectTile\obj\Debug\MainWindow.g.cs" />
+    <Compile Include="C:\Users\Mark\Dropbox\Coding Examples\ProjectTile\ProjectTile\ProjectTile\obj\Debug\StaffEntitiesPage.g.cs" />
+    <Compile Include="C:\Users\Mark\Dropbox\Coding Examples\ProjectTile\ProjectTile\ProjectTile\obj\Debug\PageTemplate.g.cs" />
+    <Compile Include="C:\Users\Mark\Dropbox\Coding Examples\ProjectTile\ProjectTile\ProjectTile\obj\Debug\StaffDetailsPage.g.cs" />
+    <Compile Include="C:\Users\Mark\Dropbox\Coding Examples\ProjectTile\ProjectTile\ProjectTile\obj\Debug\StaffPage.g.cs" />
+    <Compile Include="C:\Users\Mark\Dropbox\Coding Examples\ProjectTile\ProjectTile\ProjectTile\obj\Debug\TilesPage.g.cs" />
+    <Compile Include="C:\Users\Mark\Dropbox\Coding Examples\ProjectTile\ProjectTile\ProjectTile\obj\Debug\App.g.cs" />
+  </ItemGroup>
+</Project>
