@@ -348,7 +348,7 @@ namespace ProjectTile
             CurrentEntity = targetEntity;
             CurrentEntityID = CurrentEntity.ID;
             CurrentEntityName = PageFunctions.FormatSqlOutput(CurrentEntity.EntityName);
-            winMain.updateDetailsBlock();
+            winMain.UpdateDetailsBlock();
         }
 
         // Default Entity functions
@@ -395,7 +395,7 @@ namespace ProjectTile
                     if (displayName != CurrentEntityName) { notCurrent = " Note that you are still currently connected to '" + CurrentEntityName + "'."; }
 
                     MessageFunctions.SuccessMessage("Your default Entity has now been set to '" + displayName + "'." + notCurrent, "Default Entity Changed");
-                    winMain.updateDetailsBlock();
+                    winMain.UpdateDetailsBlock();
                     PageFunctions.ShowTilesPage();
                 }
                 catch (Exception generalException) { MessageFunctions.Error("Error changing entity", generalException); }
@@ -408,7 +408,7 @@ namespace ProjectTile
             Entities defaultEntity = targetEntity;
             DefaultEntityID = targetEntity.ID;
             DefaultEntityName = PageFunctions.FormatSqlOutput(targetEntity.EntityName);
-            winMain.updateDetailsBlock();
+            winMain.UpdateDetailsBlock();
         }
 
     } // class

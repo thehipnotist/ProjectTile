@@ -34,6 +34,7 @@ namespace ProjectTile
         List<Button> adminButtons = new List<Button>();
         List<Button> staffButtons = new List<Button>();
         List<Button> productButtons = new List<Button>();
+        List<Button> clientButtons = new List<Button>();
 
         /* ----------------------
            -- Page Management ---
@@ -79,6 +80,7 @@ namespace ProjectTile
                 mainButtons.Add(AdminButton);
                 mainButtons.Add(StaffButton);
                 mainButtons.Add(ProductButton);
+                mainButtons.Add(ClientButton);
 
                 entityButtons.Add(EntityButton_Change);
                 entityButtons.Add(EntityButton_Default);
@@ -101,6 +103,10 @@ namespace ProjectTile
                 if (myPermissions.Allow("AddProducts")) { productButtons.Add(ProductButton_New); }
                 else { ProductButton_Amend.Margin = ProductButton_New.Margin; }
                 if (myPermissions.Allow("EditProducts")) { productButtons.Add(ProductButton_Amend); }
+
+                if (myPermissions.Allow("ViewClients")) { clientButtons.Add(ClientButton_View); }
+                if (myPermissions.Allow("AddClients")) { clientButtons.Add(ClientButton_New); }
+                if (myPermissions.Allow("EditClients")) { clientButtons.Add(ClientButton_Amend); }
 
                 // More to come...
             }
@@ -152,6 +158,7 @@ namespace ProjectTile
                     else if (thisButton.Name == "AdminButton") { toggleChildButtons(true, ref adminButtons); }
                     else if (thisButton.Name == "StaffButton") { toggleChildButtons(true, ref staffButtons); }
                     else if (thisButton.Name == "ProductButton") { toggleChildButtons(true, ref productButtons); }
+                    else if (thisButton.Name == "ClientButton") { toggleChildButtons(true, ref clientButtons); }
 
                     // More to come...
 
@@ -320,6 +327,21 @@ namespace ProjectTile
         private void ProductButton_Amend_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowProductPage("Amend");
+        }
+
+        private void ClientButton_View_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowClientPage("View");
+        }
+
+        private void ClientButton_New_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowClientPage("New");
+        }
+
+        private void ClientButton_Amend_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowClientPage("Amend");
         }
         
     } // class

@@ -42,9 +42,11 @@ namespace ProjectTile
                 AmendStaff.Visibility = myPermissions.ShowOrCollapse("EditStaff");
                 StaffEntities.Visibility = myPermissions.ShowOrCollapse("ViewStaffEntities");
 
-                ViewProducts.Visibility = myPermissions.ShowOrCollapse("ViewProducts");
-                NewProducts.Visibility = myPermissions.ShowOrCollapse("AddProducts");
-                AmendProducts.Visibility = myPermissions.ShowOrCollapse("EditProducts");
+                ViewProduct.Visibility = myPermissions.ShowOrCollapse("ViewProducts");
+                NewProduct.Visibility = myPermissions.ShowOrCollapse("AddProducts");
+                AmendProduct.Visibility = myPermissions.ShowOrCollapse("EditProducts");
+
+                ViewClient.Visibility = myPermissions.ShowOrCollapse("ViewClients");
 
                 // More to come...
             }
@@ -68,7 +70,7 @@ namespace ProjectTile
            ---------------------- */   
 
         /* Data updates */
-        public void updateDetailsBlock()
+        public void UpdateDetailsBlock()
         {
             try
             {
@@ -86,7 +88,7 @@ namespace ProjectTile
         }
 
         /* Other/shared functions */
-        public bool blnConfirmClosure()
+        public bool ConfirmClosure()
         {
             return MessageFunctions.QuestionYesNo("Are you sure you want to exit?", "Close ProjectTile Application?");
         }
@@ -98,7 +100,7 @@ namespace ProjectTile
         /* Control-specific events */
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (!blnConfirmClosure()) { e.Cancel = true; } // Cancel closure if not sure
+            if (!ConfirmClosure()) { e.Cancel = true; } // Cancel closure if not sure
         }
 
         private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -167,19 +169,34 @@ namespace ProjectTile
             PageFunctions.ShowStaffEntitiesPage();
         }
 
-        private void ViewProducts_Click(object sender, RoutedEventArgs e)
+        private void ViewProduct_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowProductPage("View");
         }
 
-        private void NewProducts_Click(object sender, RoutedEventArgs e)
+        private void NewProduct_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowProductPage("New");
         }
 
-        private void AmendProducts_Click(object sender, RoutedEventArgs e)
+        private void AmendProduct_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowProductPage("Amend");
+        }
+
+        private void ViewClient_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowClientPage("View");
+        }
+
+        private void NewClient_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowClientPage("New");
+        }
+
+        private void AmendClient_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowClientPage("Amend");
         }
 
     } // class

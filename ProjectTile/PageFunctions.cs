@@ -35,24 +35,33 @@ namespace ProjectTile
                 {
                     string mainFrameSource = mainFrame.Content.ToString();
                     mainFrameSource = mainFrameSource.Replace("ProjectTile.", "");
-                    string mewPageName = newPageSource.Replace(".xaml", "");
+                    string newPageName = newPageSource.Replace(".xaml", "");
 
-                    if (mainFrameSource != "TilesPage" && mainFrameSource == mewPageName)
+                    if (mainFrameSource != "TilesPage" && mainFrameSource == newPageName)
                     {
-                        var dInv1 = winMain.Dispatcher.Invoke(new Action(() => { mainFrame.Navigate(new Uri(TilesPage, uriDefault)); }));
+                        var dInv1 = winMain.Dispatcher.Invoke(new Action(() => { navigate(TilesPage); }));
                         var task1 = Task.Factory.StartNew(() => dInv1);
-                        var dInv2 = winMain.Dispatcher.Invoke(new Action(() => { mainFrame.Navigate(new Uri(newPageSource, uriDefault)); }));
+                        var dInv2 = winMain.Dispatcher.Invoke(new Action(() => { navigate(newPageSource); }));
                         Task task2 = task1.ContinueWith((antecedent) => dInv2);
                     }
-                    else { mainFrame.Navigate(new Uri(newPageSource, uriDefault)); }
+                    else { navigate(newPageSource); }
                 }
                 catch (Exception generalException) { MessageFunctions.Error("Error changing page", generalException); }
             }
             else
             {
-                try { mainFrame.Navigate(new Uri(newPageSource, uriDefault)); }
+                try { navigate(newPageSource); }
                 catch (Exception generalException) { MessageFunctions.Error("Error changing page", generalException); }
             }
+        }
+
+        public static void navigate(string pageSource)
+        {
+            try
+            {
+                mainFrame.Navigate(new Uri(pageSource, uriDefault));
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error navigating to page location '" + pageSource + "'", generalException); }
         }
 
         public static void ShowTilesPage() { ChangePage(TilesPage); }
@@ -90,6 +99,13 @@ namespace ProjectTile
         {
             ChangePage("ProductPage.xaml?Mode=" + pageMode);
         }
+
+        public static void ShowClientPage(string pageMode)
+        {
+            ChangePage("ClientPage.xaml?Mode=" + pageMode);
+        }
+
+
 
         /* Page loads */
         public static string pageParameter(string originalString, string paramName) //, ref MainWindow winMain

@@ -37,11 +37,17 @@
                 <MenuItem x:Name="AmendStaff" Header="Amend Staff Details" FontWeight="Normal" Background="{StaticResource PtBrushGold1}" Click="AmendStaff_Click" Foreground="Black"/>
                 <MenuItem x:Name="StaffEntities" Header="Staff Entity Links" FontWeight="Normal" Background="{DynamicResource PtBrushGold1}" Click="StaffEntities_Click" Foreground="Black"/>
             </MenuItem>
-            <MenuItem x:Name="ProductsMenu" Header="_Products" FontWeight="Bold" ToolTip="{StaticResource ProductsTip}" BorderBrush="{x:Null}"
+            <MenuItem x:Name="ProductMenu" Header="_Products" FontWeight="Bold" ToolTip="{StaticResource ProductTip}" BorderBrush="{x:Null}"
                       Padding="6,0,6,0" HorizontalContentAlignment="Center" Background="{StaticResource PtBrushBackgroundBlue}" Foreground="{StaticResource PtBrushBlue3}">
-                <MenuItem x:Name="ViewProducts" Header="View Products" FontWeight="Normal" Background="{StaticResource PtBrushBlue1}" Foreground="Black" Click="ViewProducts_Click"/>
-                <MenuItem x:Name="NewProducts" Header="Create New Product" FontWeight="Normal" Background="{StaticResource PtBrushBlue1}" Foreground="Black" Click="NewProducts_Click"/>
-                <MenuItem x:Name="AmendProducts" Header="Amend Products" FontWeight="Normal" Background="{StaticResource PtBrushBlue1}" Foreground="Black" Click="AmendProducts_Click"/>
+                <MenuItem x:Name="ViewProduct" Header="View Products" FontWeight="Normal" Background="{StaticResource PtBrushBlue1}" Foreground="Black" Click="ViewProduct_Click"/>
+                <MenuItem x:Name="NewProduct" Header="Create New Product" FontWeight="Normal" Background="{StaticResource PtBrushBlue1}" Foreground="Black" Click="NewProduct_Click"/>
+                <MenuItem x:Name="AmendProduct" Header="Amend Products" FontWeight="Normal" Background="{StaticResource PtBrushBlue1}" Foreground="Black" Click="AmendProduct_Click"/>
+            </MenuItem>
+            <MenuItem x:Name="ClientMenu" Header="_Clients" FontWeight="Bold" ToolTip="{StaticResource ClientTip}" BorderBrush="{x:Null}"
+                      Padding="6,0,6,0" HorizontalContentAlignment="Center" Background="{StaticResource PtBrushBackgroundBlue}" Foreground="{StaticResource PtBrushPurple3}">
+                <MenuItem x:Name="ViewClient" Header="View Clients" FontWeight="Normal" Background="{StaticResource PtBrushPurple1}" Foreground="Black" Click="ViewClient_Click"/>
+                <MenuItem x:Name="NewClient" Header="Create New Clients" FontWeight="Normal" Background="{StaticResource PtBrushPurple1}" Foreground="Black" Click="NewClient_Click"/>
+                <MenuItem x:Name="AmendClient" Header="Amend Clients" FontWeight="Normal" Background="{StaticResource PtBrushPurple1}" Foreground="Black" Click="AmendClient_Click"/>
             </MenuItem>
         </Menu>
 
