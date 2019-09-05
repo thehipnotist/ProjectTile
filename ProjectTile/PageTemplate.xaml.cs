@@ -19,9 +19,70 @@ namespace ProjectTile
     /// </summary>
     public partial class PageTemplate : Page
     {
+        /* ----------------------
+           -- Global Variables --
+           ---------------------- */   
+
+        /* Global/page parameters */
+
+        /* Current variables */
+
+        /* Current records */
+
+
+        /* ----------------------
+           -- Page Management ---
+           ---------------------- */
+
+        /* Initialize and Load */
         public PageTemplate()
         {
             InitializeComponent();
         }
-    }
-}
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+
+
+        /* ----------------------
+           -- Data Management ---
+           ---------------------- */
+
+        /* Data updates */
+
+        /* Data retrieval */
+
+        /* Other/shared functions */
+
+
+        /* ----------------------
+           -- Event Management ---
+           ---------------------- */
+
+        /* Generic (shared) control events */
+
+        /* Control-specific events */
+
+
+
+
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            // To do: check for changes if appropriate
+
+            PageFunctions.ShowTilesPage();
+        }
+
+        private void CommitButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+
+
+    } // class
+} // namespace
