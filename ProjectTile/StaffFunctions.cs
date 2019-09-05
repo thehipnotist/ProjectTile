@@ -598,7 +598,7 @@ namespace ProjectTile
                     var includeList = allowedStaffEntityIDs(staffID);
                     int defaultEntity = (int)GetStaffMember(staffID).DefaultEntity;
 
-                    return (from e in existingPtDb.Entities
+                    List<EntitiesSummaryRecord> entitiesList = (from e in existingPtDb.Entities
                             where includeList.Contains(e.ID)
                             //orderby new { Default = (e.ID == defaultEntity), e.EntityName }
                             select (new EntitiesSummaryRecord()
@@ -610,6 +610,13 @@ namespace ProjectTile
                             })
                             ).Distinct().ToList();
 
+                    foreach (EntitiesSummaryRecord entRecord in entitiesList)
+                    {
+                        entRecord.Name = PageFunctions.FormatSqlOutput(entRecord.Name);
+                        entRecord.Description = PageFunctions.FormatSqlOutput(entRecord.Description);
+                    }
+
+                    return entitiesList;
                 }
                 catch (Exception generalException)
                 {
@@ -629,7 +636,7 @@ namespace ProjectTile
                     var avoidList = allowedStaffEntityIDs(staffID);
                     int defaultEntity = (int)GetStaffMember(staffID).DefaultEntity;
 
-                    return (from e in existingPtDb.Entities
+                    List<EntitiesSummaryRecord> entitiesList = (from e in existingPtDb.Entities
                             where !avoidList.Contains(e.ID)
                             //orderby new { Default = (e.ID == defaultEntity), e.EntityName }
                             select (new EntitiesSummaryRecord()
@@ -640,6 +647,14 @@ namespace ProjectTile
                                 Default = false
                             })
                             ).Distinct().ToList();
+
+                    foreach (EntitiesSummaryRecord entRecord in entitiesList)
+                    {
+                        entRecord.Name = PageFunctions.FormatSqlOutput(entRecord.Name);
+                        entRecord.Description = PageFunctions.FormatSqlOutput(entRecord.Description);
+                    }
+
+                    return entitiesList;
 
                 }
                 catch (Exception generalException)
@@ -655,7 +670,7 @@ namespace ProjectTile
             try
             {
                 int entityID = thisEntity.ID;
-                string entityName = thisEntity.EntityName;
+                string sqlName = thisEntity.EntityName;
                 
                 foreach (StaffSummaryRecord thisRecord in affectedStaff)
                 {
@@ -682,7 +697,7 @@ namespace ProjectTile
                         }
                         catch (Exception generalException)
                         {
-                            MessageFunctions.ErrorMessage("Error adding " + thisPerson.FirstName + " " + thisPerson.Surname + " to entity " + entityName + ": " + generalException.Message);
+                            MessageFunctions.ErrorMessage("Error adding " + thisPerson.FirstName + " " + thisPerson.Surname + " to entity " + sqlName + ": " + generalException.Message);
                             return false;
                         }
                     }
@@ -704,7 +719,7 @@ namespace ProjectTile
                         }
                         catch (Exception generalException)
                         {
-                            MessageFunctions.ErrorMessage("Error removing " + thisPerson.FirstName + " " + thisPerson.Surname + " from entity " + entityName + ": " + generalException.Message);
+                            MessageFunctions.ErrorMessage("Error removing " + thisPerson.FirstName + " " + thisPerson.Surname + " from entity " + sqlName + ": " + generalException.Message);
                             return false;
                         }
                     }
@@ -792,7 +807,7 @@ namespace ProjectTile
 
         public static bool makeDefault(List<StaffSummaryRecord> affectedStaff, Entities thisEntity)
         {
-            string entityName = thisEntity.EntityName;
+            string displayName = PageFunctions.FormatSqlOutput(thisEntity.EntityName);
 
             try
             {
@@ -816,7 +831,7 @@ namespace ProjectTile
                         MessageFunctions.ErrorMessage("Error updating default Entity in display: display record not found");
                         return false;
                     }
-                    else { displayRecord.DefaultEntity = entityName; }
+                    else { displayRecord.DefaultEntity = displayName; }
                 }    
                 return true;
             }

@@ -576,8 +576,8 @@ namespace ProjectTile
             if (StaffFunctions.ignoreAnyChanges())
             {
                 StaffFunctions.clearAnyChanges();
-                string entityName = EntityList.SelectedValue.ToString();
-                if ((entityName) == PageFunctions.AllRecords)
+                string displayName = EntityList.SelectedValue.ToString();
+                if ((displayName) == PageFunctions.AllRecords)
                 {
                     selectedEntityID = 0;
                     selectedEntity = null;
@@ -587,7 +587,7 @@ namespace ProjectTile
                 {
                     try
                     {
-                        selectedEntity = EntityFunctions.GetEntityByName(entityName);
+                        selectedEntity = EntityFunctions.GetEntityByName(displayName);
                         selectedEntityID = selectedEntity.ID;
                         StaffButton.IsEnabled = true;
                     }

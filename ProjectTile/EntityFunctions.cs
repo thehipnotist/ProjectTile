@@ -54,6 +54,12 @@ namespace ProjectTile
                     if (includeAll) { entityList.Add(PageFunctions.AllRecords); }
 
                     string[] entityArray = entityList.ToArray();
+
+                    for (int i = 0; i < entityArray.Length; i++)
+                    {
+                        entityArray[i] = PageFunctions.FormatSqlOutput(entityArray[i]);
+                    }
+
                     return entityArray;
                 }
             }
@@ -82,20 +88,21 @@ namespace ProjectTile
             }
         }
 
-        public static Entities GetEntityByName(string entityName)
+        public static Entities GetEntityByName(string displayName)
         {
             try
             {
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    Entities selectedEntity = existingPtDb.Entities.First(ent => ent.EntityName == entityName);
+                    string sqlName = PageFunctions.FormatSqlInput(displayName);
+                    Entities selectedEntity = existingPtDb.Entities.First(ent => ent.EntityName == sqlName);
                     return selectedEntity;
                 }
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error retrieving an Entity called " + entityName + " from the database: " + generalException.Message);
+                MessageFunctions.ErrorMessage("Error retrieving an Entity called " + displayName + " from the database: " + generalException.Message);
                 return null;
             }
         }
@@ -108,7 +115,7 @@ namespace ProjectTile
                 using (existingPtDb)
                 {
                     Entities selectedEntity = existingPtDb.Entities.Find(entityID);
-                    return selectedEntity.EntityName;
+                    return PageFunctions.FormatSqlOutput(selectedEntity.EntityName);
                 }
             }
             catch (Exception generalException)
@@ -152,8 +159,8 @@ namespace ProjectTile
                     UpdateCurrentEntity(ref selectedEntity);
                     if (makeDefault) 
                     {
-                        string strEntityName = selectedEntity.EntityName;
-                        SetDefaultEntity(ref selectedEntity, 0, true);
+                        string strEntityName = PageFunctions.FormatSqlOutput(selectedEntity.EntityName);
+                        SetDefaultEntity(ref selectedEntity);
                         MessageFunctions.SuccessMessage("Your default Entity has now been set to '" + strEntityName + "'.", "Default Entity Changed");
                     }
                     PageFunctions.ShowTilesPage();
@@ -163,39 +170,33 @@ namespace ProjectTile
             else { MessageFunctions.InvalidMessage("Please select an Entity from the drop-down list.", "No Entity Selected"); }
         }
 
-        public static void NewEntity(string entityName, string entityDescription, bool switchTo, bool makeDefault)
+        public static void NewEntity(string displayName, string displayDescription, bool switchTo, bool makeDefault)
         {
             int newEntityID;
             Entities newEntity;
 
-            if (entityName == "")
-            {
-                MessageFunctions.InvalidMessage("Please enter a name for the new Entity in the 'Entity Name' text box.", "No Name Entered");
-                return;
-            }
+            string sqlName = (PageFunctions.SqlInput(displayName, true, "Entity name"));
+            if (sqlName == PageFunctions.InvalidString) { return; }
 
-            if (entityDescription == "")
-            {
-                MessageFunctions.InvalidMessage("Please enter a description for the new Entity in the 'Entity Description' text box.", "No Description Entered");
-                return;
-            }
+            string sqlDescription = (PageFunctions.SqlInput(displayDescription, true, "Entity description"));
+            if (sqlDescription == PageFunctions.InvalidString) { return; }
 
             try
             {
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    Entities checkNewName = existingPtDb.Entities.FirstOrDefault(ent => ent.EntityName == entityName);
+                    Entities checkNewName = existingPtDb.Entities.FirstOrDefault(ent => ent.EntityName == sqlName);
                     if (checkNewName != null)
                     {
-                        MessageFunctions.InvalidMessage("Could not create new Entity. An Entity with name '" + entityName + "' already exists.", "Duplicate Name");
+                        MessageFunctions.InvalidMessage("Could not create new Entity. An Entity with name '" + displayName + "' already exists.", "Duplicate Name");
                         return;
                     }
 
-                    Entities checkNewDescription = existingPtDb.Entities.FirstOrDefault(ent => ent.EntityDescription == entityDescription);
+                    Entities checkNewDescription = existingPtDb.Entities.FirstOrDefault(ent => ent.EntityDescription == sqlDescription);
                     if (checkNewDescription != null)
                     {
-                        MessageFunctions.InvalidMessage("Could not create new Entity. An Entity with description '" + entityDescription + "' already exists.", "Duplicate Description");
+                        MessageFunctions.InvalidMessage("Could not create new Entity. An Entity with description '" + displayDescription + "' already exists.", "Duplicate Description");
                         return;
                     }
 
@@ -204,15 +205,15 @@ namespace ProjectTile
                         try
                         {
                             newEntity = new Entities();
-                            newEntity.EntityName = entityName;
-                            newEntity.EntityDescription = entityDescription;
+                            newEntity.EntityName = sqlName;
+                            newEntity.EntityDescription = sqlDescription;
                             
                             try
                             {
                                 existingPtDb.Entities.Add(newEntity);
                                 existingPtDb.SaveChanges();
                                 newEntityID = newEntity.ID;
-                            }
+                            }                          
                             catch (Exception generalException)
                             {
                                 MessageFunctions.ErrorMessage("Problem creating entity ID: " + generalException.Message);
@@ -247,9 +248,9 @@ namespace ProjectTile
                                 switched = " and you are now logged into it.";
                             }
 
-                            if (makeDefault) { SetDefaultEntity(ref newEntity, 0, true); }
+                            if (makeDefault) { SetDefaultEntity(ref newEntity); }
 
-                            MessageFunctions.SuccessMessage("Entity '" + entityName + "' has been created" + switched, "New Entity Created");
+                            MessageFunctions.SuccessMessage("Entity '" + displayName + "' has been created" + switched, "New Entity Created");
                             PageFunctions.ShowTilesPage();
                         }
                         catch (SqlException sqlException)
@@ -269,7 +270,7 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.ErrorMessage("Error checking new database details: " + generalException.Message); }
         }
 
-        public static void AmendEntity(ref Entities selectedEntity, string entityName, string entityDescription)
+        public static void AmendEntity(ref Entities selectedEntity, string displayName, string displayDescription)
         {
             int intSelectedEntityID;
             
@@ -278,16 +279,12 @@ namespace ProjectTile
                 MessageFunctions.InvalidMessage("Please select an Entity to amend from the drop-down list.", "No Entity Selected");
                 return;
             }
-            else if (entityName == "")
-            {
-                MessageFunctions.InvalidMessage("Please enter a name for the Entity in the 'Entity Name' text box.", "No Name Entered");
-                return;
-            }
-            else if (entityDescription == "")
-            {
-                MessageFunctions.InvalidMessage("Please enter a description for the Entity in the 'Entity Description' text box.", "No Description Entered");
-                return;
-            }
+
+            string sqlName = (PageFunctions.SqlInput(displayName, true, "Entity name"));
+            if (sqlName == PageFunctions.InvalidString) { return; }
+
+            string sqlDescription = (PageFunctions.SqlInput(displayDescription, true, "Entity description"));
+            if (sqlDescription == PageFunctions.InvalidString) { return; }
 
             try
             {
@@ -296,17 +293,17 @@ namespace ProjectTile
                 {
                     intSelectedEntityID = selectedEntity.ID;
                     
-                    Entities checkNewName = existingPtDb.Entities.FirstOrDefault(ent => ent.EntityName == entityName && ent.ID != intSelectedEntityID);
+                    Entities checkNewName = existingPtDb.Entities.FirstOrDefault(ent => ent.EntityName == sqlName && ent.ID != intSelectedEntityID);
                     if (checkNewName != null)
                     {
-                        MessageFunctions.InvalidMessage("Could not amend Entity. Another Entity with name '" + entityName + "' already exists.", "Duplicate Name");
+                        MessageFunctions.InvalidMessage("Could not amend Entity. Another Entity with name '" + displayName + "' already exists.", "Duplicate Name");
                         return;
                     }
 
-                    Entities checkNewDescription = existingPtDb.Entities.FirstOrDefault(ent => ent.EntityDescription == entityDescription && ent.ID != intSelectedEntityID);
+                    Entities checkNewDescription = existingPtDb.Entities.FirstOrDefault(ent => ent.EntityDescription == sqlDescription && ent.ID != intSelectedEntityID);
                     if (checkNewDescription != null)
                     {
-                        MessageFunctions.InvalidMessage("Could not amend Entity. Another Entity with description '" + entityDescription + "' already exists.", "Duplicate Description");
+                        MessageFunctions.InvalidMessage("Could not amend Entity. Another Entity with description '" + displayDescription + "' already exists.", "Duplicate Description");
                         return;
                     }
 
@@ -314,20 +311,21 @@ namespace ProjectTile
                     {
                         try
                         {
-                            string strNameChange = "";
-                            string strOriginalName = selectedEntity.EntityName;
+                            string nameChange = "";
+                            string originalName = selectedEntity.EntityName;
+                            string sqlOriginalName = PageFunctions.FormatSqlOutput(originalName);
 
-                            if (strOriginalName != entityName)
+                            if (originalName != sqlName)
                             {
-                                strNameChange = " to '" + entityName + "'";
+                                nameChange = " to '" + displayName + "'";
                             };
 
                             Entities changeDbEntity = existingPtDb.Entities.Find(intSelectedEntityID);
-                            changeDbEntity.EntityName = entityName;
-                            changeDbEntity.EntityDescription = entityDescription;
+                            changeDbEntity.EntityName = sqlName;
+                            changeDbEntity.EntityDescription = sqlDescription;
                             existingPtDb.SaveChanges();
 
-                            MessageFunctions.SuccessMessage("Entity '" + strOriginalName + "' has been amended" + strNameChange + ".", "Entity Amended");
+                            MessageFunctions.SuccessMessage("Entity '" + sqlOriginalName + "' has been amended" + nameChange + ".", "Entity Amended");
                             if (changeDbEntity.ID == CurrentEntityID) { UpdateCurrentEntity(ref changeDbEntity); }
                             if (changeDbEntity.ID == DefaultEntityID) { UpdateMyDefaultEntity(ref changeDbEntity); }
                             PageFunctions.ShowTilesPage();
@@ -349,28 +347,29 @@ namespace ProjectTile
         {
             CurrentEntity = targetEntity;
             CurrentEntityID = CurrentEntity.ID;
-            CurrentEntityName = CurrentEntity.EntityName;
+            CurrentEntityName = PageFunctions.FormatSqlOutput(CurrentEntity.EntityName);
             winMain.updateDetailsBlock();
         }
 
         // Default Entity functions
 
-        public static void SetDefaultEntity(ref Entities selectedEntity, int staffID = 0, bool save = true)
+        public static void SetDefaultEntity(ref Entities selectedEntity, int staffID = 0)
         {
             ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
             using (existingPtDb)
             {
                 try
                 {
-                    if (staffID == 0) { staffID = LoginFunctions.CurrentStaffID; }                    
-                    Staff thisUser = existingPtDb.Staff.Find(staffID);                    
-                    thisUser.DefaultEntity = DefaultEntityID;
+                    if (staffID == 0) { staffID = LoginFunctions.CurrentStaffID; }
 
-                    if (save)
-                    {
-                        existingPtDb.SaveChanges();
-                        if (staffID == LoginFunctions.CurrentStaffID) { UpdateMyDefaultEntity(ref selectedEntity); }
-                    }
+//MessageFunctions.InvalidMessage(staffID.ToString());
+
+                    Staff thisUser = existingPtDb.Staff.Find(staffID);                    
+                    thisUser.DefaultEntity = selectedEntity.ID;
+                    
+                    existingPtDb.SaveChanges();
+                    if (staffID == LoginFunctions.CurrentStaffID) { UpdateMyDefaultEntity(ref selectedEntity); }
+
                 }
                 catch (SqlException sqlException)
                 {
@@ -385,17 +384,17 @@ namespace ProjectTile
             }
         }
 
-        public static void ChangeDefaultEntity(ref Entities selectedEntity, string entityName)
+        public static void ChangeDefaultEntity(ref Entities selectedEntity, string displayName)
         {
             if (selectedEntity != null)
             {
                 try
                 {
-                    SetDefaultEntity(ref selectedEntity, 0, true);
+                    SetDefaultEntity(ref selectedEntity);
                     string notCurrent = "";
-                    if (entityName != CurrentEntityName) { notCurrent = " Note that you are still currently connected to '" + CurrentEntityName + "'."; }
+                    if (displayName != CurrentEntityName) { notCurrent = " Note that you are still currently connected to '" + CurrentEntityName + "'."; }
 
-                    MessageFunctions.SuccessMessage("Your default Entity has now been set to '" + entityName + "'." + notCurrent, "Default Entity Changed");
+                    MessageFunctions.SuccessMessage("Your default Entity has now been set to '" + displayName + "'." + notCurrent, "Default Entity Changed");
                     winMain.updateDetailsBlock();
                     PageFunctions.ShowTilesPage();
                 }
@@ -408,7 +407,7 @@ namespace ProjectTile
         {
             Entities defaultEntity = targetEntity;
             DefaultEntityID = targetEntity.ID;
-            DefaultEntityName = targetEntity.EntityName;
+            DefaultEntityName = PageFunctions.FormatSqlOutput(targetEntity.EntityName);
             winMain.updateDetailsBlock();
         }
 

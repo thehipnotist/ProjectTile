@@ -65,10 +65,10 @@ END;
 -- Procedure to create a database user --
 GO
 CREATE PROC usp_CreateDatabaseUser
-	@UserID VARCHAR(50), @Passwd VARCHAR(50)
+	@UserID VARCHAR(50), @Passwd NVARCHAR(50)
 AS
 BEGIN
-	DECLARE @SQL VARCHAR(MAX)
+	DECLARE @SQL NVARCHAR(MAX)
 
 	SET @SQL = 'CREATE USER ProT_' + @UserID + ' WITH PASSWORD = ''' + @Passwd + '''
 		EXEC sp_addrolemember @rolename = ''db_datareader'', @membername = ''ProT_' + @UserID + '''
@@ -84,7 +84,7 @@ PRINT 'Created procedure to create a standard database user'
 
 -- Function to get the hashed password
 GO
-CREATE FUNCTION dbo.udf_GetHashedPassword (@Passwd VARCHAR(50)) 
+CREATE FUNCTION dbo.udf_GetHashedPassword (@Passwd NVARCHAR(50)) 
 RETURNS BINARY(64)
 AS
 BEGIN
@@ -94,20 +94,8 @@ END;
 GO
 PRINT 'Created password hash function'
 
-/*
 GO
-CREATE PROCEDURE [dbo].[stf_GetHashedPassword] (@Passwd VARCHAR(50)) 
-AS
-BEGIN
-	SELECT HASHBYTES('SHA2_512', @Passwd) AS HashedPassword
-END;
-
-GO
-PRINT 'Created password hash procedure'
-*/
-
-GO
-CREATE PROCEDURE [dbo].[stf_CheckHashedPassword] (@UserID VARCHAR(50), @Passwd VARCHAR(50)) 
+CREATE PROCEDURE [dbo].[stf_CheckHashedPassword] (@UserID VARCHAR(50), @Passwd NVARCHAR(50)) 
 AS
 BEGIN
 	DECLARE @UserHashedPassword BINARY(64)
@@ -151,8 +139,8 @@ CREATE TABLE dbo.AuditEntries (
 	, PrimaryColumn					VARCHAR(50)
 	, PrimaryValue					VARCHAR(50)
 	, ChangeColumn					VARCHAR(50)
-	, OldValue						VARCHAR(400) 
-	, NewValue						VARCHAR(400)		
+	, OldValue						NVARCHAR(400) 
+	, NewValue						NVARCHAR(400)		
 	)
 
 PRINT 'Created audit entries table'
@@ -162,11 +150,11 @@ PRINT 'Created audit entries table'
 GO
 CREATE PROC usp_AuditEntry
 	@ActionType VARCHAR(20), @TableName VARCHAR(50), @PrimaryColumn VARCHAR(50), @PrimaryValue VARCHAR(50),
-	@ChangeColumn VARCHAR(50), @OldValue VARCHAR(400), @NewValue VARCHAR(400)
+	@ChangeColumn VARCHAR(50), @OldValue NVARCHAR(400), @NewValue NVARCHAR(400)
 AS
 BEGIN
 	
-	DECLARE @SQL	VARCHAR(MAX)
+	DECLARE @SQL	NVARCHAR(MAX)
 	SET @SQL = 'INSERT INTO dbo.AuditEntries (ActionType, UserName, ChangeTime, TableName, PrimaryColumn, PrimaryValue,' 
 		+ 'ChangeColumn, OldValue, NewValue) 
 		' + 'SELECT ''' + @ActionType + ''', ''' + SUSER_SNAME() + ''', SYSDATETIME(), ''' + @TableName + ''', ''' 
@@ -189,7 +177,7 @@ AS
 BEGIN
 
 	SET NOCOUNT ON
-	DECLARE @SQL				VARCHAR(MAX)
+	DECLARE @SQL				NVARCHAR(MAX)
 	DECLARE @ThisColumn			VARCHAR(50)
 	DECLARE @ColumnType			VARCHAR(50)
 	DECLARE @PrimaryColType		VARCHAR(50)
@@ -213,8 +201,8 @@ BEGIN
 		DECLARE @PrimaryValue ' + @PrimaryColType + (SELECT CASE 
 			WHEN UPPER(@PrimaryColType) LIKE '%CHAR%' THEN '(' + CAST(@PrimaryMaxLength AS VARCHAR(10)) + ')' 
 			ELSE '' END) + '
-		DECLARE @OldValue VARCHAR(400) 
-		DECLARE @NewValue VARCHAR(400)
+		DECLARE @OldValue NVARCHAR(400) 
+		DECLARE @NewValue NVARCHAR(400)
 
 		SELECT @ActionType = CASE WHEN NOT EXISTS (SELECT * FROM INSERTED) THEN ''Deleted''
 			ELSE CASE WHEN NOT EXISTS (SELECT * FROM DELETED) THEN ''Inserted''
@@ -251,6 +239,7 @@ BEGIN
 			AND c.is_computed = 0
 			AND c.name <> @PrimaryColumn
 			AND c.name <> 'Passwd'
+			AND UPPER(st.name) <> 'SYSNAME'
 
 		OPEN C_Columns
 
@@ -268,7 +257,7 @@ BEGIN
 			IF @ActionType = ''Deleted''
 			BEGIN 			
 				SELECT @OldValue = ' + CASE WHEN @ThisColumn = 'PasswordHash' THEN '''[Hashed]''' 
-					ELSE 'CAST(d.' + @ThisColumn + ' AS VARCHAR(400))
+					ELSE 'CAST(d.' + @ThisColumn + ' AS NVARCHAR(400))
 					' END
 					+ ', @NewValue = ''''
 				FROM DELETED d
@@ -277,8 +266,8 @@ BEGIN
 			ELSE IF @ActionType = ''Inserted'' OR UPDATE(' + @ThisColumn + ') 
 			BEGIN
 				' + CASE WHEN @ThisColumn = 'PasswordHash' THEN 'SELECT @OldValue = ''[OldHash]'', @NewValue = ''[NewHash]'''
-				ELSE 'SELECT @OldValue = ISNULL(CAST(d.' + @ThisColumn + ' AS VARCHAR(400)),''''),	
-					@NewValue = CAST(i.' + @ThisColumn + ' AS VARCHAR(400))
+				ELSE 'SELECT @OldValue = ISNULL(CAST(d.' + @ThisColumn + ' AS NVARCHAR(400)),''''),	
+					@NewValue = CAST(i.' + @ThisColumn + ' AS NVARCHAR(400))
 				FROM INSERTED i
 					LEFT JOIN DELETED d ON d.' + @PrimaryColumn + ' = i.' + @PrimaryColumn + '
 				WHERE i.' + @PrimaryColumn + ' =  @PrimaryValue' 
@@ -433,6 +422,7 @@ BEGIN
 	WHERE t.name = @TableName
 		AND c.is_identity = 0
 		AND c.is_computed = 0
+		AND UPPER(st.name) <> 'SYSNAME'
 
 	OPEN C_Columns
 
@@ -596,7 +586,7 @@ BEGIN TRY
 		CREATE TABLE dbo.Entities (
 			ID							INT				IDENTITY(1,1)	PRIMARY KEY
 			, EntityName				VARCHAR(30)		UNIQUE			NOT NULL
-			, EntityDescription			VARCHAR(100)	UNIQUE			NOT NULL
+			, EntityDescription			NVARCHAR(100)	UNIQUE			NOT NULL
 			)
 		
 		PRINT 'Created entities table'
@@ -624,17 +614,18 @@ BEGIN TRY
 
 		PRINT 'Populated entities table'
 
+
 		EXEC [dbo].[usp_CreateGetProcedure] 
 			@TableName = 'Entities'
 			, @IDColumn = 'ID'
 			, @Prefix = 'ent'
-		
+
 		EXEC [dbo].[usp_CreateUpdateProcedure] 
 			@TableName = 'Entities'
 			, @IDColumn = 'ID'
 			, @UpdateColumn = 'EntityName'
 			, @Prefix = 'ent'
-		
+
 		EXEC [dbo].[usp_CreateUpdateProcedure] 
 			@TableName = 'Entities'
 			, @IDColumn = 'ID'
@@ -654,14 +645,14 @@ BEGIN TRY
 		CREATE TABLE dbo.Staff (
 			ID							INT				IDENTITY(1,1)	PRIMARY KEY
 			, EmployeeID AS RIGHT('E000000' + CAST(ID AS VARCHAR(100)), 7) PERSISTED	 
-			, FirstName					VARCHAR(100)	NOT NULL
-			, Surname					VARCHAR(100)	NOT NULL
+			, FirstName					NVARCHAR(100)	NOT NULL
+			, Surname					NVARCHAR(100)	NOT NULL
 			, RoleCode					VARCHAR(5)
 				CONSTRAINT fk_StaffRoleCode FOREIGN KEY REFERENCES dbo.StaffRoles (RoleCode)
 			, StartDate					DATE			NOT NULL
 			, LeaveDate					DATE
 			, UserID					VARCHAR(50)		
-			, Passwd					VARCHAR(50)
+			, Passwd					NVARCHAR(50)
 			, PasswordHash				BINARY(64)
 			, Active					BIT				NOT NULL
 			, DefaultEntity				INT
@@ -702,7 +693,7 @@ BEGIN TRY
 		AS
 		BEGIN
 			DECLARE @UserID	VARCHAR(50)
-			DECLARE @Passwd VARCHAR(50) 
+			DECLARE @Passwd NVARCHAR(50) 
 			DECLARE @Active BIT	
 		
 			IF UPDATE(UserID)
@@ -886,9 +877,10 @@ BEGIN TRY
 
 		---- Create a view dynamically so it can go in the same batch
 		EXEC ('CREATE VIEW dbo.vi_StaffEntities AS	
-			SELECT s.FirstName + '' '' + s.Surname as StaffName, e.EntityName, e.EntityDescription 
+			SELECT s.FirstName + '' '' + s.Surname AS StaffName, e.EntityName, e.EntityDescription, 
+				CASE WHEN s.DefaultEntity = e.ID THEN 1 ELSE 0 END AS DefaultEntity 
 			FROM dbo.StaffEntities se
-				INNER JOIN dbo.Staff s on se.StaffID = s.ID
+				INNER JOIN dbo.Staff s ON se.StaffID = s.ID
 				INNER JOIN dbo.Entities e ON se.EntityID = e.ID')
 
 		PRINT 'Created a view of clients with their products'
@@ -902,7 +894,7 @@ BEGIN TRY
 			, EntityID					INT				NOT NULL
 				CONSTRAINT fk_ClientEntityID FOREIGN KEY REFERENCES dbo.Entities (ID)
 			, ClientCode				VARCHAR(15)		NOT NULL
-			, ClientName				VARCHAR(200)	NOT NULL
+			, ClientName				NVARCHAR(200)	NOT NULL
 			, AccountManagerID			INT
 				CONSTRAINT fk_ClientAccountManagerID FOREIGN KEY REFERENCES dbo.Staff (ID)
 			, Active					BIT				NOT NULL
@@ -1005,7 +997,7 @@ BEGIN TRY
 			ID							INT				IDENTITY(1,1)	PRIMARY KEY
 			, ProductName				VARCHAR(100)	UNIQUE
 			, LatestVersion				DECIMAL(10, 2)
-			, ProductDescription		VARCHAR(300)			
+			, ProductDescription		NVARCHAR(300)			
 			)
 
 		PRINT 'Created products table'
@@ -1139,7 +1131,7 @@ BEGIN TRY
 		CREATE TABLE ProjectTypes (
 			TypeCode					VARCHAR(5)		PRIMARY KEY
 			, TypeName					VARCHAR(100)	UNIQUE
-			, TypeDescription			VARCHAR(200)
+			, TypeDescription			NVARCHAR(200)
 			)	
 		
 		PRINT 'Created project types table'
@@ -1200,7 +1192,7 @@ BEGIN TRY
 		CREATE TABLE dbo.ProjectStages (
 			StageCode					INT				PRIMARY KEY
 			, StageName					VARCHAR(20)		NOT NULL
-			, StageDescription			VARCHAR(100)	NOT NULL
+			, StageDescription			NVARCHAR(100)	NOT NULL
 			, ProjectStatus				VARCHAR(20)		NOT NULL
 			)
 		
@@ -1279,7 +1271,7 @@ BEGIN TRY
 			, StartDate					DATE
 			, StageCode					INT				NOT NULL
 				CONSTRAINT fk_ProjectStageCode FOREIGN KEY REFERENCES dbo.ProjectStages(StageCode)
-			, ProjectSummary			VARCHAR(400)	NOT NULL				
+			, ProjectSummary			NVARCHAR(400)	NOT NULL				
 			)
 		
 		PRINT 'Created projects table'
@@ -1734,11 +1726,11 @@ BEGIN TRY
 			ID							INT				IDENTITY(1,1)	PRIMARY KEY
 			, ClientID					INT				NOT NULL
 				CONSTRAINT fk_StaffClientID FOREIGN KEY REFERENCES dbo.Clients (ID)
-			, FirstName					VARCHAR(100)	NOT NULL
-			, Surname					VARCHAR(100)	NOT NULL
-			, JobTitle					VARCHAR(100)
+			, FirstName					NVARCHAR(100)	NOT NULL
+			, Surname					NVARCHAR(100)	NOT NULL
+			, JobTitle					NVARCHAR(100)
 			, PhoneNumber				VARCHAR(50)
-			, Email						VARCHAR(100)
+			, Email						NVARCHAR(100)
 			, Active					BIT				NOT NULL
 			)
 	
@@ -2131,6 +2123,7 @@ BEGIN TRY
 	COMMIT TRANSACTION
 
 	PRINT 'Transaction committed'
+
 
 END TRY
 

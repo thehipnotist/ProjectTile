@@ -115,8 +115,8 @@ namespace ProjectTile
         /* Control-specific events */
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
-            string entityName = EntityName.Text;
-            string entityDescription = EntityDescription.Text;
+            string displayName = EntityName.Text;
+            string displayDescription = EntityDescription.Text;
 
             if (pageMode == "Switch")
             {
@@ -124,16 +124,16 @@ namespace ProjectTile
             }
             else if (pageMode == "New")
             {
-                EntityFunctions.NewEntity(entityName, entityDescription, (bool)SwitchTo_CheckBox.IsChecked, (bool)MakeDefault_CheckBox.IsChecked);              
+                EntityFunctions.NewEntity(displayName, displayDescription, (bool)SwitchTo_CheckBox.IsChecked, (bool)MakeDefault_CheckBox.IsChecked);              
             }
             else if (pageMode == "Amend")
             {
-                EntityFunctions.AmendEntity(ref selectedEntity, entityName, entityDescription);                
+                EntityFunctions.AmendEntity(ref selectedEntity, displayName, displayDescription);                
                
             }
             else if (pageMode == "Default")
             {
-                EntityFunctions.ChangeDefaultEntity(ref selectedEntity, entityName);
+                EntityFunctions.ChangeDefaultEntity(ref selectedEntity, displayName);
             }
             else { MessageFunctions.ErrorMessage("Not yet implemented."); }    
         }
@@ -145,15 +145,15 @@ namespace ProjectTile
 
         private void EntityList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string entityName = EntityList.SelectedValue.ToString();
-            EntityName.Text = entityName;
+            string displayName = EntityList.SelectedValue.ToString();
+            EntityName.Text = displayName;
 
             try
             {
-                selectedEntity = EntityFunctions.GetEntityByName(entityName);
+                selectedEntity = EntityFunctions.GetEntityByName(displayName);
                 selectedEntityID = selectedEntity.ID;
 
-                EntityDescription.Text = selectedEntity.EntityDescription;
+                EntityDescription.Text = PageFunctions.FormatSqlOutput(selectedEntity.EntityDescription);
                 if (pageMode == "Amend")
                 {
                     EntityDescription.IsEnabled = true;

@@ -17,8 +17,8 @@
           <Property Name="PrimaryColumn" Type="varchar" MaxLength="50" />
           <Property Name="PrimaryValue" Type="varchar" MaxLength="50" />
           <Property Name="ChangeColumn" Type="varchar" MaxLength="50" />
-          <Property Name="OldValue" Type="varchar" MaxLength="400" />
-          <Property Name="NewValue" Type="varchar" MaxLength="400" />
+          <Property Name="OldValue" Type="nvarchar" MaxLength="400" />
+          <Property Name="NewValue" Type="nvarchar" MaxLength="400" />
         </EntityType>
         <EntityType Name="ClientProducts">
           <Key>
@@ -37,7 +37,7 @@
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="EntityID" Type="int" Nullable="false" />
           <Property Name="ClientCode" Type="varchar" MaxLength="15" Nullable="false" />
-          <Property Name="ClientName" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="ClientName" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="AccountManagerID" Type="int" />
           <Property Name="Active" Type="bit" Nullable="false" />
         </EntityType>
@@ -49,9 +49,9 @@
           <Property Name="ClientID" Type="int" Nullable="false" />
           <Property Name="FirstName" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="Surname" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="JobTitle" Type="varchar" MaxLength="100" />
+          <Property Name="JobTitle" Type="nvarchar" MaxLength="100" />
           <Property Name="PhoneNumber" Type="varchar" MaxLength="50" />
-          <Property Name="Email" Type="varchar" MaxLength="100" />
+          <Property Name="Email" Type="nvarchar" MaxLength="100" />
           <Property Name="Active" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="ClientTeamRoles">
@@ -78,7 +78,7 @@
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
-          <Property Name="EntityDescription" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="EntityDescription" Type="nvarchar" MaxLength="100" Nullable="false" />
         </EntityType>
         <EntityType Name="Products">
           <Key>
@@ -87,7 +87,7 @@
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ProductName" Type="varchar" MaxLength="100" />
           <Property Name="LatestVersion" Type="decimal" Precision="10" Scale="2" />
-          <Property Name="ProductDescription" Type="varchar" MaxLength="300" />
+          <Property Name="ProductDescription" Type="nvarchar" MaxLength="300" />
         </EntityType>
         <EntityType Name="ProjectProducts">
           <Key>
@@ -118,7 +118,7 @@
           <Property Name="ClientID" Type="int" />
           <Property Name="StartDate" Type="date" />
           <Property Name="StageCode" Type="int" Nullable="false" />
-          <Property Name="ProjectSummary" Type="varchar" MaxLength="400" Nullable="false" />
+          <Property Name="ProjectSummary" Type="nvarchar" MaxLength="400" Nullable="false" />
         </EntityType>
         <EntityType Name="ProjectStages">
           <Key>
@@ -126,7 +126,7 @@
           </Key>
           <Property Name="StageCode" Type="int" Nullable="false" />
           <Property Name="StageName" Type="varchar" MaxLength="20" Nullable="false" />
-          <Property Name="StageDescription" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="StageDescription" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="ProjectStatus" Type="varchar" MaxLength="20" Nullable="false" />
         </EntityType>
         <EntityType Name="ProjectTeams">
@@ -146,7 +146,7 @@
           </Key>
           <Property Name="TypeCode" Type="varchar" MaxLength="5" Nullable="false" />
           <Property Name="TypeName" Type="varchar" MaxLength="100" />
-          <Property Name="TypeDescription" Type="varchar" MaxLength="200" />
+          <Property Name="TypeDescription" Type="nvarchar" MaxLength="200" />
         </EntityType>
         <EntityType Name="Staff">
           <Key>
@@ -160,7 +160,7 @@
           <Property Name="StartDate" Type="date" Nullable="false" />
           <Property Name="LeaveDate" Type="date" />
           <Property Name="UserID" Type="varchar" MaxLength="50" />
-          <Property Name="Passwd" Type="varchar" MaxLength="50" />
+          <Property Name="Passwd" Type="nvarchar" MaxLength="50" />
           <Property Name="PasswordHash" Type="binary" MaxLength="64" />
           <Property Name="Active" Type="bit" Nullable="false" />
           <Property Name="DefaultEntity" Type="int" />
