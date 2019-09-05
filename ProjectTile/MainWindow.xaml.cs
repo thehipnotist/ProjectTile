@@ -132,17 +132,17 @@ namespace ProjectTile
             PageFunctions.ShowEntityPage("Default");
         }
 
-        private void AdminMenu_Login_Click(object sender, RoutedEventArgs e)
+        private void LoginMenu_Login_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowLoginPage("LogIn");
         }
 
-        private void AdminMenu_Password_Click(object sender, RoutedEventArgs e)
+        private void LoginMenu_Password_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowLoginPage("PassChange");
         }
 
-        private void AdminMenu_Exit_Click(object sender, RoutedEventArgs e)
+        private void LoginMenu_Exit_Click(object sender, RoutedEventArgs e)
         {
             Close();
         }

@@ -24,12 +24,6 @@
                 <MenuItem x:Name="NewEntity" Header="Create New Entity" Click="NewEntity_Click" FontWeight="Normal" Background="{StaticResource PtBrushGreen1}" Foreground="Black"/>
                 <MenuItem x:Name="AmendEntity" Header="Amend Existing Entity" Click="AmendEntity_Click" FontWeight="Normal" Background="{StaticResource PtBrushGreen1}" Foreground="Black"/>
             </MenuItem>
-            <MenuItem x:Name="AdminMenu" Header="_Admin" FontWeight="Bold" ToolTip="{StaticResource AdminTip}" BorderBrush="{x:Null}"
-                      Padding="6,0,6,0" HorizontalContentAlignment="Center" Background ="{StaticResource PtBrushBackgroundBlue}" Foreground="{StaticResource PtBrushRed3}">
-                <MenuItem x:Name="ChangeLogin" Header="Change Login" Click="AdminMenu_Login_Click" FontWeight="Normal" Background="{StaticResource PtBrushRed1}" Foreground="Black"/>
-                <MenuItem x:Name="ChangePassword" Header="Change Password" Click="AdminMenu_Password_Click" FontWeight="Normal" Background="{StaticResource PtBrushRed1}" Foreground="Black"/>
-                <MenuItem x:Name="Exit" Header="Exit ProjectTile" Click="AdminMenu_Exit_Click" FontWeight="Normal" Background="{StaticResource PtBrushRed1}" Foreground="Black"/>
-            </MenuItem>
             <MenuItem x:Name="StaffMenu" Header="_Staff" FontWeight="Bold" ToolTip="{StaticResource StaffTip}" BorderBrush="{x:Null}" Foreground="{StaticResource PtBrushGold3}" 
                       Padding="6,0,6,0" HorizontalContentAlignment="Center" Background="{StaticResource PtBrushBackgroundBlue}">
                 <MenuItem x:Name="ViewStaff" Header="View Staff Details" FontWeight="Normal" Background="{StaticResource PtBrushGold1}" Click="ViewStaff_Click" Foreground="Black"/>
@@ -49,6 +43,12 @@
                 <MenuItem x:Name="NewClient" Header="Create New Clients" FontWeight="Normal" Background="{StaticResource PtBrushPurple1}" Foreground="Black" Click="NewClient_Click"/>
                 <MenuItem x:Name="AmendClient" Header="Amend Clients" FontWeight="Normal" Background="{StaticResource PtBrushPurple1}" Foreground="Black" Click="AmendClient_Click"/>
             </MenuItem>
+            <MenuItem x:Name="LoginMenu" Header="_Login" FontWeight="Bold" ToolTip="{StaticResource LoginTip}" BorderBrush="{x:Null}"
+                      Padding="6,0,6,0" HorizontalContentAlignment="Center" Background ="{StaticResource PtBrushBackgroundBlue}" Foreground="{StaticResource PtBrushRed3}" HorizontalAlignment="Left">
+                <MenuItem x:Name="ChangeLogin" Header="Change Login" Click="LoginMenu_Login_Click" FontWeight="Normal" Background="{StaticResource PtBrushRed1}" Foreground="Black"/>
+                <MenuItem x:Name="ChangePassword" Header="Change Password" Click="LoginMenu_Password_Click" FontWeight="Normal" Background="{StaticResource PtBrushRed1}" Foreground="Black"/>
+                <MenuItem x:Name="Exit" Header="Exit ProjectTile" Click="LoginMenu_Exit_Click" FontWeight="Normal" Background="{StaticResource PtBrushRed1}" Foreground="Black"/>
+            </MenuItem>            
         </Menu>
 
         <TextBlock x:Name="DetailsBlock" HorizontalAlignment="Right" Height="{Binding ActualHeight, ElementName=Main}" Margin="0,65,4,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="145" 

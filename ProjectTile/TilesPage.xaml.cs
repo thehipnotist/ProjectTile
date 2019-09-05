@@ -77,7 +77,7 @@ namespace ProjectTile
             try
             {
                 mainButtons.Add(EntityButton);
-                mainButtons.Add(AdminButton);
+                mainButtons.Add(LoginButton);
                 mainButtons.Add(StaffButton);
                 mainButtons.Add(ProductButton);
                 mainButtons.Add(ClientButton);
@@ -89,9 +89,9 @@ namespace ProjectTile
                 else { EntityButton_Amend.Margin = EntityButton_New.Margin; }
                 if (myPermissions.Allow("EditEntities")) { entityButtons.Add(EntityButton_Amend); }
 
-                adminButtons.Add(AdminButton_Login);
-                adminButtons.Add(AdminButton_Password);
-                adminButtons.Add(AdminButton_Exit);
+                adminButtons.Add(LoginButton_Login);
+                adminButtons.Add(LoginButton_Password);
+                adminButtons.Add(LoginButton_Exit);
 
                 if (myPermissions.Allow("ViewStaff")) { staffButtons.Add(StaffButton_View); }
                 if (myPermissions.Allow("AddStaff")) { staffButtons.Add(StaffButton_New); }
@@ -155,7 +155,7 @@ namespace ProjectTile
                     toggleMainButtons(thisButton, false);
 
                     if (thisButton.Name == "EntityButton") { toggleChildButtons(true, ref entityButtons); }
-                    else if (thisButton.Name == "AdminButton") { toggleChildButtons(true, ref adminButtons); }
+                    else if (thisButton.Name == "LoginButton") { toggleChildButtons(true, ref adminButtons); }
                     else if (thisButton.Name == "StaffButton") { toggleChildButtons(true, ref staffButtons); }
                     else if (thisButton.Name == "ProductButton") { toggleChildButtons(true, ref productButtons); }
                     else if (thisButton.Name == "ClientButton") { toggleChildButtons(true, ref clientButtons); }
@@ -279,17 +279,17 @@ namespace ProjectTile
             PageFunctions.ShowEntityPage("Default");
         }
 
-        private void AdminButton_Login_Click(object sender, RoutedEventArgs e)
+        private void LoginButton_Login_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowLoginPage("LogIn");
         }
 
-        private void AdminButton_Password_Click(object sender, RoutedEventArgs e)
+        private void LoginButton_Password_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowLoginPage("PassChange");
         }
 
-        private void AdminButton_Exit_Click(object sender, RoutedEventArgs e)
+        private void LoginButton_Exit_Click(object sender, RoutedEventArgs e)
         {
             winMain.Close();
         }

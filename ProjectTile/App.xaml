@@ -97,7 +97,7 @@
 
         <!-- Tooltips -->
         <ToolTip x:Key="EntitiesTip" Content="Entities are logical divisions of the business such as Companies, Legal Entities or Business Units"/>
-        <ToolTip x:Key="AdminTip" Content="Functions relating to your ProjectTile login details"/>
+        <ToolTip x:Key="LoginTip" Content="Functions relating to your ProjectTile login details"/>
         <ToolTip x:Key="StaffTip" Content="Staff includes ProjectTile users, and also other staff members who may work on projects"/>
         <ToolTip x:Key="ProductTip" Content="Products are the software packages used by clients, and implemented or amended via projects"/>
         <ToolTip x:Key="ClientTip" Content="Clients are software customers for (and with) whom projects are undertaken"/>
