@@ -136,7 +136,7 @@ namespace ProjectTile
                 MessageFunctions.InvalidMessage(fieldName + "s cannot be blank. Please enter a value in the '" + fieldTitle + "' field and try again.", "No " + fieldTitle + " Entered");
                 return InvalidString;
             }
-
+            
             if (invalidCharacters != "")
             {
                 List<char> inputChars = inputText.ToCharArray().ToList();
@@ -152,7 +152,8 @@ namespace ProjectTile
                 }
             }
 
-            return FormatSqlInput(inputText);
+            return inputText;
+            //return FormatSqlInput(inputText);
         }
 
         public static string FormatSqlOutput(string inputText)

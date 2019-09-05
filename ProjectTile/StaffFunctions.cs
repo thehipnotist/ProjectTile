@@ -415,7 +415,7 @@ namespace ProjectTile
             {
                 if (thisPerson.LeaveDate < System.DateTime.Today)
                 {
-                    MessageFunctions.InvalidMessage(thisPerson.FirstName + " " + thisPerson.Surname + " has left, and cannot be added to additional Entities.");
+                    MessageFunctions.InvalidMessage(thisPerson.FirstName + " " + thisPerson.Surname + " has left, and cannot be added to additional Entities.", "Not Current User");
                     return false;
                 }
                 else { return true; }
@@ -434,7 +434,7 @@ namespace ProjectTile
             {
                 if ((newDefaultID > 0 && newDefaultID == entityID) || (newDefaultID == 0 && thisPerson.DefaultEntity == entityID))
                 {
-                    MessageFunctions.InvalidMessage("Cannot remove " + thisPerson.FirstName + " " + thisPerson.Surname + " from their default Entity.");
+                    MessageFunctions.InvalidMessage("Cannot remove " + thisPerson.FirstName + " " + thisPerson.Surname + " from their default Entity.", "Default Entity Required");
                     return false;
                 }
                 else
@@ -447,13 +447,13 @@ namespace ProjectTile
                             int staffID = thisPerson.ID;
                             int openProjects = (from p in existingPtDb.Projects
                                                 join pt in existingPtDb.ProjectTeams on p.ID equals pt.ProjectID
-                                                where pt.StaffID == staffID && p.EntityID == entityID
+                                                where pt.StaffID == staffID && p.EntityID == entityID && p.ProjectStages.ProjectStatus != "Closed"
                                                 select p.ID)
                                                 .FirstOrDefault();
 
                             if (openProjects > 0)
                             {
-                                MessageFunctions.InvalidMessage("Cannot remove " + thisPerson.FirstName + " " + thisPerson.Surname + " as they have open projects in this Entity.");
+                                MessageFunctions.InvalidMessage("Cannot remove " + thisPerson.FirstName + " " + thisPerson.Surname + " as they have open projects in this Entity.", "Open Projects Found");
                                 return false;
                             }
                             else { return true; }
@@ -818,7 +818,7 @@ namespace ProjectTile
 
                     if (thisPerson.LeaveDate < System.DateTime.Today)
                     {
-                        MessageFunctions.InvalidMessage(thisPerson.FirstName + " " + thisPerson.Surname + " has left, so their default Entity cannot be changed.");
+                        MessageFunctions.InvalidMessage(thisPerson.FirstName + " " + thisPerson.Surname + " has left, so their default Entity cannot be changed.", "Not Current User");
                         return false;
                     }
 

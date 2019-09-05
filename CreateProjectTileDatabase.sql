@@ -257,7 +257,7 @@ BEGIN
 			IF @ActionType = ''Deleted''
 			BEGIN 			
 				SELECT @OldValue = ' + CASE WHEN @ThisColumn = 'PasswordHash' THEN '''[Hashed]''' 
-					ELSE 'CAST(d.' + @ThisColumn + ' AS NVARCHAR(400))
+					ELSE 'CAST(REPLACE(d.' + @ThisColumn + ', CHAR(39), CHAR(39) + CHAR(39)) AS NVARCHAR(400))
 					' END
 					+ ', @NewValue = ''''
 				FROM DELETED d
@@ -266,8 +266,8 @@ BEGIN
 			ELSE IF @ActionType = ''Inserted'' OR UPDATE(' + @ThisColumn + ') 
 			BEGIN
 				' + CASE WHEN @ThisColumn = 'PasswordHash' THEN 'SELECT @OldValue = ''[OldHash]'', @NewValue = ''[NewHash]'''
-				ELSE 'SELECT @OldValue = ISNULL(CAST(d.' + @ThisColumn + ' AS NVARCHAR(400)),''''),	
-					@NewValue = CAST(i.' + @ThisColumn + ' AS NVARCHAR(400))
+				ELSE 'SELECT @OldValue = ISNULL(CAST(REPLACE(d.' + @ThisColumn + ', CHAR(39), CHAR(39) + CHAR(39)) AS NVARCHAR(400)),''''),	
+					@NewValue = CAST(REPLACE(i.' + @ThisColumn + ', CHAR(39), CHAR(39) + CHAR(39)) AS NVARCHAR(400))
 				FROM INSERTED i
 					LEFT JOIN DELETED d ON d.' + @PrimaryColumn + ' = i.' + @PrimaryColumn + '
 				WHERE i.' + @PrimaryColumn + ' =  @PrimaryValue' 
@@ -2091,6 +2091,8 @@ BEGIN TRY
 			ID							INT				IDENTITY(1,1)	PRIMARY KEY
 			, CustomMessage				VARCHAR(200)
 			, ExceptionMessage			NVARCHAR(500)
+			, ExceptionType				NVARCHAR(200)
+			, TargetSite				NVARCHAR(500)
 			, LoggedAt					DATETIME
 			, LoggedBy					VARCHAR(100)
 			, InnerException			NVARCHAR(MAX)

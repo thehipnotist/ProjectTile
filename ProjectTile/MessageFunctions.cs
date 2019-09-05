@@ -77,12 +77,12 @@ namespace ProjectTile
             }
         }
 
-        public static void SuccessMessage(string message, string caption = "Record changed")
+        public static void SuccessMessage(string message, string caption)
         {
             MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        public static void InvalidMessage(string message, string caption = "Please try again")
+        public static void InvalidMessage(string message, string caption)
         {
             MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Stop);
         }
@@ -97,7 +97,7 @@ namespace ProjectTile
             }
             catch
             {
-                InvalidMessage(combinedMessage);
+                InvalidMessage(combinedMessage, "Please try again");
             }
         }
 
