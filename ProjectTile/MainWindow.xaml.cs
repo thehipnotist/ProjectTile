@@ -43,6 +43,8 @@ namespace ProjectTile
                 StaffEntities.Visibility = myPermissions.ShowOrCollapse("ViewStaffEntities");
 
                 ViewProducts.Visibility = myPermissions.ShowOrCollapse("ViewProducts");
+                NewProducts.Visibility = myPermissions.ShowOrCollapse("AddProducts");
+                AmendProducts.Visibility = myPermissions.ShowOrCollapse("EditProducts");
 
                 // More to come...
             }
@@ -163,6 +165,21 @@ namespace ProjectTile
         private void StaffEntities_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowStaffEntitiesPage();
+        }
+
+        private void ViewProducts_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowProductPage("View");
+        }
+
+        private void NewProducts_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowProductPage("New");
+        }
+
+        private void AmendProducts_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowProductPage("Amend");
         }
 
     } // class

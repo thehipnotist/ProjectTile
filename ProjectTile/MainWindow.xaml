@@ -39,7 +39,9 @@
             </MenuItem>
             <MenuItem x:Name="ProductsMenu" Header="_Products" FontWeight="Bold" ToolTip="{StaticResource ProductsTip}" BorderBrush="{x:Null}"
                       Padding="6,0,6,0" HorizontalContentAlignment="Center" Background="{StaticResource PtBrushBackgroundBlue}" Foreground="{StaticResource PtBrushBlue3}">
-                <MenuItem x:Name="ViewProducts" Header="View Products" FontWeight="Normal" Background="{StaticResource PtBrushBlue1}" Foreground="Black"/>
+                <MenuItem x:Name="ViewProducts" Header="View Products" FontWeight="Normal" Background="{StaticResource PtBrushBlue1}" Foreground="Black" Click="ViewProducts_Click"/>
+                <MenuItem x:Name="NewProducts" Header="Create New Product" FontWeight="Normal" Background="{StaticResource PtBrushBlue1}" Foreground="Black" Click="NewProducts_Click"/>
+                <MenuItem x:Name="AmendProducts" Header="Amend Products" FontWeight="Normal" Background="{StaticResource PtBrushBlue1}" Foreground="Black" Click="AmendProducts_Click"/>
             </MenuItem>
         </Menu>
 

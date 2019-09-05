@@ -91,6 +91,7 @@
                         <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Exit ProjectTile"/>
                     </Label>
                 </Button>
+                
                 <Button x:Name="EntityButton_New" Height="120" Width="120" Margin="15,200,0,0" Background="{StaticResource PtBrushGreen1}" Click="NewEntityButton_Click" HorizontalAlignment="Left" 
                         VerticalAlignment="Top" MouseLeave="buttonMouseOut" Visibility="Hidden">
                     <Label VerticalContentAlignment="Center" Background="{StaticResource PtBrushGreen2}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
@@ -119,6 +120,7 @@
                         <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Change Default Entity"/>
                     </Label>
                 </Button>
+                
                 <Button x:Name="StaffButton_View" Height="120" Width="120" Margin="225,80,0,0" Background="{StaticResource PtBrushGold1}" MouseLeave="buttonMouseOut" HorizontalAlignment="Left" 
                         VerticalAlignment="Top" Visibility="Hidden" Click="StaffButton_View_Click" Grid.Column="1" Grid.Row="1">
                     <Label VerticalContentAlignment="Center" Background="{StaticResource PtBrushGold2}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
@@ -147,14 +149,28 @@
                         <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Staff Entity Links"/>
                     </Label>
                 </Button>
+                
                 <Button x:Name="ProductButton_View" Height="120" Width="120" Margin="390,80,0,0" Background="{StaticResource PtBrushBlue1}" MouseLeave="buttonMouseOut" HorizontalAlignment="Left" 
-                        VerticalAlignment="Top" Visibility="Hidden">
+                        VerticalAlignment="Top" Visibility="Hidden" Click="ProductButton_View_Click">
                     <Label VerticalContentAlignment="Center" Background="{StaticResource PtBrushBlue2}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center">
                         <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="View Products"/>
                     </Label>
+                </Button>
+                <Button x:Name="ProductButton_New" Height="120" Width="120" Margin="510,200,0,0" Background="{StaticResource PtBrushBlue1}" MouseLeave="buttonMouseOut" HorizontalAlignment="Left" 
+                        VerticalAlignment="Top" Visibility="Hidden" Click="ProductButton_New_Click">
+                    <Label VerticalContentAlignment="Center" Background="{StaticResource PtBrushBlue2}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           HorizontalContentAlignment="Center">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Create New Product"/>
+                    </Label>
+                </Button>
+                <Button x:Name="ProductButton_Amend" Height="120" Width="120" Margin="510,320,0,0" Background="{StaticResource PtBrushBlue1}" MouseLeave="buttonMouseOut" HorizontalAlignment="Left" 
+                        VerticalAlignment="Top" Visibility="Hidden" Click="ProductButton_Amend_Click">
+                    <Label VerticalContentAlignment="Center" Background="{StaticResource PtBrushBlue2}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           HorizontalContentAlignment="Center">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Amend Products"/>
+                    </Label>
                 </Button>                
-
 
             </Grid>
         </Border>

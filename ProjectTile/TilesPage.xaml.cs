@@ -92,12 +92,15 @@ namespace ProjectTile
                 adminButtons.Add(AdminButton_Exit);
 
                 if (myPermissions.Allow("ViewStaff")) { staffButtons.Add(StaffButton_View); }
-                if (myPermissions.Allow("EditStaff")) { staffButtons.Add(StaffButton_Amend); }
-                else { StaffButton_Amend.Margin = StaffButton_New.Margin; }
                 if (myPermissions.Allow("AddStaff")) { staffButtons.Add(StaffButton_New); }
+                else { StaffButton_Amend.Margin = StaffButton_New.Margin; }
+                if (myPermissions.Allow("EditStaff")) { staffButtons.Add(StaffButton_Amend); }
                 if (myPermissions.Allow("ViewStaffEntities")) { staffButtons.Add(StaffButton_Entities); }
 
                 if (myPermissions.Allow("ViewProducts")) { productButtons.Add(ProductButton_View); }
+                if (myPermissions.Allow("AddProducts")) { productButtons.Add(ProductButton_New); }
+                else { ProductButton_Amend.Margin = ProductButton_New.Margin; }
+                if (myPermissions.Allow("EditProducts")) { productButtons.Add(ProductButton_Amend); }
 
                 // More to come...
             }
@@ -302,6 +305,21 @@ namespace ProjectTile
         private void StaffButton_Entities_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowStaffEntitiesPage();
+        }
+
+        private void ProductButton_View_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowProductPage("View");
+        }
+
+        private void ProductButton_New_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowProductPage("New");
+        }
+
+        private void ProductButton_Amend_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowProductPage("Amend");
         }
         
     } // class

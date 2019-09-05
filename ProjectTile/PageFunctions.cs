@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Linq;
+using System.Collections;
+using System.Globalization;
+using System.Threading;
 
 namespace ProjectTile
 {
@@ -12,6 +17,14 @@ namespace ProjectTile
         private static UriKind uriDefault = UriKind.RelativeOrAbsolute;
         private static string TilesPage = "TilesPage.xaml";
         public static string AllRecords = "<All>";
+        
+        public static string InvalidString = "%INVALID%";
+        static Dictionary<string, string> charSwitch = new Dictionary<string, string>();
+
+        public PageFunctions()
+        {
+            charSwitch["'"] = "''";
+        }
 
         /* Page changes */
         public static void ChangePage(string newPageSource)
@@ -73,6 +86,11 @@ namespace ProjectTile
             ChangePage("StaffEntitiesPage.xaml?Mode=" + pageMode + ",SelectedID=" + selectedStaffID.ToString() + ",SourceMode=" + sourcePageMode);
         }
 
+        public static void ShowProductPage(string pageMode)
+        {
+            ChangePage("ProductPage.xaml?Mode=" + pageMode);
+        }
+
         /* Page loads */
         public static string pageParameter(string originalString, string paramName) //, ref MainWindow winMain
         {                        
@@ -101,5 +119,53 @@ namespace ProjectTile
                 return null;
             }
         }
-    }
-}
+
+        /* Utilities */
+        public static string SqlInput(string inputText, bool mandatory, string fieldName, string fieldTitle = "", string invalidCharacters = "")
+        {
+
+            if (fieldTitle == "")
+            {
+                CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+                TextInfo textInfo = cultureInfo.TextInfo;
+                fieldTitle = textInfo.ToTitleCase(fieldName);
+            }
+            
+            if (mandatory && inputText == "")
+            {
+                MessageFunctions.InvalidMessage(fieldName + "s cannot be blank. Please enter a value in the '" + fieldTitle + "' field and try again.", "No " + fieldTitle + " Entered");
+                return InvalidString;
+            }
+
+            if (invalidCharacters != "")
+            {
+                List<char> inputChars = inputText.ToCharArray().ToList();
+                List<char> invalidChars = invalidCharacters.ToCharArray().ToList();
+
+                foreach (char badChar in invalidChars)
+                {
+                    if (inputChars.Contains(badChar))
+                    {
+                        MessageFunctions.InvalidMessage(fieldName + " cannot contain the character '" + badChar.ToString() + "'. Please remove it and try again.", "Invalid Character");
+                        return InvalidString;
+                    }
+                }
+            }
+
+            return FormatSqlInput(inputText);
+        }
+
+        public static string FormatSqlOutput(string inputText)
+        {
+            return inputText.Replace("''", "'");
+        }
+
+        public static string FormatSqlInput(string inputText)
+        {
+            string outputText = inputText.Replace("'", "''");
+            outputText = outputText.Replace("''''", "''"); // avoid unnecessary replacement of two single-quotes             
+            return outputText;
+        }
+
+    } // class
+} // namespace
