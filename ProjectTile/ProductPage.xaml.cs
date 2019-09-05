@@ -203,8 +203,6 @@ namespace ProjectTile
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            // To do: check for changes if appropriate
-            
             PageFunctions.ShowTilesPage();
         }
 
