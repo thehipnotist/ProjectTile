@@ -65,7 +65,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error retrieving query details: " + generalException.Message);
+                MessageFunctions.Error("Error retrieving query details", generalException);
                 StaffFunctions.returnToStaffPage(selectedStaffID);
             }
 
@@ -96,13 +96,13 @@ namespace ProjectTile
 
                     catch (Exception generalException) 
                     { 
-                        MessageFunctions.ErrorMessage("Error populating staff member data: " + generalException.Message);
+                        MessageFunctions.Error("Error populating staff member data", generalException);
                         StaffFunctions.returnToStaffPage(selectedStaffID);
                     }
                 }
                 else
                 {
-                    MessageFunctions.ErrorMessage("Load error: no staff member loaded.");
+                    MessageFunctions.Error("Load error: no staff member loaded.", null);
                     StaffFunctions.returnToStaffPage(selectedStaffID);
                 }
             }
@@ -119,7 +119,7 @@ namespace ProjectTile
             {
                 RoleList.ItemsSource = StaffFunctions.ListUserRoles(false);
             }
-            catch (Exception generalException) { MessageFunctions.ErrorMessage("Error populating roles list: " + generalException.Message); }
+            catch (Exception generalException) { MessageFunctions.Error("Error populating roles list", generalException); }
         }
 
         /* Shared functions */
@@ -130,7 +130,7 @@ namespace ProjectTile
                 if (Keyboard.IsKeyToggled(Key.CapsLock)) { CapsLockLabel.Visibility = Visibility.Visible; }
                 else { CapsLockLabel.Visibility = Visibility.Hidden; }
             }
-            catch (Exception generalException) { MessageFunctions.ErrorMessage("Caps lock error: " + generalException.Message); }
+            catch (Exception generalException) { MessageFunctions.Error("Caps lock error", generalException); }
         }
 
         private void toggleConfirm(bool show)
@@ -216,7 +216,7 @@ namespace ProjectTile
                     StaffFunctions.returnToStaffPage(selectedStaffID);
                 }
             }
-            catch (Exception generalException) { MessageFunctions.ErrorMessage("Error saving details: " + generalException.Message); }
+            catch (Exception generalException) { MessageFunctions.Error("Error saving details", generalException); }
         }
 
     }

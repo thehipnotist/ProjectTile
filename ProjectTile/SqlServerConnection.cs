@@ -37,7 +37,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error opening default SQL connection " + generalException.Message);
+                MessageFunctions.Error("Error opening default SQL connection", generalException);
                 return null;
             }
         }
@@ -72,7 +72,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error opening SQL connection for user " + userID + ": " + generalException.Message);
+                MessageFunctions.Error("Error opening SQL connection for user " + userID + "", generalException);
                 return null;
             }
         }
@@ -86,7 +86,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error using existing SQL connection: " + generalException.Message);
+                MessageFunctions.Error("Error using existing SQL connection", generalException);
                 return null;
             }
         }

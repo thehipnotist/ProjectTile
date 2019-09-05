@@ -12,7 +12,7 @@ namespace ProjectTile
         public static int CurrentStaffID;
         public static string CurrentStaffName = "";
         public static string CurrentUserID;
-        private const string dBUserPrefix = "ProT_";
+        public const string DbUserPrefix = "ProT_";
 
         public static TableSecurity MyPermissions;
         public static bool FirstLoad = true;
@@ -23,7 +23,7 @@ namespace ProjectTile
         {
             try
             {
-                string strDbUser = dBUserPrefix + userID;
+                string strDbUser = DbUserPrefix + userID;
                 ProjectTileSqlDatabase defaultPtDb = SqlServerConnection.DefaultPtDbConnection();
                 using (defaultPtDb)
                 {
@@ -33,15 +33,15 @@ namespace ProjectTile
                     return passwordMatches;
                 }
             }
-            catch (SqlException connectException)
+            catch (SqlException sqlException)
             {
-                MessageFunctions.ErrorMessage("Error accessing the database: " + connectException.Message.Replace(dBUserPrefix, "") + " Please check the details and try again.");
+                MessageFunctions.Error("Error accessing the database", sqlException);
                 return false;
             }
 
-            catch (Exception otherException)
+            catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error checking existing login: " + otherException);
+                MessageFunctions.Error("Error checking existing login", generalException);
                 return false;
             }
         }
@@ -53,7 +53,7 @@ namespace ProjectTile
 
             if(userID == "")
             {
-                MessageFunctions.ErrorMessage("UserID has not been passed to this function."); // UserID is required to check complexity so that userID cannot equal password
+                MessageFunctions.Error("UserID has not been passed to this function.", null); // UserID is required to check complexity so that userID cannot equal password
                 return false;
             }
             
@@ -97,7 +97,7 @@ namespace ProjectTile
                                     && ae.ChangeTime >= timeFrom
                                     && ae.ActionType == "Updated"
                                     && ae.PrimaryValue == staffID.ToString()
-                                    && ae.UserName.Substring(0, 5) != dBUserPrefix
+                                    && ae.UserName.Substring(0, 5) != DbUserPrefix
                                     && ( (passwordChange && ae.ChangeColumn == "PasswordHash") || (userIDChange && ae.ChangeColumn == "UserID") )
                                 )
                                 .OrderByDescending(ae => ae.ChangeTime)
@@ -107,38 +107,38 @@ namespace ProjectTile
                             foreach (int entry in auditEntryIDs)
                             {                                
                                 AuditEntries lastAuditEntry = defaultPtDb.AuditEntries.Find(entry);
-                                lastAuditEntry.UserName = dBUserPrefix + CurrentUserID;
+                                lastAuditEntry.UserName = DbUserPrefix + CurrentUserID;
                                 defaultPtDb.SaveChanges();
                             }
 
                             if (staffID == CurrentStaffID)
                             {
-                                string databaseLogin = dBUserPrefix + userID;
+                                string databaseLogin = DbUserPrefix + userID;
                                 ProjectTileSqlDatabase userPtDb = SqlServerConnection.UserPtDbConnection(databaseLogin, newPassword); // Log in again so that future database calls have the new password
                             }
 
                             return true;
                         }
-                        catch (SqlException connectException)
+                        catch (SqlException sqlException)
                         {
-                            MessageFunctions.ErrorMessage("Error amending details in the database: " + connectException.Message.Replace(dBUserPrefix, "") + " Please check the details and try again.");
+                            MessageFunctions.Error("Error amending details in the database", sqlException);
                             return false;
                         }
-                        catch (Exception otherException)
+                        catch (Exception generalException)
                         {
-                            MessageFunctions.ErrorMessage("Error amending details. " + otherException + " Please check your existing password and try again.");
+                            MessageFunctions.Error("Error amending details", generalException);
                             return false;
                         }
                     }
                 }
-                catch (SqlException connectException)
+                catch (SqlException sqlException)
                 {
-                    MessageFunctions.ErrorMessage("Error accessing the database: " + connectException.Message.Replace(dBUserPrefix, "") + " Please check the details and try again.");
+                    MessageFunctions.Error("Error accessing the database", sqlException);
                     return false;
                 }
-                catch (Exception otherException)
+                catch (Exception generalException)
                 {
-                    MessageFunctions.ErrorMessage("Error checking existing login: " + otherException.Message);
+                    MessageFunctions.Error("Error checking existing login", generalException);
                     return false;
                 }
             }
@@ -168,7 +168,7 @@ namespace ProjectTile
             try
             {
                 int entityID;
-                string databaseLogin = dBUserPrefix + userID;
+                string databaseLogin = DbUserPrefix + userID;
 
                 ProjectTileSqlDatabase userPtDb = SqlServerConnection.UserPtDbConnection(databaseLogin, password);
                 using (userPtDb)
@@ -189,15 +189,15 @@ namespace ProjectTile
                 }
             }
 
-            catch (SqlException connectException)
+            catch (SqlException sqlException)
             {
-                MessageFunctions.ErrorMessage("Error accessing the database: " + connectException.Message.Replace(dBUserPrefix, "") + " Please check the details and try again.");
+                MessageFunctions.Error("Error accessing the database", sqlException);
                 return false;
             }
 
-            catch (Exception otherException)
+            catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error logging in: " + otherException.Message);
+                MessageFunctions.Error("Error logging in", generalException);
                 return false;
             }
         }

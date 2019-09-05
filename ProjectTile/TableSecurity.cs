@@ -19,7 +19,7 @@ namespace ProjectTile
                     
                     if (currentUser == null && userID == 0)
                     {
-                        MessageFunctions.ErrorMessage("A staff record or ID number must be provided to get Table Permissions.");
+                        MessageFunctions.Error("A staff record or ID number must be provided to get Table Permissions.", null);
                     }
                     else if (currentUser == null)
                     {
@@ -43,7 +43,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error setting security permissions: " + generalException.Message); ;
+                MessageFunctions.Error("Error setting security permissions", generalException); ;
             }
         }
 
@@ -76,7 +76,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                PopUpMessage.errorMessage("Error setting security permissions: " + generalException.Message);
+                PopUpMessage.errorMessage("Error setting security permissions", generalException);
                 return false;
             }
         }

@@ -43,7 +43,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error retrieving query details: " + generalException.Message);
+                MessageFunctions.Error("Error retrieving query details", generalException);
                 PageFunctions.ShowTilesPage();
             }
 
@@ -64,7 +64,7 @@ namespace ProjectTile
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.ErrorMessage("Error setting initial login view: " + generalException.Message);
+                    MessageFunctions.Error("Error setting initial login view", generalException);
                     PageFunctions.ShowTilesPage();
                 }
             }
@@ -82,7 +82,7 @@ namespace ProjectTile
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.ErrorMessage("Error setting screen components: " + generalException.Message);
+                    MessageFunctions.Error("Error setting screen components", generalException);
                     PageFunctions.ShowTilesPage();
                 }
             }
@@ -103,7 +103,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Caps lock error: " + generalException.Message);
+                MessageFunctions.Error("Caps lock error", generalException);
             }
         }
 

@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="ProjectTileModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="ProjectTileModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AuditEntries">
           <Key>
             <PropertyRef Name="ID" />
@@ -47,8 +47,8 @@
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ClientID" Type="int" Nullable="false" />
-          <Property Name="FirstName" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="Surname" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="FirstName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Surname" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="JobTitle" Type="nvarchar" MaxLength="100" />
           <Property Name="PhoneNumber" Type="varchar" MaxLength="50" />
           <Property Name="Email" Type="nvarchar" MaxLength="100" />
@@ -79,6 +79,19 @@
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
           <Property Name="EntityDescription" Type="nvarchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ErrorLog">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustomMessage" Type="varchar" MaxLength="200" />
+          <Property Name="ExceptionMessage" Type="nvarchar" MaxLength="500" />
+          <Property Name="ExceptionType" Type="nvarchar" MaxLength="200" />
+          <Property Name="TargetSite" Type="nvarchar" MaxLength="500" />
+          <Property Name="LoggedAt" Type="datetime" />
+          <Property Name="LoggedBy" Type="varchar" MaxLength="100" />
+          <Property Name="InnerException" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Products">
           <Key>
@@ -154,8 +167,8 @@
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="EmployeeID" Type="varchar" MaxLength="7" StoreGeneratedPattern="Computed" />
-          <Property Name="FirstName" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="Surname" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="FirstName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Surname" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="RoleCode" Type="varchar" MaxLength="5" />
           <Property Name="StartDate" Type="date" Nullable="false" />
           <Property Name="LeaveDate" Type="date" />
@@ -203,11 +216,11 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_ClientStaff' does not have a pr
           </Key>
           <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
           <Property Name="ClientCode" Type="varchar" MaxLength="15" Nullable="false" />
-          <Property Name="ClientName" Type="varchar" MaxLength="200" Nullable="false" />
-          <Property Name="StaffName" Type="varchar" MaxLength="201" Nullable="false" />
-          <Property Name="JobTitle" Type="varchar" MaxLength="100" />
+          <Property Name="ClientName" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="StaffName" Type="nvarchar" MaxLength="201" Nullable="false" />
+          <Property Name="JobTitle" Type="nvarchar" MaxLength="100" />
           <Property Name="PhoneNumber" Type="varchar" MaxLength="50" />
-          <Property Name="Email" Type="varchar" MaxLength="100" />
+          <Property Name="Email" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'ProjectTile.dbo.vi_ClientsWithAccountManagers' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -223,9 +236,9 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_ClientsWithAccountManagers' doe
           <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
           <Property Name="ID" Type="int" Nullable="false" />
           <Property Name="ClientCode" Type="varchar" MaxLength="15" Nullable="false" />
-          <Property Name="ClientName" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="ClientName" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="Active" Type="bit" Nullable="false" />
-          <Property Name="AccountManagerName" Type="varchar" MaxLength="201" Nullable="false" />
+          <Property Name="AccountManagerName" Type="nvarchar" MaxLength="201" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'ProjectTile.dbo.vi_ClientsWithProducts' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -238,12 +251,12 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_ClientsWithProducts' does not h
           <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
           <Property Name="ClientID" Type="int" />
           <Property Name="ClientCode" Type="varchar" MaxLength="15" Nullable="false" />
-          <Property Name="ClientName" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="ClientName" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="ProductID" Type="int" />
           <Property Name="ProductName" Type="varchar" MaxLength="100" />
           <Property Name="ProductVersion" Type="decimal" Precision="9" Scale="1" />
           <Property Name="LatestVersion" Type="decimal" Precision="10" Scale="2" />
-          <Property Name="ProductDescription" Type="varchar" MaxLength="300" />
+          <Property Name="ProductDescription" Type="nvarchar" MaxLength="300" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'ProjectTile.dbo.vi_ClientTeams' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -256,10 +269,10 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_ClientTeams' does not have a pr
             <PropertyRef Name="RoleDescription" />
           </Key>
           <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
-          <Property Name="ClientName" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="ClientName" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="ProjectName" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="StaffName" Type="varchar" MaxLength="201" Nullable="false" />
-          <Property Name="JobTitle" Type="varchar" MaxLength="100" />
+          <Property Name="StaffName" Type="nvarchar" MaxLength="201" Nullable="false" />
+          <Property Name="JobTitle" Type="nvarchar" MaxLength="100" />
           <Property Name="RoleDescription" Type="varchar" MaxLength="100" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
@@ -276,7 +289,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_OpenProjectProducts' does not h
           </Key>
           <Property Name="ProjectCode" Type="varchar" MaxLength="9" />
           <Property Name="ClientCode" Type="varchar" MaxLength="15" Nullable="false" />
-          <Property Name="ClientName" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="ClientName" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="TypeName" Type="varchar" MaxLength="100" />
           <Property Name="ProjectName" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="StageName" Type="varchar" MaxLength="20" Nullable="false" />
@@ -304,14 +317,14 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_OpenProjects' does not have a p
           <Property Name="ProjectCode" Type="varchar" MaxLength="9" />
           <Property Name="ClientID" Type="int" Nullable="false" />
           <Property Name="ClientCode" Type="varchar" MaxLength="15" Nullable="false" />
-          <Property Name="ClientName" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="ClientName" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="TypeName" Type="varchar" MaxLength="100" />
           <Property Name="ProjectName" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="StartDate" Type="date" />
           <Property Name="StageCode" Type="int" Nullable="false" />
           <Property Name="StageName" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="ProjectStatus" Type="varchar" MaxLength="20" Nullable="false" />
-          <Property Name="ProjectSummary" Type="varchar" MaxLength="400" Nullable="false" />
+          <Property Name="ProjectSummary" Type="nvarchar" MaxLength="400" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'ProjectTile.dbo.vi_ProjectTeams' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -326,8 +339,8 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_ProjectTeams' does not have a p
           </Key>
           <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
           <Property Name="ProjectName" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="ClientName" Type="varchar" MaxLength="200" Nullable="false" />
-          <Property Name="StaffName" Type="varchar" MaxLength="201" Nullable="false" />
+          <Property Name="ClientName" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="StaffName" Type="nvarchar" MaxLength="201" Nullable="false" />
           <Property Name="ProjectRoleCode" Type="varchar" MaxLength="5" />
           <Property Name="ProjectRoleDescription" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="JobTitle" Type="varchar" MaxLength="100" Nullable="false" />
@@ -339,10 +352,12 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffEntities' does not have a 
             <PropertyRef Name="StaffName" />
             <PropertyRef Name="EntityName" />
             <PropertyRef Name="EntityDescription" />
+            <PropertyRef Name="DefaultEntity" />
           </Key>
-          <Property Name="StaffName" Type="varchar" MaxLength="201" Nullable="false" />
+          <Property Name="StaffName" Type="nvarchar" MaxLength="201" Nullable="false" />
           <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
-          <Property Name="EntityDescription" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="EntityDescription" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="DefaultEntity" Type="int" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -357,13 +372,13 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           </Key>
           <Property Name="ID" Type="int" Nullable="false" />
           <Property Name="EmployeeID" Type="varchar" MaxLength="7" />
-          <Property Name="FirstName" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="Surname" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="FirstName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Surname" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="RoleCode" Type="varchar" MaxLength="5" />
           <Property Name="StartDate" Type="date" Nullable="false" />
           <Property Name="LeaveDate" Type="date" />
           <Property Name="UserID" Type="varchar" MaxLength="50" />
-          <Property Name="Passwd" Type="varchar" MaxLength="50" />
+          <Property Name="Passwd" Type="nvarchar" MaxLength="50" />
           <Property Name="PasswordHash" Type="binary" MaxLength="64" />
           <Property Name="Active" Type="bit" Nullable="false" />
           <Property Name="DefaultEntity" Type="int" />
@@ -654,17 +669,17 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
         <Function Name="cln_InsertIntoClients" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="EntityID" Type="int" Mode="In" />
           <Parameter Name="ClientCode" Type="varchar" Mode="In" />
-          <Parameter Name="ClientName" Type="varchar" Mode="In" />
+          <Parameter Name="ClientName" Type="nvarchar" Mode="In" />
           <Parameter Name="AccountManagerID" Type="int" Mode="In" />
           <Parameter Name="Active" Type="bit" Mode="In" />
         </Function>
         <Function Name="cln_InsertIntoClientStaff" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ClientID" Type="int" Mode="In" />
-          <Parameter Name="FirstName" Type="varchar" Mode="In" />
-          <Parameter Name="Surname" Type="varchar" Mode="In" />
-          <Parameter Name="JobTitle" Type="varchar" Mode="In" />
+          <Parameter Name="FirstName" Type="nvarchar" Mode="In" />
+          <Parameter Name="Surname" Type="nvarchar" Mode="In" />
+          <Parameter Name="JobTitle" Type="nvarchar" Mode="In" />
           <Parameter Name="PhoneNumber" Type="varchar" Mode="In" />
-          <Parameter Name="Email" Type="varchar" Mode="In" />
+          <Parameter Name="Email" Type="nvarchar" Mode="In" />
           <Parameter Name="Active" Type="bit" Mode="In" />
         </Function>
         <Function Name="cln_UpdateAccountManagerIDInClients" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
@@ -692,7 +707,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
         </Function>
         <Function Name="ent_InsertIntoEntities" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="EntityName" Type="varchar" Mode="In" />
-          <Parameter Name="EntityDescription" Type="varchar" Mode="In" />
+          <Parameter Name="EntityDescription" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="ent_UpdateEntityDescriptionInEntities" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID" Type="varchar" Mode="In" />
@@ -701,6 +716,18 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
         <Function Name="ent_UpdateEntityNameInEntities" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID" Type="varchar" Mode="In" />
           <Parameter Name="EntityName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="err_GetErrorLogByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="err_InsertIntoErrorLog" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomMessage" Type="varchar" Mode="In" />
+          <Parameter Name="ExceptionMessage" Type="nvarchar" Mode="In" />
+          <Parameter Name="ExceptionType" Type="nvarchar" Mode="In" />
+          <Parameter Name="TargetSite" Type="nvarchar" Mode="In" />
+          <Parameter Name="LoggedAt" Type="datetime" Mode="In" />
+          <Parameter Name="LoggedBy" Type="varchar" Mode="In" />
+          <Parameter Name="InnerException" Type="nvarchar(max)" Mode="In" />
         </Function>
         <Function Name="pja_GetClientTeamRolesByRoleCode" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="RoleCode" Type="varchar" Mode="In" />
@@ -722,13 +749,13 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
         <Function Name="pja_InsertIntoProjectStages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="StageCode" Type="int" Mode="In" />
           <Parameter Name="StageName" Type="varchar" Mode="In" />
-          <Parameter Name="StageDescription" Type="varchar" Mode="In" />
+          <Parameter Name="StageDescription" Type="nvarchar" Mode="In" />
           <Parameter Name="ProjectStatus" Type="varchar" Mode="In" />
         </Function>
         <Function Name="pja_InsertIntoProjectTypes" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="TypeCode" Type="varchar" Mode="In" />
           <Parameter Name="TypeName" Type="varchar" Mode="In" />
-          <Parameter Name="TypeDescription" Type="varchar" Mode="In" />
+          <Parameter Name="TypeDescription" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="pja_UpdateRoleDescriptionInClientTeamRoles" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="RoleCode" Type="varchar" Mode="In" />
@@ -759,7 +786,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
         <Function Name="prd_InsertIntoProducts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ProductName" Type="varchar" Mode="In" />
           <Parameter Name="LatestVersion" Type="decimal" Mode="In" />
-          <Parameter Name="ProductDescription" Type="varchar" Mode="In" />
+          <Parameter Name="ProductDescription" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="prd_UpdateLatestVersionInProducts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID" Type="varchar" Mode="In" />
@@ -800,7 +827,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <Parameter Name="ClientID" Type="int" Mode="In" />
           <Parameter Name="StartDate" Type="date" Mode="In" />
           <Parameter Name="StageCode" Type="int" Mode="In" />
-          <Parameter Name="ProjectSummary" Type="varchar" Mode="In" />
+          <Parameter Name="ProjectSummary" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="prj_InsertIntoProjectTeams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ProjectID" Type="int" Mode="In" />
@@ -862,7 +889,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
         </Function>
         <Function Name="stf_CheckHashedPassword" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="UserID" Type="varchar" Mode="In" />
-          <Parameter Name="Passwd" Type="varchar" Mode="In" />
+          <Parameter Name="Passwd" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="stf_GetStaffByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID" Type="varchar" Mode="In" />
@@ -874,13 +901,13 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <Parameter Name="RoleCode" Type="varchar" Mode="In" />
         </Function>
         <Function Name="stf_InsertIntoStaff" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="FirstName" Type="varchar" Mode="In" />
-          <Parameter Name="Surname" Type="varchar" Mode="In" />
+          <Parameter Name="FirstName" Type="nvarchar" Mode="In" />
+          <Parameter Name="Surname" Type="nvarchar" Mode="In" />
           <Parameter Name="RoleCode" Type="varchar" Mode="In" />
           <Parameter Name="StartDate" Type="date" Mode="In" />
           <Parameter Name="LeaveDate" Type="date" Mode="In" />
           <Parameter Name="UserID" Type="varchar" Mode="In" />
-          <Parameter Name="Passwd" Type="varchar" Mode="In" />
+          <Parameter Name="Passwd" Type="nvarchar" Mode="In" />
           <Parameter Name="PasswordHash" Type="binary" Mode="In" />
           <Parameter Name="Active" Type="bit" Mode="In" />
           <Parameter Name="DefaultEntity" Type="int" Mode="In" />
@@ -915,7 +942,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <Parameter Name="ClientStaffID" Type="int" Mode="In" />
         </Function>
         <Function Name="udf_GetHashedPassword" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="binary">
-          <Parameter Name="Passwd" Type="varchar" Mode="In" />
+          <Parameter Name="Passwd" Type="nvarchar" Mode="In" />
         </Function>
         <EntityContainer Name="ProjectTileModelStoreContainer">
           <EntitySet Name="AuditEntries" EntityType="Self.AuditEntries" Schema="dbo" store:Type="Tables" />
@@ -925,6 +952,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <EntitySet Name="ClientTeamRoles" EntityType="Self.ClientTeamRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ClientTeams" EntityType="Self.ClientTeams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Entities" EntityType="Self.Entities" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ErrorLog" EntityType="Self.ErrorLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Products" EntityType="Self.Products" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProjectProducts" EntityType="Self.ProjectProducts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProjectRoles" EntityType="Self.ProjectRoles" Schema="dbo" store:Type="Tables" />
@@ -1026,7 +1054,8 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
             <DefiningQuery>SELECT 
     [vi_StaffEntities].[StaffName] AS [StaffName], 
     [vi_StaffEntities].[EntityName] AS [EntityName], 
-    [vi_StaffEntities].[EntityDescription] AS [EntityDescription]
+    [vi_StaffEntities].[EntityDescription] AS [EntityDescription], 
+    [vi_StaffEntities].[DefaultEntity] AS [DefaultEntity]
     FROM [dbo].[vi_StaffEntities] AS [vi_StaffEntities]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="vi_StaffWithRoles" EntityType="Self.vi_StaffWithRoles" store:Type="Views" store:Schema="dbo">
@@ -1135,8 +1164,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
             <End Role="ProjectTeams" EntitySet="ProjectTeams" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ProjectTileModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -1152,8 +1180,8 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <Property Name="PrimaryColumn" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="PrimaryValue" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ChangeColumn" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="OldValue" Type="String" MaxLength="400" FixedLength="false" Unicode="false" />
-          <Property Name="NewValue" Type="String" MaxLength="400" FixedLength="false" Unicode="false" />
+          <Property Name="OldValue" Type="String" MaxLength="400" FixedLength="false" Unicode="true" />
+          <Property Name="NewValue" Type="String" MaxLength="400" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ClientProducts">
           <Key>
@@ -1174,7 +1202,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="EntityID" Type="Int32" Nullable="false" />
           <Property Name="ClientCode" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="AccountManagerID" Type="Int32" />
           <Property Name="Active" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="ClientProducts" Relationship="Self.fk_ProductClientID" FromRole="Clients" ToRole="ClientProducts" />
@@ -1189,11 +1217,11 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ClientID" Type="Int32" Nullable="false" />
-          <Property Name="FirstName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Surname" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="JobTitle" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="FirstName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Surname" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="JobTitle" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="PhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Active" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Clients" Relationship="Self.fk_StaffClientID" FromRole="ClientStaff" ToRole="Clients" />
           <NavigationProperty Name="ClientTeams" Relationship="Self.fk_ClientTeamStaffID" FromRole="ClientStaff" ToRole="ClientTeams" />
@@ -1226,7 +1254,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="EntityDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="EntityDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Clients" Relationship="Self.fk_ClientEntityID" FromRole="Entities" ToRole="Clients" />
           <NavigationProperty Name="Projects" Relationship="Self.fk_ProjectEntityID" FromRole="Entities" ToRole="Projects" />
           <NavigationProperty Name="Staff" Relationship="Self.fk_StaffEntity" FromRole="Entities" ToRole="Staff" />
@@ -1239,7 +1267,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ProductName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="LatestVersion" Type="Decimal" Precision="10" Scale="2" />
-          <Property Name="ProductDescription" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="ProductDescription" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="ClientProducts" Relationship="Self.fk_ClientProductID" FromRole="Products" ToRole="ClientProducts" />
           <NavigationProperty Name="ProjectProducts" Relationship="Self.fk_ProjectProductID" FromRole="Products" ToRole="ProjectProducts" />
         </EntityType>
@@ -1275,7 +1303,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <Property Name="ClientID" Type="Int32" />
           <Property Name="StartDate" Type="DateTime" Precision="0" />
           <Property Name="StageCode" Type="Int32" Nullable="false" />
-          <Property Name="ProjectSummary" Type="String" MaxLength="400" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ProjectSummary" Type="String" MaxLength="400" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Clients" Relationship="Self.fk_ProjectClientID" FromRole="Projects" ToRole="Clients" />
           <NavigationProperty Name="ClientTeams" Relationship="Self.fk_ClientTeamProjectID" FromRole="Projects" ToRole="ClientTeams" />
           <NavigationProperty Name="Entities" Relationship="Self.fk_ProjectEntityID" FromRole="Projects" ToRole="Entities" />
@@ -1290,7 +1318,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           </Key>
           <Property Name="StageCode" Type="Int32" Nullable="false" />
           <Property Name="StageName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="StageDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="StageDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="ProjectStatus" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="Projects" Relationship="Self.fk_ProjectStageCode" FromRole="ProjectStages" ToRole="Projects" />
         </EntityType>
@@ -1314,7 +1342,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           </Key>
           <Property Name="TypeCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="TypeName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="TypeDescription" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="TypeDescription" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Projects" Relationship="Self.fk_ProjectTypeCode" FromRole="ProjectTypes" ToRole="Projects" />
         </EntityType>
         <EntityType Name="Staff">
@@ -1323,13 +1351,13 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="EmployeeID" Type="String" MaxLength="7" FixedLength="false" Unicode="false" annotation:StoreGeneratedPattern="Computed" />
-          <Property Name="FirstName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Surname" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="FirstName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Surname" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="RoleCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
           <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="LeaveDate" Type="DateTime" Precision="0" />
           <Property Name="UserID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Passwd" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Passwd" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="PasswordHash" Type="Binary" MaxLength="64" FixedLength="true" />
           <Property Name="Active" Type="Boolean" Nullable="false" />
           <Property Name="DefaultEntity" Type="Int32" />
@@ -1380,11 +1408,11 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           </Key>
           <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="ClientCode" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="StaffName" Type="String" MaxLength="201" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="JobTitle" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="StaffName" Type="String" MaxLength="201" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="JobTitle" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="PhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="vi_ClientsWithAccountManagers">
           <Key>
@@ -1398,9 +1426,9 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="ID" Type="Int32" Nullable="false" />
           <Property Name="ClientCode" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Active" Type="Boolean" Nullable="false" />
-          <Property Name="AccountManagerName" Type="String" MaxLength="201" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="AccountManagerName" Type="String" MaxLength="201" FixedLength="false" Unicode="true" Nullable="false" />
         </EntityType>
         <EntityType Name="vi_ClientsWithProducts">
           <Key>
@@ -1411,12 +1439,12 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="ClientID" Type="Int32" />
           <Property Name="ClientCode" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="ProductID" Type="Int32" />
           <Property Name="ProductName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="ProductVersion" Type="Decimal" Precision="9" Scale="1" />
           <Property Name="LatestVersion" Type="Decimal" Precision="10" Scale="2" />
-          <Property Name="ProductDescription" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="ProductDescription" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="vi_ClientTeams">
           <Key>
@@ -1427,10 +1455,10 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
             <PropertyRef Name="RoleDescription" />
           </Key>
           <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="ProjectName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="StaffName" Type="String" MaxLength="201" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="JobTitle" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="StaffName" Type="String" MaxLength="201" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="JobTitle" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="RoleDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
         </EntityType>
         <EntityType Name="vi_OpenProjectProducts">
@@ -1445,7 +1473,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           </Key>
           <Property Name="ProjectCode" Type="String" MaxLength="9" FixedLength="false" Unicode="false" />
           <Property Name="ClientCode" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="TypeName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="ProjectName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="StageName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
@@ -1471,14 +1499,14 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <Property Name="ProjectCode" Type="String" MaxLength="9" FixedLength="false" Unicode="false" />
           <Property Name="ClientID" Type="Int32" Nullable="false" />
           <Property Name="ClientCode" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="TypeName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="ProjectName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="StartDate" Type="DateTime" Precision="0" />
           <Property Name="StageCode" Type="Int32" Nullable="false" />
           <Property Name="StageName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="ProjectStatus" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ProjectSummary" Type="String" MaxLength="400" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ProjectSummary" Type="String" MaxLength="400" FixedLength="false" Unicode="true" Nullable="false" />
         </EntityType>
         <EntityType Name="vi_ProjectTeams">
           <Key>
@@ -1491,8 +1519,8 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           </Key>
           <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="ProjectName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="StaffName" Type="String" MaxLength="201" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="StaffName" Type="String" MaxLength="201" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="ProjectRoleCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
           <Property Name="ProjectRoleDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="JobTitle" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
@@ -1502,10 +1530,12 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
             <PropertyRef Name="StaffName" />
             <PropertyRef Name="EntityName" />
             <PropertyRef Name="EntityDescription" />
+            <PropertyRef Name="DefaultEntity" />
           </Key>
-          <Property Name="StaffName" Type="String" MaxLength="201" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="StaffName" Type="String" MaxLength="201" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="EntityDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="EntityDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DefaultEntity" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="vi_StaffWithRoles">
           <Key>
@@ -1518,13 +1548,13 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" />
           <Property Name="EmployeeID" Type="String" MaxLength="7" FixedLength="false" Unicode="false" />
-          <Property Name="FirstName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Surname" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="FirstName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Surname" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="RoleCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
           <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="LeaveDate" Type="DateTime" Precision="0" />
           <Property Name="UserID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Passwd" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Passwd" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="PasswordHash" Type="Binary" MaxLength="64" FixedLength="true" />
           <Property Name="Active" Type="Boolean" Nullable="false" />
           <Property Name="DefaultEntity" Type="Int32" />
@@ -1911,16 +1941,16 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
             <End Role="TablePermissions" EntitySet="TablePermissions" />
           </AssociationSet>
           <FunctionImport Name="cln_GetClientsByAccountManagerID" ReturnType="Collection(ProjectTileModel.cln_GetClientsByAccountManagerID_Result)">
-            <Parameter Name="AccountManagerID" Mode="In" Type="String" />
+          <Parameter Name="AccountManagerID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="cln_GetClientsByClientCode" ReturnType="Collection(ProjectTileModel.cln_GetClientsByClientCode_Result)">
-            <Parameter Name="ClientCode" Mode="In" Type="String" />
+          <Parameter Name="ClientCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="cln_GetClientsByID" ReturnType="Collection(ProjectTileModel.cln_GetClientsByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="cln_GetClientStaffByID" ReturnType="Collection(ProjectTileModel.cln_GetClientStaffByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="cln_InsertIntoClientProducts">
             <Parameter Name="ClientID" Mode="In" Type="Int32" />
@@ -1965,7 +1995,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
             <Parameter Name="Surname" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="ent_GetEntitiesByID" ReturnType="Collection(ProjectTileModel.ent_GetEntitiesByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="ent_InsertIntoEntities">
             <Parameter Name="EntityName" Mode="In" Type="String" />
@@ -1980,13 +2010,13 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
             <Parameter Name="EntityName" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="pja_GetClientTeamRolesByRoleCode" ReturnType="Collection(ProjectTileModel.pja_GetClientTeamRolesByRoleCode_Result)">
-            <Parameter Name="RoleCode" Mode="In" Type="String" />
+          <Parameter Name="RoleCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="pja_GetProjectRolesByRoleCode" ReturnType="Collection(ProjectTileModel.pja_GetProjectRolesByRoleCode_Result)">
-            <Parameter Name="RoleCode" Mode="In" Type="String" />
+          <Parameter Name="RoleCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="pja_GetProjectStagesByStageCode" ReturnType="Collection(ProjectTileModel.pja_GetProjectStagesByStageCode_Result)">
-            <Parameter Name="StageCode" Mode="In" Type="String" />
+          <Parameter Name="StageCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="pja_InsertIntoClientTeamRoles">
             <Parameter Name="RoleCode" Mode="In" Type="String" />
@@ -2028,10 +2058,10 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
             <Parameter Name="TypeName" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prd_GetProductsByID" ReturnType="Collection(ProjectTileModel.prd_GetProductsByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prd_GetProductsByProductName" ReturnType="Collection(ProjectTileModel.prd_GetProductsByProductName_Result)">
-            <Parameter Name="ProductName" Mode="In" Type="String" />
+          <Parameter Name="ProductName" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prd_InsertIntoProducts">
             <Parameter Name="ProductName" Mode="In" Type="String" />
@@ -2043,19 +2073,19 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
             <Parameter Name="LatestVersion" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_GetClientTeamsByID" ReturnType="Collection(ProjectTileModel.prj_GetClientTeamsByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_GetNewVersionByID">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_GetOldVersionByID">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_GetProjectsByID" ReturnType="Collection(ProjectTileModel.prj_GetProjectsByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_GetProjectTeamsByID" ReturnType="Collection(ProjectTileModel.prj_GetProjectTeamsByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_InsertIntoClientTeams">
             <Parameter Name="ProjectID" Mode="In" Type="Int32" />
@@ -2127,7 +2157,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
             <Parameter Name="ToDate" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="sec_GetTablePermissionsByID" ReturnType="Collection(ProjectTileModel.sec_GetTablePermissionsByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="sec_InsertIntoTablePermissions">
             <Parameter Name="TableName" Mode="In" Type="String" />
@@ -2142,13 +2172,13 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
             <Parameter Name="Passwd" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="stf_GetStaffByID" ReturnType="Collection(ProjectTileModel.stf_GetStaffByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="stf_GetStaffByRoleCode" ReturnType="Collection(ProjectTileModel.stf_GetStaffByRoleCode_Result)">
-            <Parameter Name="RoleCode" Mode="In" Type="String" />
+          <Parameter Name="RoleCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="stf_GetStaffRolesByRoleCode" ReturnType="Collection(ProjectTileModel.stf_GetStaffRolesByRoleCode_Result)">
-            <Parameter Name="RoleCode" Mode="In" Type="String" />
+          <Parameter Name="RoleCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="stf_InsertIntoStaff">
             <Parameter Name="FirstName" Mode="In" Type="String" />
@@ -2181,6 +2211,19 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <FunctionImport Name="stf_UpdateRoleDescriptionInStaffRoles">
             <Parameter Name="RoleCode" Mode="In" Type="String" />
             <Parameter Name="RoleDescription" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="ErrorLog" EntityType="ProjectTileModel.ErrorLog" />
+          <FunctionImport Name="err_GetErrorLogByID" ReturnType="Collection(ProjectTileModel.err_GetErrorLogByID_Result)">
+          <Parameter Name="ID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="err_InsertIntoErrorLog">
+            <Parameter Name="CustomMessage" Mode="In" Type="String" />
+            <Parameter Name="ExceptionMessage" Mode="In" Type="String" />
+            <Parameter Name="ExceptionType" Mode="In" Type="String" />
+            <Parameter Name="TargetSite" Mode="In" Type="String" />
+            <Parameter Name="LoggedAt" Mode="In" Type="DateTime" />
+            <Parameter Name="LoggedBy" Mode="In" Type="String" />
+            <Parameter Name="InnerException" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
         <ComplexType Name="cln_GetClientsByAccountManagerID_Result">
@@ -2315,6 +2358,27 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
         <ComplexType Name="stf_GetStaffRolesByRoleCode_Result">
           <Property Type="String" Name="RoleCode" Nullable="false" MaxLength="5" />
           <Property Type="String" Name="RoleDescription" Nullable="false" MaxLength="100" />
+        </ComplexType>
+        <EntityType Name="ErrorLog">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomMessage" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="ExceptionMessage" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="LoggedAt" Type="DateTime" Precision="3" />
+          <Property Name="LoggedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="InnerException" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ExceptionType" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="TargetSite" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <ComplexType Name="err_GetErrorLogByID_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="CustomMessage" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="ExceptionMessage" Nullable="true" MaxLength="500" />
+          <Property Type="DateTime" Name="LoggedAt" Nullable="true" Precision="23" />
+          <Property Type="String" Name="LoggedBy" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="InnerException" Nullable="true" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -2630,6 +2694,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <EntitySetMapping Name="vi_StaffEntities">
             <EntityTypeMapping TypeName="ProjectTileModel.vi_StaffEntities">
               <MappingFragment StoreEntitySet="vi_StaffEntities">
+                <ScalarProperty Name="DefaultEntity" ColumnName="DefaultEntity" />
                 <ScalarProperty Name="StaffName" ColumnName="StaffName" />
                 <ScalarProperty Name="EntityName" ColumnName="EntityName" />
                 <ScalarProperty Name="EntityDescription" ColumnName="EntityDescription" />
@@ -2902,6 +2967,33 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <FunctionImportMapping FunctionImportName="stf_UpdateLeaveDateInStaff" FunctionName="ProjectTileModel.Store.stf_UpdateLeaveDateInStaff" />
           <FunctionImportMapping FunctionImportName="stf_UpdateRoleCodeInStaff" FunctionName="ProjectTileModel.Store.stf_UpdateRoleCodeInStaff" />
           <FunctionImportMapping FunctionImportName="stf_UpdateRoleDescriptionInStaffRoles" FunctionName="ProjectTileModel.Store.stf_UpdateRoleDescriptionInStaffRoles" />
+          <EntitySetMapping Name="ErrorLog">
+            <EntityTypeMapping TypeName="ProjectTileModel.ErrorLog">
+              <MappingFragment StoreEntitySet="ErrorLog">
+                <ScalarProperty Name="TargetSite" ColumnName="TargetSite" />
+                <ScalarProperty Name="ExceptionType" ColumnName="ExceptionType" />
+                <ScalarProperty Name="InnerException" ColumnName="InnerException" />
+                <ScalarProperty Name="LoggedBy" ColumnName="LoggedBy" />
+                <ScalarProperty Name="LoggedAt" ColumnName="LoggedAt" />
+                <ScalarProperty Name="ExceptionMessage" ColumnName="ExceptionMessage" />
+                <ScalarProperty Name="CustomMessage" ColumnName="CustomMessage" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="err_GetErrorLogByID" FunctionName="ProjectTileModel.Store.err_GetErrorLogByID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProjectTileModel.err_GetErrorLogByID_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="CustomMessage" ColumnName="CustomMessage" />
+                <ScalarProperty Name="ExceptionMessage" ColumnName="ExceptionMessage" />
+                <ScalarProperty Name="LoggedAt" ColumnName="LoggedAt" />
+                <ScalarProperty Name="LoggedBy" ColumnName="LoggedBy" />
+                <ScalarProperty Name="InnerException" ColumnName="InnerException" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="err_InsertIntoErrorLog" FunctionName="ProjectTileModel.Store.err_InsertIntoErrorLog" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

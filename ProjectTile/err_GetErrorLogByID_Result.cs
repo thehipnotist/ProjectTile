@@ -10,13 +10,14 @@
 namespace ProjectTile
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class vi_StaffEntities
+    public partial class err_GetErrorLogByID_Result
     {
-        public string StaffName { get; set; }
-        public string EntityName { get; set; }
-        public string EntityDescription { get; set; }
-        public int DefaultEntity { get; set; }
+        public int ID { get; set; }
+        public string CustomMessage { get; set; }
+        public string ExceptionMessage { get; set; }
+        public Nullable<System.DateTime> LoggedAt { get; set; }
+        public string LoggedBy { get; set; }
+        public string InnerException { get; set; }
     }
 }

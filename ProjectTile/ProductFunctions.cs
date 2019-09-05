@@ -37,7 +37,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error retrieving products list: " + generalException.Message);
+                MessageFunctions.Error("Error retrieving products list", generalException);
                 return null;
             }
         }
@@ -54,7 +54,7 @@ namespace ProjectTile
            }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error finding product with ID " + productID.ToString() + ": " + generalException.Message);
+                MessageFunctions.Error("Error finding product with ID " + productID.ToString() + "", generalException);
                 return null;
             }
         }
@@ -103,12 +103,12 @@ namespace ProjectTile
             }
             catch (SqlException sqlException)
             {
-                MessageFunctions.ErrorMessage("SQL error saving changes to the database: " + sqlException.Message);
+                MessageFunctions.Error("SQL error saving changes to the database", sqlException);
                 return false;
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error saving changes to the database: " + generalException.Message);
+                MessageFunctions.Error("Error saving changes to the database", generalException);
                 return false;
             }
 
@@ -141,7 +141,7 @@ namespace ProjectTile
                     }                          
                     catch (Exception generalException)
                     {
-                        MessageFunctions.ErrorMessage("Problem saving new product: " + generalException.Message);
+                        MessageFunctions.Error("Problem saving new product", generalException);
                         return 0;
                     }
                 }
@@ -149,7 +149,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error creating new product: " + generalException.Message);
+                MessageFunctions.Error("Error creating new product", generalException);
                 return 0;
             }
         }
@@ -174,7 +174,7 @@ namespace ProjectTile
                         Products thisProduct = existingPtDb.Products.Find(productID);
                         if (thisProduct.LatestVersion > versionNumber)
                         {
-                            MessageFunctions.ErrorMessage("Error amending product '" + displayName + "': new version number is lower than the existing one.");
+                            MessageFunctions.Error("Error amending product '" + displayName + "': new version number is lower than the existing one.", null);
                             return false;
                         }
                         thisProduct.ProductName = displayName;
@@ -191,13 +191,13 @@ namespace ProjectTile
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.ErrorMessage("Problem saving changes to product '" + displayName + "': " + generalException.Message);
+                    MessageFunctions.Error("Problem saving changes to product '" + displayName + "'", generalException);
                     return false;
                 }
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error amending product '" + displayName + "': " + generalException.Message);
+                MessageFunctions.Error("Error amending product '" + displayName + "'", generalException);
                 return false;
             }
         }

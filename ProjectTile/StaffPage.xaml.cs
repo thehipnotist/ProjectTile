@@ -54,7 +54,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error retrieving query details: " + generalException.Message);
+                MessageFunctions.Error("Error retrieving query details", generalException);
                 PageFunctions.ShowTilesPage();
             }
 
@@ -89,7 +89,7 @@ namespace ProjectTile
                 RoleList.ItemsSource = StaffFunctions.ListUserRoles(true);
                 RoleList.SelectedItem = PageFunctions.AllRecords;                 
             }
-            catch (Exception generalException) { MessageFunctions.ErrorMessage("Error populating role filter list: " + generalException.Message); }
+            catch (Exception generalException) { MessageFunctions.Error("Error populating role filter list", generalException); }
         }
 
         private void loadOrRefreshData()
@@ -109,10 +109,10 @@ namespace ProjectTile
                             StaffGrid.ScrollIntoView(StaffGrid.SelectedItem);
                         }
                     }
-                    catch (Exception generalException) { MessageFunctions.ErrorMessage("Error selecting record: " + generalException.Message); }
+                    catch (Exception generalException) { MessageFunctions.Error("Error selecting record", generalException); }
                 }                    
             }
-            catch (Exception generalException) { MessageFunctions.ErrorMessage("Error filling staff grid: " + generalException.Message); }
+            catch (Exception generalException) { MessageFunctions.Error("Error filling staff grid", generalException); }
         }
 
         /* Other/shared functions */
@@ -229,7 +229,7 @@ namespace ProjectTile
             }
             catch (Exception generalException) 
             {
-                MessageFunctions.ErrorMessage("Error retrieving record: " + generalException.Message);
+                MessageFunctions.Error("Error retrieving record", generalException);
                 clearSelection();
                 selectedStaffID = 0; // Avoid accidentally using the previous selection
             }
@@ -245,7 +245,7 @@ namespace ProjectTile
                     loadOrRefreshData();
                 }
             }
-            catch (Exception generalException) { MessageFunctions.ErrorMessage("Error changing status: " + generalException.Message); }
+            catch (Exception generalException) { MessageFunctions.Error("Error changing status", generalException); }
         }
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)
@@ -256,7 +256,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error amending record: " + generalException.Message);
+                MessageFunctions.Error("Error amending record", generalException);
             }
         }
 

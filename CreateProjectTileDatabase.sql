@@ -439,7 +439,10 @@ BEGIN
 		SET @VarList = @VarList + '@' + @ThisColumn
 		
 		SET @FullVarList = @FullVarList + '@' + @ThisColumn + ' ' + @ColumnType
-			+ CASE WHEN UPPER(@ColumnType) LIKE '%CHAR%' THEN '(' + CAST(@MaxLength AS VARCHAR(10)) + ')' ELSE '' END
+			+ CASE WHEN UPPER(@ColumnType) LIKE '%CHAR%' 
+				THEN '(' + CASE WHEN @MaxLength = '-1' THEN 'MAX' ELSE CAST(@MaxLength AS VARCHAR(10)) END + ')' 
+				ELSE '' 
+			END
 		
 		FETCH NEXT FROM C_Columns into @ThisColumn, @ColumnType, @MaxLength		
 	END
@@ -2080,6 +2083,31 @@ BEGIN TRY
 
 		PRINT 'Created view of client teams'
 
+		---------------
+		-- Error Log --
+		---------------
+				
+		CREATE TABLE dbo.ErrorLog (
+			ID							INT				IDENTITY(1,1)	PRIMARY KEY
+			, CustomMessage				VARCHAR(200)
+			, ExceptionMessage			NVARCHAR(500)
+			, LoggedAt					DATETIME
+			, LoggedBy					VARCHAR(100)
+			, InnerException			NVARCHAR(MAX)
+			)
+	
+		PRINT 'Created error log table'
+
+		EXEC [dbo].[usp_CreateGetProcedure] 
+			@TableName = 'ErrorLog'
+			, @IDColumn = 'ID'
+			, @Prefix = 'err'
+
+		EXEC [dbo].[usp_CreateInsertProcedure] 
+			@TableName = 'ErrorLog'
+			, @Prefix = 'err'
+
+		PRINT 'Created standard procedures for error log table'
 
 		/* ------------------------------------------   
 				Check results and finish off

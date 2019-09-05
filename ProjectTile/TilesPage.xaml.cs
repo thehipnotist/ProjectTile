@@ -104,7 +104,7 @@ namespace ProjectTile
 
                 // More to come...
             }
-            catch (Exception generalException) { MessageFunctions.ErrorMessage("Error setting tile permissions: " + generalException.Message); }
+            catch (Exception generalException) { MessageFunctions.Error("Error setting tile permissions", generalException); }
         }
 
         private void toggleMainButtons(Button thisButton, bool showItem)

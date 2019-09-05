@@ -42,7 +42,7 @@
 
                 <Grid Margin="375,0,0,0" Name="AmendmentsGrid">
                     <Label x:Name="NameLabel" Content="Name" HorizontalAlignment="Right" Height="30" Margin="0,90,200,0" VerticalAlignment="Top" Width="75" FontWeight="Bold"/>
-                    <TextBox x:Name="Name" HorizontalAlignment="Right" Height="30" Margin="0,90,30,0" VerticalAlignment="Top" Width="165" FontWeight="Normal" ToolTip="Enter product name" MaxLength="80"/>
+                    <TextBox x:Name="ProductName" HorizontalAlignment="Right" Height="30" Margin="0,90,30,0" VerticalAlignment="Top" Width="165" FontWeight="Normal" ToolTip="Enter product name" MaxLength="80"/>
                     <Label x:Name="DescLabel" Content="Description" HorizontalAlignment="Right" Margin="0,135,200,0" VerticalAlignment="Top" Width="75" FontWeight="Bold" Height="30"/>
                     <TextBox x:Name="Description" HorizontalAlignment="Right" Height="90" Margin="0,135,30,0" VerticalAlignment="Top" Width="165" ToolTip="Give the product a brief description" 
                 	MaxLength="300" TextWrapping="Wrap"/>

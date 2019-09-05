@@ -26,7 +26,7 @@ namespace ProjectTile
             {
                 PageFunctions.ShowLoginPage("LogIn");
             }
-            catch (Exception generalException) { MessageFunctions.ErrorMessage("Error loading page: " + generalException.Message); }
+            catch (Exception generalException) { MessageFunctions.Error("Error loading page", generalException); }
         }
 
         /* Menu settings */
@@ -48,7 +48,7 @@ namespace ProjectTile
 
                 // More to come...
             }
-            catch (Exception generalException) { MessageFunctions.ErrorMessage("Error setting menu permissions: " + generalException.Message); }
+            catch (Exception generalException) { MessageFunctions.Error("Error setting menu permissions", generalException); }
         }
         
         public void toggleMainMenu(bool Show)
@@ -81,7 +81,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error refreshing current details: " + generalException.Message);
+                MessageFunctions.Error("Error refreshing current details", generalException);
             }
         }
 

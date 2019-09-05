@@ -55,7 +55,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error retrieving query details: " + generalException.Message);
+                MessageFunctions.Error("Error retrieving query details", generalException);
                 PageFunctions.ShowTilesPage();
             }            
             
@@ -92,7 +92,7 @@ namespace ProjectTile
 
         private void clearProductDetails()
         {
-            Name.Text = Description.Text = Version.Text = "";
+            ProductName.Text = Description.Text = Version.Text = "";
         }
 
         /* Data retrieval */
@@ -104,14 +104,14 @@ namespace ProjectTile
             ProductGrid.IsEnabled = false;
             AmendButton.IsEnabled = false;    
             Instructions.Content = "Enter the details for the new product. Existing products are shown for reference.";
-            Name.Text = Description.Text = "";
+            ProductName.Text = Description.Text = "";
             Version.Text = "1.00";
             editMode = true;
             CommitButton.IsEnabled = true;
 
             if (pageMode == "Amend" || additionMade == true)
             {
-                Name.IsEnabled = Description.IsEnabled = Version.IsEnabled = true;               
+                ProductName.IsEnabled = Description.IsEnabled = Version.IsEnabled = true;               
 
                 AddButtonText.Text = "Cancel";
                 AddImage.Visibility = Visibility.Collapsed;
@@ -121,7 +121,7 @@ namespace ProjectTile
 
         private void amendmentSetup()
         {            
-            Name.IsEnabled = Description.IsEnabled = Version.IsEnabled = false;            
+            ProductName.IsEnabled = Description.IsEnabled = Version.IsEnabled = false;            
             editMode = false;
             CommitButton.IsEnabled = false;
             gridSelection();
@@ -145,7 +145,7 @@ namespace ProjectTile
         private void amendMode()
         {
             ProductGrid.IsEnabled = false;
-            Name.IsEnabled = Description.IsEnabled = Version.IsEnabled = true;
+            ProductName.IsEnabled = Description.IsEnabled = Version.IsEnabled = true;
             editMode = true;
 
             AmendButtonText.Text = "Cancel";
@@ -169,12 +169,12 @@ namespace ProjectTile
                 try
                 {
                     selectedProduct = (Products)ProductGrid.SelectedItem;
-                    Name.Text = selectedProduct.ProductName;
+                    ProductName.Text = selectedProduct.ProductName;
                     Description.Text = selectedProduct.ProductDescription;
                     Version.Text = selectedProduct.LatestVersion.ToString();
                     AmendButton.IsEnabled = true;
                 }
-                catch (Exception generalException) { MessageFunctions.ErrorMessage("Error processing selection change: " + generalException.Message); }
+                catch (Exception generalException) { MessageFunctions.Error("Error processing selection change", generalException); }
             }
             else
             {
@@ -237,7 +237,7 @@ namespace ProjectTile
             {
                 if (selectedProduct != null)
                 {
-                    bool success = ProductFunctions.AmendProduct(selectedProduct.ID, Name.Text, Description.Text, Version.Text);
+                    bool success = ProductFunctions.AmendProduct(selectedProduct.ID, ProductName.Text, Description.Text, Version.Text);
                     if (success) 
                     { 
                         MessageFunctions.SuccessMessage("Your changes have been saved successfully.", "Product Amended");
@@ -247,22 +247,22 @@ namespace ProjectTile
                 }
                 else
                 {
-                    int newID = ProductFunctions.NewProduct(Name.Text, Description.Text, Version.Text);
+                    int newID = ProductFunctions.NewProduct(ProductName.Text, Description.Text, Version.Text);
                     if (newID > 0)
                     {
                         additionMade = true;
                         refreshProductGrid();
                         if (pageMode == "Amend") 
                         { 
-                            MessageFunctions.SuccessMessage("New product '" + Name.Text + "' saved successfully.", "Product Created");
+                            MessageFunctions.SuccessMessage("New product '" + ProductName.Text + "' saved successfully.", "Product Created");
                             amendmentSetup();
                             ProductGrid.SelectedValue = gridList.First(s => s.ID == newID);
                             ProductGrid.ScrollIntoView(ProductGrid.SelectedItem);
                         }
                         else 
                         {
-                            MessageFunctions.SuccessMessage("New product '" + Name.Text + "' saved successfully. You can create further products using the 'Add Another' button.", "Product Created");
-                            Name.IsEnabled = Description.IsEnabled = Version.IsEnabled = false;
+                            MessageFunctions.SuccessMessage("New product '" + ProductName.Text + "' saved successfully. You can create further products using the 'Add Another' button.", "Product Created");
+                            ProductName.IsEnabled = Description.IsEnabled = Version.IsEnabled = false;
                             editMode = false;
                             CommitButton.IsEnabled = false;
 
@@ -275,7 +275,7 @@ namespace ProjectTile
                     }
                 }
             }
-            else { MessageFunctions.ErrorMessage("Saving should not be possible."); }
+            else { MessageFunctions.Error("Saving should not be possible.", null); }
         }
 
 

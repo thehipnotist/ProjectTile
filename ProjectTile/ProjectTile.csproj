@@ -104,6 +104,12 @@
     <Compile Include="ent_GetEntitiesByID_Result.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="ErrorLog.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="err_GetErrorLogByID_Result.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>

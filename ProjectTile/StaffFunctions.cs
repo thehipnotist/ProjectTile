@@ -43,7 +43,7 @@ namespace ProjectTile
                     {
                         if (!myAllowedEntities.Contains(entityID))
                         {
-                            MessageFunctions.ErrorMessage("Error retrieving staff grid data: the specified Entity is not allowed for this user.");
+                            MessageFunctions.Error("Error retrieving staff grid data: the specified Entity is not allowed for this user.", null);
                             return null; 
                         }
                         else
@@ -79,7 +79,7 @@ namespace ProjectTile
                 }
                 catch (Exception generalException) 
                 { 
-                    MessageFunctions.ErrorMessage("Error retrieving staff grid data: " + generalException.Message);
+                    MessageFunctions.Error("Error retrieving staff grid data", generalException);
                     return null;                
                 }
             }
@@ -98,7 +98,7 @@ namespace ProjectTile
                 }
                 catch (Exception generalException) 
                 { 
-                    MessageFunctions.ErrorMessage("Error retrieving database record: " + generalException.Message);
+                    MessageFunctions.Error("Error retrieving database record", generalException);
                     return null;
                 }
             }
@@ -114,14 +114,14 @@ namespace ProjectTile
                     Staff foundStaff = existingPtDb.Staff.FirstOrDefault(s => s.FirstName + " " + s.Surname == staffName);
                     if (foundStaff == null)
                     {
-                        MessageFunctions.ErrorMessage("Error retrieving staff member " + staffName + ": no matching record found.");
+                        MessageFunctions.Error("Error retrieving staff member " + staffName + ": no matching record found.", null);
                         return null;
                     }
                     else { return foundStaff; }
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.ErrorMessage("Error retrieving database record: " + generalException.Message);
+                    MessageFunctions.Error("Error retrieving database record", generalException);
                     return null;
                 }
             }
@@ -135,7 +135,7 @@ namespace ProjectTile
             }
             else
             {
-                MessageFunctions.ErrorMessage("No staff member selected");
+                MessageFunctions.Error("Error retrieving staff name: no staff member selected.", null);
                 return "";
             }
         }
@@ -203,7 +203,7 @@ namespace ProjectTile
                             }
                             catch (Exception generalException)
                             {
-                                MessageFunctions.ErrorMessage("Error " + changeAction + " user: " + generalException.Message);
+                                MessageFunctions.Error("Error " + changeAction + " user", generalException);
                                 return null;
                             }
                         }
@@ -212,7 +212,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error changing status: " + generalException.Message);
+                MessageFunctions.Error("Error changing status", generalException);
                 return null;
             }
         }
@@ -292,7 +292,7 @@ namespace ProjectTile
                             }
                             catch (Exception generalException)
                             {
-                                MessageFunctions.ErrorMessage("Error applying changes: " + generalException.Message);
+                                MessageFunctions.Error("Error applying changes", generalException);
                                 return 0;
                             }
 
@@ -304,7 +304,7 @@ namespace ProjectTile
                             }
                             catch (Exception generalException)
                             {
-                                MessageFunctions.ErrorMessage("Error applying changes: " + generalException.Message);
+                                MessageFunctions.Error("Error applying changes", generalException);
                                 return 0;
                             }
 
@@ -317,7 +317,7 @@ namespace ProjectTile
                                 }
                                 catch (Exception generalException)
                                 {
-                                    MessageFunctions.ErrorMessage("Error creating new login: " + generalException.Message);
+                                    MessageFunctions.Error("Error creating new login", generalException);
                                     return 0;
                                 }
                             }
@@ -343,7 +343,7 @@ namespace ProjectTile
                             }
                             catch (Exception generalException)
                             {
-                                MessageFunctions.ErrorMessage("Error processing new default Entity: " + generalException.Message);
+                                MessageFunctions.Error("Error processing new default Entity", generalException);
                                 return 0;
                             }
 
@@ -358,7 +358,7 @@ namespace ProjectTile
                             }
                             catch (Exception generalException)
                             {
-                                MessageFunctions.ErrorMessage("Error applying changes: " + generalException.Message);
+                                MessageFunctions.Error("Error applying changes", generalException);
                                 return 0;
                             }
 
@@ -382,12 +382,12 @@ namespace ProjectTile
                             }
                             catch (SqlException sqlException)
                             {
-                                MessageFunctions.ErrorMessage("SQL error saving changes to the database: " + sqlException.Message);
+                                MessageFunctions.Error("SQL error saving changes to the database", sqlException);
                                 return 0;
                             }
                             catch (Exception generalException)
                             {
-                                MessageFunctions.ErrorMessage("Error saving changes to the database: " + generalException.Message);
+                                MessageFunctions.Error("Error saving changes to the database", generalException);
                                 return 0;
                             }
                         }
@@ -395,12 +395,12 @@ namespace ProjectTile
                 }
                 catch (SqlException sqlException)
                 {
-                    MessageFunctions.ErrorMessage("SQL error saving changes: " + sqlException.Message);
+                    MessageFunctions.Error("SQL error saving changes", sqlException);
                     return 0;
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.ErrorMessage("Error saving changes: " + generalException.Message);
+                    MessageFunctions.Error("Error saving changes", generalException);
                     return 0;
                 }
             }
@@ -422,7 +422,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error checking whether staff can be added: " + generalException.Message);
+                MessageFunctions.Error("Error checking whether staff can be added", generalException);
                 return false;
             }
         }
@@ -460,7 +460,7 @@ namespace ProjectTile
                         }
                         catch (Exception generalException) 
                         { 
-                            MessageFunctions.ErrorMessage("Error checking for open projects in this Entity: " + generalException.Message);
+                            MessageFunctions.Error("Error checking for open projects in this Entity", generalException);
                             return false;
                         }
                     }
@@ -468,7 +468,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error checking whether staff can be removed: " + generalException.Message);
+                MessageFunctions.Error("Error checking whether staff can be removed", generalException);
                 return false;
             }            
         }
@@ -489,7 +489,7 @@ namespace ProjectTile
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.ErrorMessage("Error retrieving list of staff IDs in Entity " + entityID.ToString() + ": " + generalException.Message);
+                    MessageFunctions.Error("Error retrieving list of staff IDs in Entity " + entityID.ToString() + "", generalException);
                     return null;
                 }
             }
@@ -525,7 +525,7 @@ namespace ProjectTile
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.ErrorMessage("Error retrieving summary data of staff in Entity " + entityID.ToString() + ": " + generalException.Message);
+                    MessageFunctions.Error("Error retrieving summary data of staff in Entity " + entityID.ToString() + "", generalException);
                     return null;
                 }
             }
@@ -561,7 +561,7 @@ namespace ProjectTile
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.ErrorMessage("Error retrieving summary data of staff not in Entity " + entityID.ToString() + ": " + generalException.Message);
+                    MessageFunctions.Error("Error retrieving summary data of staff not in Entity " + entityID.ToString() + "", generalException);
                     return null;
                 }
             }
@@ -582,7 +582,7 @@ namespace ProjectTile
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.ErrorMessage("Error retrieving list of Entities for staff member " + staffID.ToString() + ": " + generalException.Message);
+                    MessageFunctions.Error("Error retrieving list of Entities for staff member " + staffID.ToString() + "", generalException);
                     return null;
                 }
             }
@@ -620,7 +620,7 @@ namespace ProjectTile
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.ErrorMessage("Error retrieving summary data of Entities linked to staff member " + staffID.ToString() + ": " + generalException.Message);
+                    MessageFunctions.Error("Error retrieving summary data of Entities linked to staff member " + staffID.ToString() + "", generalException);
                     return null;
                 }
             }
@@ -659,7 +659,7 @@ namespace ProjectTile
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.ErrorMessage("Error retrieving summary data of Entities linked to staff member " + staffID.ToString() + ": " + generalException.Message);
+                    MessageFunctions.Error("Error retrieving summary data of Entities linked to staff member " + staffID.ToString() + "", generalException);
                     return null;
                 }
             }
@@ -697,7 +697,7 @@ namespace ProjectTile
                         }
                         catch (Exception generalException)
                         {
-                            MessageFunctions.ErrorMessage("Error adding " + thisPerson.FirstName + " " + thisPerson.Surname + " to entity " + sqlName + ": " + generalException.Message);
+                            MessageFunctions.Error("Error adding " + thisPerson.FirstName + " " + thisPerson.Surname + " to entity " + sqlName + "", generalException);
                             return false;
                         }
                     }
@@ -719,7 +719,7 @@ namespace ProjectTile
                         }
                         catch (Exception generalException)
                         {
-                            MessageFunctions.ErrorMessage("Error removing " + thisPerson.FirstName + " " + thisPerson.Surname + " from entity " + sqlName + ": " + generalException.Message);
+                            MessageFunctions.Error("Error removing " + thisPerson.FirstName + " " + thisPerson.Surname + " from entity " + sqlName + "", generalException);
                             return false;
                         }
                     }
@@ -730,7 +730,7 @@ namespace ProjectTile
             catch (Exception generalException)
             {
                 string change = addition ? "addition" : "removal";
-                MessageFunctions.ErrorMessage("Error processing " + change + ": " + generalException.Message);
+                MessageFunctions.Error("Error processing " + change + "", generalException);
                 return false;
             }
         }
@@ -767,7 +767,7 @@ namespace ProjectTile
                         }
                         catch (Exception generalException)
                         {
-                            MessageFunctions.ErrorMessage("Error adding " + staffName + " to entity " + thisEntity.EntityName + ": " + generalException.Message);
+                            MessageFunctions.Error("Error adding " + staffName + " to entity " + thisEntity.EntityName + "", generalException);
                             return false;
                         }
                     }
@@ -789,7 +789,7 @@ namespace ProjectTile
                         }
                         catch (Exception generalException)
                         {
-                            MessageFunctions.ErrorMessage("Error removing " + staffName + " from entity " + thisEntity.EntityName + ": " + generalException.Message);
+                            MessageFunctions.Error("Error removing " + staffName + " from entity " + thisEntity.EntityName + "", generalException);
                             return false;
                         }
                     }
@@ -800,7 +800,7 @@ namespace ProjectTile
             catch (Exception generalException)
             {
                 string change = addition ? "addition" : "removal";
-                MessageFunctions.ErrorMessage("Error processing " + change + ": " + generalException.Message);
+                MessageFunctions.Error("Error processing " + change + "", generalException);
                 return false;
             }
         }
@@ -828,7 +828,7 @@ namespace ProjectTile
                     StaffSummaryRecord displayRecord = StaffForEntity.ElementAt(displayIndex);
                     if (displayRecord == null)
                     {
-                        MessageFunctions.ErrorMessage("Error updating default Entity in display: display record not found");
+                        MessageFunctions.Error("Error updating default Entity in display: display record not found.", null);
                         return false;
                     }
                     else { displayRecord.DefaultEntity = displayName; }
@@ -837,7 +837,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {                
-                MessageFunctions.ErrorMessage("Error setting default Entities: " + generalException.Message);
+                MessageFunctions.Error("Error setting default Entities", generalException);
                 return false;
             }
         }
@@ -858,7 +858,7 @@ namespace ProjectTile
                     displayRecord = EntitiesForStaff.ElementAt(displayIndex);
                     if (displayRecord == null)
                     {
-                        MessageFunctions.ErrorMessage("Error setting default Entity in display: existing default record not found");
+                        MessageFunctions.Error("Error setting default Entity in display: existing default record not found.", null);
                         return false;
                     }
                     else { displayRecord.Default = false; }                
@@ -867,7 +867,7 @@ namespace ProjectTile
                     displayRecord = EntitiesForStaff.ElementAt(displayIndex);
                     if (displayRecord == null)
                     {
-                        MessageFunctions.ErrorMessage("Error setting default Entity in display: new default record not found");
+                        MessageFunctions.Error("Error setting default Entity in display: new default record not found.", null);
                         return false;
                     }
                     else { displayRecord.Default = true; }
@@ -877,7 +877,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error setting default Entity: " + generalException.Message);
+                MessageFunctions.Error("Error setting default Entity", generalException);
                 return false;
             }
         }
@@ -901,7 +901,7 @@ namespace ProjectTile
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.ErrorMessage("Error saving staff removals from Entity: " + generalException.Message);
+                    MessageFunctions.Error("Error saving staff removals from Entity", generalException);
                     return false;
                 }
 
@@ -915,7 +915,7 @@ namespace ProjectTile
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.ErrorMessage("Error saving staff into Entity: " + generalException.Message);
+                    MessageFunctions.Error("Error saving staff into Entity", generalException);
                     return false;
                 }
 
@@ -932,7 +932,7 @@ namespace ProjectTile
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.ErrorMessage("Error saving staff defaults: " + generalException.Message);
+                    MessageFunctions.Error("Error saving staff defaults", generalException);
                     return false;
                 }
 
@@ -965,7 +965,7 @@ namespace ProjectTile
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.ErrorMessage("Error saving staff removals from Entity: " + generalException.Message);
+                    MessageFunctions.Error("Error saving staff removals from Entity", generalException);
                     return false;
                 }
 
@@ -979,7 +979,7 @@ namespace ProjectTile
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.ErrorMessage("Error saving staff into Entity: " + generalException.Message);
+                    MessageFunctions.Error("Error saving staff into Entity", generalException);
                     return false;
                 }
 
@@ -1045,7 +1045,7 @@ namespace ProjectTile
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.ErrorMessage("Error listing staff roles: " + generalException.Message);
+                    MessageFunctions.Error("Error listing staff roles", generalException);
                     return null;
                 }
             }
@@ -1064,7 +1064,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error retrieving role description: " + generalException.Message);
+                MessageFunctions.Error("Error retrieving role description", generalException);
                 return "";
             }
         }
@@ -1082,7 +1082,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error retrieving role code: " + generalException.Message);
+                MessageFunctions.Error("Error retrieving role code", generalException);
                 return "";
             }
         }

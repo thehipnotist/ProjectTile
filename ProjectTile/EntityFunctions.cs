@@ -33,7 +33,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error listing valid Entity IDs: " + generalException.Message);
+                MessageFunctions.Error("Error listing valid Entity IDs", generalException);
                 return null;
             }
         }
@@ -65,7 +65,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error listing valid Entity names: " + generalException.Message);
+                MessageFunctions.Error("Error listing valid Entity names", generalException);
                 return null;
             }
         }
@@ -83,7 +83,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error retrieving Entity ID " + entityID.ToString() + " from the database: " + generalException.Message);
+                MessageFunctions.Error("Error retrieving Entity ID " + entityID.ToString() + " from the database", generalException);
                 return null;
             }
         }
@@ -102,7 +102,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error retrieving an Entity called " + displayName + " from the database: " + generalException.Message);
+                MessageFunctions.Error("Error retrieving an Entity called " + displayName + " from the database", generalException);
                 return null;
             }
         }
@@ -120,7 +120,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error retrieving an Entity with ID " + entityID.ToString() + " from the database: " + generalException.Message);
+                MessageFunctions.Error("Error retrieving an Entity with ID " + entityID.ToString() + " from the database", generalException);
                 return "";
             }
         }
@@ -145,7 +145,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error retrieving an Entity with ID " + entityID.ToString() + " from the database: " + generalException.Message);
+                MessageFunctions.Error("Error retrieving an Entity with ID " + entityID.ToString() + " from the database", generalException);
                 return false;
             }
         }
@@ -165,7 +165,7 @@ namespace ProjectTile
                     }
                     PageFunctions.ShowTilesPage();
                 }
-                catch (Exception generalException) { MessageFunctions.ErrorMessage("Error changing entity: " + generalException.Message); }
+                catch (Exception generalException) { MessageFunctions.Error("Error changing entity", generalException); }
             }
             else { MessageFunctions.InvalidMessage("Please select an Entity from the drop-down list.", "No Entity Selected"); }
         }
@@ -216,13 +216,13 @@ namespace ProjectTile
                             }                          
                             catch (Exception generalException)
                             {
-                                MessageFunctions.ErrorMessage("Problem creating entity ID: " + generalException.Message);
+                                MessageFunctions.Error("Problem creating entity ID", generalException);
                                 return;
                             }
                         }
                         catch (Exception generalException)
                         {
-                            MessageFunctions.ErrorMessage("Error creating database record: " + generalException.Message);
+                            MessageFunctions.Error("Error creating database record", generalException);
                             return;
                         }
 
@@ -233,7 +233,7 @@ namespace ProjectTile
                         }
                         catch (Exception generalException)
                         {
-                            MessageFunctions.ErrorMessage("Error providing access to the new database: " + generalException.Message);
+                            MessageFunctions.Error("Error providing access to the new database", generalException);
                             return;
                         }
 
@@ -255,19 +255,19 @@ namespace ProjectTile
                         }
                         catch (SqlException sqlException)
                         {
-                            MessageFunctions.ErrorMessage("SQL error saving changes to the database: " + sqlException.Message);
+                            MessageFunctions.Error("SQL error saving changes to the database", sqlException);
                             return;
                         }
                         catch (Exception generalException)
                         {
-                            MessageFunctions.ErrorMessage("Error saving changes to the database: " + generalException.Message);
+                            MessageFunctions.Error("Error saving changes to the database", generalException);
                             return;
                         }
                     }
-                    catch (Exception generalException) { MessageFunctions.ErrorMessage("Error creating new database: " + generalException.Message); }
+                    catch (Exception generalException) { MessageFunctions.Error("Error creating new database", generalException); }
                 }
             }
-            catch (Exception generalException) { MessageFunctions.ErrorMessage("Error checking new database details: " + generalException.Message); }
+            catch (Exception generalException) { MessageFunctions.Error("Error checking new database details", generalException); }
         }
 
         public static void AmendEntity(ref Entities selectedEntity, string displayName, string displayDescription)
@@ -332,15 +332,15 @@ namespace ProjectTile
                         }
                         catch (Exception generalException)
                         {
-                            MessageFunctions.ErrorMessage("Error amending database record: " + generalException.Message);
+                            MessageFunctions.Error("Error amending database record", generalException);
                             return;
                         }
 
                     }
-                    catch (Exception generalException) { MessageFunctions.ErrorMessage("Error creating new database: " + generalException.Message); }
+                    catch (Exception generalException) { MessageFunctions.Error("Error creating new database", generalException); }
                 }
             }
-            catch (Exception generalException) { MessageFunctions.ErrorMessage("Error checking new database details: " + generalException.Message); }
+            catch (Exception generalException) { MessageFunctions.Error("Error checking new database details", generalException); }
         }
  
         public static void UpdateCurrentEntity(ref Entities targetEntity)
@@ -373,12 +373,12 @@ namespace ProjectTile
                 }
                 catch (SqlException sqlException)
                 {
-                    MessageFunctions.ErrorMessage("SQL error saving new default Entity preference to the database: " + sqlException.Message);
+                    MessageFunctions.Error("SQL error saving new default Entity preference to the database", sqlException);
                     return;
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.ErrorMessage("Error saving new default Entity preference to the database: " + generalException.Message);
+                    MessageFunctions.Error("Error saving new default Entity preference to the database", generalException);
                     return;
                 }
             }
@@ -398,7 +398,7 @@ namespace ProjectTile
                     winMain.updateDetailsBlock();
                     PageFunctions.ShowTilesPage();
                 }
-                catch (Exception generalException) { MessageFunctions.ErrorMessage("Error changing entity: " + generalException.Message); }
+                catch (Exception generalException) { MessageFunctions.Error("Error changing entity", generalException); }
             }
             else { MessageFunctions.InvalidMessage("Please select an Entity from the drop-down list.", "No Entity Selected"); }
         }

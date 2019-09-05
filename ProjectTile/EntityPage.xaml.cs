@@ -43,7 +43,7 @@ namespace ProjectTile
                 }
                 catch (Exception generalException) 
                 { 
-                    MessageFunctions.ErrorMessage("Error retrieving query details: " + generalException.Message);
+                    MessageFunctions.Error("Error retrieving query details", generalException);
                     PageFunctions.ShowTilesPage();    
                 }
 
@@ -97,7 +97,7 @@ namespace ProjectTile
                     {
                         EntityList.SelectedItem = EntityFunctions.CurrentEntityName;
                     }
-                    catch (Exception generalException) { MessageFunctions.ErrorMessage("Error setting current entity: " + generalException.Message); }
+                    catch (Exception generalException) { MessageFunctions.Error("Error setting current entity", generalException); }
                 
                 }
                 else // Not sure
@@ -105,7 +105,7 @@ namespace ProjectTile
                     EntityList.Visibility = Visibility.Hidden;
                 }
             }
-            catch (Exception generalException) { MessageFunctions.ErrorMessage("Error setting initial values: " + generalException.Message); }
+            catch (Exception generalException) { MessageFunctions.Error("Error setting initial values", generalException); }
         }
 
         /* ----------------------
@@ -134,8 +134,7 @@ namespace ProjectTile
             else if (pageMode == "Default")
             {
                 EntityFunctions.ChangeDefaultEntity(ref selectedEntity, displayName);
-            }
-            else { MessageFunctions.ErrorMessage("Not yet implemented."); }    
+            }  
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -173,7 +172,7 @@ namespace ProjectTile
             }
             catch (Exception generalException) 
             {
-                MessageFunctions.ErrorMessage("Error changing entity selection: " + generalException.Message);
+                MessageFunctions.Error("Error changing entity selection", generalException);
                 selectedEntityID = 0;
                 selectedEntity = null;
             }

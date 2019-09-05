@@ -46,12 +46,12 @@ namespace ProjectTile
                     }
                     else { mainFrame.Navigate(new Uri(newPageSource, uriDefault)); }
                 }
-                catch (Exception generalException) { MessageFunctions.ErrorMessage("Error changing page: " + generalException.Message); }
+                catch (Exception generalException) { MessageFunctions.Error("Error changing page", generalException); }
             }
             else
             {
                 try { mainFrame.Navigate(new Uri(newPageSource, uriDefault)); }
-                catch (Exception generalException) { MessageFunctions.ErrorMessage("Error changing page: " + generalException.Message); }
+                catch (Exception generalException) { MessageFunctions.Error("Error changing page", generalException); }
             }
         }
 
@@ -107,14 +107,14 @@ namespace ProjectTile
                 if (paramValue != "") { return paramValue; }
                 else
                 {
-                    MessageFunctions.ErrorMessage("No page parameter called " + paramName + " found.");
+                    MessageFunctions.Error("No page parameter called " + paramName + " found.", null);
                     ShowTilesPage();
                     return null;
                 }
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error retrieving page parameter " + paramName + ": " + generalException.Message);
+                MessageFunctions.Error("Error retrieving page parameter " + paramName + "", generalException);
                 ShowTilesPage();
                 return null;
             }

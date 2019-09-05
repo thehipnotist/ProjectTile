@@ -54,6 +54,7 @@ namespace ProjectTile
         public virtual DbSet<vi_ProjectTeams> vi_ProjectTeams { get; set; }
         public virtual DbSet<vi_StaffEntities> vi_StaffEntities { get; set; }
         public virtual DbSet<vi_StaffWithRoles> vi_StaffWithRoles { get; set; }
+        public virtual DbSet<ErrorLog> ErrorLog { get; set; }
     
         public virtual ObjectResult<cln_GetClientsByAccountManagerID_Result> cln_GetClientsByAccountManagerID(string accountManagerID)
         {
@@ -952,6 +953,48 @@ namespace ProjectTile
                 new ObjectParameter("RoleDescription", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("stf_UpdateRoleDescriptionInStaffRoles", roleCodeParameter, roleDescriptionParameter);
+        }
+    
+        public virtual ObjectResult<err_GetErrorLogByID_Result> err_GetErrorLogByID(string iD)
+        {
+            var iDParameter = iD != null ?
+                new ObjectParameter("ID", iD) :
+                new ObjectParameter("ID", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<err_GetErrorLogByID_Result>("err_GetErrorLogByID", iDParameter);
+        }
+    
+        public virtual int err_InsertIntoErrorLog(string customMessage, string exceptionMessage, string exceptionType, string targetSite, Nullable<System.DateTime> loggedAt, string loggedBy, string innerException)
+        {
+            var customMessageParameter = customMessage != null ?
+                new ObjectParameter("CustomMessage", customMessage) :
+                new ObjectParameter("CustomMessage", typeof(string));
+    
+            var exceptionMessageParameter = exceptionMessage != null ?
+                new ObjectParameter("ExceptionMessage", exceptionMessage) :
+                new ObjectParameter("ExceptionMessage", typeof(string));
+    
+            var exceptionTypeParameter = exceptionType != null ?
+                new ObjectParameter("ExceptionType", exceptionType) :
+                new ObjectParameter("ExceptionType", typeof(string));
+    
+            var targetSiteParameter = targetSite != null ?
+                new ObjectParameter("TargetSite", targetSite) :
+                new ObjectParameter("TargetSite", typeof(string));
+    
+            var loggedAtParameter = loggedAt.HasValue ?
+                new ObjectParameter("LoggedAt", loggedAt) :
+                new ObjectParameter("LoggedAt", typeof(System.DateTime));
+    
+            var loggedByParameter = loggedBy != null ?
+                new ObjectParameter("LoggedBy", loggedBy) :
+                new ObjectParameter("LoggedBy", typeof(string));
+    
+            var innerExceptionParameter = innerException != null ?
+                new ObjectParameter("InnerException", innerException) :
+                new ObjectParameter("InnerException", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("err_InsertIntoErrorLog", customMessageParameter, exceptionMessageParameter, exceptionTypeParameter, targetSiteParameter, loggedAtParameter, loggedByParameter, innerExceptionParameter);
         }
     }
 }

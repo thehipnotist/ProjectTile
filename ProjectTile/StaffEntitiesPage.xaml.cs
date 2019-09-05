@@ -65,7 +65,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error retrieving query details: " + generalException.Message);
+                MessageFunctions.Error("Error retrieving query details", generalException);
                 PageFunctions.ShowTilesPage();
             }
 
@@ -115,7 +115,7 @@ namespace ProjectTile
                 EntityList.ItemsSource = EntityFunctions.EntityList(LoginFunctions.CurrentStaffID, true);
                 EntityList.SelectedItem = PageFunctions.AllRecords;
             }
-            catch (Exception generalException) { MessageFunctions.ErrorMessage("Error populating role filter list: " + generalException.Message); }
+            catch (Exception generalException) { MessageFunctions.Error("Error populating role filter list", generalException); }
         }
 
         /* Data retrieval */
@@ -138,12 +138,12 @@ namespace ProjectTile
                             StaffGrid.ScrollIntoView(StaffGrid.SelectedItem);
                         }
                     }
-                    catch (Exception generalException) { MessageFunctions.ErrorMessage("Error selecting record: " + generalException.Message); }
+                    catch (Exception generalException) { MessageFunctions.Error("Error selecting record", generalException); }
                 }
 
                 // refreshStaffSummaries(true);
             }
-            catch (Exception generalException) { MessageFunctions.ErrorMessage("Error filling staff grid: " + generalException.Message); }
+            catch (Exception generalException) { MessageFunctions.Error("Error filling staff grid", generalException); }
         }        
         
         private void nameFilter()
@@ -241,7 +241,7 @@ namespace ProjectTile
             }
             catch (Exception generalException) 
             { 
-                MessageFunctions.ErrorMessage("Error populating staff list: " + generalException.Message);
+                MessageFunctions.Error("Error populating staff list", generalException);
                 return;
             }
         }
@@ -304,7 +304,7 @@ namespace ProjectTile
             {
                 AddButton.IsEnabled = (StaffList && StaffFrom.SelectedItems != null) || (!StaffList && EntitiesFrom.SelectedItems != null);
             }
-            catch (Exception generalException) { MessageFunctions.ErrorMessage("Error activating the 'Add' button: " + generalException.Message); }
+            catch (Exception generalException) { MessageFunctions.Error("Error activating the 'Add' button", generalException); }
         }
 
         private void toActivated(bool StaffList)
@@ -313,7 +313,7 @@ namespace ProjectTile
             {
                 RemoveButton.IsEnabled = DefaultButton.IsEnabled = (StaffList && StaffTo.SelectedItems != null) || (!StaffList && EntitiesTo.SelectedItems != null);
             }
-            catch (Exception generalException) { MessageFunctions.ErrorMessage("Error activating the 'Remove' and 'Default' buttons: " + generalException.Message); }
+            catch (Exception generalException) { MessageFunctions.Error("Error activating the 'Remove' and 'Default' buttons", generalException); }
         }
 
         private void addStaff()
@@ -338,12 +338,12 @@ namespace ProjectTile
                 }
                 else
                 {
-                    MessageFunctions.ErrorMessage("Error adding staff to Entity: no staff selected");
+                    MessageFunctions.Error("Error adding staff to Entity: no staff selected.", null);
                 }
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error adding staff to Entity: " + generalException.Message);
+                MessageFunctions.Error("Error adding staff to Entity", generalException);
             }
         }
 
@@ -369,12 +369,12 @@ namespace ProjectTile
                 }
                 else
                 {
-                    MessageFunctions.ErrorMessage("Error adding Entities to staff: no Entity selected");
+                    MessageFunctions.Error("Error adding Entities to staff: no Entity selected.", null);
                 }
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error adding Entities to staff: " + generalException.Message);
+                MessageFunctions.Error("Error adding Entities to staff", generalException);
             }
         }
 
@@ -400,12 +400,12 @@ namespace ProjectTile
                 }
                 else
                 {
-                    MessageFunctions.ErrorMessage("Error removing staff from Entity: no staff selected");
+                    MessageFunctions.Error("Error removing staff from Entity: no staff selected.", null);
                 }
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error removing staff from Entity: " + generalException.Message);
+                MessageFunctions.Error("Error removing staff from Entity", generalException);
             }
         }
 
@@ -431,12 +431,12 @@ namespace ProjectTile
                 }
                 else
                 {
-                    MessageFunctions.ErrorMessage("Error removing Entities from staff: no Entity selected");
+                    MessageFunctions.Error("Error removing Entities from staff: no Entity selected.", null);
                 }
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error removing Entities from staff: " + generalException.Message);
+                MessageFunctions.Error("Error removing Entities from staff", generalException);
             }
         }
 
@@ -448,7 +448,7 @@ namespace ProjectTile
                 {
                     if (EntitiesTo.SelectedItems == null)
                     {
-                        MessageFunctions.ErrorMessage("Error setting default Entity: no Entity selected");
+                        MessageFunctions.Error("Error setting default Entity: no Entity selected.", null);
                     }
                     else if (EntitiesTo.SelectedItems.Count > 1)
                     {
@@ -471,7 +471,7 @@ namespace ProjectTile
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.ErrorMessage("Error setting default Entity: " + generalException.Message);
+                    MessageFunctions.Error("Error setting default Entity", generalException);
                 }
             }
             else
@@ -495,12 +495,12 @@ namespace ProjectTile
                     }
                     else
                     {
-                        MessageFunctions.ErrorMessage("Error setting default Entity: no staff selected");
+                        MessageFunctions.Error("Error setting default Entity: no staff selected.", null);
                     }
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.ErrorMessage("Error setting default Entity: " + generalException.Message);
+                    MessageFunctions.Error("Error setting default Entity", generalException);
                 }
             }
         }
@@ -565,7 +565,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.ErrorMessage("Error processing selection change: " + generalException.Message);
+                MessageFunctions.Error("Error processing selection change", generalException);
                 selectedStaffID = 0; // Avoid accidentally using the previous selection
                 clearSelection();
             }
@@ -593,7 +593,7 @@ namespace ProjectTile
                     }
                     catch (Exception generalException)
                     {
-                        MessageFunctions.ErrorMessage("Error changing entity selection: " + generalException.Message);
+                        MessageFunctions.Error("Error changing entity selection", generalException);
                         selectedEntityID = 0;
                         selectedEntity = null;
                         StaffButton.IsEnabled = false;

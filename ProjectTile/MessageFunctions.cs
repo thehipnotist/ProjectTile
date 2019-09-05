@@ -1,12 +1,80 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
 namespace ProjectTile
 {
     public class MessageFunctions
     {
-        public static void ErrorMessage(string message, string caption = "Error")
+        public static void Error(string customMessage, Exception exp, string caption = "Error")
         {
-            MessageBox.Show(message + " Please contact your system administrator.", caption, MessageBoxButton.OK, MessageBoxImage.Error);
+            try
+            {
+                string message = customMessage.Replace(LoginFunctions.DbUserPrefix, "");
+                string innerException = "";
+
+                if (exp != null)
+                {
+                    if (exp.InnerException != null) { innerException = exp.InnerException.ToString(); }
+                    logError(customMessage, exp.GetType().ToString(), exp.Message, exp.TargetSite.ToString(), innerException);
+
+                    message = message + ": " + exp.Message;
+
+                    if (message.Substring(message.Length - 1, 1) != ".") { message = message + "."; }
+                    message = message.Replace(": : ", ": ");
+                    message = message + "\n\nPlease contact your system administrator.";
+
+                    if (innerException != "")
+                    {
+                        MessageBoxResult answer = MessageBox.Show(message + " Would you like to view the full error?", caption, MessageBoxButton.YesNo,
+                            MessageBoxImage.Error);
+                        if (answer == MessageBoxResult.Yes)
+                        {
+                            MessageBox.Show(innerException, "Inner Exception", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                    }
+                    else { MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Error); }
+                }
+                else
+                {
+                    logError(customMessage, "Custom");
+                    if (message.Substring(message.Length - 1, 1) != ".") { message = message + "."; }
+                    message = message + "\n\nPlease contact your system administrator.";
+                    MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch
+            {
+                MessageBox.Show(customMessage, caption, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        public static void logError(string customMessage, string errorType, string expMessage = "", string targetSite = "", string innerException = "")
+        {
+            try
+            {
+                ErrorLog newError = new ErrorLog()
+                {
+                    CustomMessage = customMessage,
+                    ExceptionMessage = expMessage,
+                    ExceptionType = errorType,
+                    TargetSite = targetSite,
+                    LoggedAt = DateTime.Now,
+                    LoggedBy = LoginFunctions.CurrentUserID,
+                    InnerException = innerException
+                };
+
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    existingPtDb.ErrorLog.Add(newError);
+                    existingPtDb.SaveChanges();
+                }
+            }
+            catch // (Exception e)
+            {
+                // MessageBox.Show(e.Message + ": " + e.InnerException.ToString());
+                // Do nothing - no point throwing another error!
+            }
         }
 
         public static void SuccessMessage(string message, string caption = "Record changed")
