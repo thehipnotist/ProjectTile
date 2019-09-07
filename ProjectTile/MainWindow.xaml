@@ -48,11 +48,11 @@
                 <MenuItem x:Name="ChangeLogin" Header="Change Login" Click="LoginMenu_Login_Click" FontWeight="Normal" Background="{StaticResource PtBrushRed1}" Foreground="Black"/>
                 <MenuItem x:Name="ChangePassword" Header="Change Password" Click="LoginMenu_Password_Click" FontWeight="Normal" Background="{StaticResource PtBrushRed1}" Foreground="Black"/>
                 <MenuItem x:Name="Exit" Header="Exit ProjectTile" Click="LoginMenu_Exit_Click" FontWeight="Normal" Background="{StaticResource PtBrushRed1}" Foreground="Black"/>
-            </MenuItem>            
+            </MenuItem>
         </Menu>
 
-        <TextBlock x:Name="DetailsBlock" HorizontalAlignment="Right" Height="{Binding ActualHeight, ElementName=Main}" Margin="0,65,4,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="145" 
-                   Background="{StaticResource PtBrushHeaderBlue}" TextAlignment="Right" Padding="5,5,10,5" Foreground="White" FontWeight="Normal" FontFamily="Yu Gothic" MinWidth="145" MinHeight="500" 
+        <TextBlock x:Name="DetailsBlock" HorizontalAlignment="Right" Height="{Binding ActualHeight, ElementName=Main}" Margin="0,65,4,-96" TextWrapping="Wrap" VerticalAlignment="Top" Width="145" 
+                   Background="{StaticResource PtBrushHeaderBlue}" TextAlignment="Right" Padding="8,5,8,5" Foreground="White" FontWeight="Normal" FontFamily="Yu Gothic" MinWidth="145" MinHeight="500" 
                    MaxWidth="145" Grid.Column="1" Focusable="True" />
         <Frame x:Name="MainFrame" Content="Frame" Height="541" Margin="0,30,0,0" Width="840" NavigationUIVisibility="Hidden" BorderThickness="5" BorderBrush="{StaticResource PtBrushFrameBlue}" 
                Grid.ColumnSpan="2" MinWidth="840" MinHeight="541" HorizontalAlignment="Left" VerticalAlignment="Top"/>

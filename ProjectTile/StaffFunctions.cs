@@ -609,13 +609,6 @@ namespace ProjectTile
                                 Default = (e.ID == defaultEntity)  
                             })
                             ).Distinct().ToList();
-
-                    foreach (EntitiesSummaryRecord entRecord in entitiesList)
-                    {
-                        entRecord.Name = PageFunctions.FormatSqlOutput(entRecord.Name);
-                        entRecord.Description = PageFunctions.FormatSqlOutput(entRecord.Description);
-                    }
-
                     return entitiesList;
                 }
                 catch (Exception generalException)
@@ -647,13 +640,6 @@ namespace ProjectTile
                                 Default = false
                             })
                             ).Distinct().ToList();
-
-                    foreach (EntitiesSummaryRecord entRecord in entitiesList)
-                    {
-                        entRecord.Name = PageFunctions.FormatSqlOutput(entRecord.Name);
-                        entRecord.Description = PageFunctions.FormatSqlOutput(entRecord.Description);
-                    }
-
                     return entitiesList;
 
                 }
@@ -807,8 +793,6 @@ namespace ProjectTile
 
         public static bool makeDefault(List<StaffSummaryRecord> affectedStaff, Entities thisEntity)
         {
-            string displayName = PageFunctions.FormatSqlOutput(thisEntity.EntityName);
-
             try
             {
                 foreach (StaffSummaryRecord thisRecord in affectedStaff)
@@ -831,7 +815,7 @@ namespace ProjectTile
                         MessageFunctions.Error("Error updating default Entity in display: display record not found.", null);
                         return false;
                     }
-                    else { displayRecord.DefaultEntity = displayName; }
+                    else { displayRecord.DefaultEntity = thisEntity.EntityName; }
                 }    
                 return true;
             }

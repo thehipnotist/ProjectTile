@@ -4,6 +4,10 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Threading;
 using System.Windows.Threading;
+using System.Windows.Media;
+using System.Threading.Tasks;
+using System.Windows.Media.Animation;
+using System.Windows.Shapes;
 
 namespace ProjectTile
 {
@@ -19,6 +23,7 @@ namespace ProjectTile
         /* Global/page parameters */
         MainWindow winMain = (MainWindow)App.Current.MainWindow;
         string pageMode;
+        bool pageSuccess = false;
 
         /* ----------------------
            -- Page Management ---
@@ -101,10 +106,17 @@ namespace ProjectTile
                 if (Keyboard.IsKeyToggled(Key.CapsLock)) { CapsLockLabel.Visibility = Visibility.Visible; }
                 else { CapsLockLabel.Visibility = Visibility.Hidden; }
             }
-            catch (Exception generalException)
-            {
-                MessageFunctions.Error("Caps lock error", generalException);
-            }
+            catch (Exception generalException) {  MessageFunctions.Error("Caps lock error", generalException); }
+        }
+
+        private void toggleWaitMessage(bool display)
+        {
+            Visibility showHide = display ? Visibility.Visible : Visibility.Hidden;
+            PleaseWaitLabel.Visibility = showHide;
+            SpinEllipse.Visibility = showHide;
+            SpinRectangle.Visibility = showHide;
+
+            //MessageBox.Show(pageSuccess.ToString());
         }
 
         /* ----------------------
@@ -131,35 +143,59 @@ namespace ProjectTile
                 return;
             }
 
-            // Show the 'please wait' message and queue the next activity for afterwards
-            Action a = new Action(  () => { PleaseWaitLabel.Visibility = Visibility.Visible; }  );
-            this.Dispatcher.Invoke(a, DispatcherPriority.Send);
-
-            Action b = new Action(  () =>
+            /*
+            try
             {
-                Thread.Sleep(100); // Ensure this starts after the 'please wait' message
+                DoubleAnimation spinAnimation = new DoubleAnimation(0, 365, new Duration(TimeSpan.FromSeconds(1)));
+                Storyboard.SetTargetName(spinAnimation, "RectangleSpin");
+                Storyboard.SetTargetProperty(spinAnimation, new PropertyPath(RotateTransform.AngleProperty));             
+                spinStoryboard = new Storyboard();
+                spinStoryboard.RepeatBehavior = RepeatBehavior.Forever;
+                spinStoryboard.Children.Add(spinAnimation);
+                spinStoryboard.Begin(this, true);
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Animation error", generalException); }
+            */ 
 
-                if (!LoginFunctions.CheckPassword(userID, password))
+            // Show the 'please wait' message and queue the next activity for afterwards
+            Action a = new Action (  () => { toggleWaitMessage(true); });
+
+            Action b = new Action (  () =>
                 {
-                    MessageFunctions.InvalidMessage("Incorrect existing username or password. Please check and try again.", "Incorrect Login");
-                }
-                else if (pageMode == "LogIn") { LoginFunctions.AttemptLogin(userID, password); }
-                else if (pageMode == "PassChange")
-                {
-                    bool success = LoginFunctions.ChangeLoginDetails(LoginFunctions.CurrentStaffID, userID, NewPassword.Password, ConfirmPassword.Password);
-                    if (success) 
+                    if (!LoginFunctions.CheckPassword(userID, password))
                     {
-                        MessageFunctions.SuccessMessage("Your password has been changed successfully.", "Password Changed");
-                        PageFunctions.ShowTilesPage();
+                        MessageFunctions.InvalidMessage("Incorrect existing username or password. Please check and try again.", "Incorrect Login");
                     }
+                    else if (pageMode == "LogIn") 
+                    { 
+                        LoginFunctions.AttemptLogin(userID, password);
+                        pageSuccess = true; 
+                    }
+                    else if (pageMode == "PassChange")
+                    {
+                        bool success = LoginFunctions.ChangeLoginDetails(LoginFunctions.CurrentStaffID, userID, NewPassword.Password, ConfirmPassword.Password);
+                        if (success) 
+                        {
+                            MessageFunctions.SuccessMessage("Your password has been changed successfully.", "Password Changed");
+                            pageSuccess = true;
+                        }
+                    }
+                }   
+            );
+
+            Action c = new Action (  () =>
+                {
+                    if (pageSuccess)
+                    {
+                        LoginFunctions.CompleteLogIn();
+                    }
+                    toggleWaitMessage(false);
                 }
+            );
 
-                PleaseWaitLabel.Visibility = Visibility.Hidden;
- 
-            }   );
-
-            this.Dispatcher.Invoke(b, DispatcherPriority.ApplicationIdle);
-            
+            Task task1 = Task.Factory.StartNew(() => { this.Dispatcher.BeginInvoke(a, DispatcherPriority.Send); Thread.Sleep(100); });
+            Task task2 = task1.ContinueWith((async) => { winMain.Dispatcher.BeginInvoke(b, DispatcherPriority.SystemIdle); Thread.Sleep(100); }, TaskContinuationOptions.OnlyOnRanToCompletion);
+            Task task3 = task2.ContinueWith((antecedent) => this.Dispatcher.BeginInvoke(c, DispatcherPriority.Background), TaskContinuationOptions.OnlyOnRanToCompletion);            
         }
 
         private void Password_Changed(object sender, RoutedEventArgs e)

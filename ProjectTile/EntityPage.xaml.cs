@@ -152,7 +152,7 @@ namespace ProjectTile
                 selectedEntity = EntityFunctions.GetEntityByName(displayName);
                 selectedEntityID = selectedEntity.ID;
 
-                EntityDescription.Text = PageFunctions.FormatSqlOutput(selectedEntity.EntityDescription);
+                EntityDescription.Text = selectedEntity.EntityDescription;
                 if (pageMode == "Amend")
                 {
                     EntityDescription.IsEnabled = true;

@@ -18,28 +18,71 @@
             <RowDefinition x:Name="MiddleRow" Height="400*" MinHeight="400"/>
             <RowDefinition Height="90" MinHeight="90" MaxHeight="90"/>
         </Grid.RowDefinitions>
-        <Label x:Name="PageHeader" Content="View Products" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="655" FontWeight="Bold" Background="{x:Null}" Margin="0,0,0,0" 
+        <Label x:Name="PageHeader" Content="View Clients" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="655" FontWeight="Bold" Background="{x:Null}" Margin="0,0,0,0" 
                Foreground="White" Grid.Row="0" Grid.Column="1" />
-        <Border MinHeight="400" MinWidth="655" Height="Auto" Width="Auto" Margin="0,0,0,0" BorderBrush="{StaticResource PtBrushPurple3}" BorderThickness="2" Grid.Row="1" Grid.Column="1">
-            <Grid MinWidth="655" Width="{Binding ElementName=CentreColumn, Path=ActualWidth}">
+        <Border MinHeight="400" MinWidth="655" Height="Auto" Width="Auto" Margin="0,0,0,0" BorderBrush="{StaticResource PtBrushPurple3}" Style="{DynamicResource SectionBorder}" Grid.Row="1" 
+                Grid.Column="1">
+            <Grid x:Name="CentreGrid" MinWidth="655" Width="{Binding ElementName=CentreColumn, Path=ActualWidth}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="{Binding ElementName=MiddleRow, Path=ActualHeight}" MinHeight="400"/>
                 </Grid.RowDefinitions>
-                <Label x:Name="Instructions" Content="Instructions." HorizontalAlignment="Left" Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+
+                <Label x:Name="Instructions" Content="This page is read-only. Click on column headers to sort by that column. Use the filters to restrict results." HorizontalAlignment="Left" Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+                <Label x:Name="NameContainsLabel" Content="Name Contains" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="95" FontWeight="Bold"/>
+                <TextBox x:Name="NameContains" HorizontalAlignment="Left" Height="30" Margin="115,45,0,0" VerticalAlignment="Top" Width="120" FontWeight="Normal" ToolTip="Type and tab to filter" 
+                         TabIndex="2" LostFocus="NameContains_LostFocus" KeyUp="NameContains_KeyUp"/>
+                <CheckBox x:Name="ActiveOnly_CheckBox" Content="Active Only" HorizontalAlignment="Center" Height="30" Margin="250,43,250,0" VerticalAlignment="Top" Width="100" FontWeight="Bold" 
+                          VerticalContentAlignment="Center" Padding="5" Checked="ActiveOnly_CheckBox_Checked" Unchecked="ActiveOnly_CheckBox_Unchecked"/>
+                <Label x:Name="AMListLabel" Content="Account Manager" HorizontalAlignment="Right" Height="30" Margin="0,45,155,0" VerticalAlignment="Top" Width="110" FontWeight="Bold"/>
+                <ComboBox x:Name="AMList" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="135" SelectionChanged="AMList_SelectionChanged"/>
+
+                <DataGrid x:Name="ClientGrid" MinHeight="290" Margin="15,90,0,0" Width="500" MinWidth="400" AutoGenerateColumns="False" IsReadOnly="True" BorderBrush="{StaticResource PtBrushPurple3}" 
+                          HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn x:Name="IDColumn" Binding="{Binding ID}" ClipboardContentBinding="{x:Null}" Header="ID" Visibility="Collapsed"/>
+                        <DataGridTextColumn x:Name="ClientCodeColumn" Binding="{Binding ClientCode}" ClipboardContentBinding="{x:Null}" Header="Code"/>
+                        <DataGridTextColumn x:Name="ClientNameColumn" Binding="{Binding ClientName}" ClipboardContentBinding="{x:Null}" Header="Name" Width="*"/>
+                        <DataGridCheckBoxColumn x:Name="ActiveColumn" Binding="{Binding ActiveClient, Mode=OneWay}" ClipboardContentBinding="{x:Null}" Header="Active" IsReadOnly="True"/>
+                        <DataGridTextColumn x:Name="ManagerColumn" Binding="{Binding ManagerName}" ClipboardContentBinding="{x:Null}" Header="Account Manager"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                
+                <Grid x:Name="AmendmentsGrid" HorizontalAlignment="Right" Width="150" Margin="0,90,0,0" VerticalAlignment="Bottom">
+                    <Button x:Name="AmendButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,75" VerticalAlignment="Bottom" Width="110" 
+                		FontWeight="Bold" Style="{StaticResource RoundedButton}" IsEnabled="False" Click="AmendButton_Click">
+                        <StackPanel x:Name="AmendPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                            <Image x:Name="AmendImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="Rename.png"/>
+                            <Image x:Name="BackImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="112_LeftArrowLong_Grey_24x24_72.png" Visibility="Collapsed"/>
+                            <TextBlock x:Name="AmendButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Amend" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="AddButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,30" VerticalAlignment="Bottom" Width="110" 
+                		FontWeight="Bold" IsEnabled="True" Click="AddButton_Click" Style="{StaticResource RoundedButton}">
+                        <StackPanel x:Name="AddPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                            <Image x:Name="AddImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="112_Plus_Blue_24x24_72.png"/>
+                            <Image x:Name="BackImage2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="112_LeftArrowLong_Grey_24x24_72.png" Visibility="Collapsed"/>
+                            <TextBlock x:Name="AddButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Add New" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                </Grid>
+
             </Grid>
         </Border>
-        <Border Height="60" Margin="0,0,0,15" BorderBrush="{StaticResource PtBrushPurple3}" MinWidth="655" BorderThickness="2" Grid.Row="2" Grid.Column="1" Width="Auto" VerticalAlignment="Bottom">
+        <Border Height="60" Margin="0,0,0,15" BorderBrush="{StaticResource PtBrushPurple3}" MinWidth="655" Style="{DynamicResource SectionBorder}" Grid.Row="2" Grid.Column="1" Width="Auto" 
+                VerticalAlignment="Bottom">
             <Grid MinWidth="655" Width="{Binding ElementName=CentreColumn, Path=ActualWidth}">
                 <Grid.RowDefinitions>
                     <RowDefinition MinHeight="60"/>
                 </Grid.RowDefinitions>
-                <Button x:Name="CancelButton" HorizontalAlignment="Left" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="100" Background="{StaticResource PtBrushHeaderBlue}" FontWeight="Bold" Click="CancelButton_Click">
+                <Button x:Name="CancelButton" HorizontalAlignment="Left" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="100" Style="{StaticResource RoundedButton}" FontWeight="Bold" Click="CancelButton_Click">
                     <StackPanel x:Name="CancelPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Image x:Name="CancelImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="1385_Disable_24x24_72.png"/>
-                        <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Cancel" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Close" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Background="{StaticResource PtBrushHeaderBlue}" FontWeight="Bold" Click="CommitButton_Click">
+                <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
+                        FontWeight="Bold" Click="CommitButton_Click" IsEnabled="False">
                     <StackPanel x:Name="CommitPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Image x:Name="CommitImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="112_Tick_Green_32x32_72.png"/>
                         <TextBlock x:Name="CommitButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Commit" Margin="5,0,0,0" VerticalAlignment="Center"/>

@@ -100,6 +100,10 @@ namespace ProjectTile
                     EntitiesButtonText.Text = "View Entities";
                     Instructions.Content = "Select a staff member and click 'View Entities', or select an Entity to see assigned staff.";
                 }
+                else
+                {
+                    Instructions.Content = defaultInstructions;
+                }
             }
         }
 

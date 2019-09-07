@@ -213,9 +213,13 @@ namespace ProjectTile
             EntityFunctions.UpdateMyDefaultEntity(ref thisEntity);
 
             MyPermissions = new TableSecurity(CurrentUser);
-            winMain.MenuSecurity(ref MyPermissions);
-            winMain.toggleMainMenu(true);
+            //PageFunctions.ShowTilesPage();
+        }
 
+        public static void CompleteLogIn()
+        {
+            winMain.MenuSecurity(ref LoginFunctions.MyPermissions);
+            winMain.toggleMainMenu(true);
             PageFunctions.ShowTilesPage();
         }
 

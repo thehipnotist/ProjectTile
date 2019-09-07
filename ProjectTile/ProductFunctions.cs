@@ -18,20 +18,11 @@ namespace ProjectTile
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    search = PageFunctions.FormatSqlInput(search);
-                    
                     List<Products> productGridList = new List<Products>();
                     productGridList = (from p in existingPtDb.Products
                                        where search == "" || p.ProductName.Contains(search) || p.ProductDescription.Contains(search)
                                        orderby p.ProductName
                                        select p).ToList();
-
-                    foreach (Products thisProduct in productGridList)
-                    {
-                        thisProduct.ProductName = PageFunctions.FormatSqlOutput(thisProduct.ProductName);
-                        thisProduct.ProductDescription = PageFunctions.FormatSqlOutput(thisProduct.ProductDescription);
-                    }
-                    
                     return productGridList;
                 }
             }
@@ -68,33 +59,31 @@ namespace ProjectTile
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    string displayName = thisProduct.ProductName;
-                    string sqlName = (PageFunctions.SqlInput(displayName, true, "Product name"));
-                    if (sqlName == PageFunctions.InvalidString) { return false; }
-                    Products checkNewName = existingPtDb.Products.FirstOrDefault(p => p.ID != existingID && p.ProductName == sqlName);
-                    if (checkNewName == null) { thisProduct.ProductName = sqlName; }
+                    string productName = thisProduct.ProductName;
+                    if (!PageFunctions.SqlInputOK(productName, true, "Product name")) { return false; }
+                    Products checkNewName = existingPtDb.Products.FirstOrDefault(p => p.ID != existingID && p.ProductName == productName);
+                    if (checkNewName == null) { thisProduct.ProductName = productName; }
                     else
                     {
                         string errorText = (existingID > 0) ? 
-                            "Could not amend Product. Another Product with name '" + displayName + "' already exists." :
-                            "Could not create new Product. A Product with name '" + displayName + "' already exists." ;
+                            "Could not amend Product. Another Product with name '" + productName + "' already exists." :
+                            "Could not create new Product. A Product with name '" + productName + "' already exists." ;
 
                         MessageFunctions.InvalidMessage(errorText, "Duplicate Name");
                         return false;
                     }
 
-                    string displayDescription = thisProduct.ProductDescription;
-                    string sqlDescription = (PageFunctions.SqlInput(displayDescription, true, "Product description"));
-                    if (sqlDescription == PageFunctions.InvalidString) { return false; }
-                    Products checkNewDescription = existingPtDb.Products.FirstOrDefault(p => p.ID != existingID && p.ProductDescription == sqlDescription);
-                    if (checkNewDescription == null) { thisProduct.ProductDescription = sqlDescription; }
+                    string productDescription = thisProduct.ProductDescription;
+                    if (!PageFunctions.SqlInputOK(productDescription, true, "Product description")) { return false; }
+                    Products checkNewDescription = existingPtDb.Products.FirstOrDefault(p => p.ID != existingID && p.ProductDescription == productDescription);
+                    if (checkNewDescription == null) { thisProduct.ProductDescription = productDescription; }
                     else
                     {
                         string errorText = (existingID > 0) ?
-                            "Could not amend Product. Another Product with description '" + displayName + "' already exists." :
-                            "Could not create new Product. A Product with description '" + displayName + "' already exists.";
-                        
-                        MessageFunctions.InvalidMessage("Could not create new Product. A Product with description '" + displayDescription + "' already exists.", "Duplicate Description");
+                            "Could not amend Product. Another Product with description '" + productDescription + "' already exists." :
+                            "Could not create new Product. A Product with description '" + productDescription + "' already exists.";
+
+                        MessageFunctions.InvalidMessage(errorText, "Duplicate Description");
                         return false;
                     }
 

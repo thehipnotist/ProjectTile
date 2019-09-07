@@ -24,6 +24,7 @@ namespace ProjectTile
            ---------------------- */   
 
         /* Global/page parameters */
+        string pageMode;
 
         /* Current variables */
 
@@ -42,7 +43,17 @@ namespace ProjectTile
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-
+            try
+            {
+                string originalString = NavigationService.CurrentSource.OriginalString;
+                pageMode = PageFunctions.pageParameter(originalString, "Mode");
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving query details", generalException);
+                PageFunctions.ShowTilesPage();
+            }
+            
         }
 
 

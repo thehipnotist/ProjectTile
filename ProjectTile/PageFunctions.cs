@@ -17,14 +17,6 @@ namespace ProjectTile
         private static UriKind uriDefault = UriKind.RelativeOrAbsolute;
         private static string TilesPage = "TilesPage.xaml";
         public static string AllRecords = "<All>";
-        
-        public static string InvalidString = "%INVALID%";
-        static Dictionary<string, string> charSwitch = new Dictionary<string, string>();
-
-        public PageFunctions()
-        {
-            charSwitch["'"] = "''";
-        }
 
         /* Page changes */
         public static void ChangePage(string newPageSource)
@@ -137,7 +129,7 @@ namespace ProjectTile
         }
 
         /* Utilities */
-        public static string SqlInput(string inputText, bool mandatory, string fieldName, string fieldTitle = "", string invalidCharacters = "")
+        public static bool SqlInputOK(string inputText, bool mandatory, string fieldName, string fieldTitle = "", string invalidCharacters = "")
         {
 
             if (fieldTitle == "")
@@ -150,10 +142,9 @@ namespace ProjectTile
             if (mandatory && inputText == "")
             {
                 MessageFunctions.InvalidMessage(fieldName + "s cannot be blank. Please enter a value in the '" + fieldTitle + "' field and try again.", "No " + fieldTitle + " Entered");
-                return InvalidString;
-            }
-            
-            if (invalidCharacters != "")
+                return false;
+            }           
+            else if (invalidCharacters != "")
             {
                 List<char> inputChars = inputText.ToCharArray().ToList();
                 List<char> invalidChars = invalidCharacters.ToCharArray().ToList();
@@ -163,25 +154,11 @@ namespace ProjectTile
                     if (inputChars.Contains(badChar))
                     {
                         MessageFunctions.InvalidMessage(fieldName + " cannot contain the character '" + badChar.ToString() + "'. Please remove it and try again.", "Invalid Character");
-                        return InvalidString;
+                        return false;
                     }
                 }
             }
-
-            return inputText;
-            //return FormatSqlInput(inputText);
-        }
-
-        public static string FormatSqlOutput(string inputText)
-        {
-            return inputText.Replace("''", "'");
-        }
-
-        public static string FormatSqlInput(string inputText)
-        {
-            string outputText = inputText.Replace("'", "''");
-            outputText = outputText.Replace("''''", "''"); // avoid unnecessary replacement of two single-quotes             
-            return outputText;
+            return true;
         }
 
     } // class

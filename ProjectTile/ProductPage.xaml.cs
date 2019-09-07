@@ -26,6 +26,7 @@ namespace ProjectTile
 
         /* Global/page parameters */
         string pageMode;
+        bool allowAdd = LoginFunctions.MyPermissions.Allow("AddProducts");
 
         /* Current variables */
         string descContains = "";
@@ -69,10 +70,12 @@ namespace ProjectTile
                 additionMode();
                 AmendButton.Visibility = Visibility.Hidden;
                 AddButton.Visibility = Visibility.Hidden;
+                PageHeader.Content = "Create New Product";
             }
             else if (pageMode == "Amend")
             {
                 ProductGrid.SelectionMode = DataGridSelectionMode.Single;
+                PageHeader.Content = allowAdd? "Amend (or Create) Products" : "Amend Products";
                 amendmentSetup();
             }
 
@@ -93,6 +96,7 @@ namespace ProjectTile
         private void clearProductDetails()
         {
             ProductName.Text = Description.Text = Version.Text = "";
+            AmendButton.IsEnabled = false;
         }
 
         /* Data retrieval */
@@ -108,6 +112,7 @@ namespace ProjectTile
             Version.Text = "1.00";
             editMode = true;
             CommitButton.IsEnabled = true;
+            AddButton.Visibility = allowAdd ? Visibility.Visible : Visibility.Hidden;
 
             if (pageMode == "Amend" || additionMade == true)
             {

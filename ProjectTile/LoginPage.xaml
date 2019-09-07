@@ -6,25 +6,26 @@
       mc:Ignorable="d" 
       d:DesignHeight="535" d:DesignWidth="830" 
 	  Title="Login" Loaded="Page_Loaded">
-    
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="15" MinWidth="15" MaxWidth="15"/>
             <ColumnDefinition x:Name="CentreColumn" Width="655*" MinWidth="655"/>
             <ColumnDefinition Width="160" MinWidth="160"/>
-        </Grid.ColumnDefinitions>        
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="45" MinHeight="45" MaxHeight="45"/>
             <RowDefinition x:Name="MiddleRow" Height="400*" MinHeight="400"/>
             <RowDefinition Height="90" MinHeight="90" MaxHeight="90"/>
         </Grid.RowDefinitions>
-        
+
         <Label x:Name="PageHeader" Content ="Please Log In" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="655" FontWeight="Bold" Background="{x:Null}" Foreground="White" 
                Margin="15,0,0,0" Grid.ColumnSpan="3"/>
         <Label x:Name="RightHeader" Content ="Welcome!" HorizontalAlignment="Right" Height="30" VerticalAlignment="Top" Width="145" FontWeight="Bold" Background="{x:Null}" Foreground="White" 
-               Margin="0,0,15,0" HorizontalContentAlignment="Right" Grid.Column="2"/>     
-        
-        <Border Height="Auto" Width="Auto" MinHeight="400" Margin="0,0,0,0" BorderBrush="{StaticResource PtBrushRed3}" MinWidth="655" BorderThickness="2" Grid.Row="1" Grid.Column="1">
+               Margin="0,0,15,0" HorizontalContentAlignment="Right" Grid.Column="2"/>
+
+        <Border Height="Auto" Width="Auto" MinHeight="400" Margin="0,0,0,0" BorderBrush="{StaticResource PtBrushRed3}" MinWidth="655" Style="{DynamicResource SectionBorder}" Grid.Row="1" 
+                Grid.Column="1">
             <Grid MinWidth="655" Width="{Binding ElementName=CentreColumn, Path=ActualWidth}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="{Binding ElementName=MiddleRow, Path=ActualHeight}" MinHeight="400"/>
@@ -48,16 +49,17 @@
                          PasswordChanged="Password_Changed" TabIndex="2" KeyUp="Password_KeyUp" GotFocus="Password_GotFocus"/>
 
                 <Label x:Name="CapsLockLabel" Content="Warning: Caps Lock is on." HorizontalAlignment="Left" Margin="15,15,15,15" VerticalAlignment="Bottom" Width="465" FontWeight="Normal" Height="30" 
-                   Foreground="Red"/>    
+                   Foreground="Red"/>
             </Grid>
-        </Border>  
+        </Border>
 
-        <Border Height="60" Width="Auto" Margin="0,0,0,15" BorderBrush="{StaticResource PtBrushRed3}" VerticalAlignment="Bottom" MinWidth="655" BorderThickness="2" Grid.Column="1" Grid.Row="2">
+        <Border Height="60" Width="Auto" Margin="0,0,0,15" BorderBrush="{StaticResource PtBrushRed3}" VerticalAlignment="Bottom" MinWidth="655" Style="{DynamicResource SectionBorder}" Grid.Column="1" 
+                Grid.Row="2">
             <Grid MinWidth="655" Width="{Binding ElementName=CentreColumn, Path=ActualWidth}">
                 <Grid.RowDefinitions>
                     <RowDefinition MinHeight="60"/>
                 </Grid.RowDefinitions>
-                <Button x:Name="CancelButton" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="100" Background="{StaticResource PtBrushHeaderBlue}" FontWeight="Bold" 
+                <Button x:Name="CancelButton" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="100" Style="{StaticResource RoundedButton}" FontWeight="Bold" 
                         Margin="15,15,15,15" Click="CancelButton_Click">
                     <StackPanel x:Name="CancelPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Image x:Name="CancelImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="1385_Disable_24x24_72.png"/>
@@ -65,18 +67,48 @@
                     </StackPanel>
                 </Button>
                 <Button x:Name="LogInButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Click="LogInButton_Click" TabIndex="3" 
-                        ToolTip="Click to log in" FontWeight="Bold" Background="{StaticResource PtBrushHeaderBlue}">
+                        ToolTip="Click to log in" FontWeight="Bold" Style="{StaticResource RoundedButton}">
                     <StackPanel x:Name="CommitPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Image x:Name="CommitImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="112_Tick_Green_32x32_72.png"/>
                         <TextBlock x:Name="CommitButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Log In" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
             </Grid>
-        </Border>        
-        
+        </Border>
+
+        <Ellipse x:Name="SpinEllipse" Height="350" Width="350" Grid.ColumnSpan="3" Grid.RowSpan="3" StrokeThickness="50" Visibility="Hidden">
+            <Ellipse.Stroke>
+                <RadialGradientBrush>
+                    <GradientStop Color="{DynamicResource PtColorHeaderBlue}" Offset="1"/>
+                    <GradientStop Color="White" Offset="0"/>
+                </RadialGradientBrush>
+            </Ellipse.Stroke>
+        </Ellipse>
+        <Rectangle x:Name="SpinRectangle" Height="350" Grid.ColumnSpan="3" Grid.RowSpan="3" StrokeThickness="0" Width="100" Fill="{StaticResource PtBrushBackgroundBlue}" 
+                   RenderTransformOrigin="0.5,0.5" Visibility="Hidden">
+            <Rectangle.RenderTransform>
+                <TransformGroup>                    
+                    <RotateTransform x:Name="RectangleSpin" Angle="0"/>
+                </TransformGroup>
+            </Rectangle.RenderTransform>
+            <Rectangle.Triggers>
+                <EventTrigger RoutedEvent="Rectangle.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard x:Name="SpinEngine">
+                            <DoubleAnimation
+                                Storyboard.TargetName = "RectangleSpin"
+                                Storyboard.TargetProperty="Angle"
+                                From="0.0" To="365.0" Duration="0:0:1"
+                                RepeatBehavior="Forever"
+                            />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Rectangle.Triggers>
+        </Rectangle>
         <Label x:Name="PleaseWaitLabel" MinHeight="535" Margin="0" MinWidth="685" Background="{StaticResource PtBrushBackgroundBlue}" 
                Content="Attempting login - please wait..." FontSize="16" Foreground="Black" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Visibility="Hidden"
-               Cursor="Wait" Grid.ColumnSpan="3" Grid.RowSpan="3" Opacity="0.9"/>
+               Cursor="Wait" Grid.ColumnSpan="3" Grid.RowSpan="3" Opacity="0.9"/>        
 
     </Grid>
 </Page>
