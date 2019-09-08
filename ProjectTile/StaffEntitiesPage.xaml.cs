@@ -32,7 +32,8 @@ namespace ProjectTile
         string pageSource = "";
         string sourceMode = "";
         string backSource = "";
-        string defaultInstructions = "Select a staff member and click 'Manage Entities', or select an Entity and click 'Manage Staff'.";
+        string defaultInstructions = "Select a staff member and click 'Entities', or select an Entity and click 'Staff'.";
+        string defaultPageHeader = "Staff Members in each Entity";
         
         enum modeType { EntitiesOfStaff, StaffInEntity }
         modeType ByStaff = modeType.EntitiesOfStaff;
@@ -97,8 +98,8 @@ namespace ProjectTile
                 if (pageMode == "View")
                 {
                     StaffButton.Visibility = Visibility.Hidden;
-                    EntitiesButtonText.Text = "View Entities";
-                    Instructions.Content = "Select a staff member and click 'View Entities', or select an Entity to see assigned staff.";
+                    //EntitiesButtonText.Text = "View Entities";
+                    Instructions.Content = "Select a staff member and click 'Entities', or select an Entity to see its assigned staff.";
                 }
                 else
                 {
@@ -119,7 +120,7 @@ namespace ProjectTile
                 EntityList.ItemsSource = EntityFunctions.EntityList(LoginFunctions.CurrentStaffID, true);
                 EntityList.SelectedItem = PageFunctions.AllRecords;
             }
-            catch (Exception generalException) { MessageFunctions.Error("Error populating role filter list", generalException); }
+            catch (Exception generalException) { MessageFunctions.Error("Error populating Entity filter list", generalException); }
         }
 
         /* Data retrieval */
@@ -203,7 +204,7 @@ namespace ProjectTile
                     FromLabel.Visibility = ToLabel.Visibility = Visibility.Visible;
                     FromLabel.Content = (editMode == ByStaff) ? "Available Entities" : "Available Staff";
 
-                    string borderBrush = (editMode == ByStaff) ? "PtBrushGreen3" : "PtBrushGold3";
+                    string borderBrush = (editMode == ByStaff) ? "PtBrushEntity3" : "PtBrushStaff3";
                     AddButton.BorderBrush = RemoveButton.BorderBrush = DefaultButton.BorderBrush = Application.Current.Resources[borderBrush] as SolidColorBrush;
                 }
 
@@ -240,8 +241,8 @@ namespace ProjectTile
                 var staffNames = staffComboList.Select(sg => sg.StaffName);
                 StaffCombo.ItemsSource = staffNames;
                 selectedStaffName = StaffFunctions.GetSelectedName();
-                StaffCombo.SelectedValue = selectedStaffName;
-                refreshEntitySummaries(true); 
+                StaffCombo.SelectedValue = selectedStaffName;                
+                refreshEntitySummaries(true);                           
             }
             catch (Exception generalException) 
             { 
@@ -278,6 +279,11 @@ namespace ProjectTile
             StaffTo.SelectedItem = null;
 
             disableButtons();
+            if (selectedEntity != null)
+            {
+                PageHeader.Content = "Staff Members in Entity '" + selectedEntity.EntityName + "'";
+            }
+            
         }
 
         private void refreshEntitySummaries(bool fromDatabase)
@@ -300,6 +306,10 @@ namespace ProjectTile
             EntitiesTo.SelectedItem = null;
 
             disableButtons();
+            if (selectedStaffName != "")
+            {
+                PageHeader.Content = "Entities for " + selectedStaffName;
+            }
         }
 
         private void fromActivated(bool StaffList)
@@ -630,6 +640,7 @@ namespace ProjectTile
                 {
                     refreshStaffGrid();                    
                     toggleSelectionControls(true);
+                    PageHeader.Content = defaultPageHeader;
                 }
             }
         }
@@ -711,7 +722,6 @@ namespace ProjectTile
                 MessageFunctions.SuccessMessage("Your changes have been saved successfully. You can make further changes, go back to the previous screen, or close this window.", "Changes Saved");
                 CommitButton.IsEnabled = false;            
             }
-
         }
 
         private void StaffCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -719,8 +729,9 @@ namespace ProjectTile
             if (StaffFunctions.ignoreAnyChanges())
             {
                 StaffFunctions.clearAnyChanges();
-                StaffFunctions.SelectedStaffMember = StaffFunctions.GetStaffMemberByName(StaffCombo.SelectedItem.ToString());
-                selectedStaffID = StaffFunctions.SelectedStaffMember.ID;
+                selectedStaffName = StaffCombo.SelectedItem.ToString();
+                StaffFunctions.SelectedStaffMember = StaffFunctions.GetStaffMemberByName(selectedStaffName);
+                selectedStaffID = StaffFunctions.SelectedStaffMember.ID;                
                 refreshEntitySummaries(true);
             }
         }

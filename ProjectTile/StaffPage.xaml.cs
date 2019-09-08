@@ -73,7 +73,7 @@ namespace ProjectTile
                 DisableButton.Visibility = LoginFunctions.MyPermissions.Allow("ActivateStaff")? Visibility.Visible : Visibility.Hidden;
 
                 EntitiesButton.Visibility = (viewEntities || editEntities) ? Visibility.Visible : Visibility.Hidden;
-                if (editEntities) { EntitiesButtonText.Text = "Manage Entities"; }                
+                if (editEntities) { EntitiesButtonText.Text = "Entities"; }                
             }
         }
 

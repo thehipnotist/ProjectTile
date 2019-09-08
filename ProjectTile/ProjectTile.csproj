@@ -391,6 +391,33 @@
   <ItemGroup>
     <Resource Include="Rename.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Users.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="base_business_contacts.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Setup_Install.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="book_notebook.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="1403_Globe.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Keys.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="book_32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="filecabinet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="1460_PaintPalette_48x48.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

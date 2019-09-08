@@ -19,14 +19,28 @@ namespace ProjectTile
         public static string AllRecords = "<All>";
 
         /* Page changes */
+        public static string thisPageName()
+        {
+            try
+            {
+                string mainFrameSource = mainFrame.Content.ToString();
+                mainFrameSource = mainFrameSource.Replace("ProjectTile.", "");
+                return mainFrameSource;
+            }
+            catch (Exception generalException) 
+            { 
+                MessageFunctions.Error("Error determining page", generalException);
+                return "";
+            }
+        }
+        
         public static void ChangePage(string newPageSource)
         {                
             if (newPageSource != TilesPage) // && !blnFirstLoad)
             {
                 try
                 {
-                    string mainFrameSource = mainFrame.Content.ToString();
-                    mainFrameSource = mainFrameSource.Replace("ProjectTile.", "");
+                    string mainFrameSource = thisPageName();
                     string newPageName = newPageSource.Replace(".xaml", "");
 
                     if (mainFrameSource != "TilesPage" && mainFrameSource == newPageName)

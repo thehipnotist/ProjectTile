@@ -19,12 +19,13 @@
             <RowDefinition Height="90" MinHeight="90" MaxHeight="90"/>
         </Grid.RowDefinitions>
 
+        <Frame x:Name="HeaderImage" Content="{StaticResource LoginIcon}" Grid.Row="0" Grid.Column="1" Margin="0,5,0,0" />
         <Label x:Name="PageHeader" Content ="Please Log In" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="655" FontWeight="Bold" Background="{x:Null}" Foreground="White" 
-               Margin="15,0,0,0" Grid.ColumnSpan="3"/>
+               Margin="20,0,0,0" Grid.Column="1"/>
         <Label x:Name="RightHeader" Content ="Welcome!" HorizontalAlignment="Right" Height="30" VerticalAlignment="Top" Width="145" FontWeight="Bold" Background="{x:Null}" Foreground="White" 
                Margin="0,0,15,0" HorizontalContentAlignment="Right" Grid.Column="2"/>
 
-        <Border Height="Auto" Width="Auto" MinHeight="400" Margin="0,0,0,0" BorderBrush="{StaticResource PtBrushRed3}" MinWidth="655" Style="{DynamicResource SectionBorder}" Grid.Row="1" 
+        <Border Height="Auto" Width="Auto" MinHeight="400" Margin="0,0,0,0" BorderBrush="{StaticResource PtBrushLogin3}" MinWidth="655" Style="{DynamicResource SectionBorder}" Grid.Row="1" 
                 Grid.Column="1">
             <Grid MinWidth="655" Width="{Binding ElementName=CentreColumn, Path=ActualWidth}">
                 <Grid.RowDefinitions>
@@ -53,7 +54,7 @@
             </Grid>
         </Border>
 
-        <Border Height="60" Width="Auto" Margin="0,0,0,15" BorderBrush="{StaticResource PtBrushRed3}" VerticalAlignment="Bottom" MinWidth="655" Style="{DynamicResource SectionBorder}" Grid.Column="1" 
+        <Border Height="60" Width="Auto" Margin="0,0,0,15" BorderBrush="{StaticResource PtBrushLogin3}" VerticalAlignment="Bottom" MinWidth="655" Style="{DynamicResource SectionBorder}" Grid.Column="1" 
                 Grid.Row="2">
             <Grid MinWidth="655" Width="{Binding ElementName=CentreColumn, Path=ActualWidth}">
                 <Grid.RowDefinitions>
@@ -62,14 +63,14 @@
                 <Button x:Name="CancelButton" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="100" Style="{StaticResource RoundedButton}" FontWeight="Bold" 
                         Margin="15,15,15,15" Click="CancelButton_Click">
                     <StackPanel x:Name="CancelPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Image x:Name="CancelImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="1385_Disable_24x24_72.png"/>
+                        <Frame x:Name="CancelImage" Content="{StaticResource CancelIcon}"/>
                         <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Cancel" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button x:Name="LogInButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Click="LogInButton_Click" TabIndex="3" 
                         ToolTip="Click to log in" FontWeight="Bold" Style="{StaticResource RoundedButton}">
                     <StackPanel x:Name="CommitPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Image x:Name="CommitImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="112_Tick_Green_32x32_72.png"/>
+                        <Frame x:Name="CommitImage" Content="{StaticResource CommitIcon}"/>
                         <TextBlock x:Name="CommitButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Log In" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>

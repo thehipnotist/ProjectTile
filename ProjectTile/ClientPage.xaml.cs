@@ -40,7 +40,7 @@ namespace ProjectTile
         /* Initialize and Load */
         public ClientPage()
         {
-            InitializeComponent();
+            InitializeComponent();           
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -179,6 +179,21 @@ namespace ProjectTile
         }
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ProductButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ContactButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ProjectButton_Click(object sender, RoutedEventArgs e)
         {
 
         }

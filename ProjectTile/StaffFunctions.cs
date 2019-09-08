@@ -582,7 +582,7 @@ namespace ProjectTile
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.Error("Error retrieving list of Entities for staff member " + staffID.ToString() + "", generalException);
+                    MessageFunctions.Error("Error retrieving list of Entities for " + staffID.ToString() + "", generalException);
                     return null;
                 }
             }

@@ -17,7 +17,7 @@ namespace ProjectTile
         public MainWindow()
         {
             InitializeComponent();
-            MainMenu.Visibility = Visibility.Hidden;
+            toggleMainMenus(false);
         }
 
         private void Main_Loaded(object sender, RoutedEventArgs e)
@@ -53,15 +53,15 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error setting menu permissions", generalException); }
         }
         
-        public void toggleMainMenu(bool Show)
+        public void toggleMainMenus(bool Show)
         {
             if (Show)
             {
-                MainMenu.Visibility = Visibility.Visible;
+                MainMenu.Visibility = RightMenu.Visibility = Visibility.Visible;
             }
             else
             {
-                MainMenu.Visibility = Visibility.Hidden;
+                MainMenu.Visibility = RightMenu.Visibility = Visibility.Hidden;
             }
         }
 
@@ -90,7 +90,17 @@ namespace ProjectTile
         /* Other/shared functions */
         public bool ConfirmClosure()
         {
-            return MessageFunctions.QuestionYesNo("Are you sure you want to exit?", "Close ProjectTile Application?");
+            string loseChanges = "";
+            try
+            {
+                string thisPage = PageFunctions.thisPageName();
+                if (thisPage != "TilesPage" && thisPage != "LoginPage") { loseChanges = " Any unsaved changes you have made would be lost."; }
+            }
+            catch 
+            { 
+                // Do nothing as it's not worth raising an error when the user wants to leave
+            }
+            return MessageFunctions.QuestionYesNo("Are you sure you want to exit?" + loseChanges, "Close ProjectTile Application?");
         }
         
         /* ----------------------
@@ -152,12 +162,10 @@ namespace ProjectTile
             PageFunctions.ShowStaffPage("View");
         }
 
-
         private void AmendStaff_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowStaffPage("Amend");
         }
-
 
         private void NewStaff_Click(object sender, RoutedEventArgs e)
         {
@@ -197,6 +205,11 @@ namespace ProjectTile
         private void AmendClient_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowClientPage("Amend");
+        }
+
+        private void ExitMenu_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
 
     } // class

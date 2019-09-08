@@ -11,16 +11,19 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="15" MinWidth="15" MaxWidth="15"/>
             <ColumnDefinition x:Name="CentreColumn" Width="655*" MinWidth="655"/>
-            <ColumnDefinition Width="160" MinWidth="160"/>
+            <ColumnDefinition Width="160" MinWidth="160" MaxWidth="160"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="45" MinHeight="45" MaxHeight="45"/>
             <RowDefinition x:Name="MiddleRow" Height="400*" MinHeight="400"/>
             <RowDefinition Height="90" MinHeight="90" MaxHeight="90"/>
         </Grid.RowDefinitions>
-        <Label x:Name="PageHeader" Content="View Staff Details" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="655" FontWeight="Bold" Background="{x:Null}" Margin="0,0,0,0" Foreground="White" Grid.ColumnSpan="2"/>
+        
+        <Frame x:Name="HeaderImage" Content="{StaticResource StaffIcon}" Grid.Row="0" Grid.Column="1" Margin="0,5,0,0"/>
+        <Label x:Name="PageHeader" Content="View Staff Details" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="635" FontWeight="Bold" Background="{x:Null}" Margin="20,0,0,0" 
+               Foreground="White" Grid.Column="1"/>
 
-        <Border x:Name="TopBorder" MinHeight="400" MinWidth="655" Height="Auto" Width="Auto" Margin="0,0,0,0" BorderBrush="{StaticResource PtBrushGold3}" Grid.Row="1" Grid.Column="1" 
+        <Border x:Name="TopBorder" MinHeight="400" MinWidth="655" Height="Auto" Width="Auto" Margin="0,0,0,0" BorderBrush="{StaticResource PtBrushStaff3}" Grid.Row="1" Grid.Column="1" 
                 SizeChanged="TopBorder_SizeChanged" Style="{DynamicResource SectionBorder}">
             <Grid MinWidth="655" Width="{Binding ElementName=CentreColumn, Path=ActualWidth}">
                 <Grid.RowDefinitions>
@@ -34,7 +37,7 @@
                 <Label x:Name="RoleListLabel" Content="Role" HorizontalAlignment="Right" Height="30" Margin="0,45,155,0" VerticalAlignment="Top" Width="37" FontWeight="Bold"/>
                 <ComboBox x:Name="RoleList" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="135" SelectionChanged="RoleList_SelectionChanged"/>
 
-                <DataGrid x:Name="StaffGrid" MinHeight="290" Margin="15,90,15,15" MinWidth="625" AutoGenerateColumns="False" IsReadOnly="True" BorderBrush="{StaticResource PtBrushGold3}" 
+                <DataGrid x:Name="StaffGrid" MinHeight="290" Margin="15,90,15,15" MinWidth="625" AutoGenerateColumns="False" IsReadOnly="True" BorderBrush="{StaticResource PtBrushStaff3}" 
                           SelectionChanged="StaffGrid_SelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Top">
                     <DataGrid.Columns>
                         <DataGridTextColumn x:Name="IDColumn" Binding="{Binding ID}" ClipboardContentBinding="{x:Null}" Header="ID" Visibility="Collapsed"/>
@@ -51,7 +54,7 @@
             </Grid>
         </Border>
 
-        <Border Height="60" Margin="0,0,0,15" BorderBrush="{StaticResource PtBrushGold3}" MinWidth="655" Style="{DynamicResource SectionBorder}" Grid.Row="2" Grid.Column="1" Width="Auto" 
+        <Border Height="60" Margin="0,0,0,15" BorderBrush="{StaticResource PtBrushStaff3}" MinWidth="655" Style="{DynamicResource SectionBorder}" Grid.Row="2" Grid.Column="1" Width="Auto" 
                 VerticalAlignment="Bottom">
             <Grid MinWidth="655" Width="{Binding ElementName=CentreColumn, Path=ActualWidth}">
                 <Grid.RowDefinitions>
@@ -59,32 +62,32 @@
                 </Grid.RowDefinitions>
                 <Button x:Name="CancelButton" HorizontalAlignment="Left" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="100" Style="{StaticResource RoundedButton}" FontWeight="Bold" Click="CancelButton_Click">
                     <StackPanel x:Name="CancelPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Image x:Name="CancelImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="1385_Disable_24x24_72.png"/>
+                        <Frame x:Name="CancelImage" Content="{StaticResource CancelIcon}" />
                         <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Close" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button x:Name="EntitiesButton" HorizontalAlignment="Center" Height="30" Margin="15,15,135,0" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" ToolTip="Entities that the selected user can access" BorderThickness="2" IsEnabled="False" Click="EntitiesButton_Click">
                     <Button.BorderBrush>
-                        <SolidColorBrush Color="{DynamicResource PtColorGreen3}"/>
+                        <SolidColorBrush Color="{DynamicResource PtColorEntity3}"/>
                     </Button.BorderBrush>
                     <StackPanel x:Name="EntitiesPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <TextBlock x:Name="EntitiesButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="View Entities" Margin="5,0,5,0" VerticalAlignment="Center"/>
+                        <Frame x:Name="EntitiesImage" Content="{StaticResource EntitiesIcon}" />
+                        <TextBlock x:Name="EntitiesButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Entities" Margin="5,0,5,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>                
                 <Button x:Name="DisableButton" HorizontalAlignment="Center" Height="30" Margin="135,15,15,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" IsEnabled="False" Click="DisableButton_Click">
                     <StackPanel x:Name="DisablePanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Image x:Name="EnableImage" HorizontalAlignment="Left" Height="25" VerticalAlignment="Center" Width="25" Source="base_checkboxes.png" Stretch="UniformToFill" 
-                               Visibility="Collapsed"/>
-                        <Image x:Name="DisableImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="25" Source="CheckMixed.bmp" Margin="0,0,5,0"/>
+                        <Frame x:Name="EnableImage" Content="{StaticResource EnableIcon}"  Visibility="Collapsed"/>
+                        <Frame x:Name="DisableImage" Content="{StaticResource DisableIcon}"  Margin="0,0,5,0"/>
                         <TextBlock x:Name="DisableButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Disable" Margin="0,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" Click="CommitButton_Click">
                     <StackPanel x:Name="CommitPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Image x:Name="CommitImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="Rename.png"/>
+                        <Frame x:Name="AmendImage" Content="{StaticResource AmendIcon}" />
                         <TextBlock x:Name="CommitButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Amend" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
