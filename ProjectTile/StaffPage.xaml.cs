@@ -58,18 +58,18 @@ namespace ProjectTile
                 PageFunctions.ShowTilesPage();
             }
 
-            if (pageMode == "View")
+            if (pageMode == PageFunctions.View)
             {
                 CommitButton.Visibility = Visibility.Hidden;
                 DisableButton.Visibility = Visibility.Hidden;
                 editEntities = false; // Override as it is a view-only screen
                 EntitiesButton.Visibility = (viewEntities) ? Visibility.Visible : Visibility.Hidden;
             }
-            else if (pageMode == "Amend")
+            else if (pageMode == PageFunctions.Amend)
             {
                 PageHeader.Content = "Amend Staff Details";
                 Instructions.Content = "Choose a staff member and then click the 'Amend' button to change their details.";
-                StaffGrid.SelectionMode = DataGridSelectionMode.Single;
+                StaffDataGrid.SelectionMode = DataGridSelectionMode.Single;
                 DisableButton.Visibility = LoginFunctions.MyPermissions.Allow("ActivateStaff")? Visibility.Visible : Visibility.Hidden;
 
                 EntitiesButton.Visibility = (viewEntities || editEntities) ? Visibility.Visible : Visibility.Hidden;
@@ -92,12 +92,12 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error populating role filter list", generalException); }
         }
 
-        private void loadOrRefreshData()
+        private void refreshStaffGrid()
         {
             try
             {
-                var gridList = StaffFunctions.GetStaffGridData(activeOnly, nameContains, roleDescription, 0);
-                StaffGrid.ItemsSource = gridList;
+                List<StaffGridRecord> gridList = StaffFunctions.GetStaffGridData(activeOnly, nameContains, roleDescription, 0);
+                StaffDataGrid.ItemsSource = gridList;
  
                 if (selectedStaffID > 0)
                 {
@@ -105,8 +105,8 @@ namespace ProjectTile
                     {
                         if (gridList.Exists(s => s.ID == selectedStaffID))
                         {
-                            StaffGrid.SelectedItem = gridList.First(s => s.ID == selectedStaffID);
-                            StaffGrid.ScrollIntoView(StaffGrid.SelectedItem);
+                            StaffDataGrid.SelectedItem = gridList.First(s => s.ID == selectedStaffID);
+                            StaffDataGrid.ScrollIntoView(StaffDataGrid.SelectedItem);
                         }
                     }
                     catch (Exception generalException) { MessageFunctions.Error("Error selecting record", generalException); }
@@ -119,7 +119,7 @@ namespace ProjectTile
         private void nameFilter()
         {
             nameContains = NameContains.Text;
-            loadOrRefreshData();
+            refreshStaffGrid();
         }
 
         private void toggleActiveButton(bool? active)
@@ -171,8 +171,8 @@ namespace ProjectTile
             double targetWidth = TopBorder.ActualWidth - 30;
             double targetHeight = TopBorder.ActualHeight - 110;
 
-            StaffGrid.Width = targetWidth > StaffGrid.MinWidth ? targetWidth : StaffGrid.MinWidth;
-            StaffGrid.Height = targetHeight > StaffGrid.MinHeight ? targetHeight : StaffGrid.MinHeight;
+            StaffDataGrid.Width = Math.Max(targetWidth, StaffDataGrid.MinWidth);
+            StaffDataGrid.Height = Math.Max(targetHeight, StaffDataGrid.MinHeight);
         }        
 
         /* Control events */
@@ -184,13 +184,13 @@ namespace ProjectTile
         private void ActiveOnly_CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             activeOnly = true;
-            loadOrRefreshData();
+            refreshStaffGrid();
         }
 
         private void ActiveOnly_CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             activeOnly = false;
-            loadOrRefreshData();
+            refreshStaffGrid();
         }        
 
         private void NameContains_LostFocus(object sender, RoutedEventArgs e)
@@ -206,16 +206,16 @@ namespace ProjectTile
         private void RoleList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             roleDescription = RoleList.SelectedValue.ToString();
-            loadOrRefreshData();
+            refreshStaffGrid();
         }
 
         private void StaffGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
             {
-                if (StaffGrid.SelectedItem != null)
+                if (StaffDataGrid.SelectedItem != null)
                 {
-                    selectedRecord = (StaffGridRecord) StaffGrid.SelectedItem;
+                    selectedRecord = (StaffGridRecord) StaffDataGrid.SelectedItem;
                     selectedStaffID = selectedRecord.ID;
                     StaffFunctions.SelectedStaffMember = StaffFunctions.GetStaffMember(selectedStaffID);
                     CommitButton.IsEnabled = true;
@@ -242,7 +242,7 @@ namespace ProjectTile
                 bool? blnEnabled = StaffFunctions.EnableOrDisable(selectedStaffID);
                 if (blnEnabled != null)
                 {
-                    loadOrRefreshData();
+                    refreshStaffGrid();
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error changing status", generalException); }

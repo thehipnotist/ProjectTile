@@ -29,7 +29,7 @@ namespace ProjectTile
         int selectedStaffID = 0;
         int selectedEntityID = 0;
         string selectedStaffName = "";
-        string pageSource = "";
+        string fromSource = "";
         string sourceMode = "";
         string backSource = "";
         string defaultInstructions = "Select a staff member and click 'Entities', or select an Entity and click 'Staff'.";
@@ -77,17 +77,17 @@ namespace ProjectTile
 
             if (selectedStaffID > 0) // Opened from the Staff Page
             {
-                pageSource = "StaffPage";                
+                fromSource = "StaffPage";                
                 StaffFunctions.SelectedStaffMember = StaffFunctions.GetStaffMember(selectedStaffID);
                 StaffCombo.IsEnabled = false; // Cannot easily recreate the same selection list
                 viewEntitiesByStaffMember();
 
-                if (pageMode == "View") { Instructions.Content = "Note that only Entities you can access yourself are displayed."; }
+                if (pageMode == PageFunctions.View) { Instructions.Content = "Note that only Entities you can access yourself are displayed."; }
                 else { Instructions.Content = "Select the Entities this user should have, then click 'Save'. You can then choose other staff from the list."; }
             }
             else
             {
-                pageSource = "TilesPage";
+                fromSource = "TilesPage";
                 StaffLabel.Visibility = StaffCombo.Visibility = Visibility.Hidden;
                 BackButton.Visibility = Visibility.Hidden;
                 EntitiesFrom.Visibility = EntitiesTo.Visibility =  Visibility.Hidden;
@@ -95,7 +95,7 @@ namespace ProjectTile
                 AddButton.Visibility = DefaultButton.Visibility = RemoveButton.Visibility = Visibility.Hidden;
                 FromLabel.Visibility = ToLabel.Visibility = Visibility.Hidden;
 
-                if (pageMode == "View")
+                if (pageMode == PageFunctions.View)
                 {
                     StaffButton.Visibility = Visibility.Hidden;
                     //EntitiesButtonText.Text = "View Entities";
@@ -179,8 +179,8 @@ namespace ProjectTile
             {
                 selectionOnly = Visibility.Visible;
                 editOnly = Visibility.Hidden;
-                backSource = pageSource;
-                BackButton.Visibility = (pageSource == "TilesPage") ? Visibility.Hidden : Visibility.Visible;
+                backSource = fromSource;
+                BackButton.Visibility = (fromSource == "TilesPage") ? Visibility.Hidden : Visibility.Visible;
                 Instructions.Content = defaultInstructions;
                 FromLabel.Visibility = ToLabel.Visibility = Visibility.Hidden;
             }
@@ -188,11 +188,11 @@ namespace ProjectTile
             {
                 selectionOnly = Visibility.Hidden;
                 editOnly = Visibility.Visible;
-                backSource = (pageSource == "TilesPage") ? editMode.ToString() : pageSource;
+                backSource = (fromSource == "TilesPage") ? editMode.ToString() : fromSource;
                 BackButton.Visibility = Visibility.Visible;
                 ToLabel.Content = (editMode == ByStaff) ? "Linked Entities (Default in Bold)" : "Linked Staff";
                 
-                if (pageMode == "View")
+                if (pageMode == PageFunctions.View)
                 {
                     Instructions.Content = "";
                     FromLabel.Visibility = Visibility.Hidden;
@@ -219,15 +219,15 @@ namespace ProjectTile
             StaffButton.Visibility = selectionOnly;
             StaffButton.IsEnabled = (selectionMode && selectedEntityID != 0);
 
-            CommitButton.Visibility = (pageMode == "View")? Visibility.Hidden : editOnly;
+            CommitButton.Visibility = (pageMode == PageFunctions.View)? Visibility.Hidden : editOnly;
             StaffLabel.Visibility = StaffCombo.Visibility = (editMode == ByStaff && !selectionMode) ? Visibility.Visible : Visibility.Hidden;
 
-            StaffFrom.Visibility = (editMode == ByEntity && !selectionMode && pageMode == "Amend") ? Visibility.Visible : Visibility.Hidden;
+            StaffFrom.Visibility = (editMode == ByEntity && !selectionMode && pageMode == PageFunctions.Amend) ? Visibility.Visible : Visibility.Hidden;
             StaffTo.Visibility = (editMode == ByEntity && !selectionMode) ? Visibility.Visible : Visibility.Hidden;
-            EntitiesFrom.Visibility = (editMode == ByStaff && !selectionMode && pageMode == "Amend") ? Visibility.Visible : Visibility.Hidden;
+            EntitiesFrom.Visibility = (editMode == ByStaff && !selectionMode && pageMode == PageFunctions.Amend) ? Visibility.Visible : Visibility.Hidden;
             EntitiesTo.Visibility = (editMode == ByStaff && !selectionMode) ? Visibility.Visible : Visibility.Hidden;     
             
-            AddButton.Visibility = DefaultButton.Visibility = RemoveButton.Visibility = (!selectionMode && pageMode == "Amend") ? Visibility.Visible : Visibility.Hidden;
+            AddButton.Visibility = DefaultButton.Visibility = RemoveButton.Visibility = (!selectionMode && pageMode == PageFunctions.Amend) ? Visibility.Visible : Visibility.Hidden;
             EntityLabel.Visibility = EntityList.Visibility = (editMode == ByEntity || selectionMode) ? Visibility.Visible : Visibility.Hidden;
         }
 

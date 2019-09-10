@@ -60,19 +60,19 @@ namespace ProjectTile
                 PageFunctions.ShowTilesPage();
             }            
             
-            if (pageMode == "View")
+            if (pageMode == PageFunctions.View)
             {
                 CommitButton.Visibility = Visibility.Hidden;
                 AmendmentsGrid.Visibility = Visibility.Hidden;
             }
-            else if (pageMode == "New")
+            else if (pageMode == PageFunctions.New)
             {
                 additionMode();
                 AmendButton.Visibility = Visibility.Hidden;
                 AddButton.Visibility = Visibility.Hidden;
                 PageHeader.Content = "Create New Product";
             }
-            else if (pageMode == "Amend")
+            else if (pageMode == PageFunctions.Amend)
             {
                 ProductGrid.SelectionMode = DataGridSelectionMode.Single;
                 PageHeader.Content = allowAdd? "Amend (or Create) Products" : "Amend Products";
@@ -114,7 +114,7 @@ namespace ProjectTile
             CommitButton.IsEnabled = true;
             AddButton.Visibility = allowAdd ? Visibility.Visible : Visibility.Hidden;
 
-            if (pageMode == "Amend" || additionMade == true)
+            if (pageMode == PageFunctions.Amend || additionMade == true)
             {
                 ProductName.IsEnabled = Description.IsEnabled = Version.IsEnabled = true;               
 
@@ -140,7 +140,7 @@ namespace ProjectTile
             AddImage.Visibility = Visibility.Visible;
             BackImage2.Visibility = Visibility.Collapsed;
 
-            if (pageMode != "New")
+            if (pageMode != PageFunctions.New)
             {
                 Instructions.Content = "Choose a record from the grid and click 'Amend' to change it, then 'Save' to submit.";
                 ProductGrid.IsEnabled = true;
@@ -169,7 +169,7 @@ namespace ProjectTile
 
         private void gridSelection()
         {
-            if (pageMode == "Amend" && ProductGrid.SelectedItem != null)
+            if (pageMode == PageFunctions.Amend && ProductGrid.SelectedItem != null)
             {
                 try
                 {
@@ -255,7 +255,7 @@ namespace ProjectTile
                     {
                         additionMade = true;
                         refreshProductGrid();
-                        if (pageMode == "Amend") 
+                        if (pageMode == PageFunctions.Amend) 
                         { 
                             MessageFunctions.SuccessMessage("New product '" + ProductName.Text + "' saved successfully.", "Product Created");
                             amendmentSetup();

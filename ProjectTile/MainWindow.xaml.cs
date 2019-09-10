@@ -24,7 +24,7 @@ namespace ProjectTile
         {
             try
             {
-                PageFunctions.ShowLoginPage("LogIn");
+                PageFunctions.ShowLoginPage(PageFunctions.LogIn);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error loading page", generalException); }
         }
@@ -118,38 +118,38 @@ namespace ProjectTile
             double targetWidth = Main.ActualWidth - 15;
             double targetHeight = Main.ActualHeight - 69;
 
-            MainFrame.Width = targetWidth > MainFrame.MinWidth ? targetWidth : MainFrame.MinWidth;
-            MainFrame.Height = targetHeight > MainFrame.MinHeight ? targetHeight : MainFrame.MinHeight;
+            MainFrame.Width = Math.Max(targetWidth, MainFrame.MinWidth);
+            MainFrame.Height = Math.Max(targetHeight, MainFrame.MinHeight);
         }
 
         private void ChangeEntity_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowEntityPage("Switch");
+            PageFunctions.ShowEntityPage(PageFunctions.Switch);
         }
 
         private void NewEntity_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowEntityPage("New");
+            PageFunctions.ShowEntityPage(PageFunctions.New);
         }
 
         private void AmendEntity_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowEntityPage("Amend");
+            PageFunctions.ShowEntityPage(PageFunctions.Amend);
         }
 
         private void DefaultEntity_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowEntityPage("Default");
+            PageFunctions.ShowEntityPage(PageFunctions.Default);
         }
 
         private void LoginMenu_Login_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowLoginPage("LogIn");
+            PageFunctions.ShowLoginPage(PageFunctions.LogIn);
         }
 
         private void LoginMenu_Password_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowLoginPage("PassChange");
+            PageFunctions.ShowLoginPage(PageFunctions.PassChange);
         }
 
         private void LoginMenu_Exit_Click(object sender, RoutedEventArgs e)
@@ -159,17 +159,17 @@ namespace ProjectTile
 
         private void ViewStaff_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowStaffPage("View");
+            PageFunctions.ShowStaffPage(PageFunctions.View);
         }
 
         private void AmendStaff_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowStaffPage("Amend");
+            PageFunctions.ShowStaffPage(PageFunctions.Amend);
         }
 
         private void NewStaff_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowStaffDetailsPage("New", 0);
+            PageFunctions.ShowStaffDetailsPage(PageFunctions.New, 0);
         }
 
         private void StaffEntities_Click(object sender, RoutedEventArgs e)
@@ -179,32 +179,32 @@ namespace ProjectTile
 
         private void ViewProduct_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowProductPage("View");
+            PageFunctions.ShowProductPage(PageFunctions.View);
         }
 
         private void NewProduct_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowProductPage("New");
+            PageFunctions.ShowProductPage(PageFunctions.New);
         }
 
         private void AmendProduct_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowProductPage("Amend");
+            PageFunctions.ShowProductPage(PageFunctions.Amend);
         }
 
         private void ViewClient_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowClientPage("View");
+            PageFunctions.ShowClientPage(PageFunctions.View);
         }
 
         private void NewClient_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowClientPage("New");
+            PageFunctions.ShowClientPage(PageFunctions.New);
         }
 
         private void AmendClient_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowClientPage("Amend");
+            PageFunctions.ShowClientPage(PageFunctions.Amend);
         }
 
         private void ExitMenu_Click(object sender, RoutedEventArgs e)

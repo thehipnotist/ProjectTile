@@ -52,7 +52,7 @@ namespace ProjectTile
                 PageFunctions.ShowTilesPage();
             }
 
-            if (pageMode == "LogIn")
+            if (pageMode == PageFunctions.LogIn)
             {
                 try
                 {
@@ -73,7 +73,7 @@ namespace ProjectTile
                     PageFunctions.ShowTilesPage();
                 }
             }
-            else if (pageMode == "PassChange")
+            else if (pageMode == PageFunctions.PassChange)
             {
                 try
                 {
@@ -138,7 +138,7 @@ namespace ProjectTile
             }
             else if (password == "")
             {
-                string strContext = (pageMode == "PassChange") ? "existing " : "";
+                string strContext = (pageMode == PageFunctions.PassChange) ? "existing " : "";
                 MessageFunctions.InvalidMessage("Please enter your " + strContext + "password in the 'Password' text box.", "Password Required");
                 return;
             }
@@ -166,12 +166,12 @@ namespace ProjectTile
                     {
                         MessageFunctions.InvalidMessage("Incorrect existing username or password. Please check and try again.", "Incorrect Login");
                     }
-                    else if (pageMode == "LogIn") 
+                    else if (pageMode == PageFunctions.LogIn) 
                     { 
                         LoginFunctions.AttemptLogin(userID, password);
                         pageSuccess = true; 
                     }
-                    else if (pageMode == "PassChange")
+                    else if (pageMode == PageFunctions.PassChange)
                     {
                         bool success = LoginFunctions.ChangeLoginDetails(LoginFunctions.CurrentStaffID, userID, NewPassword.Password, ConfirmPassword.Password);
                         if (success) 

@@ -49,7 +49,15 @@ namespace ProjectTile
 
         public bool Allow (string keyName)
         {
-            return (bool) userPermissions[keyName];
+            if (userPermissions.Contains(keyName))
+            {
+                return (bool)userPermissions[keyName];
+            }
+            else
+            {
+                MessageFunctions.Error("Error retrieving table security settings; the connection does not contain a '" + keyName + "' entry", null);
+                return false;
+            }
         }
 
         public Visibility ShowOrCollapse(string keyName)

@@ -69,13 +69,13 @@ namespace ProjectTile
                 StaffFunctions.returnToStaffPage(selectedStaffID);
             }
 
-            if (pageMode == "New")
+            if (pageMode == PageFunctions.New)
             {
                 PageHeader.Content = "Create New Staff Member";
                 Instructions.Content = "Fill in the details as required and then click 'Save' to create the record.";
                 BackButton.Visibility = Visibility.Hidden;          
             }            
-            else if (pageMode == "Amend")
+            else if (pageMode == PageFunctions.Amend)
             {
                 
                 if (selectedStaffID > 0)

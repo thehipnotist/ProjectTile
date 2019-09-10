@@ -15,8 +15,17 @@ namespace ProjectTile
         private static Frame mainFrame = winMain.MainFrame;
 
         private static UriKind uriDefault = UriKind.RelativeOrAbsolute;
-        private static string TilesPage = "TilesPage.xaml";
-        public static string AllRecords = "<All>";
+        private const string TilesPage = "TilesPage.xaml";
+        public const string AllRecords = "<All>";
+
+        // Create variables for each page mode, to avoid any accidental mis-typing etc.
+        public const string View = "View";
+        public const string New = "New";
+        public const string Amend = "Amend";
+        public const string LogIn = "LogIn";
+        public const string PassChange = "PassChange";
+        public const string Switch = "Switch";
+        public const string Default = "Default";
 
         /* Page changes */
         public static string thisPageName()
@@ -95,8 +104,8 @@ namespace ProjectTile
         public static void ShowStaffEntitiesPage(int selectedStaffID = 0, bool viewOnly = false, string sourcePageMode = "View")
         {
             string pageMode;
-            if (viewOnly) { pageMode = "View"; }
-            else { pageMode = LoginFunctions.MyPermissions.Allow("EditStaffEntities") ? "Amend" : "View"; }
+            if (viewOnly) { pageMode = View; }
+            else { pageMode = LoginFunctions.MyPermissions.Allow("EditStaffEntities") ? Amend : View; }
 
             ChangePage("StaffEntitiesPage.xaml?Mode=" + pageMode + ",SelectedID=" + selectedStaffID.ToString() + ",SourceMode=" + sourcePageMode);
         }

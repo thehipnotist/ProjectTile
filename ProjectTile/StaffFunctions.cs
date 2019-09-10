@@ -229,7 +229,7 @@ namespace ProjectTile
             }            
             else
             {
-                PageFunctions.ShowStaffDetailsPage("Amend", staffID);
+                PageFunctions.ShowStaffDetailsPage(PageFunctions.Amend, staffID);
             }
         }
 

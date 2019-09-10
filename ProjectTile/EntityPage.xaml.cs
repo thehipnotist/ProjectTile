@@ -49,7 +49,7 @@ namespace ProjectTile
 
                 EntityList.ItemsSource = EntityFunctions.EntityList(LoginFunctions.CurrentStaffID, false);
 
-                if (pageMode == "Switch")
+                if (pageMode == PageFunctions.Switch)
                 {
                     PageHeader.Content = "Change Current Entity";
                     Instructions.Content = "Pick an Entity from the list to change to it.";
@@ -61,12 +61,12 @@ namespace ProjectTile
                     CommitButtonText.Text = "Change";
                     ChangeNameLabel.Visibility = Visibility.Hidden;
                 }
-                else if (pageMode == "New")
+                else if (pageMode == PageFunctions.New)
                 {
                     EntityList.Visibility = Visibility.Hidden;
                     ChangeNameLabel.Visibility = Visibility.Hidden;
                 }
-                else if (pageMode == "Amend")
+                else if (pageMode == PageFunctions.Amend)
                 {
                     PageHeader.Content = "Amend Existing Entity";
                     Instructions.Content = "Pick an Entity from the list to amend it.";
@@ -81,7 +81,7 @@ namespace ProjectTile
                     //EntityName.Margin = nameMargin;
                     CommitButtonText.Text = "Amend";
                 }
-                else if (pageMode == "Default") 
+                else if (pageMode == PageFunctions.Default) 
                 {
                     PageHeader.Content = "Change Default Entity";
                     Instructions.Content = "Pick an Entity from the list to set it as your default.";
@@ -118,20 +118,20 @@ namespace ProjectTile
             string displayName = EntityName.Text;
             string displayDescription = EntityDescription.Text;
 
-            if (pageMode == "Switch")
+            if (pageMode == PageFunctions.Switch)
             {
                 EntityFunctions.ChangeEntity(selectedEntityID, ref selectedEntity, (bool) MakeDefault_CheckBox.IsChecked);
             }
-            else if (pageMode == "New")
+            else if (pageMode == PageFunctions.New)
             {
                 EntityFunctions.NewEntity(displayName, displayDescription, (bool)SwitchTo_CheckBox.IsChecked, (bool)MakeDefault_CheckBox.IsChecked);              
             }
-            else if (pageMode == "Amend")
+            else if (pageMode == PageFunctions.Amend)
             {
                 EntityFunctions.AmendEntity(ref selectedEntity, displayName, displayDescription);                
                
             }
-            else if (pageMode == "Default")
+            else if (pageMode == PageFunctions.Default)
             {
                 EntityFunctions.ChangeDefaultEntity(ref selectedEntity, displayName);
             }  
@@ -153,11 +153,11 @@ namespace ProjectTile
                 selectedEntityID = selectedEntity.ID;
 
                 EntityDescription.Text = selectedEntity.EntityDescription;
-                if (pageMode == "Amend")
+                if (pageMode == PageFunctions.Amend)
                 {
                     EntityDescription.IsEnabled = true;
                 }
-                else if (pageMode == "Switch")
+                else if (pageMode == PageFunctions.Switch)
                 {
                     if (selectedEntityID != EntityFunctions.DefaultEntityID)
                     {

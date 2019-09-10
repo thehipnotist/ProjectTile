@@ -261,32 +261,32 @@ namespace ProjectTile
         /* Control-specific events */
         private void ChangeCurrentEntityButton_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowEntityPage("Switch");
+            PageFunctions.ShowEntityPage(PageFunctions.Switch);
         }
 
         private void NewEntityButton_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowEntityPage("New");
+            PageFunctions.ShowEntityPage(PageFunctions.New);
         }
 
         private void AmendEntityButton_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowEntityPage("Amend");
+            PageFunctions.ShowEntityPage(PageFunctions.Amend);
         }
 
         private void ChangeDefaultEntityButton_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowEntityPage("Default");
+            PageFunctions.ShowEntityPage(PageFunctions.Default);
         }
 
         private void LoginButton_Login_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowLoginPage("LogIn");
+            PageFunctions.ShowLoginPage(PageFunctions.LogIn);
         }
 
         private void LoginButton_Password_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowLoginPage("PassChange");
+            PageFunctions.ShowLoginPage(PageFunctions.PassChange);
         }
 
         private void LoginButton_Exit_Click(object sender, RoutedEventArgs e)
@@ -296,17 +296,17 @@ namespace ProjectTile
 
         private void StaffButton_View_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowStaffPage("View");
+            PageFunctions.ShowStaffPage(PageFunctions.View);
         }
 
         private void StaffButton_Amend_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowStaffPage("Amend");
+            PageFunctions.ShowStaffPage(PageFunctions.Amend);
         }
 
         private void StaffButton_New_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowStaffDetailsPage("New", 0);
+            PageFunctions.ShowStaffDetailsPage(PageFunctions.New, 0);
         }
 
         private void StaffButton_Entities_Click(object sender, RoutedEventArgs e)
@@ -316,32 +316,32 @@ namespace ProjectTile
 
         private void ProductButton_View_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowProductPage("View");
+            PageFunctions.ShowProductPage(PageFunctions.View);
         }
 
         private void ProductButton_New_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowProductPage("New");
+            PageFunctions.ShowProductPage(PageFunctions.New);
         }
 
         private void ProductButton_Amend_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowProductPage("Amend");
+            PageFunctions.ShowProductPage(PageFunctions.Amend);
         }
 
         private void ClientButton_View_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowClientPage("View");
+            PageFunctions.ShowClientPage(PageFunctions.View);
         }
 
         private void ClientButton_New_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowClientPage("New");
+            PageFunctions.ShowClientPage(PageFunctions.New);
         }
 
         private void ClientButton_Amend_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowClientPage("Amend");
+            PageFunctions.ShowClientPage(PageFunctions.Amend);
         }
         
     } // class
