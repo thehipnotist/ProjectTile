@@ -80,8 +80,8 @@ namespace ProjectTile
                     else
                     {
                         string errorText = (existingID > 0) ?
-                            "Could not amend Product. Another Product with description '" + productDescription + "' already exists." :
-                            "Could not create new Product. A Product with description '" + productDescription + "' already exists.";
+                            "Could not amend product. Another product with description '" + productDescription + "' already exists." :
+                            "Could not create new product. A product with description '" + productDescription + "' already exists.";
 
                         MessageFunctions.InvalidMessage(errorText, "Duplicate Description");
                         return false;
@@ -103,7 +103,7 @@ namespace ProjectTile
 
         }
 
-        public static int NewProduct(string displayName, string displayDescription, string version)
+        public static int NewProduct(string productName, string productDescription, string version)
         {
             try
             {
@@ -115,7 +115,7 @@ namespace ProjectTile
                     return 0;
                 }
 
-                Products newProduct = new Products() { ProductName = displayName, ProductDescription = displayDescription, LatestVersion = versionNumber };
+                Products newProduct = new Products() { ProductName = productName, ProductDescription = productDescription, LatestVersion = versionNumber };
                 if (ValidateProduct(ref newProduct, 0))
                 {
                     try
@@ -143,7 +143,7 @@ namespace ProjectTile
             }
         }
 
-        public static bool AmendProduct(int productID, string displayName, string displayDescription, string version)
+        public static bool AmendProduct(int productID, string productName, string productDescription, string version)
         {
             try
             {
@@ -151,7 +151,7 @@ namespace ProjectTile
 
                 if (!Decimal.TryParse(version, out versionNumber))
                 {
-                    MessageFunctions.InvalidMessage("Cannot amend product '" + displayName + "': new version number is not a decimal.", "Invalid Version");
+                    MessageFunctions.InvalidMessage("Cannot amend product '" + productName + "': new version number is not a decimal.", "Invalid Version");
                     return false;
                 }
 
@@ -163,11 +163,11 @@ namespace ProjectTile
                         Products thisProduct = existingPtDb.Products.Find(productID);
                         if (thisProduct.LatestVersion > versionNumber)
                         {
-                            MessageFunctions.Error("Error amending product '" + displayName + "': new version number is lower than the existing one.", null);
+                            MessageFunctions.Error("Error amending product '" + productName + "': new version number is lower than the existing one.", null);
                             return false;
                         }
-                        thisProduct.ProductName = displayName;
-                        thisProduct.ProductDescription = displayDescription;
+                        thisProduct.ProductName = productName;
+                        thisProduct.ProductDescription = productDescription;
                         thisProduct.LatestVersion = versionNumber;
 
                         if (ValidateProduct(ref thisProduct, productID))
@@ -180,13 +180,13 @@ namespace ProjectTile
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.Error("Problem saving changes to product '" + displayName + "'", generalException);
+                    MessageFunctions.Error("Problem saving changes to product '" + productName + "'", generalException);
                     return false;
                 }
             }
             catch (Exception generalException)
             {
-                MessageFunctions.Error("Error amending product '" + displayName + "'", generalException);
+                MessageFunctions.Error("Error amending product '" + productName + "'", generalException);
                 return false;
             }
         }
