@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Data.SqlClient;
+using System.Collections.Generic;
 
 namespace ProjectTile
 {
@@ -17,7 +18,7 @@ namespace ProjectTile
         
         // Data retrieval
 
-        public static int[] AllowedEntities(int thisUserID) 
+        public static int[] AllowedEntityIDs(int thisUserID) 
         {     
             try
             {
@@ -38,11 +39,34 @@ namespace ProjectTile
             }
         }
 
+        public static List<Entities> AllowedEntities(int thisUserID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    List<Entities> allowedEntities = (from se in existingPtDb.StaffEntities
+                                join e in existingPtDb.Entities on se.EntityID equals e.ID
+                                where se.StaffID == thisUserID
+                                orderby e.EntityName
+                                select e)
+                                .ToList();
+                    return allowedEntities;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving valid Entities", generalException);
+                return null;
+            }
+        }
+
         public static string[] EntityList(int thisUserID, bool includeAll)
         {
             try
             {
-                int[] entityIDs = AllowedEntities(thisUserID);
+                int[] entityIDs = AllowedEntityIDs(thisUserID);
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
