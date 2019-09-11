@@ -26,6 +26,7 @@ namespace ProjectTile
         public const string PassChange = "PassChange";
         public const string Switch = "Switch";
         public const string Default = "Default";
+        public const string About = "About";
 
         /* Page changes */
         public static string thisPageName()
@@ -120,6 +121,10 @@ namespace ProjectTile
             ChangePage("ClientPage.xaml?Mode=" + pageMode);
         }
 
+        public static void ShowHelpPage(string pageMode)
+        {
+            ChangePage("HelpPage.xaml?Mode=" + pageMode);
+        }
 
 
         /* Page loads */

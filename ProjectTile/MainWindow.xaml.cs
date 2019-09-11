@@ -17,6 +17,7 @@ namespace ProjectTile
         public MainWindow()
         {
             InitializeComponent();
+            Style = (Style)FindResource(typeof(Window));
             toggleMainMenus(false);
         }
 
@@ -57,11 +58,11 @@ namespace ProjectTile
         {
             if (Show)
             {
-                MainMenu.Visibility = RightMenu.Visibility = Visibility.Visible;
+                MainMenu.Visibility = LoginMenu.Visibility = Visibility.Visible;
             }
             else
             {
-                MainMenu.Visibility = RightMenu.Visibility = Visibility.Hidden;
+                MainMenu.Visibility = LoginMenu.Visibility = Visibility.Hidden;
             }
         }
 
@@ -210,6 +211,11 @@ namespace ProjectTile
         private void ExitMenu_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void HelpMenu_About_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowHelpPage(PageFunctions.About);
         }
 
     } // class

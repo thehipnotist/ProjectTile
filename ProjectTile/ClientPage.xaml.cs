@@ -51,7 +51,8 @@ namespace ProjectTile
         /* Initialize and Load */
         public ClientPage()
         {
-            InitializeComponent();           
+            InitializeComponent();
+            Style = (Style)FindResource(typeof(Page));
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -355,7 +356,7 @@ namespace ProjectTile
                         if (CopyContacts_CheckBox.IsChecked == true) 
                         { 
                             bool success = ClientFunctions.CopyContacts(selectedRecord.ID, newID);
-                            contactsCopied = success ? " and all active linked contacts have been copied to it" : " but contacts could not be copied";
+                            contactsCopied = success ? ", and all active linked contacts have been copied to it" : " but contacts could not be copied";
                         }
                         savedInEntity = " in Entity '" + EntityFunctions.GetEntityName(selectedEntityID) + "'" + contactsCopied + ". Switch to that Entity if you need to work with the new record";
                     }

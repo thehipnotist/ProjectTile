@@ -1,13 +1,14 @@
-﻿<Application x:Class="ProjectTile.App"
+﻿<Application
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="ProjectTile.App"
              StartupUri="MainWindow.xaml">
-    <Application.Resources>        
-        
+    <Application.Resources>
+
         <!-- Main Colours -->
         <Color x:Key="PtColorMenuBlue" R="160"  G="200" B="253"  A="255"/>
         <SolidColorBrush x:Key="PtBrushMenuBlue" Color="{StaticResource PtColorMenuBlue}"/>
-        
+
         <Color x:Key="PtColorHeaderBlue" R="149" G="175" B="220" A="255"/>
         <SolidColorBrush x:Key="PtBrushHeaderBlue" Color="{StaticResource PtColorHeaderBlue}"/>
 
@@ -26,7 +27,7 @@
         <!-- Greens -->
         <Color x:Key="PtColorEntity3" G="200" A="255"/>
         <SolidColorBrush x:Key="PtBrushEntity3" Color="{StaticResource PtColorEntity3}"/>
-        
+
         <Color x:Key="PtColorEntity2" R="77" G="217" B="77" A="255"/>
         <SolidColorBrush x:Key="PtBrushEntity2" Color="{StaticResource PtColorEntity2}"/>
 
@@ -34,17 +35,21 @@
         <SolidColorBrush x:Key="PtBrushEntity1" Color="{StaticResource PtColorEntity1}"/>
 
         <RadialGradientBrush x:Key="PtGradientEntity2">
-            <GradientStopCollection>
-                <GradientStop Color="{StaticResource PtColorEntity2}" Offset="0"/>
-                <GradientStop Color="{StaticResource PtColorEntity3}" Offset="1"/>
-            </GradientStopCollection>
+            <RadialGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="{StaticResource PtColorEntity2}" Offset="0"/>
+                    <GradientStop Color="{StaticResource PtColorEntity3}" Offset="1"/>
+                </GradientStopCollection>
+            </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
 
         <RadialGradientBrush x:Key="PtGradientEntity1">
-            <GradientStopCollection>
-                <GradientStop Color="{StaticResource PtColorEntity1}" Offset="0"/>
-                <GradientStop Color="{StaticResource PtColorEntity2}" Offset="1"/>
-            </GradientStopCollection>
+            <RadialGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="{StaticResource PtColorEntity1}" Offset="0"/>
+                    <GradientStop Color="{StaticResource PtColorEntity2}" Offset="1"/>
+                </GradientStopCollection>
+            </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
 
         <!-- Golds -->
@@ -58,17 +63,21 @@
         <SolidColorBrush x:Key="PtBrushStaff1" Color="{StaticResource PtColorStaff1}"/>
 
         <RadialGradientBrush x:Key="PtGradientStaff2">
-            <GradientStopCollection>
-                <GradientStop Color="{StaticResource PtColorStaff2}" Offset="0"/>
-                <GradientStop Color="{StaticResource PtColorStaff3}" Offset="1"/>
-            </GradientStopCollection>
+            <RadialGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="{StaticResource PtColorStaff2}" Offset="0"/>
+                    <GradientStop Color="{StaticResource PtColorStaff3}" Offset="1"/>
+                </GradientStopCollection>
+            </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
 
         <RadialGradientBrush x:Key="PtGradientStaff1">
-            <GradientStopCollection>
-                <GradientStop Color="{StaticResource PtColorStaff1}" Offset="0"/>
-                <GradientStop Color="{StaticResource PtColorStaff2}" Offset="1"/>
-            </GradientStopCollection>
+            <RadialGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="{StaticResource PtColorStaff1}" Offset="0"/>
+                    <GradientStop Color="{StaticResource PtColorStaff2}" Offset="1"/>
+                </GradientStopCollection>
+            </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
 
         <!-- Blues -->
@@ -82,17 +91,21 @@
         <SolidColorBrush x:Key="PtBrushProduct1" Color="{StaticResource PtColorProduct1}"/>
 
         <RadialGradientBrush x:Key="PtGradientProduct2">
-            <GradientStopCollection>
-                <GradientStop Color="{StaticResource PtColorProduct2}" Offset="0"/>
-                <GradientStop Color="{StaticResource PtColorProduct3}" Offset="1"/>
-            </GradientStopCollection>
+            <RadialGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="{StaticResource PtColorProduct2}" Offset="0"/>
+                    <GradientStop Color="{StaticResource PtColorProduct3}" Offset="1"/>
+                </GradientStopCollection>
+            </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
 
         <RadialGradientBrush x:Key="PtGradientProduct1">
-            <GradientStopCollection>
-                <GradientStop Color="{StaticResource PtColorProduct1}" Offset="0"/>
-                <GradientStop Color="{StaticResource PtColorProduct2}" Offset="1"/>
-            </GradientStopCollection>
+            <RadialGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="{StaticResource PtColorProduct1}" Offset="0"/>
+                    <GradientStop Color="{StaticResource PtColorProduct2}" Offset="1"/>
+                </GradientStopCollection>
+            </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
 
         <!-- Reds -->
@@ -106,17 +119,21 @@
         <SolidColorBrush x:Key="PtBrushLogin1" Color="{StaticResource PtColorLogin1}"/>
 
         <RadialGradientBrush x:Key="PtGradientLogin2">
-            <GradientStopCollection>
-                <GradientStop Color="{StaticResource PtColorLogin2}" Offset="0"/>
-                <GradientStop Color="{StaticResource PtColorLogin3}" Offset="1"/>
-            </GradientStopCollection>
+            <RadialGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="{StaticResource PtColorLogin2}" Offset="0"/>
+                    <GradientStop Color="{StaticResource PtColorLogin3}" Offset="1"/>
+                </GradientStopCollection>
+            </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
 
         <RadialGradientBrush x:Key="PtGradientLogin1">
-            <GradientStopCollection>
-                <GradientStop Color="{StaticResource PtColorLogin1}" Offset="0"/>
-                <GradientStop Color="{StaticResource PtColorLogin2}" Offset="1"/>
-            </GradientStopCollection>
+            <RadialGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="{StaticResource PtColorLogin1}" Offset="0"/>
+                    <GradientStop Color="{StaticResource PtColorLogin2}" Offset="1"/>
+                </GradientStopCollection>
+            </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
 
         <!-- Purples -->
@@ -130,18 +147,32 @@
         <SolidColorBrush x:Key="PtBrushClient1" Color="{StaticResource PtColorClient1}"/>
 
         <RadialGradientBrush x:Key="PtGradientClient2">
-            <GradientStopCollection>
-                <GradientStop Color="{StaticResource PtColorClient2}" Offset="0"/>
-                <GradientStop Color="{StaticResource PtColorClient3}" Offset="1"/>
-            </GradientStopCollection>
+            <RadialGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="{StaticResource PtColorClient2}" Offset="0"/>
+                    <GradientStop Color="{StaticResource PtColorClient3}" Offset="1"/>
+                </GradientStopCollection>
+            </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
 
         <RadialGradientBrush x:Key="PtGradientClient1">
-            <GradientStopCollection>
-                <GradientStop Color="{StaticResource PtColorClient1}" Offset="0"/>
-                <GradientStop Color="{StaticResource PtColorClient2}" Offset="1"/>
-            </GradientStopCollection>
+            <RadialGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="{StaticResource PtColorClient1}" Offset="0"/>
+                    <GradientStop Color="{StaticResource PtColorClient2}" Offset="1"/>
+                </GradientStopCollection>
+            </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
+
+        <!-- Greys -->
+        <Color x:Key="PtColorHelp3" R="200" G="200" B="200"  A="255"/>
+        <SolidColorBrush x:Key="PtBrushHelp3" Color="{StaticResource PtColorHelp3}"/>
+
+        <Color x:Key="PtColorHelp2" R="217" G="217" B="217" A="255"/>
+        <SolidColorBrush x:Key="PtBrushHelp2" Color="{StaticResource PtColorHelp2}"/>
+
+        <Color x:Key="PtColorHelp1" R="233" G="233" B="241" A="233"/>
+        <SolidColorBrush x:Key="PtBrushHelp1" Color="{StaticResource PtColorHelp1}"/>
 
         <!-- Tooltips -->
         <ToolTip x:Key="EntitiesTip" Content="Entities are logical divisions of the business such as Companies, Legal Entities or Business Units"/>
@@ -161,10 +192,11 @@
         <Image x:Key="CommitIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="112_Tick_Green_32x32_72.png"/>
         <Image x:Key="ContactIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="base_business_contacts.png"/>
         <Image x:Key="CopyIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="copy.png"/>
-        <Image x:Key="DisableIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="25" Source="CheckMixed.bmp"/>        
+        <Image x:Key="DisableIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="25" Source="CheckMixed.bmp"/>
         <Image x:Key="EnableIcon" HorizontalAlignment="Left" Height="25" VerticalAlignment="Center" Width="25" Source="base_checkboxes.png" Stretch="UniformToFill"/>
         <Image x:Key="EntitiesIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="1403_Globe.png"/>
         <Image x:Key="LeftIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="112_LeftArrowShort_Blue_24x24_72.png"/>
+        <Image x:Key="HelpIcon" HorizontalAlignment="Right" Height="20" VerticalAlignment="Top" Width="20" Source="109_AllAnnotations_Help_24x24_72.png"/>
         <Image x:Key="LoginIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="Keys.png"/>
         <Image x:Key="SubtractIcon" HorizontalAlignment="Right" Height="20" VerticalAlignment="Top" Width="20" Source="112_Minus_Blue_24x24_72.png"/>
         <Image x:Key="PinIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="25" Source="138_PushPin_24x24_72.png" Stretch="UniformToFill"/>
@@ -204,7 +236,7 @@
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Border x:Name="border" CornerRadius="5" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{StaticResource PtBrushHeaderBlue}" SnapsToDevicePixels="True">
                             <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" 
-                                              Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+        						Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsDefaulted" Value="True">
@@ -331,6 +363,85 @@
             <Setter Property="BorderThickness" Value="2"/>
             <Setter Property="CornerRadius" Value="3"/>
         </Style>
+
+        <Style x:Key="PaddedTextBox" TargetType="{x:Type TextBox}">
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="#FFABADB3"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="5"/>            
+            <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="AllowDrop" Value="True"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="False" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" TargetName="border" Value="0.56"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" TargetName="border" Value="#FF7EB4EA"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter Property="BorderBrush" TargetName="border" Value="#FF569DE5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>                            
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding (0)}" Value="false">
+                    <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>                   
+                </DataTrigger>               
+            </Style.Triggers>                
+        </Style>
+        <Style x:Key="PaddedPassword" TargetType="{x:Type PasswordBox}">
+            <Setter Property="PasswordChar" Value="*"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="#FFABADB3"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="AllowDrop" Value="True"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type PasswordBox}">
+                        <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="False" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" TargetName="border" Value="0.56"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" TargetName="border" Value="#FF7EB4EA"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter Property="BorderBrush" TargetName="border" Value="#FF569DE5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="{x:Type Window}">
+            <Setter Property="FontFamily" Value="Yu Gothic"/>
+        </Style>
+        <Style TargetType="{x:Type Page}">
+            <Setter Property="FontFamily" Value="Yu Gothic"/>
+        </Style>        
 
     </Application.Resources>
 </Application>

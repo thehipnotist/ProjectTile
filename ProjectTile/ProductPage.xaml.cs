@@ -45,6 +45,7 @@ namespace ProjectTile
         public ProductPage()
         {
             InitializeComponent();
+            Style = (Style)FindResource(typeof(Page));
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

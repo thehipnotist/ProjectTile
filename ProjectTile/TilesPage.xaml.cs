@@ -23,7 +23,7 @@ namespace ProjectTile
         Thickness thinBorder = new Thickness (1, 1, 1, 1); 
 
         /* Current records */
-        TableSecurity myPermissions; 
+        TableSecurity myPermissions = LoginFunctions.MyPermissions;
 
         // Create empty lists of associated buttons that are populated when loaded (below)
         // This is the most efficient way to show and hide only the necessary buttons without having to loop through all of them
@@ -45,10 +45,14 @@ namespace ProjectTile
         public TilesPage()
         {
             InitializeComponent();
-            myPermissions = LoginFunctions.MyPermissions;
+            Style = (Style)FindResource(typeof(Page));
+        }  
+
+        private void TilesPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            addAndGroupButtons();
 
             string demoCo = "";
-
             if (EntityFunctions.CurrentEntityID == 1) // Logged into SampleCo, possibly a new user
             {
                 demoCo = ", a demonstration company";
@@ -64,11 +68,6 @@ namespace ProjectTile
                 }
             }
             Welcome.Content = String.Format("Welcome to ProjectTile, {0}. You are logged into Entity {1}{2}.", LoginFunctions.CurrentStaffName, EntityFunctions.CurrentEntityName, demoCo);
-        }  
-
-        private void TilesPage1_Loaded(object sender, RoutedEventArgs e)
-        {
-            addAndGroupButtons();
         }
 
         /* Page changes */
