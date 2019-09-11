@@ -50,7 +50,7 @@ namespace ProjectTile
             }
         }
 
-        public static List<string> AllManagersList(int entityID, bool includeNonAMs, string mustInclude)
+        public static List<string> AllManagersList(int entityID, bool includeNonAMs, string includeIfInEntity)
         {
             try
             {
@@ -60,12 +60,12 @@ namespace ProjectTile
                     List<string> managerNames = new List<string>();
                     managerNames = (from s in existingPtDb.Staff
                                     join se in existingPtDb.StaffEntities on s.ID equals se.StaffID
-                                    where (se.EntityID == entityID) && (includeNonAMs || s.RoleCode == ManagerRole)
+                                    where (se.EntityID == entityID) && (includeNonAMs || s.RoleCode == ManagerRole || s.FirstName + " " + s.Surname == includeIfInEntity)
                                     orderby s.FirstName, s.Surname
                                     select s.FirstName + " " + s.Surname)
                                 .Distinct().ToList();
 
-                    if (!managerNames.Contains(mustInclude)) { managerNames.Add(mustInclude); }
+                    //if (!managerNames.Contains(includeIfInEntity)) { managerNames.Add(includeIfInEntity); } // Now handled above
 
                     return managerNames;
                 }
@@ -218,7 +218,7 @@ namespace ProjectTile
             }
         }
 
-        public static int NewClient(string clientCode, string clientName, string accountManager, bool active)
+        public static int NewClient(string clientCode, string clientName, string accountManager, bool active, int entityID)
         {
             try
             {
@@ -229,8 +229,6 @@ namespace ProjectTile
                 }
 
                 int accountManagerID = StaffFunctions.GetStaffMemberByName(accountManager).ID;
-                int entityID = EntityFunctions.CurrentEntityID;
-
                 Clients newClient = new Clients() { ClientCode = clientCode, ClientName = clientName, AccountManagerID = accountManagerID, Active = active, EntityID = entityID};
                 if (ValidateClient(ref newClient, 0, true))
                 {
@@ -270,7 +268,7 @@ namespace ProjectTile
                 }                
                 
                 int accountManagerID = StaffFunctions.GetStaffMemberByName(accountManager).ID;
-                int entityID = EntityFunctions.CurrentEntityID;
+                int entityID = EntityFunctions.CurrentEntityID; // Always amending in the current Entity only
 
                 try
                 {
@@ -328,11 +326,9 @@ namespace ProjectTile
                     char c2 = string2[i];
                     char r = '\u0000';
 
-                    //MessageFunctions.InvalidMessage(c1.ToString() + " " + c2.ToString(), "Testing");
-
-                    if (c1 == c2) { r = c1; }
+                    if (char.IsDigit(c2) && (c1 == NumChar || char.IsDigit(c1))) { r = NumChar; } // This goes first as numbers shouldn't be expected to match
+                    else if (c1 == c2) { r = c1; }
                     else if (char.IsLetter(c2) && (c1 == AlphaChar || char.IsLetter(c1))) { r = AlphaChar; }
-                    else if (char.IsDigit(c2) && (c1 == NumChar || char.IsDigit(c1))) { r = NumChar; }
                     else if (char.IsLetterOrDigit(c2) && (c1 == AlphaNum || c1 == NumChar || c1 == AlphaChar || char.IsLetterOrDigit(c1))) { r = AlphaNum; }
                     else if ((char.IsSymbol(c2) || char.IsPunctuation(c2))  && (c1 == Symbol || char.IsSymbol(c1) || char.IsPunctuation(c1))) { r = Symbol; }
                     else if ((char.IsLetterOrDigit(c2) || char.IsSymbol(c2) || char.IsPunctuation(c2))
@@ -360,8 +356,16 @@ namespace ProjectTile
                 {
                     string suggestedFormat = "";
                     List<string> clientCodes = (from c in existingPtDb.Clients
-                                                where (int) c.ID != avoidID && (bool) c.Active == true
+                                                where (int) c.ID != avoidID && (bool) c.Active == true && c.EntityID == entityID 
                                                 select c.ClientCode).ToList();
+
+                    if (clientCodes.ToArray().Length <= 3) // Not enough to compare
+                    {
+                        ClientCodeFormat = "";
+                        SuggestionTips = "";
+                        ExplainCode = "";
+                        return ""; 
+                    } 
 
                     if (check != "") { clientCodes.Add(check); } // Add the check string to get the result including that string
                     
@@ -422,6 +426,59 @@ namespace ProjectTile
             }
         }
 
+        public static List<ClientStaff> GetContactsByClientID(int clientID, bool activeOnly)
+        {           
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return (from cs in existingPtDb.ClientStaff
+                            where cs.ClientID == clientID && (!activeOnly || cs.Active)
+                            select cs).ToList();
+				}
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error obtaining contact records for client with ID " + clientID.ToString(), generalException);
+                return null;
+            }	               
+        }
+
+        public static bool CopyContacts(int sourceClientID, int newClientID)
+        {
+            try
+            {
+                List<ClientStaff> sourceContacts = GetContactsByClientID(sourceClientID, true);
+ 
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {                   
+                    foreach (ClientStaff contactRecord in sourceContacts)
+                    {
+                        ClientStaff newContact = new ClientStaff
+                        {
+                            ClientID = newClientID,
+                            FirstName = contactRecord.FirstName,
+                            Surname = contactRecord.Surname,
+                            JobTitle = contactRecord.JobTitle,
+                            PhoneNumber = contactRecord.PhoneNumber,
+                            Email = contactRecord.Email,
+                            Active = contactRecord.Active
+                        };
+
+                        existingPtDb.ClientStaff.Add(newContact);
+                    }
+                    existingPtDb.SaveChanges();
+                    return true;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error copying client contacts from client ID " + sourceClientID.ToString() + " to client ID " + newClientID.ToString(), generalException);
+                return false;
+            }	
+        }
 
     } // class
 } // namespace
