@@ -38,7 +38,7 @@ namespace ProjectTile
                     var gridList = new List<StaffGridRecord>();
 
                     // Only get Entities that the current user can access; if entity is specified, check it is valid and replace the array with its ID
-                    var myAllowedEntities = EntityFunctions.AllowedEntityIDs(LoginFunctions.CurrentStaffID);
+                    var myAllowedEntities = EntityFunctions.AllowedEntities(LoginFunctions.CurrentStaffID);
                     if (entityID > 0)
                     {
                         if (!myAllowedEntities.Contains(entityID))
@@ -331,7 +331,7 @@ namespace ProjectTile
                             {
                                 if (!selectedStaff.DefaultEntity.Equals(defaultEntityID))
                                 {
-                                    int[] allowedEntities = EntityFunctions.AllowedEntityIDs(staffID);
+                                    int[] allowedEntities = EntityFunctions.AllowedEntities(staffID);
                                     if (!allowedEntities.Contains(defaultEntityID))
                                     {
                                         addEntity = MessageFunctions.QuestionYesNo("This staff member does not currently have access to " + defaultEnt + ". Is this correct?", "Allow new Entity?");
@@ -574,7 +574,7 @@ namespace ProjectTile
             {
                 try
                 {
-                    var myAllowedEntities = EntityFunctions.AllowedEntityIDs(LoginFunctions.CurrentStaffID);                    
+                    var myAllowedEntities = EntityFunctions.AllowedEntities(LoginFunctions.CurrentStaffID);                    
                     return (from se in existingPtDb.StaffEntities
                             where se.StaffID == staffID && myAllowedEntities.Contains((int) se.EntityID)
                             select (int)se.EntityID

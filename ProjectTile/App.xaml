@@ -160,7 +160,6 @@
         <Image x:Key="ClientIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="filecabinet.png"/>
         <Image x:Key="CommitIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="112_Tick_Green_32x32_72.png"/>
         <Image x:Key="ContactIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="base_business_contacts.png"/>
-        <Image x:Key="CopyIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="copy.png"/>
         <Image x:Key="DisableIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="25" Source="CheckMixed.bmp"/>        
         <Image x:Key="EnableIcon" HorizontalAlignment="Left" Height="25" VerticalAlignment="Center" Width="25" Source="base_checkboxes.png" Stretch="UniformToFill"/>
         <Image x:Key="EntitiesIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="1403_Globe.png"/>

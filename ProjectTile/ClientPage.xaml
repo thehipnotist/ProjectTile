@@ -38,9 +38,8 @@
                              TabIndex="2" LostFocus="NameContains_LostFocus" KeyUp="NameContains_KeyUp"/>
                     <CheckBox x:Name="ActiveOnly_CheckBox" Content="Active Only" HorizontalAlignment="Center" Height="30" Margin="250,43,250,0" VerticalAlignment="Top" Width="100" FontWeight="Bold" 
                               VerticalContentAlignment="Center" Padding="5" Checked="ActiveOnly_CheckBox_Checked" Unchecked="ActiveOnly_CheckBox_Unchecked"/>
-                    <Label x:Name="MainManagersLabel" Content="Account Manager" HorizontalAlignment="Right" Height="30" Margin="0,45,155,0" VerticalAlignment="Top" Width="110" FontWeight="Bold"/>
-                    <ComboBox x:Name="MainManagersCombo" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="135" 
-                              SelectionChanged="MainManagersCombo_SelectionChanged"/>
+                    <Label x:Name="AMListLabel" Content="Account Manager" HorizontalAlignment="Right" Height="30" Margin="0,45,155,0" VerticalAlignment="Top" Width="110" FontWeight="Bold"/>
+                    <ComboBox x:Name="AMList" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="135" SelectionChanged="AMList_SelectionChanged"/>
 
                     <DataGrid x:Name="ClientDataGrid" MinHeight="290" Margin="15,90,0,0" Width="500" MinWidth="400" AutoGenerateColumns="False" IsReadOnly="True" 
                               BorderBrush="{StaticResource PtBrushClient3}" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionChanged="ClientDataGrid_SelectionChanged">
@@ -69,14 +68,7 @@
                             <TextBlock x:Name="AddButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Add New" Margin="5,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
-                    <Button x:Name="CopyButton" HorizontalAlignment="Right" Height="30" Margin="15,110,15,30" VerticalAlignment="Top" Width="110" 
-                		FontWeight="Bold" IsEnabled="False" Click="CopyButton_Click" Style="{StaticResource RoundedButton}">
-                        <StackPanel x:Name="CopyPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                            <Frame x:Name="CopyImage" Content="{StaticResource CopyIcon}" />
-                            <TextBlock x:Name="CopyButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Copy" Margin="5,0,0,0" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>                    
-                    <Button x:Name="ContactButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,110" VerticalAlignment="Bottom" Width="110" 
+                    <Button x:Name="ContactButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Center" Width="110" 
                 		FontWeight="Bold" IsEnabled="True" Click="ContactButton_Click" Style="{StaticResource RoundedButton}">
                         <StackPanel x:Name="ContactPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                             <Frame x:Name="ContactImage" Content="{StaticResource ContactIcon}" />
@@ -120,17 +112,11 @@
                     <Label x:Name="ActiveLabel" Content="Active" HorizontalAlignment="Right" Height="30" Margin="0,120,215,0" VerticalAlignment="Top" Width="50" FontWeight="Bold"/>
                     <CheckBox x:Name="Active_CheckBox" HorizontalAlignment="Right" Height="30" Margin="0,120,30,0" VerticalAlignment="Top" Width="180" FontWeight="Bold" 
                 	    VerticalContentAlignment="Center" UseLayoutRounding="False"/>                    
-                    <Label x:Name="EditManagersLabel" Content="Account Manager" HorizontalAlignment="Left" Height="30" Margin="15,165,0,0" VerticalAlignment="Top" Width="110" FontWeight="Bold"/>
-                    <ComboBox x:Name="EditManagersCombo" HorizontalAlignment="Left" Height="30" Margin="130,165,0,0" VerticalAlignment="Top" Width="160"/>
-                    <CheckBox x:Name="NonAMs_CheckBox" HorizontalAlignment="Left" Height="30" Margin="305,165,0,0" VerticalAlignment="Top" Width="250" FontWeight="Bold" 
+                    <Label x:Name="AMList2Label" Content="Account Manager" HorizontalAlignment="Left" Height="30" Margin="15,165,0,0" VerticalAlignment="Top" Width="110" FontWeight="Bold"/>
+                    <ComboBox x:Name="AMList2" HorizontalAlignment="Left" Height="30" Margin="130,165,0,0" VerticalAlignment="Top" Width="160"/>
+                    <CheckBox x:Name="NonAMs_CheckBox" HorizontalAlignment="Left" Height="30" Margin="300,165,0,0" VerticalAlignment="Top" Width="250" FontWeight="Bold" 
                 	    VerticalContentAlignment="Center" UseLayoutRounding="False" Content="Include Non-Account Managers?" Checked="NonAMs_CheckBox_Checked" Unchecked="NonAMs_CheckBox_Unchecked"/>
-
-                    <Label x:Name="EntityLabel" Content="Entity" HorizontalAlignment="Left" Height="30" Margin="15,210,0,0" VerticalAlignment="Top" Width="110" FontWeight="Bold"/>
-                    <ComboBox x:Name="EntityCombo" HorizontalAlignment="Left" Height="30" Margin="130,210,0,0" VerticalAlignment="Top" Width="160" DisplayMemberPath="EntityName" 
-                              SelectionChanged="EntityList_SelectionChanged" ToolTip="Include all available staff, not just the Account Managers"/>
-                    <CheckBox x:Name="CopyContacts_CheckBox" HorizontalAlignment="Left" Height="30" Margin="305,210,0,0" VerticalAlignment="Top" Width="250" FontWeight="Bold" 
-                	    VerticalContentAlignment="Center" UseLayoutRounding="False" Content="Copy Active Client Contacts?" ToolTip="Copy all active contacts for this client to the new record"/>
-
+                    
                     <TextBlock x:Name="SuggestionTips" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="15,0,15,15" Height="50" Width="625" Text="Set at runtime" TextWrapping="WrapWithOverflow"/>
 
                 </Grid>

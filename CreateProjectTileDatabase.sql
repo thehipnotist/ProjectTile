@@ -1849,8 +1849,8 @@ BEGIN TRY
 
 		-- Create a view dynamically so it can go in the same batch
 		EXEC ('CREATE VIEW dbo.vi_ClientStaff AS	
-			SELECT e.EntityName, c.ClientCode, c.ClientName, c.Active AS ''ClientActive'',
-				cs.FirstName + '' '' + cs.Surname AS ''StaffName'', cs.JobTitle, cs.Active AS ''StaffActive'', cs.PhoneNumber, cs.Email
+			SELECT e.EntityName, c.ClientCode, c.ClientName, 
+				cs.FirstName + '' '' + cs.Surname AS ''StaffName'', cs.JobTitle, cs.PhoneNumber, cs.Email
 			FROM dbo.ClientStaff cs
 				INNER JOIN dbo.Clients c ON cs.ClientID = c.ID
 				INNER JOIN dbo.Entities e ON c.EntityID = e.ID')
