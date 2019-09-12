@@ -19,30 +19,31 @@ namespace ProjectTile
     /// </summary>
     public partial class StaffDetailsPage : Page
     {
-        /* ----------------------
-        -- Global Variables --
-        ---------------------- */
+        // ---------------------- //
+        // -- Global Variables -- //
+        // ---------------------- //
 
-        /* Global/page parameters */
+        // Global/page parameters //
 
         MainWindow winMain = (MainWindow)App.Current.MainWindow;
         string pageMode;
         int selectedStaffID = 0;
 
-        /* Current variables */
+        // Current variables //
 
-        /* Current records */
+        // Current records //
         Staff thisStaffMember;
 
-        /* ----------------------
-           -- Page Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Page Management --- //
+        // ---------------------- //
 
-        /* Initialize and Load */
+        // Initialize and Load //
         public StaffDetailsPage()
         {
             InitializeComponent();
             Style = (Style)FindResource(typeof(Page));
+            KeepAlive = false;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -60,9 +61,8 @@ namespace ProjectTile
 
             try
             {
-                string originalString = NavigationService.CurrentSource.OriginalString;
-                pageMode = PageFunctions.pageParameter(originalString, "Mode");
-                selectedStaffID = Int32.Parse(PageFunctions.pageParameter(originalString, "SelectedID"));
+                pageMode = PageFunctions.pageParameter(this, "Mode");
+                selectedStaffID = Int32.Parse(PageFunctions.pageParameter(this, "SelectedID"));
             }
             catch (Exception generalException)
             {
@@ -109,11 +109,11 @@ namespace ProjectTile
             }
         }
 
-        /* ----------------------
-           -- Data Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Data Management --- //
+        // ---------------------- //
 
-        /* Data updates */
+        // Data updates //
         private void refreshRoleList()
         {
             try
@@ -123,7 +123,7 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error populating roles list", generalException); }
         }
 
-        /* Shared functions */
+        // Shared functions //
         private void check_CapsLock()
         {
             try
@@ -149,11 +149,11 @@ namespace ProjectTile
             }
         }
 
-        /* ----------------------
-           -- Event Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Event Management -- //
+        // ---------------------- //
 
-        /* Control-specific events */
+        // Control-specific events //
         private void Password_Changed(object sender, RoutedEventArgs e)
         {
             //check_CapsLock(); // Removed as this can cause errors on load and isn't needed

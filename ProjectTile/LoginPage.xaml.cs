@@ -16,25 +16,26 @@ namespace ProjectTile
     /// </summary>
     public partial class LoginPage : Page
     {
-        /* ----------------------
-           -- Global Variables --
-           ---------------------- */
+        // ---------------------- //
+        // -- Global Variables -- //
+        // ---------------------- //
 
-        /* Global/page parameters */
+        // Global/page parameters //
         MainWindow winMain = (MainWindow)App.Current.MainWindow;
         string pageMode;
         bool pageSuccess = false;
 
-        /* ----------------------
-           -- Page Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Page Management --- //
+        // ---------------------- //
 
-        /* Initialize and Load */
+        // Initialize and Load //
 
         public LoginPage()
         {
             InitializeComponent();
             Style = (Style)FindResource(typeof(Page));
+            KeepAlive = false;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -44,8 +45,7 @@ namespace ProjectTile
 
             try
             {
-                string originalString = NavigationService.CurrentSource.OriginalString;
-                pageMode = PageFunctions.pageParameter(originalString, "Mode"); //, ref winMain
+                pageMode = PageFunctions.pageParameter(this, "Mode");
             }
             catch (Exception generalException)
             {
@@ -95,11 +95,11 @@ namespace ProjectTile
 
         }
 
-        /* ----------------------
-           -- Data Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Data Management --- //
+        // ---------------------- //
 
-        /* Shared functions */        
+        // Shared functions //        
         private void check_CapsLock()
         {           
             try
@@ -120,11 +120,11 @@ namespace ProjectTile
             //MessageBox.Show(pageSuccess.ToString());
         }
 
-        /* ----------------------
-           -- Event Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Event Management -- //
+        // ---------------------- //
 
-        /* Control-specific events */
+        // Control-specific events //
         private void LogInButton_Click(object sender, RoutedEventArgs e)
         {
            

@@ -9,28 +9,29 @@ namespace ProjectTile
     /// </summary>
     public partial class EntityPage : Page
     {
-        /* ----------------------
-           -- Global Variables --
-           ---------------------- */
+        // ---------------------- //
+        // -- Global Variables -- //
+        // ---------------------- //
 
-        /* Global/page parameters */		
+        // Global/page parameters //		
         string pageMode;
 
-        /* Current variables */
+        // Current variables //
         int selectedEntityID = 0;
 
-        /* Current records */
+        // Current records //
         Entities selectedEntity = null;
 
-        /* ----------------------
-           -- Page Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Page Management --- //
+        // ---------------------- //
 
-        /* Initialize and Load */
+        // Initialize and Load //
         public EntityPage()
         {
             InitializeComponent();
             Style = (Style)FindResource(typeof(Page));
+            KeepAlive = false;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -39,8 +40,7 @@ namespace ProjectTile
             {
                 try 
                 {
-                    string originalString = NavigationService.CurrentSource.OriginalString;
-                    pageMode = PageFunctions.pageParameter(originalString, "Mode"); //, ref winMain
+                    pageMode = PageFunctions.pageParameter(this, "Mode");
                 }
                 catch (Exception generalException) 
                 { 
@@ -109,11 +109,11 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error setting initial values", generalException); }
         }
 
-        /* ----------------------
-           -- Event Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Event Management -- //
+        // ---------------------- //
 
-        /* Control-specific events */
+        // Control-specific events //
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
             string displayName = EntityName.Text;

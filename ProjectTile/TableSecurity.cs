@@ -88,7 +88,7 @@ namespace ProjectTile
                 return false;
             }
         }
-         */ 
+        */ 
 
-    }
-}
+    } // class
+} // namespace

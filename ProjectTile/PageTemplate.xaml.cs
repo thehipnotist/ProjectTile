@@ -19,34 +19,35 @@ namespace ProjectTile
     /// </summary>
     public partial class PageTemplate : Page
     {
-        /* ----------------------
-           -- Global Variables --
-           ---------------------- */   
+        // ---------------------- //
+        // -- Global Variables -- //
+        // ---------------------- //   
 
-        /* Global/page parameters */
+        // Global/page parameters //
         string pageMode;
 
-        /* Current variables */
+        // Current variables //
 
-        /* Current records */
+        // Current records //
 
 
-        /* ----------------------
-           -- Page Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Page Management --- //
+        // ---------------------- //
 
-        /* Initialize and Load */
+        // Initialize and Load //
         public PageTemplate()
         {
             InitializeComponent();
+            Style = (Style)FindResource(typeof(Page));
+            KeepAlive = false;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             try
             {
-                string originalString = NavigationService.CurrentSource.OriginalString;
-                pageMode = PageFunctions.pageParameter(originalString, "Mode");
+                pageMode = PageFunctions.pageParameter(this, "Mode");
             }
             catch (Exception generalException)
             {
@@ -58,24 +59,24 @@ namespace ProjectTile
 
 
 
-        /* ----------------------
-           -- Data Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Data Management --- //
+        // ---------------------- //
 
-        /* Data updates */
+        // Data updates //
 
-        /* Data retrieval */
+        // Data retrieval //
 
-        /* Other/shared functions */
+        // Other/shared functions //
 
 
-        /* ----------------------
-           -- Event Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Event Management -- //
+        // ---------------------- //
 
-        /* Generic (shared) control events */
+        // Generic (shared) control events //
 
-        /* Control-specific events */
+        // Control-specific events //
 
 
 

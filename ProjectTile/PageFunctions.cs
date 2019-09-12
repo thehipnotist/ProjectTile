@@ -6,6 +6,7 @@ using System.Linq;
 using System.Collections;
 using System.Globalization;
 using System.Threading;
+using System.Windows;
 
 namespace ProjectTile
 {
@@ -28,8 +29,8 @@ namespace ProjectTile
         public const string Default = "Default";
         public const string About = "About";
 
-        /* Page changes */
-        public static string thisPageName()
+        // Page changes //
+        public static string ThisPageName()
         {
             try
             {
@@ -50,7 +51,7 @@ namespace ProjectTile
             {
                 try
                 {
-                    string mainFrameSource = thisPageName();
+                    string mainFrameSource = ThisPageName();
                     string newPageName = newPageSource.Replace(".xaml", "");
 
                     if (mainFrameSource != "TilesPage" && mainFrameSource == newPageName)
@@ -71,15 +72,18 @@ namespace ProjectTile
             }
         }
 
-        public static void navigate(string pageSource)
+        private static void navigate(string pageSource)
         {
             try
             {
+                mainFrame.Content = null;                
                 mainFrame.Navigate(new Uri(pageSource, uriDefault));
+                mainFrame.NavigationService.RemoveBackEntry();
             }
             catch (Exception generalException) { MessageFunctions.Error("Error navigating to page location '" + pageSource + "'", generalException); }
         }
 
+        // Individual pages //
         public static void ShowTilesPage() { ChangePage(TilesPage); }
 
         public static void ShowEntityPage(string pageMode)
@@ -126,14 +130,14 @@ namespace ProjectTile
             ChangePage("HelpPage.xaml?Mode=" + pageMode);
         }
 
-
-        /* Page loads */
-        public static string pageParameter(string originalString, string paramName) //, ref MainWindow winMain
-        {                        
+        // Page initialisation //
+        public static string pageParameter(Page currentPage, string paramName)
+        {
             try
-            {                
+            {                             
                 string paramValue = "";
-                
+                string originalString = currentPage.NavigationService.CurrentSource.OriginalString;
+
                 string[] originalStringArray = originalString.Split('?', ','); // NB: NavigationService.CurrentSource.Query will not work as it is a relative URL
                 foreach (string part in originalStringArray)
                 {
@@ -156,7 +160,7 @@ namespace ProjectTile
             }
         }
 
-        /* Utilities */
+        // Utilities //
         public static bool SqlInputOK(string inputText, bool mandatory, string fieldName, string fieldTitle = "", string invalidCharacters = "")
         {
 

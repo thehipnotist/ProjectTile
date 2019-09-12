@@ -14,14 +14,14 @@ namespace ProjectTile
     /// </summary>
     public partial class StaffPage : Page
     {
-        /* ----------------------
-           -- Global Variables --
-           ---------------------- */
+        // ---------------------- //
+        // -- Global Variables -- //
+        // ---------------------- //
 
-        /* Global/page parameters */
+        // Global/page parameters //
         string pageMode;
 
-        /* Current variables */
+        // Current variables //
         bool activeOnly = false;
         string nameContains = "";
         string roleDescription = PageFunctions.AllRecords;
@@ -30,27 +30,27 @@ namespace ProjectTile
         bool viewEntities = LoginFunctions.MyPermissions.Allow("ViewStaffEntities");
         bool editEntities = LoginFunctions.MyPermissions.Allow("EditStaffEntities");
 
-        /* Current records */
+        // Current records //
         StaffGridRecord selectedRecord;
 
-        /* ----------------------
-           -- Page Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Page Management --- //
+        // ---------------------- //
 
-        /* Initialize and Load */            
+        // Initialize and Load //            
         public StaffPage()
         {
             InitializeComponent();
             Style = (Style)FindResource(typeof(Page));
+            KeepAlive = false;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             try
-            {
-                string originalString = NavigationService.CurrentSource.OriginalString;
-                pageMode = PageFunctions.pageParameter(originalString, "Mode");
-                selectedStaffID = Int32.Parse(PageFunctions.pageParameter(originalString, "SelectedID"));
+            {                
+                pageMode = PageFunctions.pageParameter(this, "Mode");
+                selectedStaffID = Int32.Parse(PageFunctions.pageParameter(this, "SelectedID"));
                 refreshRoleList(); // This also runs LoadOrRefreshData to populate the main staff data grid
             }
             catch (Exception generalException)
@@ -78,11 +78,11 @@ namespace ProjectTile
             }
         }
 
-        /* ----------------------
-           -- Data Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Data Management --- //
+        // ---------------------- //
 
-        /* Data updates */
+        // Data updates //
         private void refreshRoleList()
         {
             try
@@ -116,7 +116,7 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error filling staff grid", generalException); }
         }
 
-        /* Other/shared functions */
+        // Other/shared functions //
         private void nameFilter()
         {
             nameContains = NameContains.Text;
@@ -162,11 +162,11 @@ namespace ProjectTile
             EntitiesButton.IsEnabled = false;
         }
 
-        /* ----------------------
-           -- Event Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Event Management -- //
+        // ---------------------- //
 
-        /* Shared functions */
+        // Shared functions //
         private void resize()
         {
             double targetWidth = TopBorder.ActualWidth - 30;
@@ -176,7 +176,7 @@ namespace ProjectTile
             StaffDataGrid.Height = Math.Max(targetHeight, StaffDataGrid.MinHeight);
         }        
 
-        /* Control events */
+        // Control events //
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowTilesPage();

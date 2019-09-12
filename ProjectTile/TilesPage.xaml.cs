@@ -11,18 +11,18 @@ namespace ProjectTile
     /// </summary>
     public partial class TilesPage : Page
     {
-        /* ----------------------
-           -- Global Variables --
-           ---------------------- */
+        // ---------------------- //
+        // -- Global Variables -- //
+        // ---------------------- //
 
-        /* Global/page parameters */		        
+        // Global/page parameters //		        
         MainWindow winMain = (MainWindow)App.Current.MainWindow;
         bool keepExpansion;
         
         Thickness fatBorder = new Thickness (5, 5, 5, 5);
         Thickness thinBorder = new Thickness (1, 1, 1, 1); 
 
-        /* Current records */
+        // Current records //
         TableSecurity myPermissions = LoginFunctions.MyPermissions;
 
         // Create empty lists of associated buttons that are populated when loaded (below)
@@ -36,11 +36,11 @@ namespace ProjectTile
         List<Button> productButtons = new List<Button>();
         List<Button> clientButtons = new List<Button>();
 
-        /* ----------------------
-           -- Page Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Page Management --- //
+        // ---------------------- //
 
-        /* Initialize and Load */        
+        // Initialize and Load //        
         
         public TilesPage()
         {
@@ -70,7 +70,7 @@ namespace ProjectTile
             Welcome.Content = String.Format("Welcome to ProjectTile, {0}. You are logged into Entity {1}{2}.", LoginFunctions.CurrentStaffName, EntityFunctions.CurrentEntityName, demoCo);
         }
 
-        /* Page changes */
+        // Page changes //
         private void addAndGroupButtons()
         {
             try
@@ -238,11 +238,11 @@ namespace ProjectTile
             movedElsewhere();
         }
 
-        /* ----------------------
-           -- Event Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Event Management -- //
+        // ---------------------- //
 
-        /* Generic (shared) events */
+        // Generic (shared) events //
         private void buttonMouseOver(object sender, MouseEventArgs e)
         {
             if (sender is Button)
@@ -257,7 +257,7 @@ namespace ProjectTile
             if (sender is Button) { movedElsewhere(); }
         }
 
-        /* Control-specific events */
+        // Control-specific events //
         private void ChangeCurrentEntityButton_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowEntityPage(PageFunctions.Switch);

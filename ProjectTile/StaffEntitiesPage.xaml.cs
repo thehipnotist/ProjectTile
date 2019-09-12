@@ -16,14 +16,14 @@ namespace ProjectTile
     /// </summary>
     public partial class StaffEntitiesPage : Page
     {
-        /* ----------------------
-            -- Global Variables --
-            ---------------------- */
+        // ---------------------- //
+        // -- Global Variables -- //
+        // ---------------------- //
 
-        /* Global/page parameters */
+        // Global/page parameters //
         string pageMode;
 
-        /* Current variables */
+        // Current variables //
         bool activeOnly = false;
         string nameContains = "";
         int selectedStaffID = 0;
@@ -40,29 +40,29 @@ namespace ProjectTile
         modeType ByEntity = modeType.StaffInEntity;
         modeType editMode;
 
-        /* Current records */
+        // Current records //
         StaffGridRecord selectedRecord;
         Entities selectedEntity;
 
-        /* ----------------------
-           -- Page Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Page Management --- //
+        // ---------------------- //
 
-        /* Initialize and Load */
+        // Initialize and Load //
         public StaffEntitiesPage()
         {
             InitializeComponent();
             Style = (Style)FindResource(typeof(Page));
+            KeepAlive = false;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
+        {            
             try 
             { 
-                string originalString = NavigationService.CurrentSource.OriginalString;
-                pageMode = PageFunctions.pageParameter(originalString, "Mode");
-                sourceMode = PageFunctions.pageParameter(originalString, "SourceMode");
-                selectedStaffID = Int32.Parse(PageFunctions.pageParameter(originalString, "SelectedID"));
+                pageMode = PageFunctions.pageParameter(this, "Mode");
+                sourceMode = PageFunctions.pageParameter(this, "SourceMode");
+                selectedStaffID = Int32.Parse(PageFunctions.pageParameter(this, "SelectedID"));
                 refreshEntityList();
             }
             catch (Exception generalException)
@@ -106,14 +106,14 @@ namespace ProjectTile
                 {
                     Instructions.Content = defaultInstructions;
                 }
-            }
+            } 
         }
 
-        /* ----------------------
-           -- Data Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Data Management --- //
+        // ---------------------- //
 
-        /* Data updates */
+        // Data updates //
         private void refreshEntityList()
         {
             try
@@ -124,9 +124,9 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error populating Entity filter list", generalException); }
         }
 
-        /* Data retrieval */
+        // Data retrieval //
 
-        /* Other/shared functions */
+        // Other/shared functions //
         private void refreshStaffGrid()
         {
             try
@@ -535,13 +535,14 @@ namespace ProjectTile
         }
 
 
-        /* ----------------------
-           -- Event Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Event Management -- //
+        //   ---------------------- //
 
-        /* Generic (shared) control events */
+        // Generic (shared) control events //
 
-        /* Control-specific events */
+ 
+        // Control-specific events //
         private void ActiveOnly_CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             togglActiveOnly(true);
@@ -678,7 +679,7 @@ namespace ProjectTile
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            if (editMode == ByStaff) { addEntities(); }
+           if (editMode == ByStaff) { addEntities(); }
             else { addStaff(); }
         }
 
@@ -736,6 +737,7 @@ namespace ProjectTile
                 refreshEntitySummaries(true);
             }
         }
+ 
 
-    }
-}
+    } // class
+} // namespace

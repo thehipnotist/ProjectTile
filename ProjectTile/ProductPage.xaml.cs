@@ -20,40 +20,40 @@ namespace ProjectTile
     /// </summary>
     public partial class ProductPage : Page
     {
-        /* ----------------------
-           -- Global Variables --
-           ---------------------- */
+        // ---------------------- //
+        // -- Global Variables -- //
+        // ---------------------- //
 
-        /* Global/page parameters */
+        // Global/page parameters //
         string pageMode;
         bool allowAdd = LoginFunctions.MyPermissions.Allow("AddProducts");
 
-        /* Current variables */
+        // Current variables //
         string descContains = "";
         bool editMode = false;
         bool additionMade = false;
 
-        /* Current records */
+        // Current records //
         Products selectedProduct;
         List<Products> gridList;
 
-        /* ----------------------
-           -- Page Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Page Management --- //
+        // ---------------------- //
 
-        /* Initialize and Load */
+        // Initialize and Load //
         public ProductPage()
         {
             InitializeComponent();
             Style = (Style)FindResource(typeof(Page));
+            KeepAlive = false;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             try
             {
-                string originalString = NavigationService.CurrentSource.OriginalString;
-                pageMode = PageFunctions.pageParameter(originalString, "Mode");
+                pageMode = PageFunctions.pageParameter(this, "Mode");
             }
             catch (Exception generalException)
             {
@@ -83,11 +83,11 @@ namespace ProjectTile
             refreshProductGrid();
         }
 
-        /* ----------------------
-           -- Data Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Data Management --- //
+        // ---------------------- //
 
-        /* Data updates */
+        // Data updates //
         private void refreshProductGrid()
         {
             gridList = ProductFunctions.ProductsList(descContains);
@@ -100,9 +100,9 @@ namespace ProjectTile
             AmendButton.IsEnabled = false;
         }
 
-        /* Data retrieval */
+        // Data retrieval //
 
-        /* Other/shared functions */
+        // Other/shared functions //
         private void additionMode()
         {
             ProductGrid.SelectedItem = null; 
@@ -189,13 +189,13 @@ namespace ProjectTile
             }
         }
 
-        /* ----------------------
-           -- Event Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Event Management -- //
+        // ---------------------- //
 
-        /* Generic (shared) control events */
+        // Generic (shared) control events //
 
-        /* Control-specific events */
+        // Control-specific events //
 
         private void DescContains_LostFocus(object sender, RoutedEventArgs e)
         {

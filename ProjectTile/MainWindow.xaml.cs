@@ -9,11 +9,11 @@ namespace ProjectTile
     /// </summary>
     public partial class MainWindow : Window
     {
-        /* ----------------------
-           -- Page Management ---
-           ---------------------- */       
+        // ---------------------- //
+        // -- Page Management --- //
+        // ---------------------- //       
 
-        /* Initialize and Load */
+        // Initialize and Load //
         public MainWindow()
         {
             InitializeComponent();
@@ -30,7 +30,7 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error loading page", generalException); }
         }
 
-        /* Menu settings */
+        // Menu settings //
         public void MenuSecurity(ref TableSecurity myPermissions)
         {
             try
@@ -66,11 +66,11 @@ namespace ProjectTile
             }
         }
 
-        /* ----------------------
-           -- Data Management ---
-           ---------------------- */   
+        // ---------------------- //
+        // -- Data Management --- //
+        // ---------------------- //   
 
-        /* Data updates */
+        // Data updates //
         public void UpdateDetailsBlock()
         {
             try
@@ -88,13 +88,13 @@ namespace ProjectTile
             }
         }
 
-        /* Other/shared functions */
+        // Other/shared functions //
         public bool ConfirmClosure()
         {
             string loseChanges = "";
             try
             {
-                string thisPage = PageFunctions.thisPageName();
+                string thisPage = PageFunctions.ThisPageName();
                 if (thisPage != "TilesPage" && thisPage != "LoginPage") { loseChanges = " Any unsaved changes you have made would be lost."; }
             }
             catch 
@@ -104,11 +104,11 @@ namespace ProjectTile
             return MessageFunctions.QuestionYesNo("Are you sure you want to exit?" + loseChanges, "Close ProjectTile Application?");
         }
         
-        /* ----------------------
-           -- Event Management ---
-           ---------------------- */  
+        // ---------------------- //
+        // -- Event Management -- //
+        // ---------------------- //  
 
-        /* Control-specific events */
+        // Control-specific events //
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (!ConfirmClosure()) { e.Cancel = true; } // Cancel closure if not sure
