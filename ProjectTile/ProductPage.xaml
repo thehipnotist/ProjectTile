@@ -30,9 +30,9 @@
                 </Grid.RowDefinitions>
                 <Label x:Name="Instructions" Content="This page is read-only. Click on column headers to sort by that column. Use the filter to restrict results." HorizontalAlignment="Left" Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
 
-                <Label x:Name="SearchLabel" Content="Name or Description Contain" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="175" FontWeight="Bold"/>
+                <Label x:Name="SearchLabel" Content="Name/Description Contains" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="175" FontWeight="Bold"/>
                 <TextBox x:Name="SearchText" HorizontalAlignment="Left" Height="30" Margin="190,45,0,0" VerticalAlignment="Top" Width="175" FontWeight="Normal" ToolTip="Type and tab to filter" 
-                         TabIndex="2" LostFocus="DescContains_LostFocus" KeyUp="DescContains_KeyUp"/>
+                         TabIndex="2" LostFocus="DescContains_LostFocus" KeyUp="DescContains_KeyUp" Style="{DynamicResource PaddedTextBox}"/>
                 <DataGrid x:Name="ProductGrid" MinHeight="290" Margin="15,90,290,15" MinWidth="350" AutoGenerateColumns="False" IsReadOnly="True" BorderBrush="{StaticResource PtBrushProduct3}" 
                           HorizontalAlignment="Left" VerticalAlignment="Top" SelectionChanged="ProductGrid_SelectionChanged">
                     <DataGrid.Columns>
@@ -44,13 +44,15 @@
                 </DataGrid>
 
                 <Grid Margin="375,0,0,0" Name="AmendmentsGrid">
-                    <Label x:Name="NameLabel" Content="Name" HorizontalAlignment="Right" Height="30" Margin="0,90,200,0" VerticalAlignment="Top" Width="75" FontWeight="Bold"/>
-                    <TextBox x:Name="ProductName" HorizontalAlignment="Right" Height="30" Margin="0,90,30,0" VerticalAlignment="Top" Width="165" FontWeight="Normal" ToolTip="Enter product name" MaxLength="80"/>
-                    <Label x:Name="DescLabel" Content="Description" HorizontalAlignment="Right" Margin="0,135,200,0" VerticalAlignment="Top" Width="75" FontWeight="Bold" Height="30"/>
+                    <Label x:Name="NameLabel" Content="Name" HorizontalAlignment="Right" Height="30" Margin="0,90,195,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
+                    <TextBox x:Name="ProductName" HorizontalAlignment="Right" Height="30" Margin="0,90,30,0" VerticalAlignment="Top" Width="165" FontWeight="Normal" ToolTip="Enter product name" 
+                             MaxLength="80" Style="{DynamicResource PaddedTextBox}"/>
+                    <Label x:Name="DescLabel" Content="Description" HorizontalAlignment="Right" Margin="0,135,195,0" VerticalAlignment="Top" Width="80" FontWeight="Bold" Height="30"/>
                     <TextBox x:Name="Description" HorizontalAlignment="Right" Height="90" Margin="0,135,30,0" VerticalAlignment="Top" Width="165" ToolTip="Give the product a brief description" 
-                	MaxLength="300" TextWrapping="Wrap"/>
+                	MaxLength="300" TextWrapping="Wrap" Style="{DynamicResource PaddedTextBox}"/>
                     <Label x:Name="VersionLabel" Content="Latest Version" HorizontalAlignment="Right" Height="30" Margin="0,240,175,0" VerticalAlignment="Top" Width="100" FontWeight="Bold"/>
-                    <TextBox x:Name="Version" HorizontalAlignment="Right" Height="30" Margin="0,240,30,0" VerticalAlignment="Top" Width="140" FontWeight="Normal" ToolTip="Enter the latest version here" PreviewTextInput="Version_PreviewTextInput" TextAlignment="Right"/>
+                    <TextBox x:Name="Version" HorizontalAlignment="Right" Height="30" Margin="0,240,30,0" VerticalAlignment="Top" Width="140" FontWeight="Normal" ToolTip="Enter the latest version here" 
+                             PreviewTextInput="Version_PreviewTextInput" TextAlignment="Right" Style="{DynamicResource PaddedTextBox}"/>
 
                     <Button x:Name="AmendButton" HorizontalAlignment="Left" Height="30" Margin="15,240,30,75" VerticalAlignment="Bottom" Width="110" 
                             FontWeight="Bold" Style="{StaticResource RoundedButton}" IsEnabled="False" Click="AmendButton_Click">
