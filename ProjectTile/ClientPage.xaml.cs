@@ -19,11 +19,11 @@ namespace ProjectTile
     /// </summary>
     public partial class ClientPage : Page
     {
-        /* ----------------------
-           -- Global Variables --
-           ---------------------- */   
+        // ---------------------- //
+        // -- Global Variables -- //
+        // ---------------------- //   
 
-        /* Global/page parameters */
+        // Global/page parameters //
         string pageMode;
         TableSecurity myPermissions = LoginFunctions.MyPermissions;
         bool viewContacts;
@@ -35,32 +35,32 @@ namespace ProjectTile
         int editRecordID = 0;
         List<ClientGridRecord> gridList;
 
-        /* Current variables */
+        // Current variables //
         int accountManagerID = 0;
         int selectedEntityID = EntityFunctions.CurrentEntityID; // This may be changed when copying a record
 
-        /* Current records */
+        // Current records //
         bool activeOnly = false;
         string nameContains = "";
         ClientGridRecord selectedRecord = null;
 
-        /* ----------------------
-           -- Page Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Page Management --- //
+        // ---------------------- //
 
-        /* Initialize and Load */
+        // Initialize and Load //
         public ClientPage()
         {
             InitializeComponent();
             Style = (Style)FindResource(typeof(Page));
+            KeepAlive = false;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             try
             {
-                string originalString = NavigationService.CurrentSource.OriginalString;
-                pageMode = PageFunctions.pageParameter(originalString, "Mode");
+                pageMode = PageFunctions.pageParameter(this, "Mode");
             }
             catch (Exception generalException)
             {
@@ -100,15 +100,15 @@ namespace ProjectTile
             }
         }
 
-        /* ----------------------
-           -- Data Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Data Management --- //
+        // ---------------------- //
 
-        /* Data updates */
+        // Data updates //
 
-        /* Data retrieval */
+        // Data retrieval //
 
-        /* Other/shared functions */
+        // Other/shared functions //
         private void refreshClientGrid()
         {
             try
@@ -175,7 +175,7 @@ namespace ProjectTile
                 PageHeader.Content = "Amend Client Details";
                 Instructions.Content = "Choose a client and then click 'Amend' to change their details, or use the other options as required.";
                 EntityWarningLabel.Visibility = Visibility.Visible;
-                EntityCombo.Visibility = EntityLabel.Visibility = Visibility.Hidden;
+                toggleEntityControls(false);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error resetting the page", generalException); }
         }
@@ -258,7 +258,7 @@ namespace ProjectTile
                             editRecordID = 0;
                             PageHeader.Content = "Copy Client Details";
                             Instructions.Content = "Amend the details as required for the new record, then click 'Save' to create it.";
-                            EntityCombo.Visibility = EntityLabel.Visibility = Visibility.Visible;
+                            toggleEntityControls(true);
                             refreshEntityList();
                         }
                         else
@@ -266,7 +266,7 @@ namespace ProjectTile
                             editRecordID = gridRecord.ID;
                             PageHeader.Content = "Amend Client Details";
                             Instructions.Content = "Amend the selected record as required and then click 'Save' to apply changes.";
-                            EntityCombo.Visibility = EntityLabel.Visibility = Visibility.Hidden;
+                            toggleEntityControls(false);
                         }
                 
                         ClientCode.Text = gridRecord.ClientCode;
@@ -284,7 +284,7 @@ namespace ProjectTile
                         editRecordID = 0;
                         PageHeader.Content = "Create New Client";
                         Instructions.Content = "Fill in the details as required and then click 'Save' to create the record.";
-                        EntityCombo.Visibility = EntityLabel.Visibility = Visibility.Hidden;
+                        toggleEntityControls(false);
                         refreshEditManagersCombo((bool)NonAMs_CheckBox.IsChecked, "");
                         if (pageMode == PageFunctions.Amend) 
                         { 
@@ -402,13 +402,19 @@ namespace ProjectTile
             return (EditManagersCombo.SelectedItem != null) ? EditManagersCombo.SelectedItem.ToString() : "";
         }
 
-        /* ----------------------
-           -- Event Management ---
-           ---------------------- */
+        private void toggleEntityControls(bool show)
+        {
+            if (show) { EntityCombo.Visibility = EntityLabel.Visibility = Visibility.Visible; }
+            else { EntityCombo.Visibility = EntityLabel.Visibility = CopyContacts_CheckBox.Visibility = Visibility.Hidden; }
+        }
 
-        /* Generic (shared) control events */
+        // ---------------------- //
+        // -- Event Management -- //
+        // ---------------------- //
 
-        /* Control-specific events */
+        // Generic (shared) control events //
+
+        // Control-specific events //
 
         private void MainManagersCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -505,8 +511,6 @@ namespace ProjectTile
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            // To do: check for changes if appropriate
-
             PageFunctions.ShowTilesPage();
         }
 
@@ -545,7 +549,7 @@ namespace ProjectTile
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error handling Entity selection change", generalException); }
-        }            
+        }
 
     } // class
 } // namespace

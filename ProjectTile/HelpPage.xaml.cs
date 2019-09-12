@@ -19,35 +19,55 @@ namespace ProjectTile
     /// </summary>
     public partial class HelpPage : Page
     {
-        /* ----------------------
-           -- Global Variables --
-           ---------------------- */   
+        // ---------------------- //
+        // -- Global Variables -- //
+        // ---------------------- //   
 
-        /* Global/page parameters */
+        // Global/page parameters //
         string pageMode;
-
-        /* Current variables */
-
-        /* Current records */
+        string newLine = "\n";
 
 
-        /* ----------------------
-           -- Page Management ---
-           ---------------------- */
+        string backgroundText = "";
+        public string BackgroundText
+        {
+            get
+            {
+                return backgroundText;
+            }
+            set
+            {
+                backgroundText = value;
+                //OnPropertyChanged("BackgroundText");
+            }
+        }
 
-        /* Initialize and Load */
+        // Current variables //
+
+        // Current records //
+
+        // ---------------------- //
+        // -- Page Management --- //
+        // ---------------------- //
+
+        // Initialize and Load //
         public HelpPage()
         {
             InitializeComponent();
             Style = (Style)FindResource(typeof(Page));
+            KeepAlive = false;
+
+            backgroundText = "ProjectTile was created by Mark Adrian Johnson in 2019 to learn and demonstrate his programming skills."
+                + newLine + "The front end is written in Visual C# with WPF forms. The back end is a scripted SQL Server database."
+                + newLine + "All of the code will be made available on GitHub soon.";
+
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             try
             {
-                string originalString = NavigationService.CurrentSource.OriginalString;
-                pageMode = PageFunctions.pageParameter(originalString, "Mode");
+                pageMode = PageFunctions.pageParameter(this, "Mode");
             }
             catch (Exception generalException)
             {
@@ -59,33 +79,32 @@ namespace ProjectTile
             {
                 CommitButton.Visibility = Visibility.Hidden;
                 CancelButtonText.Text = "Close";
-                
-                MainText.Text = "The front end is written in Visual C# with WPF forms. The back end is a scripted SQL Server database.\n\n"
-                    + "All of the code will be made available on GitHub soon.";
+
+                backgroundText = "NewText";
             }
             
         }
 
 
 
-        /* ----------------------
-           -- Data Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Data Management --- //
+        // ---------------------- //
 
-        /* Data updates */
+        // Data updates //
 
-        /* Data retrieval */
+        // Data retrieval //
 
-        /* Other/shared functions */
+        // Other/shared functions //
 
 
-        /* ----------------------
-           -- Event Management ---
-           ---------------------- */
+        // ---------------------- //
+        // -- Event Management -- //
+        // ---------------------- //
 
-        /* Generic (shared) control events */
+        // Generic (shared) control events //
 
-        /* Control-specific events */
+        // Control-specific events //
 
 
 
@@ -93,7 +112,8 @@ namespace ProjectTile
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowTilesPage();
+            if (LoginFunctions.CurrentStaffID > 0) { PageFunctions.ShowTilesPage(); }
+            else { PageFunctions.ShowLoginPage(PageFunctions.LogIn); }
         }
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)

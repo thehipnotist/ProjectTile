@@ -28,9 +28,15 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="{Binding ElementName=MiddleRow, Path=ActualHeight}" MinHeight="400"/>
                 </Grid.RowDefinitions>
-                <Label x:Name="Instructions" Content="ProjectTile was created by Mark Adrian Johnson in 2019 to learn and demonstrate his programming skills." HorizontalAlignment="Left" 
+                <Label x:Name="Instructions" Content="Thanks for trying ProjectTile." HorizontalAlignment="Left" 
                        Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-                <TextBlock x:Name="MainText" HorizontalAlignment="Left" MinHeight="325" Margin="15,60,15,15" TextWrapping="Wrap" Text="Filled at runtime" VerticalAlignment="Top" Width="625" Padding="5"/>
+                <TextBlock x:Name="MainText" HorizontalAlignment="Left" MinHeight="325" Margin="15,60,15,15" TextWrapping="Wrap" VerticalAlignment="Top" Width="625" Padding="5">
+                    <TextBlock.Inlines>
+                        <TextBlock FontWeight="Bold" Text="Background"/>
+                        <LineBreak/>
+                        <TextBlock Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Page}, Path=BackgroundText}"/>
+                    </TextBlock.Inlines>
+                </TextBlock>
             </Grid>
         </Border>
         <Border Height="60" Margin="0,0,0,15" BorderBrush="{StaticResource PtBrushHelp3}" MinWidth="655" Style="{DynamicResource SectionBorder}" Grid.Row="2" Grid.Column="1" Width="Auto" 
