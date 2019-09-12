@@ -198,13 +198,14 @@
         <Image x:Key="LeftIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="112_LeftArrowShort_Blue_24x24_72.png"/>
         <Image x:Key="HelpIcon" HorizontalAlignment="Right" Height="20" VerticalAlignment="Top" Width="20" Source="109_AllAnnotations_Help_24x24_72.png"/>
         <Image x:Key="LoginIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="Keys.png"/>
-        <Image x:Key="SubtractIcon" HorizontalAlignment="Right" Height="20" VerticalAlignment="Top" Width="20" Source="112_Minus_Blue_24x24_72.png"/>
         <Image x:Key="PinIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="25" Source="138_PushPin_24x24_72.png" Stretch="UniformToFill"/>
         <Image x:Key="PlusIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="112_Plus_Blue_24x24_72.png"/>
         <Image x:Key="ProductIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="Setup_Install.png"/>
         <Image x:Key="ProjectIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="book_notebook.png"/>
         <Image x:Key="RightIcon" HorizontalAlignment="Right" Height="20" VerticalAlignment="Top" Width="20" Source="112_RightArrowShort_Blue_24x24_72.png"/>
+        <Image x:Key="SubtractIcon" HorizontalAlignment="Right" Height="20" VerticalAlignment="Top" Width="20" Source="112_Minus_Blue_24x24_72.png"/>        
         <Image x:Key="StaffIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="Users.png"/>
+        <Image x:Key="StaffIcon2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="Users.png"/> <!-- Required for Staff Entities, which uses this icon twice -->
         <Image x:Key="SuggestIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="Function_32.png"/>
         <Image x:Key="TilesIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="1460_PaintPalette_48x48.png"/>
         <Image x:Key="UpIcon" HorizontalAlignment="Right" Height="20" VerticalAlignment="Top" Width="20" Source="112_UpArrowShort_Blue_24x24_72.png"/>
