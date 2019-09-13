@@ -151,12 +151,11 @@ namespace ProjectTile
                     string clientCode = thisClient.ClientCode;
                     if (!PageFunctions.SqlInputOK(clientCode, true, "Client code", "Client Code", "!£$%^&*()=~#{[}]:;@'<,>.?/|¬`¦€")) { return false; }
                     Clients checkNewCode = existingPtDb.Clients.FirstOrDefault(c => c.ID != existingID && c.ClientCode == clientCode && c.EntityID == entityID);
-                    if (checkNewCode == null) { thisClient.ClientCode = clientCode; }
-                    else
+                    if (checkNewCode != null) 
                     {
                         string errorText = (existingID > 0) ?
-                            "Could not amend client. Another client with code '" + clientCode + "' already exists." :
-                            "Could not create new client. A client with code '" + clientCode + "' already exists.";
+                            "Could not amend client. Another client with code '" + clientCode + "' already exists in this Entity." :
+                            "Could not create new client. A client with code '" + clientCode + "' already exists in this Entity.";
 
                         MessageFunctions.InvalidMessage(errorText, "Duplicate Code");
                         return false;
@@ -181,12 +180,11 @@ namespace ProjectTile
                     string clientName = thisClient.ClientName;
                     if (!PageFunctions.SqlInputOK(clientName, true, "Client name")) { return false; }
                     Clients checkNewName = existingPtDb.Clients.FirstOrDefault(c => c.ID != existingID && c.ClientName == clientName && c.EntityID == entityID);
-                    if (checkNewName == null) { thisClient.ClientName = clientName; }
-                    else
+                    if (checkNewName == null) 
                     {
                         string errorText = (existingID > 0) ?
-                            "Could not amend client. Another client with name '" + clientName + "' already exists." :
-                            "Could not create new client. A client with name '" + clientName + "' already exists.";
+                            "Could not amend client. Another client with name '" + clientName + "' already exists in this Entity." :
+                            "Could not create new client. A client with name '" + clientName + "' already exists in this Entity.";
 
                         MessageFunctions.InvalidMessage(errorText, "Duplicate Name");
                         return false;
@@ -569,6 +567,144 @@ namespace ProjectTile
                 MessageFunctions.Error("Error changing contact status", generalException);
                 return null;
             }
+        }
+
+        public static bool ValidateContact(ref ClientStaff thisContact, int existingID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    int clientID = thisContact.ClientID;
+
+                    if (!PageFunctions.SqlInputOK(thisContact.FirstName, true, "First name")) { return false; }
+                    if (!PageFunctions.SqlInputOK(thisContact.FirstName, true, "Surname")) { return false; }
+
+                    string contactName = thisContact.FirstName + " " + thisContact.Surname;                    
+                    ClientStaff checkNewName = existingPtDb.ClientStaff.FirstOrDefault(c => c.ID != existingID && c.FirstName + " " + c.Surname == contactName && c.ClientID == clientID);
+                    if (checkNewName != null) 
+                    {
+                        string errorText = (existingID > 0) ?
+                            "Could not amend contact. Another contact with name '" + contactName + "' already exists for this client." :
+                            "Could not create new contact. A contact with name '" + contactName + "' already exists for this client.";
+
+                        MessageFunctions.InvalidMessage(errorText, "Duplicate Name");
+                        return false;
+                    }
+
+                    if (thisContact.JobTitle == "")
+                    {
+                        bool keepSaving = MessageFunctions.QuestionYesNo("You have not entered a job title for this contact, which may make them difficult to identify later. " + 
+                            "Is this intentional? If in doubt enter your best guess, followed by '(To be confirmed)' for example.");
+                        if (!keepSaving) { return false; }
+                    } 
+
+                    string email = thisContact.Email;
+                    if (email == "" && thisContact.PhoneNumber == "")
+                    {
+                        bool keepSaving = MessageFunctions.QuestionYesNo("You have not entered any contact details for this contact. Is this intentional?");
+                        if (!keepSaving) { return false; }
+                    }
+                    if ((email != "" && !email.Contains("@") || !email.Contains(".")))
+                    {
+                        bool keepSaving = MessageFunctions.QuestionYesNo("The entered e-mail address of '" + email + "' does not appear to be valid. Are you sure this is correct?");
+                        if (!keepSaving) { return false; }
+                    }
+
+                    return true;
+                }
+            }
+            catch (SqlException sqlException)
+            {
+                MessageFunctions.Error("SQL error saving changes to the database", sqlException);
+                return false;
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error saving changes to the database", generalException);
+                return false;
+            }
+        }
+
+        public static int NewContact(int clientID, string firstName, string surname, string jobTitle, string phoneNumber, string email, bool active)
+        {
+            try
+            {
+                ClientStaff newContact = new ClientStaff() { ClientID = clientID, FirstName = firstName, Surname = surname, JobTitle = jobTitle, PhoneNumber = phoneNumber,
+                    Email = email, Active = active};
+                if (ValidateContact(ref newContact, 0))
+                {
+                    try
+                    {
+                        ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                        using (existingPtDb)
+                        {
+                            existingPtDb.ClientStaff.Add(newContact);
+                            existingPtDb.SaveChanges();
+                            return newContact.ID;
+                        }
+                    }
+                    catch (Exception generalException)
+                    {
+                        MessageFunctions.Error("Problem saving new contact", generalException);
+                        return 0;
+                    }
+                }
+                else { return 0; }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error creating new contact", generalException);
+                return 0;
+            }
+        }
+
+        public static bool AmendContact(int contactID, int clientID, string firstName, string surname, string jobTitle, string phoneNumber, string email, bool active)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    ClientStaff thisContact = existingPtDb.ClientStaff.Find(contactID);
+                    thisContact.ClientID = clientID;
+                    thisContact.FirstName = firstName;
+			        thisContact.Surname = surname;
+			        thisContact.JobTitle = jobTitle;
+			        thisContact.PhoneNumber = phoneNumber;
+			        thisContact.Email = email;
+                    thisContact.Active = active;
+
+                    if (ValidateContact(ref thisContact, contactID))
+                    {
+                        try
+                        {
+                            existingPtDb.SaveChanges();
+                            return true;
+                        }
+                        catch (Exception generalException)
+                        {
+                            MessageFunctions.Error("Problem saving changes to contact '" + firstName + " " + surname + "'", generalException);
+                            return false;
+                        }
+                    }
+                    else { return false; }
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error amending contact '" + firstName + " " + surname + "'", generalException);
+                return false;
+            }
+        }
+
+        // Navigation
+
+        public static void returnToContactPage(int clientID, int contactID, string sourceMode = "Amend")
+        {
+            bool viewOnly = (sourceMode == PageFunctions.View); // Unlikely but just in case!
+            PageFunctions.ShowClientContactPage(sourceMode, clientID, viewOnly, contactID);
         }
 
     } // class

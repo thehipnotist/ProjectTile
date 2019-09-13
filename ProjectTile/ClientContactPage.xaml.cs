@@ -28,6 +28,7 @@ namespace ProjectTile
         string fromSource = "";
         string sourceMode = "";
         int selectedClientID = 0;
+        int selectedContactID = 0; // Only used for the initial page parameter, to handle returning to this page
         string originalInstructions;
         
         TableSecurity myPermissions = LoginFunctions.MyPermissions;
@@ -70,6 +71,7 @@ namespace ProjectTile
                 pageMode = PageFunctions.pageParameter(this, "Mode");
                 sourceMode = PageFunctions.pageParameter(this, "SourceMode");
                 selectedClientID = Int32.Parse(PageFunctions.pageParameter(this, "ClientID"));
+                selectedContactID = Int32.Parse(PageFunctions.pageParameter(this, "ContactID"));
             }
             catch (Exception generalException)
             {
@@ -236,7 +238,13 @@ namespace ProjectTile
         {
             try
             {
-                int selectedID = (selectedContactGridRecord != null) ? selectedContactGridRecord.ID : 0;
+                int selectedID = 0;
+                if (selectedContactID > 0)
+                {
+                    selectedID = selectedContactID;
+                    selectedContactID = 0; // Only used at page initiation, so this stops it interfering later
+                }
+                else if (selectedContactGridRecord != null) { selectedID = selectedContactGridRecord.ID; }
                 
                 contactGridList = ClientFunctions.ContactGridList(contactContains, contactActiveOnly, selectedClientID);
                 ContactDataGrid.ItemsSource = contactGridList;
@@ -268,6 +276,7 @@ namespace ProjectTile
                     ClientCombo.Items.Add(thisClient);
                     ClientCombo.SelectedItem = thisClient;
                 }
+                else if (selectedContactID > 0) {} // Do nothing at this stage, as we'll come round to this again...
                 else
                 {
                     ClientCombo.ItemsSource = clientGridList;
@@ -395,12 +404,12 @@ namespace ProjectTile
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            // To do - create new contact on new page
+            PageFunctions.ShowContactDetailsPage(selectedClientID, 0);
         }
 
         private void AmendButton_Click(object sender, RoutedEventArgs e)
         {
-            // To do - amend contact on same page as above
+            PageFunctions.ShowContactDetailsPage(selectedClientID, selectedContact.ID);
         }
 
         private void ContactContains_LostFocus(object sender, RoutedEventArgs e)

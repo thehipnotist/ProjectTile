@@ -474,7 +474,7 @@ namespace ProjectTile
 
         private void ContactButton_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowClientContactPage(selectedRecord.ID, (pageMode == "View"), pageMode);
+            PageFunctions.ShowClientContactPage(pageMode, selectedRecord.ID, (pageMode == "View"));
         }
 
         private void ProjectButton_Click(object sender, RoutedEventArgs e)
