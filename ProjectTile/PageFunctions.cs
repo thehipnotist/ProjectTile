@@ -28,6 +28,7 @@ namespace ProjectTile
         public const string Switch = "Switch";
         public const string Default = "Default";
         public const string About = "About";
+        public const string None = "None";
 
         // Page changes //
         public static string ThisPageName()
@@ -126,13 +127,19 @@ namespace ProjectTile
             ChangePage("ClientPage.xaml?Mode=" + pageMode + ",ClientID=" + selectedClientID.ToString());
         }
 
-        public static void ShowClientContactPage(int clientID = 0, bool viewOnly = false, string sourcePageMode = "View")
+        public static void ShowClientContactPage(string sourcePageMode, int clientID = 0, bool viewOnly = false, int contactID = 0)
         {
             string pageMode;  // Mode is based on viewOnly or permissions; sourcePageMode tells us what the previous screen was
             if (viewOnly) { pageMode = View; }
             else { pageMode = LoginFunctions.MyPermissions.Allow("EditClientStaff") ? Amend : View; }
 
-            ChangePage("ClientContactPage.xaml?Mode=" + pageMode + ",ClientID=" + clientID.ToString() + ",SourceMode=" + sourcePageMode);
+            ChangePage("ClientContactPage.xaml?Mode=" + pageMode + ",ClientID=" + clientID.ToString() + ",SourceMode=" + sourcePageMode + ",ContactID=" + contactID.ToString());
+        }
+
+        public static void ShowContactDetailsPage(int clientID, int contactID = 0)
+        {
+            string pageMode = (contactID == 0) ? New : Amend;
+            ChangePage("ContactDetailsPage.xaml?Mode=" + pageMode + ",ClientID=" + clientID.ToString() + ",ContactID=" + contactID.ToString());
         }
 
         public static void ShowHelpPage(string pageMode)
