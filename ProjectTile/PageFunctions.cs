@@ -79,6 +79,7 @@ namespace ProjectTile
                 mainFrame.Content = null;                
                 mainFrame.Navigate(new Uri(pageSource, uriDefault));
                 mainFrame.NavigationService.RemoveBackEntry();
+                GC.Collect();
             }
             catch (Exception generalException) { MessageFunctions.Error("Error navigating to page location '" + pageSource + "'", generalException); }
         }
@@ -98,21 +99,21 @@ namespace ProjectTile
 
         public static void ShowStaffPage(string pageMode, int selectedStaffID = 0)
         {
-            ChangePage("StaffPage.xaml?Mode=" + pageMode + ",SelectedID=" + selectedStaffID.ToString());
+            ChangePage("StaffPage.xaml?Mode=" + pageMode + ",StaffID=" + selectedStaffID.ToString());
         }
 
         public static void ShowStaffDetailsPage(string pageMode, int selectedStaffID)
         {
-            ChangePage("StaffDetailsPage.xaml?Mode=" + pageMode + ",SelectedID=" + selectedStaffID.ToString());
+            ChangePage("StaffDetailsPage.xaml?Mode=" + pageMode + ",StaffID=" + selectedStaffID.ToString());
         }
 
         public static void ShowStaffEntitiesPage(int selectedStaffID = 0, bool viewOnly = false, string sourcePageMode = "View")
         {
-            string pageMode;
+            string pageMode; // Mode is based on viewOnly or permissions; sourcePageMode tells us what the previous screen was
             if (viewOnly) { pageMode = View; }
             else { pageMode = LoginFunctions.MyPermissions.Allow("EditStaffEntities") ? Amend : View; }
 
-            ChangePage("StaffEntitiesPage.xaml?Mode=" + pageMode + ",SelectedID=" + selectedStaffID.ToString() + ",SourceMode=" + sourcePageMode);
+            ChangePage("StaffEntitiesPage.xaml?Mode=" + pageMode + ",StaffID=" + selectedStaffID.ToString() + ",SourceMode=" + sourcePageMode);
         }
 
         public static void ShowProductPage(string pageMode)
@@ -120,9 +121,18 @@ namespace ProjectTile
             ChangePage("ProductPage.xaml?Mode=" + pageMode);
         }
 
-        public static void ShowClientPage(string pageMode)
+        public static void ShowClientPage(string pageMode, int selectedClientID = 0)
         {
-            ChangePage("ClientPage.xaml?Mode=" + pageMode);
+            ChangePage("ClientPage.xaml?Mode=" + pageMode + ",ClientID=" + selectedClientID.ToString());
+        }
+
+        public static void ShowClientContactPage(int clientID = 0, bool viewOnly = false, string sourcePageMode = "View")
+        {
+            string pageMode;  // Mode is based on viewOnly or permissions; sourcePageMode tells us what the previous screen was
+            if (viewOnly) { pageMode = View; }
+            else { pageMode = LoginFunctions.MyPermissions.Allow("EditClientStaff") ? Amend : View; }
+
+            ChangePage("ClientContactPage.xaml?Mode=" + pageMode + ",ClientID=" + clientID.ToString() + ",SourceMode=" + sourcePageMode);
         }
 
         public static void ShowHelpPage(string pageMode)

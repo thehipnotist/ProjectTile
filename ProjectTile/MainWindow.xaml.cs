@@ -218,5 +218,10 @@ namespace ProjectTile
             PageFunctions.ShowHelpPage(PageFunctions.About);
         }
 
+        private void ClientContact_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowClientContactPage();
+        }
+
     } // class
 } // namespace

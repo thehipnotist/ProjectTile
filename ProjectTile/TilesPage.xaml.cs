@@ -46,6 +46,7 @@ namespace ProjectTile
         {
             InitializeComponent();
             Style = (Style)FindResource(typeof(Page));
+            KeepAlive = false;
         }  
 
         private void TilesPage_Loaded(object sender, RoutedEventArgs e)
@@ -104,8 +105,10 @@ namespace ProjectTile
                 if (myPermissions.Allow("EditProducts")) { productButtons.Add(ProductButton_Amend); }
 
                 if (myPermissions.Allow("ViewClients")) { clientButtons.Add(ClientButton_View); }
+                else { ClientButton_Contact.Margin = ClientButton_View.Margin; }
                 if (myPermissions.Allow("AddClients")) { clientButtons.Add(ClientButton_New); }
                 if (myPermissions.Allow("EditClients")) { clientButtons.Add(ClientButton_Amend); }
+                if (myPermissions.Allow("ViewClientStaff")) { clientButtons.Add(ClientButton_Contact); }
 
                 // More to come...
             }
@@ -341,6 +344,11 @@ namespace ProjectTile
         private void ClientButton_Amend_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowClientPage(PageFunctions.Amend);
+        }
+
+        private void ClientButton_Contact_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowClientContactPage();
         }
         
     } // class

@@ -68,6 +68,9 @@
     </Compile>
     <Compile Include="ClientFunctions.cs" />
     <Compile Include="ClientGridRecord.cs" />
+    <Compile Include="ClientContactPage.xaml.cs">
+      <DependentUpon>ClientContactPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ClientProducts.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
@@ -208,6 +211,7 @@
     </Compile>
     <Compile Include="LoginFunctions.cs" />
     <Compile Include="StaffFunctions.cs" />
+    <Compile Include="ContactGridRecord.cs" />
     <Compile Include="StaffGridRecord.cs" />
     <Compile Include="StaffPage.xaml.cs">
       <DependentUpon>StaffPage.xaml</DependentUpon>
@@ -259,6 +263,10 @@
     <Compile Include="vi_StaffWithRoles.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
+    <Page Include="ClientContactPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="EntityPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
