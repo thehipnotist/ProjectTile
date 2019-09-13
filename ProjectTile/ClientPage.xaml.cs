@@ -38,6 +38,7 @@ namespace ProjectTile
         // Current variables //
         int accountManagerID = 0;
         int selectedEntityID = EntityFunctions.CurrentEntityID; // This may be changed when copying a record
+        int selectedClientID; // Used only for page load
 
         // Current records //
         bool activeOnly = false;
@@ -61,6 +62,7 @@ namespace ProjectTile
             try
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
+                selectedClientID = Int32.Parse(PageFunctions.pageParameter(this, "ClientID"));
             }
             catch (Exception generalException)
             {
@@ -74,10 +76,8 @@ namespace ProjectTile
 
             if (pageMode == PageFunctions.View)
             {
-                ButtonsGrid.Visibility = EditGrid.Visibility = Visibility.Hidden;
+                EditGrid.Visibility = AddButton.Visibility = AmendButton.Visibility = CopyButton.Visibility = Visibility.Hidden;
                 MainClientGrid.Visibility = Visibility.Visible;
-                double gridWidth = CentreGrid.ActualWidth - 30;
-                ClientDataGrid.Width = gridWidth;
                 CommitButton.Visibility = Visibility.Hidden;
                 setButtonSecurity();
                 refreshMainManagersCombo();
@@ -92,11 +92,11 @@ namespace ProjectTile
             else if (pageMode == PageFunctions.Amend)
             {
                 PageHeader.Content = "Amend Clients";
+                ClientDataGrid.SelectionMode = DataGridSelectionMode.Single;
                 AddButton.Visibility = myPermissions.Allow("AddClients")? Visibility.Visible : Visibility.Hidden;
                 setButtonSecurity();
-                refreshMainManagersCombo();
                 resetAmendPage();
-                ClientDataGrid.SelectionMode = DataGridSelectionMode.Single;
+                // refreshMainManagersCombo(); // Not required as done by resetAmendPage
             }
         }
 
@@ -115,14 +115,16 @@ namespace ProjectTile
             {
                 gridList = ClientFunctions.ClientGridList(activeOnly, nameContains, accountManagerID, EntityFunctions.CurrentEntityID);
                 ClientDataGrid.ItemsSource = gridList;               
-                if (selectedRecord != null)
+                if (selectedRecord != null || selectedClientID > 0)
                 {
                     try
-                    {                        
-                        if (gridList.Exists(c => c.ID == selectedRecord.ID))
+                    {
+                        int selectedID = (selectedRecord != null) ? selectedRecord.ID : selectedClientID;
+                        if (gridList.Exists(c => c.ID == selectedID))
                         {
-                            ClientDataGrid.SelectedItem = gridList.First(c => c.ID == selectedRecord.ID);
+                            ClientDataGrid.SelectedItem = gridList.First(c => c.ID == selectedID);
                             ClientDataGrid.ScrollIntoView(ClientDataGrid.SelectedItem);
+                            selectedClientID = 0; // Clear this, it should only be used for initial load when going back from another page
                         }
                     }
                     catch (Exception generalException) { MessageFunctions.Error("Error selecting the current row", generalException); }
@@ -199,20 +201,20 @@ namespace ProjectTile
         {
             try
             { 
-            Visibility shown = Visibility.Visible;
-            Visibility hidden = Visibility.Hidden;
+                Visibility shown = Visibility.Visible;
+                Visibility hidden = Visibility.Hidden;
 
-            viewContacts = myPermissions.Allow("ViewClientStaff");
-            amendContacts = myPermissions.Allow("EditClientStaff");
-            ContactButton.Visibility = (viewContacts || amendContacts) ? shown : hidden;
+                viewContacts = myPermissions.Allow("ViewClientStaff");
+                amendContacts = myPermissions.Allow("EditClientStaff");
+                ContactButton.Visibility = (viewContacts || amendContacts) ? shown : hidden;
 
-            viewProducts = myPermissions.Allow("ViewClientProducts");
-            amendProducts = myPermissions.Allow("EditClientProducts");
-            ContactButton.Visibility = (viewProducts || amendProducts) ? shown : hidden;
+                viewProducts = myPermissions.Allow("ViewClientProducts");
+                amendProducts = myPermissions.Allow("EditClientProducts");
+                ProductButton.Visibility = (viewProducts || amendProducts) ? shown : hidden;
 
-            viewProjects = myPermissions.Allow("ViewProjects");
-            amendProjects = myPermissions.Allow("EditProjects");
-            ContactButton.Visibility = (viewProjects || amendProjects) ? shown : hidden;
+                viewProjects = myPermissions.Allow("ViewProjects");
+                amendProjects = myPermissions.Allow("EditProjects");
+                ProjectButton.Visibility = (viewProjects || amendProjects) ? shown : hidden;
             }
             catch (Exception generalException) { MessageFunctions.Error("Error setting button security", generalException); }
         }
@@ -472,7 +474,7 @@ namespace ProjectTile
 
         private void ContactButton_Click(object sender, RoutedEventArgs e)
         {
-
+            PageFunctions.ShowClientContactPage(selectedRecord.ID, (pageMode == "View"), pageMode);
         }
 
         private void ProjectButton_Click(object sender, RoutedEventArgs e)

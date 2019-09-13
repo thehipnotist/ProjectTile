@@ -19,8 +19,8 @@
             <RowDefinition Height="90" MinHeight="90" MaxHeight="90"/>
         </Grid.RowDefinitions>
 
-        <Frame x:Name="HeaderImage" Content="{StaticResource ClientIcon}"  Grid.Row="0" Grid.Column="1" Margin="0,5,0,0"/>
-        <Label x:Name="PageHeader" Content="View Clients" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="655" FontWeight="Bold" Background="{x:Null}" Margin="20,0,0,0" 
+        <Frame x:Name="HeaderImage" Content="{StaticResource ClientIcon}"  Grid.Row="0" Grid.Column="1" Margin="0,5,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="PageHeader" Content="View Clients" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="635" FontWeight="Bold" Background="{x:Null}" Margin="20,0,0,0" 
                Foreground="White" Grid.Row="0" Grid.Column="1" />
 
         <Border MinHeight="400" MinWidth="655" Height="Auto" Width="Auto" Margin="0,0,0,0" BorderBrush="{StaticResource PtBrushClient3}" Style="{DynamicResource SectionBorder}" Grid.Row="1" 
@@ -32,10 +32,10 @@
 
                 <Label x:Name="Instructions" Content="This page is read-only. Click on column headers to sort by that column. Use the filters to restrict results." HorizontalAlignment="Left" Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
 
-                <Grid x:Name="MainClientGrid" HorizontalAlignment="Left" MinHeight="655" Margin="0,0,0,0" VerticalAlignment="Top" MinWidth="655" Visibility="Hidden">
-                    <Label x:Name="NameContainsLabel" Content="Name Contains" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="95" FontWeight="Bold"/>
-                    <TextBox x:Name="NameContains" HorizontalAlignment="Left" Height="30" Margin="115,45,0,0" VerticalAlignment="Top" Width="120" FontWeight="Normal" ToolTip="Type and tab to filter" 
-                             TabIndex="2" LostFocus="NameContains_LostFocus" KeyUp="NameContains_KeyUp" Style="{DynamicResource PaddedTextBox}"/>
+                <Grid x:Name="MainClientGrid" HorizontalAlignment="Left" MinHeight="400" Margin="0,0,0,0" VerticalAlignment="Top" MinWidth="655" Visibility="Hidden">
+                    <Label x:Name="NameContainsLabel" Content="Name Contains" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="100" FontWeight="Bold"/>
+                    <TextBox x:Name="NameContains" HorizontalAlignment="Left" Height="30" Margin="115,45,0,0" VerticalAlignment="Top" Width="120" ToolTip="Type and tab to filter" 
+                             TabIndex="2" LostFocus="NameContains_LostFocus" KeyUp="NameContains_KeyUp" Style="{DynamicResource PaddedTextBox}" CharacterCasing="Upper"/>
                     <CheckBox x:Name="ActiveOnly_CheckBox" Content="Active Only" HorizontalAlignment="Center" Height="30" Margin="250,44,250,0" VerticalAlignment="Top" Width="100" FontWeight="Bold" 
                               VerticalContentAlignment="Center" Padding="5" Checked="ActiveOnly_CheckBox_Checked" Unchecked="ActiveOnly_CheckBox_Unchecked"/>
                     <Label x:Name="MainManagersLabel" Content="Account Manager" HorizontalAlignment="Right" Height="30" Margin="0,45,155,0" VerticalAlignment="Top" Width="115" FontWeight="Bold"/>
@@ -77,21 +77,21 @@
                         </StackPanel>
                     </Button>                    
                     <Button x:Name="ContactButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,110" VerticalAlignment="Bottom" Width="110" 
-                		FontWeight="Bold" IsEnabled="True" Click="ContactButton_Click" Style="{StaticResource RoundedButton}">
+                		FontWeight="Bold" IsEnabled="False" Click="ContactButton_Click" Style="{StaticResource RoundedButton}">
                         <StackPanel x:Name="ContactPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                             <Frame x:Name="ContactImage" Content="{StaticResource ContactIcon}" />
                             <TextBlock x:Name="ContactButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Contacts" Margin="5,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
                     <Button x:Name="ProductButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,65" VerticalAlignment="Bottom" Width="110" 
-                		FontWeight="Bold" IsEnabled="True" Click="ProductButton_Click" Style="{StaticResource RoundedButton}" BorderThickness="2" BorderBrush="{StaticResource PtBrushProduct3}">
+                		FontWeight="Bold" IsEnabled="False" Click="ProductButton_Click" Style="{StaticResource RoundedButton}" BorderThickness="2" BorderBrush="{StaticResource PtBrushProduct3}">
                         <StackPanel x:Name="ProductPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                             <Frame x:Name="ProductImage" Content="{StaticResource ProductIcon}" />
                             <TextBlock x:Name="ProductButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Products" Margin="5,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
                     <Button x:Name="ProjectButton" HorizontalAlignment="Right" Height="30" Margin="15,60,15,15" VerticalAlignment="Bottom" Width="110" 
-                		FontWeight="Bold" IsEnabled="True" Click="ProjectButton_Click" Style="{StaticResource RoundedButton}">
+                		FontWeight="Bold" IsEnabled="False" Click="ProjectButton_Click" Style="{StaticResource RoundedButton}">
                         <StackPanel x:Name="ProjectPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                             <Frame x:Name="ProjectImage" Content="{StaticResource ProjectIcon}" />
                             <TextBlock x:Name="ProjectButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Projects" Margin="5,0,0,0" VerticalAlignment="Center"/>
@@ -117,7 +117,7 @@
                               Style="{DynamicResource PaddedTextBox}"/>
                     
                     <Label x:Name="ClientNameLabel" Content="Client Name" HorizontalAlignment="Left" Height="30" Margin="15,120,0,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
-                    <TextBox x:Name="ClientName" HorizontalAlignment="Left" Height="30" Margin="130,120,0,0" VerticalAlignment="Top" Width="220" FontWeight="Normal" ToolTip="Enter the client's name"
+                    <TextBox x:Name="ClientName" HorizontalAlignment="Left" Height="30" Margin="130,120,0,0" VerticalAlignment="Top" Width="220" ToolTip="Enter the client's name"
                              Style="{DynamicResource PaddedTextBox}"/>
                     <Label x:Name="ActiveLabel" Content="Active" HorizontalAlignment="Right" Height="30" Margin="0,120,215,0" VerticalAlignment="Top" Width="50" FontWeight="Bold"/>
                     <CheckBox x:Name="Active_CheckBox" HorizontalAlignment="Right" Height="30" Margin="0,120,30,0" VerticalAlignment="Top" Width="180" FontWeight="Bold" 
@@ -160,7 +160,7 @@
                     </StackPanel>
                 </Button>
                 <Button x:Name="BackButton" HorizontalAlignment="Left" Height="30" Margin="130,15,15,0" VerticalAlignment="Top" Width="100" Style="{StaticResource RoundedButton}" 
-                	FontWeight="Bold" Click="BackButton_Click" ToolTip="Return to staff list without saving">
+                	FontWeight="Bold" Click="BackButton_Click" ToolTip="Return to clients list without saving">
                     <StackPanel x:Name="BackPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Frame x:Name="BackImage" Content="{StaticResource BackIcon}"/>
                         <TextBlock x:Name="BackButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Back" Margin="5,0,0,0" VerticalAlignment="Center"/>

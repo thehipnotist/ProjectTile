@@ -11,6 +11,7 @@ namespace ProjectTile
         public static Clients SelectedClient;
         public const string ManagerRole = "AM";
         public static string EntityWarning = "Note that only clients in the current Entity ('" + EntityFunctions.CurrentEntityName + "') are displayed.";
+        public static string ShortEntityWarning = "Note that only clients in the current Entity are displayed.";
         
         public static string ClientCodeFormat = "";
         public const char AlphaChar = '\u0040'; // @
@@ -445,6 +446,37 @@ namespace ProjectTile
             }	               
         }
 
+        // Contacts functions
+
+        public static List<ContactGridRecord> ContactGridList (string contactContains, bool ActiveOnly, int clientID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return (from cs in existingPtDb.ClientStaff
+                            where ( (clientID == 0 || cs.ClientID == clientID)
+                                && (!ActiveOnly || cs.Active)
+                                && (contactContains == "" || (cs.FirstName + " " + cs.Surname).Contains(contactContains) || cs.JobTitle.Contains(contactContains)) )
+                            select (new ContactGridRecord 
+                            {
+                                ID = cs.ID,
+                                ContactName = cs.FirstName + " " + cs.Surname,
+                                JobTitle = cs.JobTitle,
+                                PhoneNumber = cs.PhoneNumber,
+                                Email = cs.Email,
+                                ActiveContact = cs.Active
+                            }) ).ToList();                                                
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving list of contacts", generalException);
+                return null;
+            }	
+        }
+
         public static bool CopyContacts(int sourceClientID, int newClientID)
         {
             try
@@ -478,6 +510,65 @@ namespace ProjectTile
                 MessageFunctions.Error("Error copying client contacts from client ID " + sourceClientID.ToString() + " to client ID " + newClientID.ToString(), generalException);
                 return false;
             }	
+        }
+
+        public static ClientStaff GetContact(int contactID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return existingPtDb.ClientStaff.Find(contactID);
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving details for client contact with ID " + contactID.ToString(), generalException);
+                return null;
+            }		
+        }
+
+        public static bool? EnableOrDisable(int contactID)
+        {
+            try
+            {
+                ClientStaff selectedContact = GetContact(contactID);
+                if (selectedContact == null) { return null; }
+
+                string changeName = selectedContact.Active ? "Disable" : "Enable";
+                string changeAction = selectedContact.Active ? "disabling" : "enabling";
+                bool confirm = MessageFunctions.QuestionYesNo(
+                        changeName + " " + selectedContact.FirstName + " " + selectedContact.Surname + "'s record? This will take effect immediately.",
+                        changeName + " user?");
+                    
+                if (!confirm) { return null; }
+                else
+                {
+                    try
+                    {                            
+                        ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                        using (existingPtDb)
+                        {                            
+                            bool blnNewStatus = !selectedContact.Active;
+                            selectedContact = existingPtDb.ClientStaff.Find(contactID); // Required as so far we are using a copy
+                            selectedContact.Active = blnNewStatus;
+                            existingPtDb.SaveChanges();
+                            return selectedContact.Active;
+                        }
+                    }
+                    catch (Exception generalException)
+                    {
+                        MessageFunctions.Error("Error " + changeAction + " contact", generalException);
+                        return null;
+                    }                    
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error changing contact status", generalException);
+                return null;
+            }
         }
 
     } // class
