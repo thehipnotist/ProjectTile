@@ -62,7 +62,7 @@ namespace ProjectTile
             try
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
-                selectedStaffID = Int32.Parse(PageFunctions.pageParameter(this, "SelectedID"));
+                selectedStaffID = Int32.Parse(PageFunctions.pageParameter(this, "StaffID"));
             }
             catch (Exception generalException)
             {

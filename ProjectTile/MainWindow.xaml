@@ -42,6 +42,7 @@
                 <MenuItem x:Name="ViewClient" Header="View Clients" FontWeight="Normal" Background="{StaticResource PtBrushClient1}" Foreground="Black" Click="ViewClient_Click"/>
                 <MenuItem x:Name="NewClient" Header="Create New Clients" FontWeight="Normal" Background="{StaticResource PtBrushClient1}" Foreground="Black" Click="NewClient_Click"/>
                 <MenuItem x:Name="AmendClient" Header="Amend Clients" FontWeight="Normal" Background="{StaticResource PtBrushClient1}" Foreground="Black" Click="AmendClient_Click"/>
+                <MenuItem x:Name="ClientContact" Header="Client Contacts" FontWeight="Normal" Background="{StaticResource PtBrushClient1}" Foreground="Black" Click="ClientContact_Click"/>
             </MenuItem>
         </Menu>
 
@@ -62,7 +63,7 @@
         </Menu>
 
         <TextBlock x:Name="DetailsBlock" HorizontalAlignment="Right" Height="{Binding ActualHeight, ElementName=Main}" Margin="0,65,4,-96" TextWrapping="Wrap" VerticalAlignment="Top" Width="145" 
-                   Background="{StaticResource PtBrushHeaderBlue}" TextAlignment="Right" Padding="8,5,8,5" Foreground="White" FontWeight="Normal" MinWidth="145" MinHeight="500" 
+                   Background="{StaticResource PtBrushHeaderBlue}" TextAlignment="Right" Padding="8,5,8,5" Foreground="White" MinWidth="145" MinHeight="500" 
                    MaxWidth="145" Grid.Column="1" Focusable="True" />
         <Frame x:Name="MainFrame" Content="Frame" Height="541" Margin="0,30,0,0" Width="840" NavigationUIVisibility="Hidden" BorderThickness="5" BorderBrush="{StaticResource PtBrushFrameBlue}" 
                Grid.ColumnSpan="2" MinWidth="840" MinHeight="541" HorizontalAlignment="Left" VerticalAlignment="Top"/>

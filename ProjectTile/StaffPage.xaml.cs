@@ -50,7 +50,7 @@ namespace ProjectTile
             try
             {                
                 pageMode = PageFunctions.pageParameter(this, "Mode");
-                selectedStaffID = Int32.Parse(PageFunctions.pageParameter(this, "SelectedID"));
+                selectedStaffID = Int32.Parse(PageFunctions.pageParameter(this, "StaffID"));
                 refreshRoleList(); // This also runs LoadOrRefreshData to populate the main staff data grid
             }
             catch (Exception generalException)

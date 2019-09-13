@@ -22,16 +22,17 @@ namespace ProjectTile
 
         // Global/page parameters //
         string pageMode;
+        string fromSource = "";
+        string sourceMode = "";
+        string backSource = "";
+        int selectedStaffID = 0;
 
         // Current variables //
         bool activeOnly = false;
         string nameContains = "";
-        int selectedStaffID = 0;
         int selectedEntityID = 0;
         string selectedStaffName = "";
-        string fromSource = "";
-        string sourceMode = "";
-        string backSource = "";
+
         string defaultInstructions = "Select a staff member and click 'Entities', or select an Entity and click 'Staff'.";
         string defaultPageHeader = "Staff Members in each Entity";
         
@@ -62,7 +63,7 @@ namespace ProjectTile
             { 
                 pageMode = PageFunctions.pageParameter(this, "Mode");
                 sourceMode = PageFunctions.pageParameter(this, "SourceMode");
-                selectedStaffID = Int32.Parse(PageFunctions.pageParameter(this, "SelectedID"));
+                selectedStaffID = Int32.Parse(PageFunctions.pageParameter(this, "StaffID"));
                 refreshEntityList();
             }
             catch (Exception generalException)
@@ -283,8 +284,7 @@ namespace ProjectTile
             if (selectedEntity != null)
             {
                 PageHeader.Content = "Staff Members in Entity '" + selectedEntity.EntityName + "'";
-            }
-            
+            }            
         }
 
         private void refreshEntitySummaries(bool fromDatabase)
