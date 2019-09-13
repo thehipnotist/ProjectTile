@@ -1741,10 +1741,10 @@ BEGIN TRY
 
 		INSERT INTO dbo.TablePermissions (
 							TableName,			RoleCode,	ViewTable,	UpdateRows,	InsertRows, ChangeStatus)
-			SELECT			'ClientStaff',		'AD',		1,			1,			1,			0
-			UNION SELECT	'ClientStaff',		'SM',		1,			1,			1,			0
+			SELECT			'ClientStaff',		'AD',		1,			1,			1,			1
+			UNION SELECT	'ClientStaff',		'SM',		1,			1,			1,			1
 			UNION SELECT	'ClientStaff',		'PM',		1,			1,			0,			0
-			UNION SELECT	'ClientStaff',		'AM',		1,			1,			1,			0
+			UNION SELECT	'ClientStaff',		'AM',		1,			1,			1,			1
 			UNION SELECT	'ClientStaff',		'SC',		1,			0,			0,			0
 			UNION SELECT	'ClientStaff',		'AC',		1,			0,			0,			0
 			UNION SELECT	'ClientStaff',		'TM',		1,			0,			0,			0
