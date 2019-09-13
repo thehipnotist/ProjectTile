@@ -34,7 +34,12 @@
                     <TextBlock.Inlines>
                         <TextBlock FontWeight="Bold" Text="Background"/>
                         <LineBreak/>
-                        <TextBlock Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Page}, Path=BackgroundText}"/>
+                        <TextBlock Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Page}, Path=BackgroundText, Mode=TwoWay}" TextWrapping="Wrap" />
+                        <LineBreak/>
+                        <LineBreak/>
+                        <TextBlock FontWeight="Bold" Text="The ProjectTile System"/>
+                        <LineBreak/>
+                        <TextBlock Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Page}, Path=SystemText, Mode=TwoWay}" TextWrapping="Wrap" />
                     </TextBlock.Inlines>
                 </TextBlock>
             </Grid>
