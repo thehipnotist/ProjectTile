@@ -6,9 +6,10 @@ using System.Text;
 
 namespace ProjectTile
 {
+
     class ClientFunctions
     {
-        public static Clients SelectedClient;
+        
         public const string ManagerRole = "AM";
         public static string EntityWarning = "Note that only clients in the current Entity ('" + EntityFunctions.CurrentEntityName + "') are displayed.";
         public static string ShortEntityWarning = "Note that only clients in the current Entity are displayed.";
@@ -22,6 +23,11 @@ namespace ProjectTile
         public const char OtherChar = '\u003F'; // ?
         public static string SuggestionTips = "";
         public static string ExplainCode;
+
+        // The following must be updated when opening a page from the menu and choosing a client, or cleared when returning to the menu or clearing client selection
+        public static string SourcePage = "TilesPage";
+        public static string SourcePageMode = PageFunctions.None;
+        public static Clients SelectedClient = null;    
         
         // Data retrieval
 
@@ -147,6 +153,8 @@ namespace ProjectTile
                 {
                     int entityID = thisClient.EntityID;
                     string trySuggestion = "";
+
+                    //MessageFunctions.InvalidMessage(thisClient.ID.ToString(), "Test");
                     
                     string clientCode = thisClient.ClientCode;
                     if (!PageFunctions.SqlInputOK(clientCode, true, "Client code", "Client Code", "!£$%^&*()=~#{[}]:;@'<,>.?/|¬`¦€")) { return false; }
@@ -180,7 +188,7 @@ namespace ProjectTile
                     string clientName = thisClient.ClientName;
                     if (!PageFunctions.SqlInputOK(clientName, true, "Client name")) { return false; }
                     Clients checkNewName = existingPtDb.Clients.FirstOrDefault(c => c.ID != existingID && c.ClientName == clientName && c.EntityID == entityID);
-                    if (checkNewName == null) 
+                    if (checkNewName != null) 
                     {
                         string errorText = (existingID > 0) ?
                             "Could not amend client. Another client with name '" + clientName + "' already exists in this Entity." :
@@ -229,7 +237,7 @@ namespace ProjectTile
 
                 int accountManagerID = StaffFunctions.GetStaffMemberByName(accountManager).ID;
                 Clients newClient = new Clients() { ClientCode = clientCode, ClientName = clientName, AccountManagerID = accountManagerID, Active = active, EntityID = entityID};
-                if (ValidateClient(ref newClient, 0, true))
+                if (ValidateClient(ref newClient, newClient.ID, true))
                 {
                     try
                     {
@@ -627,11 +635,11 @@ namespace ProjectTile
             }
         }
 
-        public static int NewContact(int clientID, string firstName, string surname, string jobTitle, string phoneNumber, string email, bool active)
+        public static int NewContact(string firstName, string surname, string jobTitle, string phoneNumber, string email, bool active)
         {
             try
             {
-                ClientStaff newContact = new ClientStaff() { ClientID = clientID, FirstName = firstName, Surname = surname, JobTitle = jobTitle, PhoneNumber = phoneNumber,
+                ClientStaff newContact = new ClientStaff() { ClientID = SelectedClient.ID, FirstName = firstName, Surname = surname, JobTitle = jobTitle, PhoneNumber = phoneNumber,
                     Email = email, Active = active};
                 if (ValidateContact(ref newContact, 0))
                 {
@@ -660,7 +668,7 @@ namespace ProjectTile
             }
         }
 
-        public static bool AmendContact(int contactID, int clientID, string firstName, string surname, string jobTitle, string phoneNumber, string email, bool active)
+        public static bool AmendContact(int contactID, string firstName, string surname, string jobTitle, string phoneNumber, string email, bool active)
         {
             try
             {
@@ -668,7 +676,7 @@ namespace ProjectTile
                 using (existingPtDb)
                 {
                     ClientStaff thisContact = existingPtDb.ClientStaff.Find(contactID);
-                    thisContact.ClientID = clientID;
+                    thisContact.ClientID = SelectedClient.ID;
                     thisContact.FirstName = firstName;
 			        thisContact.Surname = surname;
 			        thisContact.JobTitle = jobTitle;
@@ -701,10 +709,17 @@ namespace ProjectTile
 
         // Navigation
 
-        public static void returnToContactPage(int clientID, int contactID, string sourceMode = "Amend")
+        public static void ReturnToContactPage(int contactID)
+        {            
+            PageFunctions.ShowClientContactPage(contactID);
+        }
+
+        public static void ReturnToTilesPage()
         {
-            bool viewOnly = (sourceMode == PageFunctions.View); // Unlikely but just in case!
-            PageFunctions.ShowClientContactPage(sourceMode, clientID, viewOnly, contactID);
+            SelectedClient = null;
+            SourcePage = "TilesPage";
+            SourcePageMode = PageFunctions.None;   
+            PageFunctions.ShowTilesPage();
         }
 
     } // class

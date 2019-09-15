@@ -38,7 +38,7 @@ namespace ProjectTile
         // Current variables //
         int accountManagerID = 0;
         int selectedEntityID = EntityFunctions.CurrentEntityID; // This may be changed when copying a record
-        int selectedClientID; // Used only for page load
+        //int selectedClientID; // Used only for page load
 
         // Current records //
         bool activeOnly = false;
@@ -62,12 +62,14 @@ namespace ProjectTile
             try
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
-                selectedClientID = Int32.Parse(PageFunctions.pageParameter(this, "ClientID"));
+                ClientFunctions.SourcePage = "ClientPage";
+                ClientFunctions.SourcePageMode = pageMode;
+                //selectedClientID = Int32.Parse(PageFunctions.pageParameter(this, "ClientID"));
             }
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error retrieving query details", generalException);
-                PageFunctions.ShowTilesPage();
+                ClientFunctions.ReturnToTilesPage();
             }
 
             BackButton.Visibility = Visibility.Hidden;
@@ -115,16 +117,20 @@ namespace ProjectTile
             {
                 gridList = ClientFunctions.ClientGridList(activeOnly, nameContains, accountManagerID, EntityFunctions.CurrentEntityID);
                 ClientDataGrid.ItemsSource = gridList;               
-                if (selectedRecord != null || selectedClientID > 0)
+                if (selectedRecord != null || ClientFunctions.SelectedClient != null)
                 {
                     try
                     {
-                        int selectedID = (selectedRecord != null) ? selectedRecord.ID : selectedClientID;
+                        int selectedID = (selectedRecord != null) ? selectedRecord.ID : ClientFunctions.SelectedClient.ID;
                         if (gridList.Exists(c => c.ID == selectedID))
                         {
                             ClientDataGrid.SelectedItem = gridList.First(c => c.ID == selectedID);
                             ClientDataGrid.ScrollIntoView(ClientDataGrid.SelectedItem);
-                            selectedClientID = 0; // Clear this, it should only be used for initial load when going back from another page
+                            //selectedClientID = 0; // Clear this, it should only be used for initial load when going back from another page
+                        }
+                        else
+                        {
+                            ClientFunctions.SelectedClient = null;
                         }
                     }
                     catch (Exception generalException) { MessageFunctions.Error("Error selecting the current row", generalException); }
@@ -161,6 +167,7 @@ namespace ProjectTile
                 List<String> managersList = ClientFunctions.AllManagersList(selectedEntityID, includeNonAMs, currentManager);
                 EditManagersCombo.ItemsSource = managersList;
                 if (currentManager == "" || managersList.Contains(currentManager)) { EditManagersCombo.SelectedItem = currentManager; }
+                else { EditManagersCombo.SelectedItem = null; }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error refreshing the list of available Account Managers", generalException); }
         }
@@ -375,7 +382,7 @@ namespace ProjectTile
                         }
                         AddButtonText.Text = "Add Another";
                     }
-                    else { PageFunctions.ShowTilesPage(); }
+                    else { ClientFunctions.ReturnToTilesPage(); }
                 }
                 catch (Exception generalException) { MessageFunctions.Error("Error updating page for new client record", generalException); }
             }
@@ -474,12 +481,12 @@ namespace ProjectTile
 
         private void ContactButton_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowClientContactPage(pageMode, selectedRecord.ID, (pageMode == "View"));
+            PageFunctions.ShowClientContactPage();
         }
 
         private void ProjectButton_Click(object sender, RoutedEventArgs e)
         {
-
+            // To do: add link to projects
         }
 
         private void ClientDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -489,11 +496,11 @@ namespace ProjectTile
                 if (ClientDataGrid.SelectedItem != null)
                 {
                     selectedRecord = (ClientGridRecord)ClientDataGrid.SelectedItem;
-                    Clients selectedClient = ClientFunctions.GetClientByID(selectedRecord.ID, true);
-                    toggleSideButtons(selectedClient != null);
+                    ClientFunctions.GetClientByID(selectedRecord.ID, true);
+                    toggleSideButtons(true);
                 }
                 else { clearSelection(); }
-            }
+            }            
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error processing client selection", generalException);
@@ -513,7 +520,7 @@ namespace ProjectTile
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowTilesPage();
+            ClientFunctions.ReturnToTilesPage();
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)

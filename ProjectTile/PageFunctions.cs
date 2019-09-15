@@ -122,24 +122,24 @@ namespace ProjectTile
             ChangePage("ProductPage.xaml?Mode=" + pageMode);
         }
 
-        public static void ShowClientPage(string pageMode, int selectedClientID = 0)
+        public static void ShowClientPage(string pageMode)
         {
-            ChangePage("ClientPage.xaml?Mode=" + pageMode + ",ClientID=" + selectedClientID.ToString());
+            ChangePage("ClientPage.xaml?Mode=" + pageMode);
         }
 
-        public static void ShowClientContactPage(string sourcePageMode, int clientID = 0, bool viewOnly = false, int contactID = 0)
+        public static void ShowClientContactPage(int contactID = 0)
         {
             string pageMode;  // Mode is based on viewOnly or permissions; sourcePageMode tells us what the previous screen was
-            if (viewOnly) { pageMode = View; }
+            if (ClientFunctions.SourcePageMode == PageFunctions.View) { pageMode = View; }
             else { pageMode = LoginFunctions.MyPermissions.Allow("EditClientStaff") ? Amend : View; }
 
-            ChangePage("ClientContactPage.xaml?Mode=" + pageMode + ",ClientID=" + clientID.ToString() + ",SourceMode=" + sourcePageMode + ",ContactID=" + contactID.ToString());
+            ChangePage("ClientContactPage.xaml?Mode=" + pageMode + ",ContactID=" + contactID.ToString());
         }
 
-        public static void ShowContactDetailsPage(int clientID, int contactID = 0)
+        public static void ShowContactDetailsPage(int contactID = 0)
         {
             string pageMode = (contactID == 0) ? New : Amend;
-            ChangePage("ContactDetailsPage.xaml?Mode=" + pageMode + ",ClientID=" + clientID.ToString() + ",ContactID=" + contactID.ToString());
+            ChangePage("ContactDetailsPage.xaml?Mode=" + pageMode + ",ContactID=" + contactID.ToString());
         }
 
         public static void ShowHelpPage(string pageMode)

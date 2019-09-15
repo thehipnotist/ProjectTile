@@ -26,9 +26,7 @@ namespace ProjectTile
         // Global/page parameters //
         MainWindow winMain = (MainWindow)App.Current.MainWindow;
         string pageMode;
-        //string sourceMode;
         int selectedContactID = 0;
-        int selectedClientID;
 
         // Current variables //
 
@@ -59,18 +57,18 @@ namespace ProjectTile
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
                 selectedContactID = Int32.Parse(PageFunctions.pageParameter(this, "ContactID"));
-                selectedClientID = Int32.Parse(PageFunctions.pageParameter(this, "ClientID"));
+                //selectedClientID = Int32.Parse(PageFunctions.pageParameter(this, "ClientID"));
                 
             }
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error retrieving query details", generalException);
-                PageFunctions.ShowTilesPage();
+                ClientFunctions.ReturnToTilesPage();
             }
 
-            Clients thisClient = ClientFunctions.GetClientByID(selectedClientID, true);
-            ClientCode.Text = thisClient.ClientCode;
-            ClientName.Text = thisClient.ClientName;
+            //Clients thisClient = ClientFunctions.GetClientByID(selectedClientID, true);
+            ClientCode.Text = ClientFunctions.SelectedClient.ClientCode;
+            ClientName.Text = ClientFunctions.SelectedClient.ClientName;
 
             if (pageMode == PageFunctions.New)
             {
@@ -95,13 +93,13 @@ namespace ProjectTile
                     catch (Exception generalException)
                     {
                         MessageFunctions.Error("Error populating contact data", generalException);
-                        ClientFunctions.returnToContactPage(selectedClientID, selectedContactID);
+                        ClientFunctions.ReturnToContactPage(selectedContactID);
                     }
                 }
                 else
                 {
                     MessageFunctions.Error("Load error: no contact loaded.", null);
-                    ClientFunctions.returnToContactPage(selectedClientID, selectedContactID);
+                    ClientFunctions.ReturnToContactPage(selectedContactID);
                 }
             }
         }
@@ -114,7 +112,7 @@ namespace ProjectTile
         private void createNewContact()
         {
             int newID = 0;
-            try { newID = ClientFunctions.NewContact(selectedClientID, FirstName.Text, Surname.Text, JobTitle.Text, PhoneNumber.Text, Email.Text, (bool) Active_CheckBox.IsChecked); }
+            try { newID = ClientFunctions.NewContact(FirstName.Text, Surname.Text, JobTitle.Text, PhoneNumber.Text, Email.Text, (bool) Active_CheckBox.IsChecked); }
             catch (Exception generalException) { MessageFunctions.Error("Error creating new contact record", generalException); }
             if (newID > 0)
             {
@@ -128,7 +126,7 @@ namespace ProjectTile
         {
             bool success = false;
 
-            try { success = ClientFunctions.AmendContact(selectedContactID, selectedClientID, FirstName.Text, Surname.Text, JobTitle.Text, PhoneNumber.Text, Email.Text, 
+            try { success = ClientFunctions.AmendContact(selectedContactID, FirstName.Text, Surname.Text, JobTitle.Text, PhoneNumber.Text, Email.Text, 
                 (bool)Active_CheckBox.IsChecked); }
             catch (Exception generalException) { MessageFunctions.Error("Error saving amendments to contact", generalException); }
             try
@@ -144,7 +142,7 @@ namespace ProjectTile
 			
         private void goBack()
         {
-            ClientFunctions.returnToContactPage(selectedClientID, selectedContactID);
+            ClientFunctions.ReturnToContactPage(selectedContactID);
         }
 
         // ---------------------- //
@@ -155,7 +153,7 @@ namespace ProjectTile
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             bool confirm = MessageFunctions.QuestionYesNo("This returns back to the application's Main Menu without saving any changes. Are you sure?", "Return to main menu?");
-            if (confirm) {  PageFunctions.ShowTilesPage(); }
+            if (confirm) { ClientFunctions.ReturnToTilesPage(); }
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)

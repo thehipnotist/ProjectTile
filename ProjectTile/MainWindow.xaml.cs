@@ -220,7 +220,7 @@ namespace ProjectTile
 
         private void ClientContact_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowClientContactPage(PageFunctions.None);
+            PageFunctions.ShowClientContactPage();
         }
 
     } // class

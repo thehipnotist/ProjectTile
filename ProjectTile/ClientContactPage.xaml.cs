@@ -25,9 +25,8 @@ namespace ProjectTile
 
         // Global/page parameters //
         string pageMode;
-        string fromSource = "";
-        string sourceMode = "";
-        int selectedClientID = 0;
+        //string fromSource = "";
+        //string sourceMode = "";
         int selectedContactID = 0; // Only used for the initial page parameter, to handle returning to this page
         string originalInstructions;
         
@@ -69,14 +68,13 @@ namespace ProjectTile
             try
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
-                sourceMode = PageFunctions.pageParameter(this, "SourceMode");
-                selectedClientID = Int32.Parse(PageFunctions.pageParameter(this, "ClientID"));
+                //sourceMode = PageFunctions.pageParameter(this, "SourceMode");
                 selectedContactID = Int32.Parse(PageFunctions.pageParameter(this, "ContactID"));
             }
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error retrieving query details", generalException);
-                PageFunctions.ShowTilesPage();
+                ClientFunctions.ReturnToTilesPage();
             }
 
             try
@@ -91,14 +89,13 @@ namespace ProjectTile
                     originalInstructions = originalInstructions.Replace("View", "View or Amend");
                 }
 
-                if (selectedClientID > 0)
+                if (ClientFunctions.SelectedClient != null)
                 {
-                    fromSource = "ClientPage";
                     contactMode();
                 }
                 else
                 {
-                    fromSource = "TilesPage";
+                    //fromSource = "TilesPage";
                     EntityWarningLabel.Content = ClientFunctions.ShortEntityWarning;
                     clientMode();
                 }
@@ -106,7 +103,7 @@ namespace ProjectTile
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error setting up the client contacts page", generalException);
-                PageFunctions.ShowTilesPage();
+                ClientFunctions.ReturnToTilesPage();
             }
         }
 
@@ -123,7 +120,8 @@ namespace ProjectTile
         {
             try
             {
-                int selectedID = selectedClientID; // Use this first as it is set when going back from contacts; set this before refreshing or it is lost
+                int selectedID = 0;
+                if (ClientFunctions.SelectedClient != null) { selectedID = ClientFunctions.SelectedClient.ID; } 
                 if (selectedID == 0 && selectedClientGridRecord != null) { selectedID = selectedClientGridRecord.ID; } // Just in case
                 
                 clientGridList = ClientFunctions.ClientGridList(clientActiveOnly, nameContains, accountManagerID, EntityFunctions.CurrentEntityID);
@@ -193,7 +191,6 @@ namespace ProjectTile
         private void clearClientSelection()
         {
             ClientFunctions.SelectedClient = null;
-            selectedClientID = 0;
             //selectedRecord = null; // Don't clear this automatically, as the refresh tries to reuse it
             ContactButton.IsEnabled = false;
         }
@@ -223,7 +220,7 @@ namespace ProjectTile
                 }
 
                 EntityWarningLabel.Visibility = Visibility.Hidden;
-                ClientGrid.Visibility = ContactButton.Visibility = Visibility.Hidden;
+                ClientGrid.Visibility = ContactButton.Visibility = Visibility.Hidden;                
                 BackButton.Visibility = Visibility.Visible;
                 AmendButton.Visibility = canAmend? Visibility.Visible : Visibility.Hidden;
                 AddButton.Visibility = canAmend ? Visibility.Visible : Visibility.Hidden;
@@ -245,8 +242,8 @@ namespace ProjectTile
                     selectedContactID = 0; // Only used at page initiation, so this stops it interfering later
                 }
                 else if (selectedContactGridRecord != null) { selectedID = selectedContactGridRecord.ID; }
-                
-                contactGridList = ClientFunctions.ContactGridList(contactContains, contactActiveOnly, selectedClientID);
+
+                contactGridList = ClientFunctions.ContactGridList(contactContains, contactActiveOnly, ClientFunctions.SelectedClient.ID);
                 ContactDataGrid.ItemsSource = contactGridList;
                 if (selectedID > 0)
                 {
@@ -268,20 +265,27 @@ namespace ProjectTile
         {
             try
             {
-                if (selectedClientGridRecord == null)
+                if (ClientFunctions.SourcePage == "ClientPage") // Don't allow changing
                 {
-                    ClientCombo.IsEnabled = false; // Must come first as used in 'selection changed'                    
-                    Clients thisClient = ClientFunctions.GetClientByID(selectedClientID, false);
+                    ClientCombo.IsEnabled = false; // Must come first as used in 'selection changed'                                        
                     ClientCombo.Items.Clear(); // Just in case!
-                    ClientCombo.Items.Add(thisClient);
-                    ClientCombo.SelectedItem = thisClient;
+                    ClientCombo.Items.Add(ClientFunctions.SelectedClient);
+                    ClientCombo.SelectedItem = ClientFunctions.SelectedClient;
                 }
-                else if (selectedContactID > 0) {} // Do nothing at this stage, as we'll come round to this again...
-                else
+                else if (selectedClientGridRecord != null) 
                 {
                     ClientCombo.ItemsSource = clientGridList;
                     ClientCombo.SelectedItem = selectedClientGridRecord;
                 }
+                else if (ClientFunctions.SelectedClient != null) // Back from the client contact details page
+                {
+                    refreshClientGrid();                    
+                    ClientCombo.Items.Clear(); // Just in case!
+                    ClientCombo.ItemsSource = clientGridList;
+                    ClientGridRecord thisRecord = clientGridList.FirstOrDefault(cgl => cgl.ID == ClientFunctions.SelectedClient.ID);
+                    if (thisRecord != null) { ClientCombo.SelectedItem = thisRecord; }
+                }                            
+
                 //refreshContactGrid(); // Shouldn't be needed as the selection change does it for us
             }
             catch (Exception generalException) { MessageFunctions.Error("Error refreshing the clients drop-down", generalException); }
@@ -369,9 +373,8 @@ namespace ProjectTile
                 if (ClientDataGrid.SelectedItem != null)
                 {
                     selectedClientGridRecord = (ClientGridRecord)ClientDataGrid.SelectedItem;
-                    Clients selectedClient = ClientFunctions.GetClientByID(selectedClientGridRecord.ID, true);
-                    ContactButton.IsEnabled = (selectedClient != null);
-                    selectedClientID = selectedClient.ID;
+                    ClientFunctions.GetClientByID(selectedClientGridRecord.ID, true); // Also updates 'master' SelectedClient
+                    ContactButton.IsEnabled = true;
                 }
                 else { clearClientSelection(); }
             }
@@ -384,12 +387,12 @@ namespace ProjectTile
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowTilesPage();
+            ClientFunctions.ReturnToTilesPage();
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            if (fromSource == "ClientPage") { PageFunctions.ShowClientPage(sourceMode, selectedClientID); }
+            if (ClientFunctions.SourcePage == "ClientPage") { PageFunctions.ShowClientPage(pageMode = ClientFunctions.SourcePageMode); }
             else 
             {       
                 clientMode();
@@ -404,12 +407,12 @@ namespace ProjectTile
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowContactDetailsPage(selectedClientID, 0);
+            PageFunctions.ShowContactDetailsPage(0);
         }
 
         private void AmendButton_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowContactDetailsPage(selectedClientID, selectedContact.ID);
+            PageFunctions.ShowContactDetailsPage(selectedContact.ID);
         }
 
         private void ContactContains_LostFocus(object sender, RoutedEventArgs e)
@@ -435,7 +438,7 @@ namespace ProjectTile
         }
 
         private void ClientCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {           
+        {            
             try
             {
                 if (ClientCombo.IsEnabled) // Otherwise just the one value, already 'selected'
@@ -443,7 +446,7 @@ namespace ProjectTile
                     if (ClientCombo.SelectedItem != null) // No need for an 'else', won't be long...
                     {
                         ClientGridRecord thisRecord = (ClientGridRecord)ClientCombo.SelectedItem;
-                        selectedClientID = thisRecord.ID;
+                        ClientFunctions.GetClientByID(thisRecord.ID, true);
                     }
                 }
                 refreshContactGrid();
