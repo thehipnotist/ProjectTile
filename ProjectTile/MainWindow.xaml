@@ -43,6 +43,7 @@
                 <MenuItem x:Name="NewClient" Header="Create New Clients" FontWeight="Normal" Background="{StaticResource PtBrushClient1}" Foreground="Black" Click="NewClient_Click"/>
                 <MenuItem x:Name="AmendClient" Header="Amend Clients" FontWeight="Normal" Background="{StaticResource PtBrushClient1}" Foreground="Black" Click="AmendClient_Click"/>
                 <MenuItem x:Name="ClientContact" Header="Client Contacts" FontWeight="Normal" Background="{StaticResource PtBrushClient1}" Foreground="Black" Click="ClientContact_Click"/>
+                <MenuItem x:Name="ClientProduct" Header="Client Products" FontWeight="Normal" Background="{StaticResource PtBrushClient1}" Foreground="Black" Click="ClientProduct_Click"/>
             </MenuItem>
         </Menu>
 

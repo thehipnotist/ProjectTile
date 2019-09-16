@@ -189,6 +189,7 @@
         <Image x:Key="BackIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="112_LeftArrowLong_Grey_24x24_72.png"/>
         <Image x:Key="CancelIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="1385_Disable_24x24_72.png"/>
         <Image x:Key="ClientIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="filecabinet.png"/>
+        <Image x:Key="ClientIcon2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="filecabinet.png"/>
         <Image x:Key="CommitIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="112_Tick_Green_32x32_72.png"/>
         <Image x:Key="ContactIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="base_business_contacts.png"/>
         <Image x:Key="ContactIcon2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="base_business_contacts.png"/>
@@ -444,6 +445,19 @@
         <Style TargetType="{x:Type Page}">
             <Setter Property="FontFamily" Value="Yu Gothic"/>
         </Style>        
-
+        
+        <Style TargetType="ListViewItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        </Style>
+        <DataTemplate x:Key="LatestVersionTemplate">
+            <TextBlock HorizontalAlignment="Right" Text="{Binding LatestVersion}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="ClientVersionTemplate">
+            <TextBlock HorizontalAlignment="Right" Text="{Binding ClientVersion}"/>
+        </DataTemplate>    
+        <DataTemplate x:Key="ActiveTemplate">
+            <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Active}"/>
+        </DataTemplate>
+               
     </Application.Resources>
 </Application>

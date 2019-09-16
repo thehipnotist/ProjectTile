@@ -228,7 +228,14 @@
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
                         <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Client Contacts"/>
                     </Label>
-                </Button>                
+                </Button>
+                <Button x:Name="ClientButton_Product" Height="120" Width="120" Margin="120,135,0,0" Background="{StaticResource PtBrushClient1}" MouseLeave="buttonMouseOut" HorizontalAlignment="Left" 
+                        VerticalAlignment="Top" Grid.Column="2" Visibility="Hidden" Click="ClientButton_Product_Click" Style="{DynamicResource TileStyle}">
+                    <Label VerticalContentAlignment="Center" Background="{StaticResource PtGradientClient1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Client Products"/>
+                    </Label>
+                </Button>
 
             </Grid>
         </Border>

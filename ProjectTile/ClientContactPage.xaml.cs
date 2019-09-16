@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -36,9 +37,9 @@ namespace ProjectTile
         bool canActivate;
 
         // Current variables //
-        int accountManagerID = 0;
+        //int accountManagerID = 0;
         bool clientActiveOnly = false;
-        string nameContains = "";
+        string clientContains = "";
         bool contactActiveOnly = false;
         string contactContains = ""; 
 
@@ -50,6 +51,7 @@ namespace ProjectTile
         // Lists //
         List<ClientGridRecord> clientGridList;
         List<ContactGridRecord> contactGridList;
+        List<string> contactDropList;
 
         // ---------------------- //
         // -- Page Management --- //
@@ -123,9 +125,11 @@ namespace ProjectTile
                 int selectedID = 0;
                 if (ClientFunctions.SelectedClient != null) { selectedID = ClientFunctions.SelectedClient.ID; } 
                 if (selectedID == 0 && selectedClientGridRecord != null) { selectedID = selectedClientGridRecord.ID; } // Just in case
-                
-                clientGridList = ClientFunctions.ClientGridList(clientActiveOnly, nameContains, accountManagerID, EntityFunctions.CurrentEntityID);
-                ClientDataGrid.ItemsSource = clientGridList;  
+
+                clientGridList = ClientFunctions.ClientGridListByContact(clientActiveOnly, clientContains, contactContains, EntityFunctions.CurrentEntityID);
+                ClientDataGrid.ItemsSource = clientGridList;
+                ClientDataGrid.Items.SortDescriptions.Clear();
+                ClientDataGrid.Items.SortDescriptions.Add(new SortDescription("ClientCode", ListSortDirection.Ascending));
              
                 try
                 {
@@ -140,26 +144,6 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error refreshing client details in the grid", generalException); }
         }
 
-        private void refreshManagersCombo(string accountManager = "")
-        {            
-            try
-            {
-                string newSelection = PageFunctions.AllRecords;
-                string currentSelection = (ManagersCombo.SelectedItem != null)? ManagersCombo.SelectedItem.ToString() : "";
-                List<string> managersList = ClientFunctions.CurrentManagersList(EntityFunctions.CurrentEntityID, true);
-                if (currentSelection != "")
-                {
-                    if(managersList.Contains(currentSelection) && (accountManager == "" || currentSelection == accountManager))
-                        { newSelection = currentSelection; } // the previous AM is re-selected only if it matches the current Client record's AM
-                    //ManagersCombo.SelectedItem = newSelection;
-                }
-                ManagersCombo.ItemsSource = managersList;
-                ManagersCombo.SelectedItem = newSelection; 
-                //refreshClientGrid(); // Not required as done by the automatic selection change
-            }
-            catch (Exception generalException) { MessageFunctions.Error("Error refreshing the list of current Account Managers", generalException); }
-        }
-
         private void clientMode()
         {
             try
@@ -170,22 +154,32 @@ namespace ProjectTile
                 AmendButton.Visibility = AddButton.Visibility = DisableButton.Visibility = BackButton.Visibility = Visibility.Hidden;
                 ContactButton.Visibility = Visibility.Visible;
                 ContactButton.HorizontalAlignment = System.Windows.HorizontalAlignment.Right;
-                refreshManagersCombo();
                 Instructions.Content = originalInstructions;
+                refreshClientGrid();
             }
             catch (Exception generalException) { MessageFunctions.Error("Error resetting the page", generalException); }
         }
 
         private void nameFilter()
         {
-            nameContains = ClientContains.Text;
+            clientContains = ClientContains.Text;
             refreshClientGrid();
         }
 
-        private void contactFilter()
-        {
-            contactContains = ContactContains.Text;
-            refreshContactGrid();
+        private void contactFilter(bool clientMode)
+        {            
+            if (clientMode)
+            {
+                PossibleContacts.Visibility = Visibility.Hidden;
+                contactContains = ContactLike.Text;
+                refreshClientGrid();                
+            }
+            else 
+            {
+                contactContains = ContactContains.Text;
+                refreshContactGrid(); 
+            }
+
         }
 
         private void clearClientSelection()
@@ -226,6 +220,7 @@ namespace ProjectTile
                 AddButton.Visibility = canAmend ? Visibility.Visible : Visibility.Hidden;
                 DisableButton.Visibility = canActivate ? Visibility.Visible : Visibility.Hidden;
                 ContactGrid.Visibility = Visibility.Visible;
+                ContactContains.Text = contactContains;
                 refreshClientCombo();
             }
             catch (Exception generalException) { MessageFunctions.Error("Error displaying client contacts", generalException); }
@@ -320,6 +315,66 @@ namespace ProjectTile
             }
         }
 
+        private void refreshNamesList()
+        {
+            string contactLike = ContactLike.Text;
+            if (contactLike == "") 
+            { 
+                PossibleContacts.Visibility = Visibility.Hidden;
+                AmendButton.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                PossibleContacts.Visibility = Visibility.Visible;
+                contactDropList = ClientFunctions.ContactDropList(contactLike);
+                PossibleContacts.ItemsSource = contactDropList;
+            }
+        }
+
+        private void chooseContactName()
+        {
+            ContactLike.Text = (string)PossibleContacts.SelectedItem;
+            contactFilter(true);
+            checkForSingleContact(); // In case the client selection doesn't change automatically
+        }
+
+        private void checkForSingleContact()
+        {
+            try
+            {
+                if (ContactLike.Text != "" && (clientGridList.Count == 1 || ClientDataGrid.SelectedItem != null))
+                {
+                    bool singleContact = chooseSingleContact();
+                    if (singleContact)
+                    {                                                
+                        AmendButton.Visibility = canAmend ? Visibility.Visible : Visibility.Hidden;
+                        AmendButton.IsEnabled = canAmend;
+                        AmendButton.ToolTip = "Amend " + selectedContact.FirstName + " " + selectedContact.Surname + "'s details";
+                    }
+                    else
+                    {
+                        AmendButton.Visibility = Visibility.Hidden;
+                    }
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error processing contact selection via the drop-down", generalException); }
+        }
+
+        private bool chooseSingleContact()
+        {
+            try
+            {
+                if (selectedClientGridRecord == null) { ClientDataGrid.SelectedItem = clientGridList.ElementAt(0); }
+                selectedContact = ClientFunctions.GetContactByName(selectedClientGridRecord.ID, ContactLike.Text);
+                return (selectedContact != null);
+            }
+            catch (Exception generalException) 
+            { 
+                MessageFunctions.Error("Error selecting the displayed contact name", generalException);
+                return false;
+            }
+        }
+
         // ---------------------- //
         // -- Event Management -- //
         // ---------------------- //
@@ -327,23 +382,6 @@ namespace ProjectTile
         // Generic (shared) control events //
 
         // Control-specific events //
-
-        private void ManagersCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            try
-            {
-                string selectedName = ManagersCombo.SelectedValue.ToString();
-                if (selectedName != PageFunctions.AllRecords)
-                {
-                    Staff accountManager = StaffFunctions.GetStaffMemberByName(selectedName);
-                    accountManagerID = accountManager.ID;
-                }
-                else { accountManagerID = 0; }
-                refreshClientGrid();
-            }
-            catch (Exception generalException) { MessageFunctions.Error("Error handling the Account Manager selection change", generalException); }
-        }
-
         private void ClientContains_LostFocus(object sender, RoutedEventArgs e)
         {
             nameFilter();
@@ -375,6 +413,7 @@ namespace ProjectTile
                     selectedClientGridRecord = (ClientGridRecord)ClientDataGrid.SelectedItem;
                     ClientFunctions.GetClientByID(selectedClientGridRecord.ID, true); // Also updates 'master' SelectedClient
                     ContactButton.IsEnabled = true;
+                    checkForSingleContact();
                 }
                 else { clearClientSelection(); }
             }
@@ -396,7 +435,7 @@ namespace ProjectTile
             else 
             {       
                 clientMode();
-                refreshClientGrid(); // Required to process a change of selected client in the drop-down, as doesn't happen automatically
+                //refreshClientGrid(); // Required to process a change of selected client in the drop-down, as doesn't happen automatically
             }
         }
 
@@ -417,12 +456,12 @@ namespace ProjectTile
 
         private void ContactContains_LostFocus(object sender, RoutedEventArgs e)
         {
-            contactFilter();
+            contactFilter(false);
         }
 
         private void ContactContains_KeyUp(object sender, KeyEventArgs e)
         {
-            contactFilter();
+            contactFilter(false);
         }
 
         private void ActiveContact_CheckBox_Checked(object sender, RoutedEventArgs e)
@@ -463,6 +502,7 @@ namespace ProjectTile
                     selectedContactGridRecord = (ContactGridRecord) ContactDataGrid.SelectedItem;
                     AmendButton.IsEnabled = true;                    
                     selectedContact = ClientFunctions.GetContact(selectedContactGridRecord.ID);
+                    AmendButton.ToolTip = "Amend " + selectedContact.FirstName + " " + selectedContact.Surname + "'s details";
                     toggleActiveButton(selectedContact.Active);
                 }
                 else { clearContactSelection(); }
@@ -485,6 +525,29 @@ namespace ProjectTile
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error changing status", generalException); }
+        }
+
+        private void ClientLike_LostFocus(object sender, RoutedEventArgs e)
+        {
+            contactFilter(true);
+        }
+
+        private void ClientLike_KeyUp(object sender, KeyEventArgs e)
+        {
+            refreshNamesList();
+        }
+
+        private void ContactLike_GotFocus(object sender, RoutedEventArgs e)
+        {
+            refreshNamesList();
+        }
+
+        private void PossibleContacts_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (PossibleContacts.SelectedItem != null)
+            {
+                chooseContactName();
+            }
         }
 
     } // class

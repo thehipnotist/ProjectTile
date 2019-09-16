@@ -11,7 +11,7 @@ namespace ProjectTile
     {
         // Data retrieval
         
-        public static List<Products> ProductsList(string search)
+        public static List<Products> ProductsList(string search, bool includeAll = false)
         {
             try
             {
@@ -23,6 +23,13 @@ namespace ProjectTile
                                        where search == "" || p.ProductName.Contains(search) || p.ProductDescription.Contains(search)
                                        orderby p.ProductName
                                        select p).ToList();
+
+                    if (includeAll)
+                    {
+                        Products dummyProduct = new Products { ID = 0, ProductName = PageFunctions.AllRecords, ProductDescription = "", LatestVersion = 0 };
+                        productGridList.Add(dummyProduct);
+                    }
+
                     return productGridList;
                 }
             }

@@ -476,7 +476,7 @@ namespace ProjectTile
 
         private void ProductButton_Click(object sender, RoutedEventArgs e)
         {
-
+            PageFunctions.ShowClientProductsPage((pageMode == PageFunctions.View));
         }
 
         private void ContactButton_Click(object sender, RoutedEventArgs e)

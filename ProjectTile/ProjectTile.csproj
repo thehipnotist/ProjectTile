@@ -133,6 +133,9 @@
     <Compile Include="ContactDetailsPage.xaml.cs">
       <DependentUpon>ContactDetailsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ClientProductsPage.xaml.cs">
+      <DependentUpon>ClientProductsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="StaffEntitiesPage.xaml.cs">
       <DependentUpon>StaffEntitiesPage.xaml</DependentUpon>
     </Compile>
@@ -222,6 +225,7 @@
     <Compile Include="StaffRoles.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="ClientProductSummary.cs" />
     <Compile Include="StaffSummaryRecord.cs" />
     <Compile Include="stf_GetStaffByID_Result.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
@@ -303,6 +307,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ContactDetailsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ClientProductsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

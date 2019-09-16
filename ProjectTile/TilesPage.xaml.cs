@@ -109,6 +109,7 @@ namespace ProjectTile
                 if (myPermissions.Allow("AddClients")) { clientButtons.Add(ClientButton_New); }
                 if (myPermissions.Allow("EditClients")) { clientButtons.Add(ClientButton_Amend); }
                 if (myPermissions.Allow("ViewClientStaff")) { clientButtons.Add(ClientButton_Contact); }
+                if (myPermissions.Allow("ViewClientProducts")) { clientButtons.Add(ClientButton_Product); }
 
                 // More to come...
             }
@@ -349,6 +350,11 @@ namespace ProjectTile
         private void ClientButton_Contact_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowClientContactPage();
+        }
+
+        private void ClientButton_Product_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowClientProductsPage(false);
         }
         
     } // class

@@ -48,6 +48,10 @@ namespace ProjectTile
                 AmendProduct.Visibility = myPermissions.ShowOrCollapse("EditProducts");
 
                 ViewClient.Visibility = myPermissions.ShowOrCollapse("ViewClients");
+                NewClient.Visibility = myPermissions.ShowOrCollapse("AddClients");
+                AmendClient.Visibility = myPermissions.ShowOrCollapse("EditClients");
+                ClientContact.Visibility = myPermissions.ShowOrCollapse("ViewClientStaff");
+                ClientProduct.Visibility = myPermissions.ShowOrCollapse("ViewClientProducts");
 
                 // More to come...
             }
@@ -221,6 +225,11 @@ namespace ProjectTile
         private void ClientContact_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowClientContactPage();
+        }
+
+        private void ClientProduct_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowClientProductsPage(false);
         }
 
     } // class

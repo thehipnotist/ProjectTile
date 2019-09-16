@@ -142,6 +142,15 @@ namespace ProjectTile
             ChangePage("ContactDetailsPage.xaml?Mode=" + pageMode + ",ContactID=" + contactID.ToString());
         }
 
+        public static void ShowClientProductsPage(bool viewOnly = false, string sourcePageMode = "View")
+        {
+            string pageMode; // Mode is based on viewOnly or permissions; sourcePageMode tells us what the previous screen was
+            if (viewOnly) { pageMode = View; }
+            else { pageMode = LoginFunctions.MyPermissions.Allow("EditClientProducts") ? Amend : View; }
+
+            ChangePage("ClientProductsPage.xaml?Mode=" + pageMode + ",SourceMode=" + sourcePageMode);
+        }
+
         public static void ShowHelpPage(string pageMode)
         {
             ChangePage("HelpPage.xaml?Mode=" + pageMode);

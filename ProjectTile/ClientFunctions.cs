@@ -12,7 +12,7 @@ namespace ProjectTile
         
         public const string ManagerRole = "AM";
         public static string EntityWarning = "Note that only clients in the current Entity ('" + EntityFunctions.CurrentEntityName + "') are displayed.";
-        public static string ShortEntityWarning = "Note that only clients in the current Entity are displayed.";
+        public static string ShortEntityWarning = "Only clients in the current Entity are displayed.";
         
         public static string ClientCodeFormat = "";
         public const char AlphaChar = '\u0040'; // @
@@ -23,6 +23,16 @@ namespace ProjectTile
         public const char OtherChar = '\u003F'; // ?
         public static string SuggestionTips = "";
         public static string ExplainCode;
+
+        public static List<Clients> ClientsNotForProduct;
+        public static List<ClientProductSummary> ClientsForProduct;
+        public static List<int> ClientIDsToAdd = new List<int>();
+        public static List<int> ClientIDsToRemove = new List<int>();
+
+        public static List<Products> ProductsNotForClient;
+        public static List<ClientProductSummary> ProductsForClient;
+        public static List<int> ProductIDsToAdd = new List<int>();
+        public static List<int> ProductIDsToRemove = new List<int>();
 
         // The following must be updated when opening a page from the menu and choosing a client, or cleared when returning to the menu or clearing client selection
         public static string SourcePage = "TilesPage";
@@ -154,8 +164,6 @@ namespace ProjectTile
                     int entityID = thisClient.EntityID;
                     string trySuggestion = "";
 
-                    //MessageFunctions.InvalidMessage(thisClient.ID.ToString(), "Test");
-                    
                     string clientCode = thisClient.ClientCode;
                     if (!PageFunctions.SqlInputOK(clientCode, true, "Client code", "Client Code", "!£$%^&*()=~#{[}]:;@'<,>.?/|¬`¦€")) { return false; }
                     Clients checkNewCode = existingPtDb.Clients.FirstOrDefault(c => c.ID != existingID && c.ClientCode == clientCode && c.EntityID == entityID);
@@ -453,6 +461,63 @@ namespace ProjectTile
         }
 
         // Contacts functions
+        public static ClientStaff GetContactByName(int clientID, string contactName)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return existingPtDb.ClientStaff.FirstOrDefault(cs => cs.ClientID == clientID && cs.FirstName + " " + cs.Surname == contactName);
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving contact with name '" + contactName + "'", generalException);
+                return null;
+            }	
+        }
+
+        public static List<ClientGridRecord> ClientGridListByContact(bool activeOnly, string clientContains, string contactContains, int entityID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    List<ClientGridRecord> clientList = new List<ClientGridRecord>();
+                    clientList = (from c in existingPtDb.Clients
+                                  join s in existingPtDb.Staff on c.AccountManagerID equals s.ID
+                                  join e in existingPtDb.Entities on c.EntityID equals e.ID
+                                  join cs in existingPtDb.ClientStaff on c.ID equals cs.ClientID
+                                    into GroupJoin from scs in GroupJoin.DefaultIfEmpty()
+                                  where ((int)c.EntityID == entityID)
+                                    && contactContains == "" || (scs.FirstName + " " + scs.Surname).Contains(contactContains)
+                                    && (!activeOnly || c.Active)
+                                    && (clientContains == "" || c.ClientName.Contains(clientContains))
+                                  orderby c.ClientCode
+                                  select (new ClientGridRecord()
+                                  {
+                                      ID = c.ID,
+                                      ClientCode = c.ClientCode,
+                                      ClientName = c.ClientName,
+                                      ManagerID = (int)c.AccountManagerID,
+                                      ManagerName = s.FirstName + " " + s.Surname,
+                                      ActiveClient = c.Active,
+                                      EntityID = c.EntityID,
+                                      EntityName = e.EntityName
+                                  }
+                                  )).Distinct().ToList();
+
+                    return clientList;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving list of clients", generalException);
+                return null;
+            }
+        }
 
         public static List<ContactGridRecord> ContactGridList (string contactContains, bool ActiveOnly, int clientID)
         {
@@ -481,6 +546,32 @@ namespace ProjectTile
                 MessageFunctions.Error("Error retrieving list of contacts", generalException);
                 return null;
             }	
+        }
+
+        public static List<string> ContactDropList(string contactContains)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return (from cs in existingPtDb.ClientStaff
+                            where contactContains == "" || (cs.FirstName + " " + cs.Surname).Contains(contactContains)
+                            select cs.FirstName + " " + cs.Surname
+                                /*
+                                JobTitle = cs.JobTitle,
+                                PhoneNumber = cs.PhoneNumber,
+                                Email = cs.Email,
+                                ActiveContact = cs.Active
+                                */
+                            ).Distinct().ToList();
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving drop-down list of contacts", generalException);
+                return null;
+            }
         }
 
         public static bool CopyContacts(int sourceClientID, int newClientID)
@@ -705,6 +796,384 @@ namespace ProjectTile
                 MessageFunctions.Error("Error amending contact '" + firstName + " " + surname + "'", generalException);
                 return false;
             }
+        }
+
+        // Client Products
+        public static List<ClientGridRecord> ClientGridListByProduct(bool activeOnly, string clientContains, int productID, int entityID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    List<ClientGridRecord> clientList = new List<ClientGridRecord>();
+                    clientList = (from c in existingPtDb.Clients
+                                  join s in existingPtDb.Staff on c.AccountManagerID equals s.ID
+                                  join e in existingPtDb.Entities on c.EntityID equals e.ID
+                                  join cp in existingPtDb.ClientProducts on c.ID equals cp.ClientID
+                                    into GroupJoin from scp in GroupJoin.DefaultIfEmpty()
+                                  where ((int)c.EntityID == entityID)
+                                    && (productID == 0 || scp.ProductID == productID)
+                                    && (!activeOnly || c.Active)
+                                    && (clientContains == "" || c.ClientName.Contains(clientContains))
+                                  orderby c.ClientCode
+                                  select (new ClientGridRecord()
+                                  {
+                                      ID = c.ID,
+                                      ClientCode = c.ClientCode,
+                                      ClientName = c.ClientName,
+                                      ManagerID = (int)c.AccountManagerID,
+                                      ManagerName = s.FirstName + " " + s.Surname,
+                                      ActiveClient = c.Active,
+                                      EntityID = c.EntityID,
+                                      EntityName = e.EntityName
+                                  }
+                                  )).Distinct().ToList();
+
+                    return clientList;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving list of clients", generalException);
+                return null;
+            }
+        }
+
+        public static List<ClientProductSummary> ClientsWithProduct(bool activeOnly, int productID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return (from p in existingPtDb.Products
+                            join cp in existingPtDb.ClientProducts on p.ID equals cp.ProductID
+                            join c in existingPtDb.Clients on cp.ClientID equals c.ID
+                            where (productID == 0 || p.ID == productID)  && (!activeOnly || c.Active) && c.EntityID == EntityFunctions.CurrentEntityID
+                            orderby c.ClientName
+                            select new ClientProductSummary 
+                            {
+                                ID = cp.ID,
+                                ClientID = c.ID,
+                                ClientName = c.ClientName,
+                                ClientEntityID = c.EntityID,
+                                ActiveClient = c.Active,
+                                ProductID = p.ID,
+                                ProductName = p.ProductName,
+                                LatestVersion = (decimal)p.LatestVersion,
+                                Live = (bool) cp.Live,
+                                Status = "TBC",                                     // To do: set status
+                                ClientVersion = (decimal)cp.ProductVersion
+                            }
+                            ).ToList();
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error listing clients with product ID" + productID.ToString(), generalException);
+                return null;
+            }		
+        }
+
+        public static List<Clients> ClientsWithoutProduct(bool activeOnly, int productID)
+        {
+            try
+            {
+                List<int> clientIDsWithProduct = ClientsWithProduct(false, productID).Select(cwp => (int) cwp.ClientID).ToList();
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return (from c in existingPtDb.Clients
+                            where (!activeOnly || c.Active) && !clientIDsWithProduct.Contains(c.ID) && c.EntityID == EntityFunctions.CurrentEntityID
+                            orderby c.ClientCode
+                            select c).ToList();
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error listing clients without product ID" + productID.ToString(), generalException);
+                return null;
+            }		
+        }
+
+        public static List<ClientProductSummary> LinkedProducts(int clientID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return (from p in existingPtDb.Products
+                            join cp in existingPtDb.ClientProducts on p.ID equals cp.ProductID
+                            join c in existingPtDb.Clients on cp.ClientID equals c.ID
+                            where c.ID == clientID
+                            orderby p.ProductName
+                            select new ClientProductSummary
+                            {
+                                ID = cp.ID,
+                                ClientID = c.ID,
+                                ClientName = c.ClientName,
+                                ClientEntityID = c.EntityID,
+                                ActiveClient = c.Active,
+                                ProductID = p.ID,
+                                ProductName = p.ProductName,
+                                LatestVersion = (decimal)p.LatestVersion,
+                                Live = (bool) cp.Live,
+                                Status = "TBC",                                     // To do: set status
+                                ClientVersion = (decimal)cp.ProductVersion
+                            }
+                            ).ToList();
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error listing products for client ID" + clientID.ToString(), generalException);
+                return null;
+            }		
+        }
+
+        public static List<Products> UnlinkedProducts(int clientID)
+        {
+            try
+            {
+                List<int> productIDsForClient = LinkedProducts(clientID).Select(lp => (int)lp.ProductID).ToList();
+
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return (from p in existingPtDb.Products
+                            where !productIDsForClient.Contains(p.ID)
+                            orderby p.ProductName
+                            select p).ToList();
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error listing products not linked to client ID" + clientID.ToString(), generalException);
+                return null;
+            }		
+        }
+
+        public static bool CanRemoveClientProduct(ref Clients thisClient, int productID)
+        {
+            // Don't allow if the client has projects with this product
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    try
+                    {
+                        int clientID = thisClient.ID;
+                        int openProjects = (from p in existingPtDb.Projects
+                                            join pp in existingPtDb.ProjectProducts on p.ID equals pp.ProjectID                                            
+                                            where p.ClientID == clientID && p.ID == productID
+                                            select p.ID)
+                                            .FirstOrDefault();
+
+                        if (openProjects > 0)
+                        {
+                            MessageFunctions.InvalidMessage("Cannot remove this product from " + thisClient.ClientName + " as they have projects involving it.", "Projects Found");
+                            return false;
+                        }
+                        else { return true; }
+                    }
+                    catch (Exception generalException)
+                    {
+                        MessageFunctions.Error("Error checking for projects with this client", generalException);
+                        return false;
+                    }
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error checking whether client product can be removed", generalException);
+                return false;
+            }            
+        }
+
+        public static bool ToggleProductClients(List<Clients> affectedClients, bool addition, Products thisProduct)
+        {
+            try
+            {
+                int productID = thisProduct.ID;
+                string productName = thisProduct.ProductName;
+
+                foreach (Clients thisRecord in affectedClients)
+                {
+                    int clientID = thisRecord.ID;
+                    Clients thisClient = GetClientByID(clientID, false);
+                    bool canChange = addition ? true : CanRemoveClientProduct(ref thisClient, productID);
+
+                    if (!canChange) { return false; }
+                    else if (addition)
+                    {
+                        try
+                        {
+                            ClientProductSummary addRecord = new ClientProductSummary
+                                {
+                                    ClientID = clientID,
+                                    ClientName = thisClient.ClientName,
+                                    ClientEntityID = thisClient.EntityID,
+                                    ActiveClient = thisClient.Active,
+                                    ProductID = thisProduct.ID,
+                                    ProductName = thisProduct.ProductName,
+                                    LatestVersion = (decimal)thisProduct.LatestVersion,
+                                    Live = false,
+                                    Status = "New",
+                                    ClientVersion = Math.Round((decimal)thisProduct.LatestVersion, 1)
+                                };                            
+                            ClientsForProduct.Add(addRecord);
+                            ClientsNotForProduct.Remove(thisRecord);
+
+                            if (ClientIDsToRemove.Contains(clientID)) { ClientIDsToRemove.Remove(clientID); }
+                            else { ClientIDsToAdd.Add(clientID); }
+                        }
+                        catch (Exception generalException)
+                        {
+                            MessageFunctions.Error("Error adding product " + productName + " to client " + thisClient.ClientName, generalException);
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            ClientsNotForProduct.Add(thisRecord);
+                            ClientProductSummary removeRecord = ClientsForProduct.FirstOrDefault(cps => cps.ClientID == clientID && cps.ProductID == thisProduct.ID);
+                            ClientsForProduct.Remove(removeRecord);
+
+                            if (ClientIDsToAdd.Contains(clientID)) { ClientIDsToAdd.Remove(clientID); }
+                            else { ClientIDsToRemove.Add(clientID); }
+                        }
+                        catch (Exception generalException)
+                        {
+                            MessageFunctions.Error("Error removing product " + productName + " from client " + thisClient.ClientName, generalException);
+                            return false;
+                        }
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception generalException)
+            {
+                string change = addition ? "addition" : "removal";
+                MessageFunctions.Error("Error processing " + change + "", generalException);
+                return false;
+            }
+        }
+
+        public static bool ToggleClientProducts(List<Products> affectedProducts, bool addition, Clients thisClient)
+        {
+            try
+            {
+                int clientID = thisClient.ID;
+
+                foreach (Products thisRecord in affectedProducts)
+                {
+                    int productID = thisRecord.ID;
+                    Products thisProduct = ProductFunctions.GetProductByID (productID);
+                    bool canChange = addition ? true : CanRemoveClientProduct(ref thisClient, productID);
+
+                    if (!canChange) { return false; }
+                    else if (addition)
+                    {
+                        try
+                        {
+                            ClientProductSummary addRecord = new ClientProductSummary
+                            {
+                                ClientID = thisClient.ID,
+                                ClientName = thisClient.ClientName,
+                                ClientEntityID = thisClient.EntityID,
+                                ActiveClient = thisClient.Active,
+                                ProductID = productID,
+                                ProductName = thisProduct.ProductName,
+                                LatestVersion = (decimal)thisProduct.LatestVersion,
+                                Live = false,
+                                Status = "New",
+                                ClientVersion = Math.Round((decimal)thisProduct.LatestVersion,1)
+                            };   
+                            ProductsForClient.Add(addRecord);
+                            ProductsNotForClient.Remove(thisRecord);
+
+                            if (ProductIDsToRemove.Contains(productID))
+                            {
+                                ProductIDsToRemove.Remove(productID);
+                            }
+                            else
+                            {
+                                ProductIDsToAdd.Add(productID);
+                            }
+                        }
+                        catch (Exception generalException)
+                        {
+                            MessageFunctions.Error("Error adding " + thisClient.ClientName + " to product " + thisProduct.ProductName + "", generalException);
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            ProductsNotForClient.Add(thisRecord);
+                            ClientProductSummary removeRecord = ProductsForClient.FirstOrDefault(cps => cps.ClientID == thisClient.ID && cps.ProductID == productID);
+                            ProductsForClient.Remove(removeRecord);
+
+                            if (ProductIDsToAdd.Contains(productID)) { ProductIDsToAdd.Remove(productID); }
+                            else { ProductIDsToRemove.Add(productID); }
+                        }
+                        catch (Exception generalException)
+                        {
+                            MessageFunctions.Error("Error removing " + thisClient.ClientName + " from product " + thisProduct.ProductName + "", generalException);
+                            return false;
+                        }
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception generalException)
+            {
+                string change = addition ? "addition" : "removal";
+                MessageFunctions.Error("Error processing " + change + "", generalException);
+                return false;
+            }
+        }
+
+        public static bool IgnoreAnyChanges()
+        {
+            if (ClientIDsToAdd.Count > 0 || ClientIDsToRemove.Count > 0 // || ClientDefaultsToSet.Count > 0
+                || ProductIDsToAdd.Count > 0 || ProductIDsToRemove.Count > 0 // || newDefaultID > 0
+                )
+            {
+                return MessageFunctions.QuestionYesNo("This will undo any changes you made since you last saved. Continue?");
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public static void ClearAnyChanges()
+        {
+            ClientIDsToAdd.Clear();
+            ClientIDsToRemove.Clear();
+//            ClientDefaultsToSet.Clear();
+            ProductIDsToAdd.Clear();
+            ProductIDsToRemove.Clear();
+//            newDefaultID = 0;
+        }
+
+        public static bool SaveClientProductChanges(int clientID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static bool SaveProductClientChanges(int clientID)
+        {
+            throw new NotImplementedException();
         }
 
         // Navigation
