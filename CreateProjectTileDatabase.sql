@@ -1089,25 +1089,25 @@ BEGIN TRY
 
 		INSERT INTO dbo.ClientProducts (
 							ClientID,	
-				ProductID,															ProductVersion)
+				ProductID,															ProductVersion,	Live)
 			SELECT			(SELECT ID FROM dbo.Clients WHERE ClientCode = 'C_S_LG001'),	
-				(SELECT ID FROM dbo.Products WHERE ProductName = 'FlogIT'),			2.0
+				(SELECT ID FROM dbo.Products WHERE ProductName = 'FlogIT'),			2.0,			1
 			UNION SELECT	(SELECT ID FROM dbo.Clients WHERE ClientCode = 'C_S_LG001'),	
-				(SELECT ID FROM dbo.Products WHERE ProductName = 'BankIT'),			1.0
+				(SELECT ID FROM dbo.Products WHERE ProductName = 'BankIT'),			1.0,			1
 			UNION SELECT	(SELECT ID FROM dbo.Clients WHERE ClientCode = 'C_S_WD001'),	
-				(SELECT ID FROM dbo.Products WHERE ProductName = 'Accountible'),	4.1
+				(SELECT ID FROM dbo.Products WHERE ProductName = 'Accountible'),	4.1,			1
 			UNION SELECT	(SELECT ID FROM dbo.Clients WHERE ClientCode = 'C_S_WD001'),	
-				(SELECT ID FROM dbo.Products WHERE ProductName = 'Inventistry'),	3.4
+				(SELECT ID FROM dbo.Products WHERE ProductName = 'Inventistry'),	3.4,			1
 			UNION SELECT	(SELECT ID FROM dbo.Clients WHERE ClientCode = 'C_S_LE001'),	
-				(SELECT ID FROM dbo.Products WHERE ProductName = 'PeoplePower'),	1.2
+				(SELECT ID FROM dbo.Products WHERE ProductName = 'PeoplePower'),	1.2,			1
 			UNION SELECT	(SELECT ID FROM dbo.Clients WHERE ClientCode = 'C_S_YP001'),	
-				(SELECT ID FROM dbo.Products WHERE ProductName = 'Accountible'),	3.5
+				(SELECT ID FROM dbo.Products WHERE ProductName = 'Accountible'),	3.5,			1
 			UNION SELECT	(SELECT ID FROM dbo.Clients WHERE ClientCode = 'C_S_YP001'),	
-				(SELECT ID FROM dbo.Products WHERE ProductName = 'FlogIT'),			1.7
+				(SELECT ID FROM dbo.Products WHERE ProductName = 'FlogIT'),			1.7,			1
 			UNION SELECT	(SELECT ID FROM dbo.Clients WHERE ClientCode = 'C_S_BH001'),	
-				(SELECT ID FROM dbo.Products WHERE ProductName = 'Accountible'),	3.7
+				(SELECT ID FROM dbo.Products WHERE ProductName = 'Accountible'),	3.7,			0
 			UNION SELECT	(SELECT ID FROM dbo.Clients WHERE ClientCode = 'C_S_BH001'),
-				(SELECT ID FROM dbo.Products WHERE ProductName = 'BankIT'),			2.0
+				(SELECT ID FROM dbo.Products WHERE ProductName = 'BankIT'),			2.0,			1
 
 		PRINT 'Populated client products table'
 
