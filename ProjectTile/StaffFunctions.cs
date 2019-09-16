@@ -404,12 +404,11 @@ namespace ProjectTile
                     return 0;
                 }
             }
-
         }
 
         // Entity-related functions
         
-        public static bool canAddStaffEntity(ref Staff thisPerson)
+        public static bool CanAddStaffEntity(ref Staff thisPerson)
         {
             try
             {
@@ -427,7 +426,7 @@ namespace ProjectTile
             }
         }
 
-        public static bool canRemoveStaffEntity(ref Staff thisPerson, int entityID)
+        public static bool CanRemoveStaffEntity(ref Staff thisPerson, int entityID)
         {
             // Don't allow if the Entity is the user's default, or the user has active projects in that Entity 
             try
@@ -567,7 +566,7 @@ namespace ProjectTile
             }
         }
 
-        public static int[] allowedStaffEntityIDs(int staffID)
+        public static int[] AllowedStaffEntityIDs(int staffID)
         {
             ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
             using (existingPtDb)
@@ -588,14 +587,14 @@ namespace ProjectTile
             }
         }
         
-        public static List<EntitiesSummaryRecord> allowedLinkedEntities (int staffID)
+        public static List<EntitiesSummaryRecord> AllowedLinkedEntities (int staffID)
         {
             ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
             using (existingPtDb)
             {
                 try
                 {
-                    var includeList = allowedStaffEntityIDs(staffID);
+                    var includeList = AllowedStaffEntityIDs(staffID);
                     int defaultEntity = (int)GetStaffMember(staffID).DefaultEntity;
 
                     List<EntitiesSummaryRecord> entitiesList = (from e in existingPtDb.Entities
@@ -619,14 +618,14 @@ namespace ProjectTile
             }
         }
 
-        public static List<EntitiesSummaryRecord> allowedUnlinkedEntities(int staffID)
+        public static List<EntitiesSummaryRecord> AllowedUnlinkedEntities(int staffID)
         {
             ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
             using (existingPtDb)
             {
                 try
                 {
-                    var avoidList = allowedStaffEntityIDs(staffID);
+                    var avoidList = AllowedStaffEntityIDs(staffID);
                     int defaultEntity = (int)GetStaffMember(staffID).DefaultEntity;
 
                     List<EntitiesSummaryRecord> entitiesList = (from e in existingPtDb.Entities
@@ -651,7 +650,7 @@ namespace ProjectTile
             }
         }     
         
-        public static bool toggleEntityStaff(List<StaffSummaryRecord> affectedStaff, bool addition, Entities thisEntity)
+        public static bool ToggleEntityStaff(List<StaffSummaryRecord> affectedStaff, bool addition, Entities thisEntity)
         {
             try
             {
@@ -662,7 +661,7 @@ namespace ProjectTile
                 {
                     int selectedFromID = thisRecord.ID;
                     Staff thisPerson = GetStaffMember(selectedFromID);
-                    bool canChange = addition ? canAddStaffEntity(ref thisPerson) : canRemoveStaffEntity(ref thisPerson, entityID);
+                    bool canChange = addition ? CanAddStaffEntity(ref thisPerson) : CanRemoveStaffEntity(ref thisPerson, entityID);
 
                     if (!canChange) { return false; }
                     else if (addition)
@@ -721,7 +720,7 @@ namespace ProjectTile
             }
         }
 
-        public static bool toggleStaffEntities(List<EntitiesSummaryRecord> affectedEntities, bool addition, Staff thisPerson)
+        public static bool ToggleStaffEntities(List<EntitiesSummaryRecord> affectedEntities, bool addition, Staff thisPerson)
         {
             try
             {
@@ -732,7 +731,7 @@ namespace ProjectTile
                 {
                     int selectedFromID = thisRecord.ID;
                     Entities thisEntity = EntityFunctions.GetEntity(selectedFromID);
-                    bool canChange = addition ? canAddStaffEntity(ref thisPerson) : canRemoveStaffEntity(ref thisPerson, selectedFromID);
+                    bool canChange = addition ? CanAddStaffEntity(ref thisPerson) : CanRemoveStaffEntity(ref thisPerson, selectedFromID);
 
                     if (!canChange) { return false; }
                     else if (addition)
@@ -791,7 +790,7 @@ namespace ProjectTile
             }
         }
 
-        public static bool makeDefault(List<StaffSummaryRecord> affectedStaff, Entities thisEntity)
+        public static bool MakeDefault(List<StaffSummaryRecord> affectedStaff, Entities thisEntity)
         {
             try
             {
@@ -826,7 +825,7 @@ namespace ProjectTile
             }
         }
 
-        public static bool changeDefault(int entityID, int staffID)
+        public static bool ChangeDefault(int entityID, int staffID)
         {
             Entities thisEntity = EntityFunctions.GetEntity(entityID);
             try
@@ -866,7 +865,7 @@ namespace ProjectTile
             }
         }
 
-        public static bool saveEntityStaffChanges(int entityID)
+        public static bool SaveEntityStaffChanges(int entityID)
         {
             bool myDefaultChanged = false;
             
@@ -927,12 +926,12 @@ namespace ProjectTile
                     EntityFunctions.UpdateMyDefaultEntity(ref newDefault); 
                 }
 
-                clearAnyChanges();
+                ClearAnyChanges();
                 return true;
             }
         }
 
-        public static bool saveStaffEntitiesChanges(int staffID)
+        public static bool SaveStaffEntitiesChanges(int staffID)
         {
             ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
             using (existingPtDb)
@@ -981,12 +980,12 @@ namespace ProjectTile
                     EntityFunctions.UpdateMyDefaultEntity(ref newDefault);
                 }
 
-                clearAnyChanges();
+                ClearAnyChanges();
                 return true;
             }
         }
 
-        public static bool ignoreAnyChanges()
+        public static bool IgnoreAnyChanges()
         {
             if (StaffIDsToAdd.Count > 0 || StaffIDsToRemove.Count > 0 || StaffDefaultsToSet.Count > 0 
                 || EntityIDsToAdd.Count > 0 || EntityIDsToRemove.Count > 0 || newDefaultID > 0)
@@ -999,7 +998,7 @@ namespace ProjectTile
             }
         }
 
-        public static void clearAnyChanges()
+        public static void ClearAnyChanges()
         {
             StaffIDsToAdd.Clear();
             StaffIDsToRemove.Clear();
@@ -1073,7 +1072,7 @@ namespace ProjectTile
 
         // Navigation
 
-        public static void returnToStaffPage(int staffID, string sourceMode = "Amend")
+        public static void ReturnToStaffPage(int staffID, string sourceMode = "Amend")
         {
             PageFunctions.ShowStaffPage(sourceMode, staffID);
         }

@@ -291,8 +291,8 @@ namespace ProjectTile
         {
             if (fromDatabase)
             {
-                StaffFunctions.EntitiesNotForStaff = StaffFunctions.allowedUnlinkedEntities(selectedStaffID);
-                StaffFunctions.EntitiesForStaff = StaffFunctions.allowedLinkedEntities(selectedStaffID);                
+                StaffFunctions.EntitiesNotForStaff = StaffFunctions.AllowedUnlinkedEntities(selectedStaffID);
+                StaffFunctions.EntitiesForStaff = StaffFunctions.AllowedLinkedEntities(selectedStaffID);                
             }
             EntitiesFrom.ItemsSource = StaffFunctions.EntitiesNotForStaff;
             EntitiesFrom.Items.SortDescriptions.Clear();
@@ -343,7 +343,7 @@ namespace ProjectTile
                         fromList.Add((StaffSummaryRecord)selectedRow);                        
                     }
                     
-                    bool success = StaffFunctions.toggleEntityStaff(fromList, true, selectedEntity);
+                    bool success = StaffFunctions.ToggleEntityStaff(fromList, true, selectedEntity);
                     if (success)
                     {
                         refreshStaffSummaries(false);
@@ -374,7 +374,7 @@ namespace ProjectTile
                         fromList.Add((EntitiesSummaryRecord)selectedRow);
                     }
 
-                    bool success = StaffFunctions.toggleStaffEntities(fromList, true, StaffFunctions.SelectedStaffMember);
+                    bool success = StaffFunctions.ToggleStaffEntities(fromList, true, StaffFunctions.SelectedStaffMember);
                     if (success)
                     {
                         refreshEntitySummaries(false);
@@ -405,7 +405,7 @@ namespace ProjectTile
                         toList.Add((StaffSummaryRecord)selectedRow);
                     }
 
-                    bool success = StaffFunctions.toggleEntityStaff(toList, false, selectedEntity);
+                    bool success = StaffFunctions.ToggleEntityStaff(toList, false, selectedEntity);
                     if (success)
                     {
                         refreshStaffSummaries(false);
@@ -436,7 +436,7 @@ namespace ProjectTile
                         toList.Add((EntitiesSummaryRecord)selectedRow);
                     }
 
-                    bool success = StaffFunctions.toggleStaffEntities(toList, false, StaffFunctions.SelectedStaffMember);
+                    bool success = StaffFunctions.ToggleStaffEntities(toList, false, StaffFunctions.SelectedStaffMember);
                     if (success)
                     {
                         refreshEntitySummaries(false);
@@ -475,7 +475,7 @@ namespace ProjectTile
                         if (thisRecord.Default == false)
                         {
                             int entityID = thisRecord.ID;
-                            bool success = StaffFunctions.changeDefault(entityID, selectedStaffID);
+                            bool success = StaffFunctions.ChangeDefault(entityID, selectedStaffID);
                             if (success)
                             {
                                 refreshEntitySummaries(false);
@@ -501,7 +501,7 @@ namespace ProjectTile
                             defaultList.Add((StaffSummaryRecord)selectedRow);
                         }
 
-                        bool success = StaffFunctions.makeDefault(defaultList, selectedEntity);
+                        bool success = StaffFunctions.MakeDefault(defaultList, selectedEntity);
                         if (success)
                         {
                             refreshStaffSummaries(false);
@@ -526,9 +526,9 @@ namespace ProjectTile
             refreshStaffGrid();
             if (StaffTo.Visibility == Visibility.Visible) 
             {
-                if (StaffFunctions.ignoreAnyChanges())
+                if (StaffFunctions.IgnoreAnyChanges())
                 {
-                    StaffFunctions.clearAnyChanges();
+                    StaffFunctions.ClearAnyChanges();
                     refreshStaffSummaries(true);
                 }
             }
@@ -589,9 +589,9 @@ namespace ProjectTile
 
         private void EntityList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (StaffFunctions.ignoreAnyChanges())
+            if (StaffFunctions.IgnoreAnyChanges())
             {
-                StaffFunctions.clearAnyChanges();
+                StaffFunctions.ClearAnyChanges();
                 string displayName = EntityList.SelectedValue.ToString();
                 if ((displayName) == PageFunctions.AllRecords)
                 {
@@ -622,21 +622,21 @@ namespace ProjectTile
         
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            if (StaffFunctions.ignoreAnyChanges())
+            if (StaffFunctions.IgnoreAnyChanges())
             {
-                StaffFunctions.clearAnyChanges();
+                StaffFunctions.ClearAnyChanges();
                 PageFunctions.ShowTilesPage();
             }
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            if (StaffFunctions.ignoreAnyChanges())
+            if (StaffFunctions.IgnoreAnyChanges())
             {
-                StaffFunctions.clearAnyChanges();
+                StaffFunctions.ClearAnyChanges();
                 if (backSource == "StaffPage")
                 {
-                    StaffFunctions.returnToStaffPage(selectedStaffID, sourceMode);
+                    StaffFunctions.ReturnToStaffPage(selectedStaffID, sourceMode);
                 }
                 else
                 {
@@ -718,7 +718,7 @@ namespace ProjectTile
         {
             bool confirm = MessageFunctions.QuestionYesNo("Are you sure you wish to save your amendments?", "Save changes?");
             if (!confirm) { return; }
-            bool success = (editMode == ByStaff) ? StaffFunctions.saveStaffEntitiesChanges(selectedStaffID) : StaffFunctions.saveEntityStaffChanges(selectedEntityID);
+            bool success = (editMode == ByStaff) ? StaffFunctions.SaveStaffEntitiesChanges(selectedStaffID) : StaffFunctions.SaveEntityStaffChanges(selectedEntityID);
             if (success)
             {
                 MessageFunctions.SuccessMessage("Your changes have been saved successfully. You can make further changes, go back to the previous screen, or close this window.", "Changes Saved");
@@ -728,9 +728,9 @@ namespace ProjectTile
 
         private void StaffCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (StaffFunctions.ignoreAnyChanges())
+            if (StaffFunctions.IgnoreAnyChanges())
             {
-                StaffFunctions.clearAnyChanges();
+                StaffFunctions.ClearAnyChanges();
                 selectedStaffName = StaffCombo.SelectedItem.ToString();
                 StaffFunctions.SelectedStaffMember = StaffFunctions.GetStaffMemberByName(selectedStaffName);
                 selectedStaffID = StaffFunctions.SelectedStaffMember.ID;                

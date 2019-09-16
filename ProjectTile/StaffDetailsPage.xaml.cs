@@ -67,7 +67,7 @@ namespace ProjectTile
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error retrieving query details", generalException);
-                StaffFunctions.returnToStaffPage(selectedStaffID);
+                StaffFunctions.ReturnToStaffPage(selectedStaffID);
             }
 
             if (pageMode == PageFunctions.New)
@@ -98,13 +98,13 @@ namespace ProjectTile
                     catch (Exception generalException) 
                     { 
                         MessageFunctions.Error("Error populating staff member data", generalException);
-                        StaffFunctions.returnToStaffPage(selectedStaffID);
+                        StaffFunctions.ReturnToStaffPage(selectedStaffID);
                     }
                 }
                 else
                 {
                     MessageFunctions.Error("Load error: no staff member loaded.", null);
-                    StaffFunctions.returnToStaffPage(selectedStaffID);
+                    StaffFunctions.ReturnToStaffPage(selectedStaffID);
                 }
             }
         }
@@ -177,7 +177,7 @@ namespace ProjectTile
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            StaffFunctions.returnToStaffPage(selectedStaffID);
+            StaffFunctions.ReturnToStaffPage(selectedStaffID);
         }
 
         private void NewPassword_LostFocus(object sender, RoutedEventArgs e)
@@ -214,7 +214,7 @@ namespace ProjectTile
                         selectedStaffID = returnID;
                     }
                     else { MessageFunctions.SuccessMessage("Changes saved successfully.", "Staff member amended"); }
-                    StaffFunctions.returnToStaffPage(selectedStaffID);
+                    StaffFunctions.ReturnToStaffPage(selectedStaffID);
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error saving details", generalException); }
