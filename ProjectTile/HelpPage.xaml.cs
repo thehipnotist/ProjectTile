@@ -18,7 +18,7 @@ namespace ProjectTile
     /// <summary>
     /// Interaction logic for HelpPage.xaml
     /// </summary>
-    public partial class HelpPage : Page
+    public partial class HelpPage : Page, INotifyPropertyChanged
     {
         // ---------------------- //
         // -- Global Variables -- //
@@ -100,7 +100,7 @@ namespace ProjectTile
                 CommitButton.Visibility = Visibility.Hidden;
                 CancelButtonText.Text = "Close";
 
-                //BackgroundText = "NewText";
+                //BackgroundText = "Testing";
             }
             
         }
@@ -118,8 +118,6 @@ namespace ProjectTile
         // Other/shared functions //
         protected void OnPropertyChanged(string eventName)
         {
-            //MessageBox.Show("Hi");
-
             try
             {
                 PropertyChangedEventHandler thisHandler = PropertyChanged;
