@@ -114,8 +114,8 @@ namespace ProjectTile
         {
             Visibility showHide = display ? Visibility.Visible : Visibility.Hidden;
             PleaseWaitLabel.Visibility = showHide;
-            SpinEllipse.Visibility = showHide;
-            SpinRectangle.Visibility = showHide;
+            //SpinEllipse.Visibility = showHide;
+            //SpinRectangle.Visibility = showHide;
 
             //MessageBox.Show(pageSuccess.ToString());
         }
