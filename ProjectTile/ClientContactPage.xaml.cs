@@ -411,7 +411,7 @@ namespace ProjectTile
                 if (ClientDataGrid.SelectedItem != null)
                 {
                     selectedClientGridRecord = (ClientGridRecord)ClientDataGrid.SelectedItem;
-                    ClientFunctions.GetClientByID(selectedClientGridRecord.ID, true); // Also updates 'master' SelectedClient
+                    ClientFunctions.SelectClient(selectedClientGridRecord.ID);
                     ContactButton.IsEnabled = true;
                     checkForSingleContact();
                 }
@@ -485,7 +485,7 @@ namespace ProjectTile
                     if (ClientCombo.SelectedItem != null) // No need for an 'else', won't be long...
                     {
                         ClientGridRecord thisRecord = (ClientGridRecord)ClientCombo.SelectedItem;
-                        ClientFunctions.GetClientByID(thisRecord.ID, true);
+                        ClientFunctions.SelectClient(thisRecord.ID);
                     }
                 }
                 refreshContactGrid();

@@ -199,22 +199,32 @@ namespace ProjectTile
 
         private void ViewClient_Click(object sender, RoutedEventArgs e)
         {
+            ClientFunctions.ResetClientParameters();
             PageFunctions.ShowClientPage(PageFunctions.View);
         }
 
         private void NewClient_Click(object sender, RoutedEventArgs e)
         {
+            ClientFunctions.ResetClientParameters();
             PageFunctions.ShowClientPage(PageFunctions.New);
         }
 
         private void AmendClient_Click(object sender, RoutedEventArgs e)
         {
+            ClientFunctions.ResetClientParameters();
             PageFunctions.ShowClientPage(PageFunctions.Amend);
         }
 
-        private void ExitMenu_Click(object sender, RoutedEventArgs e)
+        private void ClientContact_Click(object sender, RoutedEventArgs e)
         {
-            Close();
+            ClientFunctions.ResetClientParameters();
+            PageFunctions.ShowClientContactPage();
+        }
+
+        private void ClientProduct_Click(object sender, RoutedEventArgs e)
+        {
+            ClientFunctions.ResetClientParameters();
+            PageFunctions.ShowClientProductsPage();
         }
 
         private void HelpMenu_About_Click(object sender, RoutedEventArgs e)
@@ -222,15 +232,11 @@ namespace ProjectTile
             PageFunctions.ShowHelpPage(PageFunctions.About);
         }
 
-        private void ClientContact_Click(object sender, RoutedEventArgs e)
+        private void ExitMenu_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowClientContactPage();
+            Close();
         }
 
-        private void ClientProduct_Click(object sender, RoutedEventArgs e)
-        {
-            PageFunctions.ShowClientProductsPage(false);
-        }
 
     } // class
 } // namespace

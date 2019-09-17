@@ -476,7 +476,7 @@ namespace ProjectTile
 
         private void ProductButton_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowClientProductsPage((pageMode == PageFunctions.View));
+            PageFunctions.ShowClientProductsPage();
         }
 
         private void ContactButton_Click(object sender, RoutedEventArgs e)
@@ -496,7 +496,7 @@ namespace ProjectTile
                 if (ClientDataGrid.SelectedItem != null)
                 {
                     selectedRecord = (ClientGridRecord)ClientDataGrid.SelectedItem;
-                    ClientFunctions.GetClientByID(selectedRecord.ID, true);
+                    ClientFunctions.SelectClient(selectedRecord.ID);
                     toggleSideButtons(true);
                 }
                 else { clearSelection(); }

@@ -48,7 +48,7 @@ namespace ProjectTile
         
         public static void ChangePage(string newPageSource)
         {                
-            if (newPageSource != TilesPage) // && !blnFirstLoad)
+            if (newPageSource != TilesPage)
             {
                 try
                 {
@@ -57,7 +57,7 @@ namespace ProjectTile
 
                     if (mainFrameSource != "TilesPage" && mainFrameSource == newPageName)
                     {
-                        var dInv1 = winMain.Dispatcher.Invoke(new Action(() => { navigate(TilesPage); }));
+                        var dInv1 = winMain.Dispatcher.Invoke(new Action(() => { navigate(TilesPage); })); // Open the tiles page in between to reset
                         var task1 = Task.Factory.StartNew(() => dInv1);
                         var dInv2 = winMain.Dispatcher.Invoke(new Action(() => { navigate(newPageSource); }));
                         Task task2 = task1.ContinueWith((antecedent) => dInv2);
@@ -86,7 +86,11 @@ namespace ProjectTile
         }
 
         // Individual pages //
-        public static void ShowTilesPage() { ChangePage(TilesPage); }
+        public static void ShowTilesPage()
+        {
+            ChangePage(TilesPage);
+            ClientFunctions.ResetClientParameters();
+        }
 
         public static void ShowEntityPage(string pageMode)
         {
@@ -142,13 +146,13 @@ namespace ProjectTile
             ChangePage("ContactDetailsPage.xaml?Mode=" + pageMode + ",ContactID=" + contactID.ToString());
         }
 
-        public static void ShowClientProductsPage(bool viewOnly = false, string sourcePageMode = "View")
+        public static void ShowClientProductsPage()
         {
             string pageMode; // Mode is based on viewOnly or permissions; sourcePageMode tells us what the previous screen was
-            if (viewOnly) { pageMode = View; }
+            if (ClientFunctions.SourcePageMode == PageFunctions.View) { pageMode = View; }
             else { pageMode = LoginFunctions.MyPermissions.Allow("EditClientProducts") ? Amend : View; }
 
-            ChangePage("ClientProductsPage.xaml?Mode=" + pageMode + ",SourceMode=" + sourcePageMode);
+            ChangePage("ClientProductsPage.xaml?Mode=" + pageMode);
         }
 
         public static void ShowHelpPage(string pageMode)
