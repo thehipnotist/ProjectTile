@@ -29,11 +29,13 @@ namespace ProjectTile
         public static List<ClientProductSummary> ClientsForProduct;
         public static List<int> ClientIDsToAdd = new List<int>();
         public static List<int> ClientIDsToRemove = new List<int>();
+        public static List<int> ClientIDsToUpdate = new List<int>();
 
         public static List<Products> ProductsNotForClient;
         public static List<ClientProductSummary> ProductsForClient;
         public static List<int> ProductIDsToAdd = new List<int>();
         public static List<int> ProductIDsToRemove = new List<int>();
+        public static List<int> ProductIDsToUpdate = new List<int>();
 
         // The following must be updated when opening a page from the menu and choosing a client, or cleared when returning to the menu or clearing client selection
         public static string SourcePage = "TilesPage";
@@ -856,57 +858,70 @@ namespace ProjectTile
             }
         }
 
-        private static void refineProductStatuses(ref List<ClientProductSummary> clientProducts)
+        private static ClientProductSummary.StatusType clientProductStatus(ClientProductSummary thisRecord)
         {
             try
             {
+                ClientProductSummary.StatusType newStatus = ClientProductSummary.StatusType.Inactive;
+
+                if (! (thisRecord.ID > 0)) { return ClientProductSummary.StatusType.Added; }
+
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
-                {
-                    foreach (ClientProductSummary cp in clientProducts)
-                    {
-                        List<Projects> relevantProjects =
-                            (from pp in existingPtDb.ProjectProducts
-                             join pj in existingPtDb.Projects on pp.ProjectID equals pj.ID
-                             where pp.ProductID == cp.ProductID && pj.ClientID == cp.ClientID
-                             orderby pj.StageCode descending
-                             select pj
-                            ).ToList();
+                {                                       
+                    List<Projects> relevantProjects =
+                        (from pp in existingPtDb.ProjectProducts
+                         join pj in existingPtDb.Projects on pp.ProjectID equals pj.ID
+                         where pp.ProductID == thisRecord.ProductID && pj.ClientID == thisRecord.ClientID
+                         orderby pj.StageCode descending
+                         select pj
+                        ).ToList();
 
-                        if (!cp.Live)
+                    if (!thisRecord.Live)
+                    {
+                        foreach (Projects rp in relevantProjects)
                         {
-                            foreach (Projects rp in relevantProjects)
+                            if (rp.StageCode >= LiveStage)
                             {
-                                if (rp.StageCode >= LiveStage)
-                                {
-                                    cp.Status = "Retired"; // This is checked first; if a project has been completed but the product is not active, it must have been retired
-                                    break;
-                                }
-                                else if (rp.TypeCode == "AS" || rp.TypeCode == "NS" || rp.TypeCode == "TO")
-                                {
-                                    cp.Status = "In Progress";
-                                    break;
-                                }
-                                else { cp.Status = "Inactive"; }
+                                newStatus = ClientProductSummary.StatusType.Retired; // This is checked first; if a project has been completed but the product is not active, it must have been retired
+                                break;
                             }
-                        }
-                        else
-                        {
-                            foreach (Projects rp in relevantProjects)
+                            else if (rp.TypeCode == "AS" || rp.TypeCode == "NS" || rp.TypeCode == "TO")
                             {
-                                if (rp.StageCode <= LiveStage)
-                                {
-                                    cp.Status = "Maintenance";
-                                    break;
-                                }
+                                newStatus = ClientProductSummary.StatusType.InProgress;
+                                break;
+                            }
+                            else { newStatus = ClientProductSummary.StatusType.Inactive; }
+                        }
+                    }
+                    else
+                    {
+                        newStatus = ClientProductSummary.StatusType.Live;
+                        foreach (Projects rp in relevantProjects)
+                        {
+                            if (rp.StageCode <= LiveStage)
+                            {
+                                newStatus = ClientProductSummary.StatusType.Updates;
+                                break;
                             }
                         }
                     }
                 }
+
+                return newStatus;
             }
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error setting product statuses", generalException);
+                return ClientProductSummary.StatusType.New;
+            }
+        }
+
+        private static void refineProductStatuses(ref List<ClientProductSummary> clientProducts)
+        {
+            foreach (ClientProductSummary cp in clientProducts)
+            {
+                cp.StatusID = clientProductStatus(cp);
             }
         }
         
@@ -934,7 +949,7 @@ namespace ProjectTile
                             ProductName = p.ProductName,
                             LatestVersion = (decimal)p.LatestVersion,
                             Live = (bool) cp.Live,
-                            Status = (cp.Live == true) ? "Live" : "New",
+                            StatusID = (cp.Live == true) ? ClientProductSummary.StatusType.Live : ClientProductSummary.StatusType.New,
                             ClientVersion = (decimal)cp.ProductVersion
                         }
                         ).ToList();
@@ -995,7 +1010,7 @@ namespace ProjectTile
                             ProductName = p.ProductName,
                             LatestVersion = (decimal)p.LatestVersion,
                             Live = (bool)cp.Live,
-                            Status = (cp.Live == true) ? "Live" : "New",
+                            StatusID = (cp.Live == true) ? ClientProductSummary.StatusType.Live : ClientProductSummary.StatusType.New,
                             ClientVersion = (decimal)cp.ProductVersion
                         }
                         ).ToList();
@@ -1044,20 +1059,26 @@ namespace ProjectTile
                     try
                     {
                         int clientID = thisClient.ID;
-
-                        //MessageFunctions.InvalidMessage("Client ID is " + clientID.ToString() + ", Product ID is " + productID.ToString(), "Testing");
-
-                        List<Projects> openProjects = (from pj in existingPtDb.Projects
-                                                  join pp in existingPtDb.ProjectProducts on pj.ID equals pp.ProjectID
-                                                  where pj.ClientID == clientID && pp.ProductID == productID  && pj.StageCode < LiveStage
-                                                  select pj).ToList();                        
-
-                        if (openProjects.Count > 0)
+                        ClientProducts thisClientProduct = existingPtDb.ClientProducts.FirstOrDefault(cp => cp.ClientID == clientID && cp.ProductID == productID);
+                        if (thisClientProduct != null)
                         {
-                            MessageFunctions.InvalidMessage("Cannot remove this product from " + thisClient.ClientName + " as they have projects involving it.", "Projects Found");
-                            return false;
+                            if (thisClientProduct.Live == true)
+                            {
+                                MessageFunctions.InvalidMessage("Cannot remove this product from " + thisClient.ClientName + " as it is currently Live.", "Live Product");
+                                return false;
+                            }
+
+                            List<Projects> openProjects = (from pj in existingPtDb.Projects
+                                                           join pp in existingPtDb.ProjectProducts on pj.ID equals pp.ProjectID
+                                                           where pj.ClientID == clientID && pp.ProductID == productID && pj.StageCode < LiveStage
+                                                           select pj).ToList();
+                            if (openProjects.Count > 0)
+                            {
+                                MessageFunctions.InvalidMessage("Cannot remove this product from " + thisClient.ClientName + " as they have projects involving it.", "Projects Found");
+                                return false;
+                            }
                         }
-                        else { return true; }
+                        return true;
                     }
                     catch (Exception generalException)
                     {
@@ -1101,7 +1122,7 @@ namespace ProjectTile
                                     ProductName = thisProduct.ProductName,
                                     LatestVersion = (decimal)thisProduct.LatestVersion,
                                     Live = false,
-                                    Status = "Added",
+                                    StatusID = ClientProductSummary.StatusType.Added,
                                     ClientVersion = Math.Round((decimal)thisProduct.LatestVersion, 1)
                                 };                            
                             ClientsForProduct.Add(addRecord);
@@ -1172,7 +1193,7 @@ namespace ProjectTile
                                 ProductName = thisProduct.ProductName,
                                 LatestVersion = (decimal)thisProduct.LatestVersion,
                                 Live = false,
-                                Status = "Added",
+                                StatusID = ClientProductSummary.StatusType.Added,
                                 ClientVersion = Math.Round((decimal)thisProduct.LatestVersion,1)
                             };   
                             ProductsForClient.Add(addRecord);
@@ -1240,10 +1261,10 @@ namespace ProjectTile
         {
             ClientIDsToAdd.Clear();
             ClientIDsToRemove.Clear();
-//            ClientDefaultsToSet.Clear();
+            ClientIDsToUpdate.Clear();
             ProductIDsToAdd.Clear();
             ProductIDsToRemove.Clear();
-//            newDefaultID = 0;
+            ProductIDsToRemove.Clear();
         }
 
         public static bool SaveClientProductChanges(int clientID)
@@ -1254,6 +1275,174 @@ namespace ProjectTile
         public static bool SaveProductClientChanges(int clientID)
         {
             throw new NotImplementedException();
+        }
+
+        private static void queueClientProductUpdate(ClientProductSummary thisRecord, bool byClient)
+        {
+            if (byClient) 
+            {
+                int productID = thisRecord.ProductID;
+                if (!ProductIDsToAdd.Contains(productID) && !ProductIDsToUpdate.Contains(productID))
+                {
+                    ProductIDsToUpdate.Add(productID);
+                }
+            }
+            else
+            {
+                int clientID = thisRecord.ClientID;
+                if (!ClientIDsToAdd.Contains(clientID) && !ClientIDsToUpdate.Contains(clientID))
+                {
+                    ClientIDsToUpdate.Add(clientID);
+                }
+            }
+        }
+        
+        public static bool ActivateProduct(ClientProductSummary thisRecord, bool byClient)
+        {
+            try
+            {            
+                string reason = "";
+                bool allowActivate = false;
+                //bool updateStatus = false;
+
+                if (thisRecord.Live)
+                {
+                    MessageFunctions.Error("This record is already Live", null);
+                    return false;
+                }
+
+                switch (thisRecord.StatusID)
+                {
+                    case ClientProductSummary.StatusType.Added: 
+                        reason = "has just been added. A project is normally required to activate new products.";
+                        allowActivate = true;
+                        //updateStatus = false;
+                        break;
+                    case ClientProductSummary.StatusType.New: 
+                        reason = "is new. A project is normally required to activate new products.";
+                        allowActivate = true;
+                        //updateStatus = true;
+                        break;
+                    case ClientProductSummary.StatusType.InProgress:
+                    case ClientProductSummary.StatusType.Updates:
+                        reason = "has project work in progress. The status should be updated via the project.";
+                        allowActivate = false;
+                        break;
+                    default:  
+                        reason = "";
+                        allowActivate = true;
+                        //updateStatus = true;
+                        break;
+                }                
+
+                if (!allowActivate)
+                {
+                    MessageFunctions.InvalidMessage("You cannot activate this product record because it " + reason, "Cannot Activate");
+                    return false;
+                }
+                else
+                {
+                    string check = (reason == "")? "": " It " + reason; 
+                    bool activate = MessageFunctions.QuestionYesNo("Are you sure you want to activate this product?" + check);
+                    if (activate) 
+                    {
+                        thisRecord.Live = true;
+                        //if (updateStatus) { thisRecord.StatusID = ClientProductSummary.StatusType.Live; }
+                        thisRecord.StatusID = clientProductStatus(thisRecord);
+                        queueClientProductUpdate(thisRecord, byClient);                        
+                    }
+                    return activate; 
+                } 
+ 
+            }
+            catch (Exception generalException) 
+            { 
+                MessageFunctions.Error("Error activating client product record", generalException);
+                return false;
+            }
+        }
+
+        public static bool DisableProduct(ClientProductSummary thisRecord, bool byClient)
+        {
+            try
+            {
+                string reason = "";
+//                ClientProductSummary.StatusType newStatus = thisRecord.StatusID;
+
+                if (!thisRecord.Live)
+                {
+                    MessageFunctions.Error("This record is not already Live", null);
+                    return false;
+                }
+
+                switch (thisRecord.StatusID)
+                {
+//                    case ClientProductSummary.StatusType.Added:
+//                       break; // Just don't update the status
+                    case ClientProductSummary.StatusType.InProgress:
+                        reason = "has project work in progress. The status should normally be updated via the project.";
+                        break;
+//                    case ClientProductSummary.StatusType.Live:
+//                        newStatus = ClientProductSummary.StatusType.Retired;
+//                        break;
+                    case ClientProductSummary.StatusType.Updates:
+                        reason = "has project work in progress. The status should normally be updated via the project.";
+                        break;
+                    default:
+//                        newStatus = ClientProductSummary.StatusType.Inactive;
+                        break;
+                }
+
+                string check = (reason == "") ? "" : " It " + reason;
+                bool deactivate = MessageFunctions.QuestionYesNo("Are you sure you want to disable this product?" + check);
+                if (deactivate)
+                {
+                    thisRecord.Live = false;
+//                    thisRecord.StatusID = newStatus;
+                    thisRecord.StatusID = clientProductStatus(thisRecord);
+                    queueClientProductUpdate(thisRecord, byClient);
+                }
+                return deactivate;               
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error activating client product record", generalException);
+                return false;
+            }
+        }
+
+        public static bool AmendVersion(ClientProductSummary thisRecord, string version, bool byClient)
+        {           
+            decimal versionNumber;
+            bool carryOn = false;
+
+            if (!Decimal.TryParse(version, out versionNumber))
+            {
+                MessageFunctions.Error("Cannot update the version: the given number is not a decimal.", null);
+                return false;
+            }
+            else if (versionNumber == thisRecord.ClientVersion) { return false;  }
+            else if (thisRecord.LatestVersion < versionNumber)
+            {
+                MessageFunctions.InvalidMessage("The entered version number is higher than the latest product version. Please try again.", "Invalid version");
+                return false;
+            }
+            else if (thisRecord.ClientVersion > versionNumber)
+            {
+                carryOn = MessageFunctions.QuestionYesNo("The entered version number is lower than the current one. Is this correct?");               
+            }
+            else
+            {
+                carryOn = MessageFunctions.QuestionYesNo("Update the client's version of this product? This is not immediately saved, so it can be undone using the 'Back' button.");
+            }
+
+            if (!carryOn) { return false; }
+            else
+            {
+                thisRecord.ClientVersion = versionNumber;
+                queueClientProductUpdate(thisRecord, byClient);
+                return true;
+            }
         }
 
         // Navigation

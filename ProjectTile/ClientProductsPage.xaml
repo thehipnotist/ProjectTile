@@ -38,10 +38,8 @@
                 <Label x:Name="ProductLabel" Content="Product" HorizontalAlignment="Right" Height="30" Margin="0,45,200,0" VerticalAlignment="Top" Width="55" FontWeight="Bold"/>
                 <ComboBox x:Name="ProductCombo" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="180" SelectionChanged="ProductCombo_SelectionChanged"
                           DisplayMemberPath="ProductName"/>
-                <Label x:Name="VersionLabel" Content="Version" HorizontalAlignment="Right" Height="30" Margin="135,45,225,0" VerticalAlignment="Top" Width="55" FontWeight="Bold"/>
-                <TextBox x:Name="Version" HorizontalAlignment="Right" Height="30" Margin="190,45,145,0" VerticalAlignment="Top" Width="75" ToolTip="Type new version if upgraded" 
-                         LostFocus="Version_LostFocus" IsEnabled="false" Style="{DynamicResource PaddedTextBox}" PreviewTextInput="Version_PreviewTextInput"/>                
-                <Button x:Name="DisableButton" HorizontalAlignment="Right" Height="30" Margin="15,45,15,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
+
+                <Button x:Name="DisableButton" HorizontalAlignment="Right" Height="30" Margin="15,45,160,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" IsEnabled="False" Click="DisableButton_Click">
                     <StackPanel x:Name="DisablePanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Frame x:Name="EnableImage" Content="{StaticResource EnableIcon}"  Visibility="Collapsed"/>
@@ -49,8 +47,12 @@
                         <TextBlock x:Name="DisableButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Disable" Margin="0,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
+                <Label x:Name="VersionLabel" Content="Version" HorizontalAlignment="Right" Height="30" Margin="135,45,75,0" VerticalAlignment="Top" Width="55" FontWeight="Bold"/>
+                <TextBox x:Name="Version" HorizontalAlignment="Right" Height="30" Margin="190,45,15,0" VerticalAlignment="Top" Width="55" ToolTip="Type new version if upgraded" 
+                         LostFocus="Version_LostFocus" IsEnabled="false" Style="{DynamicResource PaddedTextBox}" PreviewTextInput="Version_PreviewTextInput"
+                         HorizontalContentAlignment="Right"/>                
 
-                <Label x:Name="ClientLabel" Content="Client" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="95" FontWeight="Bold"/>
+                <Label x:Name="ClientLabel" Content="Client Name" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="95" FontWeight="Bold"/>
                 <ComboBox x:Name="ClientCombo" HorizontalAlignment="Left" Height="30" Margin="115,45,15,0" VerticalAlignment="Top" Width="180" SelectionChanged="ClientCombo_SelectionChanged"
                           DisplayMemberPath="ClientName"/>
                 <DataGrid x:Name="ClientDataGrid" MinHeight="290" Margin="15,90,15,15" MinWidth="625" AutoGenerateColumns="False" IsReadOnly="True" BorderBrush="{StaticResource PtBrushClient3}" 

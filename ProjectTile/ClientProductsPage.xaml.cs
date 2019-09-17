@@ -23,15 +23,12 @@ namespace ProjectTile
         // Global/page parameters //
         string pageMode;
         string fromSource = "";
-        //string sourceMode = "";
         string backSource = "";
-        //int selectedClientID = 0;
 
         // Current variables //
         bool activeOnly = false;
         string nameContains = "";
         int selectedProductID = 0;
-        //string selectedClientName = "";
 
         string activeInstructions = "Select a client and click 'Products', or select an Product and click 'Clients'.";
         string activePageHeader = "Products for each Client";
@@ -67,8 +64,6 @@ namespace ProjectTile
             try
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
-                //sourceMode = PageFunctions.pageParameter(this, "SourceMode");
-                //selectedClientID = Int32.Parse(PageFunctions.pageParameter(this, "ClientID"));
                 refreshProductCombo();
             }
             catch (Exception generalException)
@@ -127,8 +122,6 @@ namespace ProjectTile
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating Product filter list", generalException); }
         }
-
-        // Data retrieval //
 
         // Other/shared functions //
         private void refreshClientDataGrid()
@@ -335,6 +328,22 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error activating the 'Add' button", generalException); }
         }
 
+        private void toggleDisableButton(bool IsLive)
+        {
+            if (IsLive)
+            {
+                DisableButtonText.Text = "Disable";
+                DisableImage.Visibility = Visibility.Visible;
+                EnableImage.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                DisableButtonText.Text = "Activate";
+                DisableImage.Visibility = Visibility.Collapsed;
+                EnableImage.Visibility = Visibility.Visible;
+            }
+        }
+        
         private void toActivated(bool ClientList)
         {
             try
@@ -350,19 +359,7 @@ namespace ProjectTile
                 {
                     Version.Text = selectedClientProduct.ClientVersion.ToString();
                     RemoveButton.IsEnabled = DisableButton.IsEnabled = Version.IsEnabled = true;
-                    
-                    if (selectedClientProduct.Live)
-                    {
-                        DisableButtonText.Text = "Disable";
-                        DisableImage.Visibility = Visibility.Visible;
-                        EnableImage.Visibility = Visibility.Collapsed;
-                    }
-                    else
-                    {
-                        DisableButtonText.Text = "Activate";
-                        DisableImage.Visibility = Visibility.Collapsed;
-                        EnableImage.Visibility = Visibility.Visible;
-                    }
+                    toggleDisableButton(selectedClientProduct.Live);
                 }
                 else
                 {
@@ -559,7 +556,13 @@ namespace ProjectTile
         }
 */
  
-        private void togglActiveOnly(bool isChecked)
+        private void clearChanges()
+        {
+            ClientFunctions.ClearAnyChanges();
+            selectedClientProduct = null;
+        }
+
+        private void toggleActiveOnly(bool isChecked)
         {
             activeOnly = isChecked;
             refreshClientDataGrid();
@@ -567,10 +570,16 @@ namespace ProjectTile
             {
                 if (ClientFunctions.IgnoreAnyChanges())
                 {
-                    ClientFunctions.ClearAnyChanges();
+                    clearChanges();
                     refreshClientSummaries(true);
                 }
             }
+        }
+
+        private void refreshEditPage()
+        {
+            if (editMode == ByClient) { refreshProductSummaries(false); }
+            else { refreshClientSummaries(false); }
         }
 
         // ---------------------- //
@@ -583,12 +592,12 @@ namespace ProjectTile
         // Control-specific events //
         private void ActiveOnly_CheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            togglActiveOnly(true);
+            toggleActiveOnly(true);
         }
 
         private void ActiveOnly_CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            togglActiveOnly(false);
+            toggleActiveOnly(false);
         }
 
         private void NameContains_LostFocus(object sender, RoutedEventArgs e)
@@ -628,7 +637,7 @@ namespace ProjectTile
         {
             if (ClientFunctions.IgnoreAnyChanges())
             {
-                ClientFunctions.ClearAnyChanges();
+                clearChanges();
                 Products selectedRecord = (Products) ProductCombo.SelectedItem;
                 if (selectedRecord.ProductName == PageFunctions.AllRecords)
                 {
@@ -661,7 +670,7 @@ namespace ProjectTile
         {
             if (ClientFunctions.IgnoreAnyChanges())
             {
-                ClientFunctions.ClearAnyChanges();
+                clearChanges();
                 ClientFunctions.ReturnToTilesPage();
             }
         }
@@ -670,7 +679,7 @@ namespace ProjectTile
         {
             if (ClientFunctions.IgnoreAnyChanges())
             {
-                ClientFunctions.ClearAnyChanges();
+                clearChanges();
                 if (backSource == "ClientPage")
                 {
                     PageFunctions.ShowClientPage(pageMode = ClientFunctions.SourcePageMode);
@@ -762,7 +771,7 @@ namespace ProjectTile
         {
             if (ClientFunctions.IgnoreAnyChanges())
             {
-                ClientFunctions.ClearAnyChanges();
+                clearChanges();
                 if (ClientCombo.SelectedItem != null)
                 {
                     selectedGridRecord = (ClientGridRecord)ClientCombo.SelectedItem;
@@ -774,12 +783,25 @@ namespace ProjectTile
 
         private void DisableButton_Click(object sender, RoutedEventArgs e)
         {
-
+            if (selectedClientProduct == null) { MessageFunctions.Error("No client product record selected.", null); }
+            try
+            {
+                bool success = false;
+                bool byClient = (editMode == ByClient);
+                bool enabling = (EnableImage.Visibility == Visibility.Visible);
+                
+                success = enabling ? ClientFunctions.ActivateProduct(selectedClientProduct, byClient) : ClientFunctions.DisableProduct(selectedClientProduct, byClient); 
+                if (success) { refreshEditPage(); }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error processing status change", generalException); }
         }
 
         private void Version_LostFocus(object sender, RoutedEventArgs e)
-        {
-
+        {            
+            if (selectedClientProduct == null) { MessageFunctions.Error("No client product record selected.", null); }
+            bool success = ClientFunctions.AmendVersion(selectedClientProduct, Version.Text, (editMode == ByClient));
+            if (success) { refreshEditPage(); }
+            else { Version.Text = selectedClientProduct.ClientVersion.ToString(); }
         }
 
         private void Version_PreviewTextInput(object sender, TextCompositionEventArgs e)
