@@ -59,7 +59,7 @@ namespace ProjectTile
                 demoCo = ", a demonstration company";
                 if (LoginFunctions.FirstLoad)
                 {
-                    Instructions.Content = "To create a new Entity to work in, go to the Entity menu or hover over 'Entity' below, and choose 'Create New Entity'.";
+                    Instructions.Content = "To create a new empty Entity, choose the Entity menu or 'Entity' tile below, then 'Create New Entity'.";
                     Instructions.Visibility = myPermissions.Allow("AddEntities") ? Visibility.Visible : Visibility.Hidden;
                     LoginFunctions.FirstLoad = false;
                 }
@@ -354,7 +354,7 @@ namespace ProjectTile
 
         private void ClientButton_Product_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowClientProductsPage(false);
+            PageFunctions.ShowClientProductsPage();
         }
         
     } // class
