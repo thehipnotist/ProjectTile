@@ -149,7 +149,7 @@
                         <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Amend Staff Details"/>
                     </Label>
                 </Button>
-                <Button x:Name="StaffButton_Entities" Height="120" Width="120" Margin="45,90,0,0" Background="{StaticResource PtBrushStaff1}" MouseLeave="buttonMouseOut" HorizontalAlignment="Left" 
+                <Button x:Name="StaffButton_Entities" Height="120" Width="120" Margin="45,90,0,0" Background="{StaticResource PtBrushEntity2}" MouseLeave="buttonMouseOut" HorizontalAlignment="Left" 
                         VerticalAlignment="Top" Visibility="Hidden" Click="StaffButton_Entities_Click" Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{StaticResource PtGradientStaff1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle2}">
@@ -193,7 +193,7 @@
                         <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Change Password"/>
                     </Label>
                 </Button>
-                <Button x:Name="LoginButton_Exit" HorizontalAlignment="Left" Height="120" Margin="495,210,0,0" VerticalAlignment="Top" Width="120" Background="{StaticResource PtBrushLogin1}" 
+                <Button x:Name="LoginButton_Exit" HorizontalAlignment="Left" Height="120" Margin="495,210,0,0" VerticalAlignment="Top" Width="120" Background="{StaticResource PtBrushExit2}"
                         MouseLeave="buttonMouseOut" Click="LoginButton_Exit_Click" Visibility="Hidden" Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{StaticResource PtGradientLogin1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle2}">
@@ -229,7 +229,7 @@
                         <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Client Contacts"/>
                     </Label>
                 </Button>
-                <Button x:Name="ClientButton_Product" Height="120" Width="120" Margin="120,135,0,0" Background="{StaticResource PtBrushClient1}" MouseLeave="buttonMouseOut" HorizontalAlignment="Left" 
+                <Button x:Name="ClientButton_Product" Height="120" Width="120" Margin="120,135,0,0" Background="{StaticResource PtBrushProduct2}" MouseLeave="buttonMouseOut" HorizontalAlignment="Left" 
                         VerticalAlignment="Top" Grid.Column="2" Visibility="Hidden" Click="ClientButton_Product_Click" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{StaticResource PtGradientClient1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">

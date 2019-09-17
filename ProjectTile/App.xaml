@@ -173,7 +173,17 @@
 
         <Color x:Key="PtColorHelp1" R="233" G="233" B="241" A="233"/>
         <SolidColorBrush x:Key="PtBrushHelp1" Color="{StaticResource PtColorHelp1}"/>
+        
+        <!-- Blacks -->
+        <Color x:Key="PtColorExit3" R="0" G="0" B="0"  A="255"/>
+        <SolidColorBrush x:Key="PtBrushExit3" Color="{StaticResource PtColorExit3}"/>
 
+        <Color x:Key="PtColorExit2" R="77" G="77" B="77" A="255"/>
+        <SolidColorBrush x:Key="PtBrushExit2" Color="{StaticResource PtColorExit2}"/>
+
+        <Color x:Key="PtColorExit1" R="153" G="153" B="153" A="233"/>
+        <SolidColorBrush x:Key="PtBrushExit1" Color="{StaticResource PtColorExit1}"/>
+        
         <!-- Tooltips -->
         <ToolTip x:Key="EntitiesTip" Content="Entities are logical divisions of the business such as Companies, Legal Entities or Business Units"/>
         <ToolTip x:Key="LoginTip" Content="Functions relating to your ProjectTile login details"/>

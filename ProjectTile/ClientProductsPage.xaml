@@ -23,7 +23,7 @@
         <Label x:Name="PageHeader" Content="Products for each Client" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="635" FontWeight="Bold" Background="{x:Null}" 
                Margin="20,0,0,0" Foreground="White" Grid.Column="1"/>
 
-        <Border MinHeight="400" MinWidth="655" Height="Auto" Width="Auto" Margin="0,0,0,0" BorderBrush="{StaticResource PtBrushClient3}" Style="{DynamicResource SectionBorder}" Grid.Row="1" 
+        <Border MinHeight="400" MinWidth="655" Height="Auto" Width="Auto" Margin="0,0,0,0" BorderBrush="{StaticResource PtBrushProduct3}" Style="{DynamicResource SectionBorder}" Grid.Row="1" 
                 Grid.Column="1">
             <Grid MinWidth="655" Width="{Binding ElementName=CentreColumn, Path=ActualWidth}">
                 <Grid.RowDefinitions>
@@ -32,12 +32,23 @@
                 <Label x:Name="NameContainsLabel" Content="Name Contains" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="100" FontWeight="Bold"/>
                 <Label x:Name="Instructions" Content="" HorizontalAlignment="Left" Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
                 <TextBox x:Name="NameContains" HorizontalAlignment="Left" Height="30" Margin="115,45,0,0" VerticalAlignment="Top" Width="120" ToolTip="Type and tab to filter" 
-                         TabIndex="2" LostFocus="NameContains_LostFocus" KeyUp="NameContains_KeyUp" Style="{DynamicResource PaddedTextBox}" CharacterCasing="Upper"/>
-                <CheckBox x:Name="ActiveOnly_CheckBox" Content="Active Only" HorizontalAlignment="Center" Height="30" Margin="275,45,280,0" VerticalAlignment="Top" Width="100" FontWeight="Bold" 
+                         LostFocus="NameContains_LostFocus" KeyUp="NameContains_KeyUp" Style="{DynamicResource PaddedTextBox}" CharacterCasing="Upper"/>
+                <CheckBox x:Name="ActiveOnly_CheckBox" Content="Active Only" HorizontalAlignment="Center" Height="30" Margin="25,45,15,0" VerticalAlignment="Top" Width="100" FontWeight="Bold" 
                           VerticalContentAlignment="Center" Checked="ActiveOnly_CheckBox_Checked" Unchecked="ActiveOnly_CheckBox_Unchecked"/>
                 <Label x:Name="ProductLabel" Content="Product" HorizontalAlignment="Right" Height="30" Margin="0,45,200,0" VerticalAlignment="Top" Width="55" FontWeight="Bold"/>
                 <ComboBox x:Name="ProductCombo" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="180" SelectionChanged="ProductCombo_SelectionChanged"
                           DisplayMemberPath="ProductName"/>
+                <Label x:Name="VersionLabel" Content="Version" HorizontalAlignment="Right" Height="30" Margin="135,45,225,0" VerticalAlignment="Top" Width="55" FontWeight="Bold"/>
+                <TextBox x:Name="Version" HorizontalAlignment="Right" Height="30" Margin="190,45,145,0" VerticalAlignment="Top" Width="75" ToolTip="Type new version if upgraded" 
+                         LostFocus="Version_LostFocus" IsEnabled="false" Style="{DynamicResource PaddedTextBox}" PreviewTextInput="Version_PreviewTextInput"/>                
+                <Button x:Name="DisableButton" HorizontalAlignment="Right" Height="30" Margin="15,45,15,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
+                        FontWeight="Bold" IsEnabled="False" Click="DisableButton_Click">
+                    <StackPanel x:Name="DisablePanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                        <Frame x:Name="EnableImage" Content="{StaticResource EnableIcon}"  Visibility="Collapsed"/>
+                        <Frame x:Name="DisableImage" Content="{StaticResource DisableIcon}"  Margin="0,0,5,0"/>
+                        <TextBlock x:Name="DisableButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Disable" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
 
                 <Label x:Name="ClientLabel" Content="Client" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="95" FontWeight="Bold"/>
                 <ComboBox x:Name="ClientCombo" HorizontalAlignment="Left" Height="30" Margin="115,45,15,0" VerticalAlignment="Top" Width="180" SelectionChanged="ClientCombo_SelectionChanged"
@@ -45,9 +56,9 @@
                 <DataGrid x:Name="ClientDataGrid" MinHeight="290" Margin="15,90,15,15" MinWidth="625" AutoGenerateColumns="False" IsReadOnly="True" BorderBrush="{StaticResource PtBrushClient3}" 
                           SelectionChanged="ClientDataGrid_SelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Top" Height="256">
                     <DataGrid.Columns>
-                        <DataGridTextColumn x:Name="IDColumn" Binding="{Binding ID}" ClipboardContentBinding="{x:Null}" Header="ID" Visibility="Collapsed"/>
-                        <DataGridTextColumn x:Name="ClientNameColumn" Binding="{Binding ClientName}" ClipboardContentBinding="{x:Null}" Header="Name" Width="*"/>                        
+                        <DataGridTextColumn x:Name="IDColumn" Binding="{Binding ID}" ClipboardContentBinding="{x:Null}" Header="ID" Visibility="Collapsed"/>                                               
                         <DataGridTextColumn x:Name="ClientCodeColumn" Binding="{Binding ClientCode}" ClipboardContentBinding="{x:Null}" Header="Code"/>
+                        <DataGridTextColumn x:Name="ClientNameColumn" Binding="{Binding ClientName}" ClipboardContentBinding="{x:Null}" Header="Name" Width="*"/>
                         <DataGridCheckBoxColumn x:Name="ActiveColumn" Binding="{Binding ActiveClient, Mode=OneWay}" ClipboardContentBinding="{x:Null}" Header="Active" IsReadOnly="True"/>
                         <DataGridTextColumn x:Name="ManagerColumn" Binding="{Binding ManagerName}" ClipboardContentBinding="{x:Null}" Header="Account Manager"/>
                     </DataGrid.Columns>
@@ -59,9 +70,9 @@
                     <ListView.View>
                         <GridView>
                             <GridViewColumn x:Name="ClientIDFromCol" DisplayMemberBinding="{Binding ID}" Header="ID" Width="0"/>
-                            <GridViewColumn x:Name="ClientNameFromCol" DisplayMemberBinding="{Binding ClientName}" Header="Name" Width="125"/>                            
-                            <GridViewColumn x:Name="ClientCodeCol" DisplayMemberBinding="{Binding ClientCode}" Header="Code" Width="75"/>                           
-                            <GridViewColumn x:Name="ClientActiveFromCol" Header="Active" Width="Auto" CellTemplate="{DynamicResource ActiveTemplate}"/>
+                            <GridViewColumn x:Name="ClientCodeCol" DisplayMemberBinding="{Binding ClientCode}" Header="Code" Width="75"/>
+                            <GridViewColumn x:Name="ClientNameFromCol" DisplayMemberBinding="{Binding ClientName}" Header="Name" Width="135"/>                                                                                
+                            <GridViewColumn x:Name="ClientActiveFromCol" Header="Active" Width="50" CellTemplate="{DynamicResource ActiveTemplate}"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -70,9 +81,9 @@
                     <ListView.View>
                         <GridView>
                             <GridViewColumn x:Name="ProductIDFromCol" DisplayMemberBinding="{Binding ID}" Header="ID" Width="0"/>
-                            <GridViewColumn x:Name="ProductNameFromCol" DisplayMemberBinding="{Binding ProductName}" Header="Name" Width="75"/>
+                            <GridViewColumn x:Name="ProductNameFromCol" DisplayMemberBinding="{Binding ProductName}" Header="Name" Width="85"/>
                             <GridViewColumn x:Name="ProductDescFromCol" DisplayMemberBinding="{Binding ProductDescription}" Header="Description" Width="125"/>
-                            <GridViewColumn x:Name="ProductVersionFromCol" Header="Latest" Width="65" CellTemplate="{DynamicResource LatestVersionTemplate}"/>
+                            <GridViewColumn x:Name="ProductVersionFromCol" Header="Latest" Width="50" CellTemplate="{DynamicResource LatestVersionTemplate}"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -85,14 +96,7 @@
                         <TextBlock x:Name="AddButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Add" Margin="0,0,0,0" VerticalAlignment="Bottom"/>
                     </Grid>
                 </Button>
-                <Button x:Name="ActiveButton" HorizontalAlignment="Center" Height="45" Margin="300,110,300,0" VerticalAlignment="Center" Width="55" Style="{StaticResource RoundedButton}"  
-                	FontWeight="Bold" IsEnabled="False" Click="ActiveButton_Click">
-                    <Grid x:Name="ActivePanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Width="50">
-                        <Frame x:Name="PinImage" Content="{StaticResource PinIcon}" Margin="3,0,15,15"/>
-                        <Frame x:Name="UpImage" Content="{StaticResource UpIcon}" Margin="15,0,3,15"/>
-                        <TextBlock x:Name="ActiveButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Active" Margin="0,0,0,0" VerticalAlignment="Bottom"/>
-                    </Grid>
-                </Button>
+
                 <Button x:Name="RemoveButton" HorizontalAlignment="Center" Height="45" Margin="15,15,15,40" VerticalAlignment="Bottom" Width="55" Style="{StaticResource RoundedButton}"  
                 	FontWeight="Bold" IsEnabled="False" Click="RemoveButton_Click">
                     <Grid x:Name="RemovePanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Width="50">
@@ -101,17 +105,16 @@
                         <TextBlock x:Name="RemoveButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Remove" Margin="0,0,0,0" VerticalAlignment="Bottom"/>
                     </Grid>
                 </Button>
-
                 <Label x:Name="ToLabel" Content="Linked Products (Live in Bold)" HorizontalAlignment="Right" Height="30" Margin="15,90,15,0" VerticalAlignment="Top" Width="250" FontWeight="Bold" 
                        HorizontalContentAlignment="Right"/>
                 <ListView x:Name="ClientTo" Grid.Column="1" HorizontalAlignment="Right" Height="260" Margin="15,120,15,15" VerticalAlignment="Top" Width="265"
-                          BorderBrush="{StaticResource PtBrushClient3}" GotFocus="ClientTo_GotFocus" SelectionChanged="ClientTo_SelectionChanged" >
+                          BorderBrush="{StaticResource PtBrushClient3}" GotFocus="ClientTo_GotFocus" SelectionChanged="ClientTo_SelectionChanged" SelectionMode="Single" >
                     <ListView.View>
                         <GridView>
                             <GridViewColumn x:Name="ClientIDToCol" DisplayMemberBinding="{Binding ID}" Header="ID" Width="0"/>
-                            <GridViewColumn x:Name="ClientNameToCol" DisplayMemberBinding="{Binding ClientName}" Header="Name" Width="125"/>
-                            <GridViewColumn x:Name="ClientStatusToCol" DisplayMemberBinding="{Binding Status}" Header="Status" Width="65"/>
-                            <GridViewColumn x:Name="ClientVersionToCol" Header="Version" Width="75" CellTemplate="{DynamicResource ClientVersionTemplate}"/>
+                            <GridViewColumn x:Name="ClientNameToCol" DisplayMemberBinding="{Binding ClientName}" Header="Name" Width="140"/>
+                            <GridViewColumn x:Name="ClientStatusToCol" DisplayMemberBinding="{Binding Status}" Header="Status" Width="75"/>
+                            <GridViewColumn x:Name="ClientVersionToCol" Header="Vsn" Width="45" CellTemplate="{DynamicResource ClientVersionTemplate}"/>
                         </GridView>
                     </ListView.View>
                     <ListView.ItemContainerStyle>
@@ -130,13 +133,14 @@
                     </ListView.ItemContainerStyle>                    
                 </ListView>
                 <ListView x:Name="ProductTo" Grid.Column="1" HorizontalAlignment="Right" Height="260"  Margin="15,120,15,15" VerticalAlignment="Top" Width="265"
-                          BorderBrush="{StaticResource PtBrushProduct3}" SelectionChanged="ProductTo_SelectionChanged" GotFocus="ProductTo_GotFocus" >
+                          BorderBrush="{StaticResource PtBrushProduct3}" SelectionChanged="ProductTo_SelectionChanged" GotFocus="ProductTo_GotFocus" SelectionMode="Single" >
                     <ListView.View>
                         <GridView>
                             <GridViewColumn x:Name="ProductIDToCol" DisplayMemberBinding="{Binding ID}" Header="ID" Width="0"/>
-                            <GridViewColumn x:Name="ProductNameToCol" DisplayMemberBinding="{Binding ProductName}" Header="Name" Width="115"/>
-                            <GridViewColumn x:Name="ProductVersionToCol" Header="Version" Width="75" CellTemplate="{DynamicResource ClientVersionTemplate}"/>
-                            <GridViewColumn x:Name="ProductLatestToCol" Header="Latest" Width="75" CellTemplate="{DynamicResource LatestVersionTemplate}"/>
+                            <GridViewColumn x:Name="ProductNameToCol" DisplayMemberBinding="{Binding ProductName}" Header="Name" Width="95"/>
+                            <GridViewColumn x:Name="ProductStatusToCol" DisplayMemberBinding="{Binding Status}" Header="Status" Width="75"/>
+                            <GridViewColumn x:Name="ProductVersionToCol" Header="Vsn" Width="40" CellTemplate="{DynamicResource ClientVersionTemplate}"/>
+                            <GridViewColumn x:Name="ProductLatestToCol" Header="Latest" Width="50" CellTemplate="{DynamicResource LatestVersionTemplate}"/>
                         </GridView>
                     </ListView.View>
                     <ListView.ItemContainerStyle>
@@ -177,6 +181,7 @@
                         <TextBlock x:Name="BackButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Back" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
+                <Label x:Name="ProductVersionLabel" HorizontalAlignment="Left" Height="30" Margin="245,15,0,0" VerticalAlignment="Top" Width="400"/>
                 <Button x:Name="ProductButton" HorizontalAlignment="Center" Height="30" Margin="0,15,15,0" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" ToolTip="Products the selected client has purchased" BorderThickness="2" IsEnabled="False" Click="ProductButton_Click">
                     <Button.BorderBrush>
