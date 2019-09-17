@@ -23,7 +23,7 @@ namespace ProjectTile
         // Global/page parameters //
         string pageMode;
         string fromSource = "";
-        string sourceMode = "";
+        //string sourceMode = "";
         string backSource = "";
         //int selectedClientID = 0;
 
@@ -31,7 +31,7 @@ namespace ProjectTile
         bool activeOnly = false;
         string nameContains = "";
         int selectedProductID = 0;
-        string selectedClientName = "";
+        //string selectedClientName = "";
 
         string activeInstructions = "Select a client and click 'Products', or select an Product and click 'Clients'.";
         string activePageHeader = "Products for each Client";
@@ -46,8 +46,9 @@ namespace ProjectTile
         List<ClientGridRecord> clientGridList;
 
         // Current records //
-        ClientGridRecord selectedRecord;
+        ClientGridRecord selectedGridRecord;
         Products selectedProduct;
+        ClientProductSummary selectedClientProduct;
 
         // ---------------------- //
         // -- Page Management --- //
@@ -66,7 +67,7 @@ namespace ProjectTile
             try
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
-                sourceMode = PageFunctions.pageParameter(this, "SourceMode");
+                //sourceMode = PageFunctions.pageParameter(this, "SourceMode");
                 //selectedClientID = Int32.Parse(PageFunctions.pageParameter(this, "ClientID"));
                 refreshProductCombo();
             }
@@ -98,7 +99,8 @@ namespace ProjectTile
                 BackButton.Visibility = Visibility.Hidden;
                 ProductFrom.Visibility = ProductTo.Visibility = Visibility.Hidden;
 
-                AddButton.Visibility = ActiveButton.Visibility = RemoveButton.Visibility = Visibility.Hidden;
+                AddButton.Visibility = RemoveButton.Visibility = Visibility.Hidden;
+                VersionLabel.Visibility = Version.Visibility = DisableButton.Visibility = Visibility.Hidden;
                 FromLabel.Visibility = ToLabel.Visibility = Visibility.Hidden;
 
                 if (pageMode == PageFunctions.View)
@@ -166,7 +168,7 @@ namespace ProjectTile
 
         private void clearSelection()
         {
-            selectedRecord = null;
+            selectedGridRecord = null;
             // selectedClientID = 0; // Don't clear this automatically, as the refresh tries to reuse it
             ClientFunctions.SelectedClient = null; // Ditto
             ProductButton.IsEnabled = false;
@@ -174,7 +176,7 @@ namespace ProjectTile
 
         private void disableButtons()
         {
-            AddButton.IsEnabled = ActiveButton.IsEnabled = RemoveButton.IsEnabled = false;
+            AddButton.IsEnabled = DisableButton.IsEnabled = RemoveButton.IsEnabled = Version.IsEnabled = false;
         }
 
         private void toggleSelectionControls(bool selectionMode)
@@ -190,6 +192,7 @@ namespace ProjectTile
                 BackButton.Visibility = (fromSource == "TilesPage") ? Visibility.Hidden : Visibility.Visible;
                 Instructions.Content = activeInstructions;
                 FromLabel.Visibility = ToLabel.Visibility = Visibility.Hidden;
+                ProductVersionLabel.Content = "";
             }
             else
             {
@@ -207,12 +210,15 @@ namespace ProjectTile
                 }
                 else
                 {
-                    Instructions.Content = (editMode == ByClient) ? "Move products to the right to add them, or left to remove them." : "Move clients to the right to add them, or left to remove them.";
+                    Instructions.Content = (editMode == ByClient) ? "Move products to the right to add them, or left to remove them." 
+                        : "Move clients to the right to add them, or left to remove them.";
                     FromLabel.Visibility = ToLabel.Visibility = Visibility.Visible;
                     FromLabel.Content = (editMode == ByClient) ? "Available Products" : "Available Clients";
 
                     string borderBrush = (editMode == ByClient) ? "PtBrushProduct3" : "PtBrushClient3";
-                    AddButton.BorderBrush = RemoveButton.BorderBrush = ActiveButton.BorderBrush = Application.Current.Resources[borderBrush] as SolidColorBrush;
+                    AddButton.BorderBrush = RemoveButton.BorderBrush = DisableButton.BorderBrush = Application.Current.Resources[borderBrush] as SolidColorBrush;
+                    VersionLabel.HorizontalAlignment = Version.HorizontalAlignment = DisableButton.HorizontalAlignment = (editMode == ByClient) ? 
+                        HorizontalAlignment.Right : HorizontalAlignment.Left;
                 }
 
                 disableButtons();
@@ -234,7 +240,8 @@ namespace ProjectTile
             ProductFrom.Visibility = (editMode == ByClient && !selectionMode && pageMode == PageFunctions.Amend) ? Visibility.Visible : Visibility.Hidden;
             ProductTo.Visibility = (editMode == ByClient && !selectionMode) ? Visibility.Visible : Visibility.Hidden;
 
-            AddButton.Visibility = ActiveButton.Visibility = RemoveButton.Visibility = (!selectionMode && pageMode == PageFunctions.Amend) ? Visibility.Visible : Visibility.Hidden;
+            AddButton.Visibility = RemoveButton.Visibility = (!selectionMode && pageMode == PageFunctions.Amend) ? Visibility.Visible : Visibility.Hidden;
+            VersionLabel.Visibility = Version.Visibility = DisableButton.Visibility = AddButton.Visibility;
             ProductLabel.Visibility = ProductCombo.Visibility = (editMode == ByProduct || selectionMode) ? Visibility.Visible : Visibility.Hidden;
         }
 
@@ -285,7 +292,11 @@ namespace ProjectTile
             disableButtons();
             if (selectedProduct != null)
             {
-                PageHeader.Content = "Clients in Product '" + selectedProduct.ProductName + "'";
+                PageHeader.Content = "Clients with Product '" + selectedProduct.ProductName + "'";
+                if (ClientFrom.Visibility == Visibility.Visible)
+                {
+                    ProductVersionLabel.Content = "The latest version of " + selectedProduct.ProductName + " is " + selectedProduct.LatestVersion.ToString() + ".";
+                }
             }
         }
 
@@ -309,9 +320,9 @@ namespace ProjectTile
             ProductTo.SelectedItem = null;
 
             disableButtons();
-            if (selectedClientName != "")
+            if (ClientFunctions.SelectedClient != null)
             {
-                PageHeader.Content = "Products for " + selectedClientName;
+                PageHeader.Content = "Products for " + ClientFunctions.SelectedClient.ClientName;
             }
         }
 
@@ -328,7 +339,37 @@ namespace ProjectTile
         {
             try
             {
-                RemoveButton.IsEnabled = ActiveButton.IsEnabled = (ClientList && ClientTo.SelectedItems != null) || (!ClientList && ProductTo.SelectedItems != null);
+                bool clientSelected = (ClientList && ClientTo.SelectedItem != null); 
+                bool productSelected = (!ClientList && ProductTo.SelectedItem != null);
+                
+                if (clientSelected) { selectedClientProduct = (ClientProductSummary) ClientTo.SelectedItem;  }
+                else if (productSelected) { selectedClientProduct = (ClientProductSummary)ProductTo.SelectedItem; }
+                else { selectedClientProduct = null; }
+
+                if (selectedClientProduct != null)
+                {
+                    Version.Text = selectedClientProduct.ClientVersion.ToString();
+                    RemoveButton.IsEnabled = DisableButton.IsEnabled = Version.IsEnabled = true;
+                    
+                    if (selectedClientProduct.Live)
+                    {
+                        DisableButtonText.Text = "Disable";
+                        DisableImage.Visibility = Visibility.Visible;
+                        EnableImage.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        DisableButtonText.Text = "Activate";
+                        DisableImage.Visibility = Visibility.Collapsed;
+                        EnableImage.Visibility = Visibility.Visible;
+                    }
+                }
+                else
+                {
+                    Version.Text = "";
+                    RemoveButton.IsEnabled = DisableButton.IsEnabled = Version.IsEnabled = false;
+                }
+
             }
             catch (Exception generalException) { MessageFunctions.Error("Error activating the 'Remove' and 'Active' buttons", generalException); }
         }
@@ -397,14 +438,12 @@ namespace ProjectTile
         {
             try
             {
-                if (ClientTo.SelectedItems != null)
+                if (ClientTo.SelectedItem != null)
                 {
                     List<Clients> removeList = new List<Clients>();
-                    foreach (ClientProductSummary selectedRow in ClientTo.SelectedItems)
-                    {
-                        Clients thisClient = ClientFunctions.GetClientByID(selectedRow.ClientID, false);
-                        removeList.Add(thisClient);
-                    }
+                    ClientProductSummary thisRecord = (ClientProductSummary) ClientTo.SelectedItem;
+                    Clients thisClient = ClientFunctions.GetClientByID(thisRecord.ClientID);
+                    removeList.Add(thisClient);
 
                     bool success = ClientFunctions.ToggleProductClients(removeList, false, selectedProduct);
                     if (success)
@@ -428,14 +467,12 @@ namespace ProjectTile
         {
             try
             {
-                if (ProductTo.SelectedItems != null)
+                if (ProductTo.SelectedItem != null)
                 {
                     List<Products> removeList = new List<Products>();
-                    foreach (ClientProductSummary selectedRow in ProductTo.SelectedItems)
-                    {
-                        Products thisProduct = ProductFunctions.GetProductByID(selectedRow.ProductID);
-                        removeList.Add(thisProduct);
-                    }
+                    ClientProductSummary thisRecord = (ClientProductSummary) ProductTo.SelectedItem;
+                    Products thisProduct = ProductFunctions.GetProductByID(thisRecord.ProductID);
+                    removeList.Add(thisProduct);
 
                     bool success = ClientFunctions.ToggleClientProducts(removeList, false, ClientFunctions.SelectedClient);
                     if (success)
@@ -462,11 +499,11 @@ namespace ProjectTile
             {
                 try
                 {
-                    if (ProductTo.SelectedItems == null)
+                    if (ProductTo.SelectedItem == null)
                     {
                         MessageFunctions.Error("Error setting active Product: no Product selected.", null);
                     }
-                    else if (ProductTo.SelectedItems.Count > 1)
+                    else if (ProductTo.SelectedItem.Count > 1)
                     {
                         MessageFunctions.InvalidMessage("Cannot set active product. Please ensure only one product is selected.", "Multiple Products selected");
                     }
@@ -494,10 +531,10 @@ namespace ProjectTile
             {
                 try
                 {
-                    if (ClientTo.SelectedItems != null)
+                    if (ClientTo.SelectedItem != null)
                     {
                         List<ClientSummaryRecord> activeList = new List<ClientSummaryRecord>();
-                        foreach (var selectedRow in ClientTo.SelectedItems)
+                        foreach (var selectedRow in ClientTo.SelectedItem)
                         {
                             activeList.Add((ClientSummaryRecord)selectedRow);
                         }
@@ -520,21 +557,21 @@ namespace ProjectTile
                 }
             }
         }
-
+*/
+ 
         private void togglActiveOnly(bool isChecked)
         {
             activeOnly = isChecked;
             refreshClientDataGrid();
             if (ClientTo.Visibility == Visibility.Visible)
             {
-                if (ClientFunctions.ignoreAnyChanges())
+                if (ClientFunctions.IgnoreAnyChanges())
                 {
-                    ClientFunctions.clearAnyChanges();
+                    ClientFunctions.ClearAnyChanges();
                     refreshClientSummaries(true);
                 }
             }
         }
-*/
 
         // ---------------------- //
         // -- Event Management -- //
@@ -546,12 +583,12 @@ namespace ProjectTile
         // Control-specific events //
         private void ActiveOnly_CheckBox_Checked(object sender, RoutedEventArgs e)
         {
-//            togglActiveOnly(true);
+            togglActiveOnly(true);
         }
 
         private void ActiveOnly_CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-//            togglActiveOnly(false);
+            togglActiveOnly(false);
         }
 
         private void NameContains_LostFocus(object sender, RoutedEventArgs e)
@@ -570,8 +607,8 @@ namespace ProjectTile
             {
                 if (ClientDataGrid.SelectedItem != null)
                 {
-                    selectedRecord = (ClientGridRecord)ClientDataGrid.SelectedItem;
-                    ClientFunctions.GetClientByID(selectedRecord.ID, true);
+                    selectedGridRecord = (ClientGridRecord)ClientDataGrid.SelectedItem;
+                    ClientFunctions.SelectClient(selectedGridRecord.ID);
                     ProductButton.IsEnabled = true;
                 }
                 else // No record selected, e.g. because filter changed
@@ -636,7 +673,7 @@ namespace ProjectTile
                 ClientFunctions.ClearAnyChanges();
                 if (backSource == "ClientPage")
                 {
-                    PageFunctions.ShowClientPage(sourceMode);
+                    PageFunctions.ShowClientPage(pageMode = ClientFunctions.SourcePageMode);
                 }
                 else
                 {
@@ -709,11 +746,6 @@ namespace ProjectTile
             else { removeClient(); }
         }
 
-        private void ActiveButton_Click(object sender, RoutedEventArgs e)
-        {
-//            setActive();
-        }
-
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
             bool confirm = MessageFunctions.QuestionYesNo("Are you sure you wish to save your amendments?", "Save changes?");
@@ -733,11 +765,26 @@ namespace ProjectTile
                 ClientFunctions.ClearAnyChanges();
                 if (ClientCombo.SelectedItem != null)
                 {
-                    selectedRecord = (ClientGridRecord)ClientCombo.SelectedItem;
-                    ClientFunctions.GetClientByID(selectedRecord.ID, true);
+                    selectedGridRecord = (ClientGridRecord)ClientCombo.SelectedItem;
+                    ClientFunctions.SelectClient(selectedGridRecord.ID);
                     refreshProductSummaries(true);
                 }
             }
+        }
+
+        private void DisableButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Version_LostFocus(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Version_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !ProductFunctions.VersionFormat.IsMatch((sender as TextBox).Text.Insert((sender as TextBox).SelectionStart, e.Text));
         }
 
 

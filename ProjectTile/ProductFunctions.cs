@@ -4,11 +4,14 @@ using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ProjectTile
 {
     class ProductFunctions
     {
+        public static Regex VersionFormat = new Regex("^[.][0-9]+$|^[0-9]*[.]{0,1}[0-9]*$");        
+        
         // Data retrieval
         
         public static List<Products> ProductsList(string search, bool includeAll = false)

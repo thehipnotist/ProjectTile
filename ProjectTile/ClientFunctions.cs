@@ -13,6 +13,7 @@ namespace ProjectTile
         public const string ManagerRole = "AM";
         public static string EntityWarning = "Note that only clients in the current Entity ('" + EntityFunctions.CurrentEntityName + "') are displayed.";
         public static string ShortEntityWarning = "Only clients in the current Entity are displayed.";
+        public const int LiveStage = 11;
         
         public static string ClientCodeFormat = "";
         public const char AlphaChar = '\u0040'; // @
@@ -37,7 +38,7 @@ namespace ProjectTile
         // The following must be updated when opening a page from the menu and choosing a client, or cleared when returning to the menu or clearing client selection
         public static string SourcePage = "TilesPage";
         public static string SourcePageMode = PageFunctions.None;
-        public static Clients SelectedClient = null;    
+        public static Clients SelectedClient = null;
         
         // Data retrieval
 
@@ -133,7 +134,7 @@ namespace ProjectTile
             }          
         }
 
-        public static Clients GetClientByID(int clientID, bool isSelectedClient)
+        public static Clients GetClientByID(int clientID)
         {
             try
             {
@@ -141,7 +142,6 @@ namespace ProjectTile
                 using (existingPtDb)
                 {
                     Clients thisClient = existingPtDb.Clients.Find(clientID);
-                    if (isSelectedClient) { SelectedClient = thisClient; }
                     return thisClient;
                 }
             }
@@ -150,6 +150,22 @@ namespace ProjectTile
                 MessageFunctions.Error("Error retrieving Client with ID " + clientID.ToString(), generalException);
                 return null;
             }	
+        }
+
+        public static void SelectClient(int clientID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    SelectedClient = existingPtDb.Clients.Find(clientID);
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error setting selected Client as ID " + clientID.ToString(), generalException);
+            }
         }
 
         // Data amendment
@@ -840,6 +856,60 @@ namespace ProjectTile
             }
         }
 
+        private static void refineProductStatuses(ref List<ClientProductSummary> clientProducts)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    foreach (ClientProductSummary cp in clientProducts)
+                    {
+                        List<Projects> relevantProjects =
+                            (from pp in existingPtDb.ProjectProducts
+                             join pj in existingPtDb.Projects on pp.ProjectID equals pj.ID
+                             where pp.ProductID == cp.ProductID && pj.ClientID == cp.ClientID
+                             orderby pj.StageCode descending
+                             select pj
+                            ).ToList();
+
+                        if (!cp.Live)
+                        {
+                            foreach (Projects rp in relevantProjects)
+                            {
+                                if (rp.StageCode >= LiveStage)
+                                {
+                                    cp.Status = "Retired"; // This is checked first; if a project has been completed but the product is not active, it must have been retired
+                                    break;
+                                }
+                                else if (rp.TypeCode == "AS" || rp.TypeCode == "NS" || rp.TypeCode == "TO")
+                                {
+                                    cp.Status = "In Progress";
+                                    break;
+                                }
+                                else { cp.Status = "Inactive"; }
+                            }
+                        }
+                        else
+                        {
+                            foreach (Projects rp in relevantProjects)
+                            {
+                                if (rp.StageCode <= LiveStage)
+                                {
+                                    cp.Status = "Maintenance";
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error setting product statuses", generalException);
+            }
+        }
+        
         public static List<ClientProductSummary> ClientsWithProduct(bool activeOnly, int productID)
         {
             try
@@ -847,26 +917,30 @@ namespace ProjectTile
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    return (from p in existingPtDb.Products
-                            join cp in existingPtDb.ClientProducts on p.ID equals cp.ProductID
-                            join c in existingPtDb.Clients on cp.ClientID equals c.ID
-                            where (productID == 0 || p.ID == productID)  && (!activeOnly || c.Active) && c.EntityID == EntityFunctions.CurrentEntityID
-                            orderby c.ClientName
-                            select new ClientProductSummary 
-                            {
-                                ID = cp.ID,
-                                ClientID = c.ID,
-                                ClientName = c.ClientName,
-                                ClientEntityID = c.EntityID,
-                                ActiveClient = c.Active,
-                                ProductID = p.ID,
-                                ProductName = p.ProductName,
-                                LatestVersion = (decimal)p.LatestVersion,
-                                Live = (bool) cp.Live,
-                                Status = "TBC",                                     // To do: set status
-                                ClientVersion = (decimal)cp.ProductVersion
-                            }
-                            ).ToList();
+                    List<ClientProductSummary> clientProducts = 
+                        (from p in existingPtDb.Products
+                        join cp in existingPtDb.ClientProducts on p.ID equals cp.ProductID
+                        join c in existingPtDb.Clients on cp.ClientID equals c.ID
+                        where (productID == 0 || p.ID == productID)  && (!activeOnly || c.Active) && c.EntityID == EntityFunctions.CurrentEntityID
+                        orderby c.ClientName
+                        select new ClientProductSummary 
+                        {
+                            ID = cp.ID,
+                            ClientID = c.ID,
+                            ClientName = c.ClientName,
+                            ClientEntityID = c.EntityID,
+                            ActiveClient = c.Active,
+                            ProductID = p.ID,
+                            ProductName = p.ProductName,
+                            LatestVersion = (decimal)p.LatestVersion,
+                            Live = (bool) cp.Live,
+                            Status = (cp.Live == true) ? "Live" : "New",
+                            ClientVersion = (decimal)cp.ProductVersion
+                        }
+                        ).ToList();
+
+                    refineProductStatuses(ref clientProducts); // Refine the statuses where there are projects in progress
+                    return clientProducts;
                 }
             }
             catch (Exception generalException)
@@ -904,26 +978,30 @@ namespace ProjectTile
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    return (from p in existingPtDb.Products
-                            join cp in existingPtDb.ClientProducts on p.ID equals cp.ProductID
-                            join c in existingPtDb.Clients on cp.ClientID equals c.ID
-                            where c.ID == clientID
-                            orderby p.ProductName
-                            select new ClientProductSummary
-                            {
-                                ID = cp.ID,
-                                ClientID = c.ID,
-                                ClientName = c.ClientName,
-                                ClientEntityID = c.EntityID,
-                                ActiveClient = c.Active,
-                                ProductID = p.ID,
-                                ProductName = p.ProductName,
-                                LatestVersion = (decimal)p.LatestVersion,
-                                Live = (bool) cp.Live,
-                                Status = "TBC",                                     // To do: set status
-                                ClientVersion = (decimal)cp.ProductVersion
-                            }
-                            ).ToList();
+                    List<ClientProductSummary> clientProducts = 
+                        (from p in existingPtDb.Products
+                        join cp in existingPtDb.ClientProducts on p.ID equals cp.ProductID
+                        join c in existingPtDb.Clients on cp.ClientID equals c.ID
+                        where c.ID == clientID
+                        orderby p.ProductName
+                        select new ClientProductSummary
+                        {
+                            ID = cp.ID,
+                            ClientID = c.ID,
+                            ClientName = c.ClientName,
+                            ClientEntityID = c.EntityID,
+                            ActiveClient = c.Active,
+                            ProductID = p.ID,
+                            ProductName = p.ProductName,
+                            LatestVersion = (decimal)p.LatestVersion,
+                            Live = (bool)cp.Live,
+                            Status = (cp.Live == true) ? "Live" : "New",
+                            ClientVersion = (decimal)cp.ProductVersion
+                        }
+                        ).ToList();
+
+                    refineProductStatuses(ref clientProducts); // Refine the statuses where there are projects in progress
+                    return clientProducts;
                 }
             }
             catch (Exception generalException)
@@ -966,13 +1044,15 @@ namespace ProjectTile
                     try
                     {
                         int clientID = thisClient.ID;
-                        int openProjects = (from p in existingPtDb.Projects
-                                            join pp in existingPtDb.ProjectProducts on p.ID equals pp.ProjectID                                            
-                                            where p.ClientID == clientID && p.ID == productID
-                                            select p.ID)
-                                            .FirstOrDefault();
 
-                        if (openProjects > 0)
+                        //MessageFunctions.InvalidMessage("Client ID is " + clientID.ToString() + ", Product ID is " + productID.ToString(), "Testing");
+
+                        List<Projects> openProjects = (from pj in existingPtDb.Projects
+                                                  join pp in existingPtDb.ProjectProducts on pj.ID equals pp.ProjectID
+                                                  where pj.ClientID == clientID && pp.ProductID == productID  && pj.StageCode < LiveStage
+                                                  select pj).ToList();                        
+
+                        if (openProjects.Count > 0)
                         {
                             MessageFunctions.InvalidMessage("Cannot remove this product from " + thisClient.ClientName + " as they have projects involving it.", "Projects Found");
                             return false;
@@ -1003,7 +1083,7 @@ namespace ProjectTile
                 foreach (Clients thisRecord in affectedClients)
                 {
                     int clientID = thisRecord.ID;
-                    Clients thisClient = GetClientByID(clientID, false);
+                    Clients thisClient = GetClientByID(clientID);
                     bool canChange = addition ? true : CanRemoveClientProduct(ref thisClient, productID);
 
                     if (!canChange) { return false; }
@@ -1021,7 +1101,7 @@ namespace ProjectTile
                                     ProductName = thisProduct.ProductName,
                                     LatestVersion = (decimal)thisProduct.LatestVersion,
                                     Live = false,
-                                    Status = "New",
+                                    Status = "Added",
                                     ClientVersion = Math.Round((decimal)thisProduct.LatestVersion, 1)
                                 };                            
                             ClientsForProduct.Add(addRecord);
@@ -1092,7 +1172,7 @@ namespace ProjectTile
                                 ProductName = thisProduct.ProductName,
                                 LatestVersion = (decimal)thisProduct.LatestVersion,
                                 Live = false,
-                                Status = "New",
+                                Status = "Added",
                                 ClientVersion = Math.Round((decimal)thisProduct.LatestVersion,1)
                             };   
                             ProductsForClient.Add(addRecord);
@@ -1185,10 +1265,15 @@ namespace ProjectTile
 
         public static void ReturnToTilesPage()
         {
+            ResetClientParameters();
+            PageFunctions.ShowTilesPage();
+        }
+
+        public static void ResetClientParameters()
+        {
             SelectedClient = null;
             SourcePage = "TilesPage";
             SourcePageMode = PageFunctions.None;   
-            PageFunctions.ShowTilesPage();
         }
 
     } // class
