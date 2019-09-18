@@ -155,6 +155,11 @@ namespace ProjectTile
             ChangePage("ClientProductsPage.xaml?Mode=" + pageMode);
         }
 
+        public static void ShowProjectPage(string pageMode)
+        {
+            ChangePage("ProjectPage.xaml?Mode=" + pageMode);
+        }
+
         public static void ShowHelpPage(string pageMode)
         {
             ChangePage("HelpPage.xaml?Mode=" + pageMode);

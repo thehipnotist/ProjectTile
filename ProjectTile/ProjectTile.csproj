@@ -74,6 +74,7 @@
     <Compile Include="ClientProducts.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="ProjectSummaryRecord.cs" />
     <Compile Include="Clients.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
@@ -126,6 +127,9 @@
     <Compile Include="HelpPage.xaml.cs">
       <DependentUpon>HelpPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PageTemplate - Copy.xaml.cs">
+      <DependentUpon>PageTemplate - Copy.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ProductFunctions.cs" />
     <Compile Include="ProductPage.xaml.cs">
       <DependentUpon>ProductPage.xaml</DependentUpon>
@@ -136,6 +140,7 @@
     <Compile Include="ClientProductsPage.xaml.cs">
       <DependentUpon>ClientProductsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ProjectFunctions.cs" />
     <Compile Include="StaffEntitiesPage.xaml.cs">
       <DependentUpon>StaffEntitiesPage.xaml</DependentUpon>
     </Compile>
@@ -206,8 +211,8 @@
     <Compile Include="Staff.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="PageTemplate.xaml.cs">
-      <DependentUpon>PageTemplate.xaml</DependentUpon>
+    <Compile Include="ProjectPage.xaml.cs">
+      <DependentUpon>ProjectPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="StaffDetailsPage.xaml.cs">
       <DependentUpon>StaffDetailsPage.xaml</DependentUpon>
@@ -302,6 +307,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="PageTemplate - Copy.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="ProductPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -318,7 +327,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="PageTemplate.xaml">
+    <Page Include="ProjectPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

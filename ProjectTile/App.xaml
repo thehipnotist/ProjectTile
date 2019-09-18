@@ -80,14 +80,14 @@
             </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
 
-        <!-- Blues -->
-        <Color x:Key="PtColorProduct3" R="50" G="55" B="255"  A="255"/>
+        <!-- Oranges -->
+        <Color x:Key="PtColorProduct3" R="255" G="108" B="0"  A="255"/>
         <SolidColorBrush x:Key="PtBrushProduct3" Color="{StaticResource PtColorProduct3}"/>
 
-        <Color x:Key="PtColorProduct2" R="120" G="123" B="255" A="255"/>
+        <Color x:Key="PtColorProduct2" R="255" G="111" B="86" A="255"/>
         <SolidColorBrush x:Key="PtBrushProduct2" Color="{StaticResource PtColorProduct2}"/>
 
-        <Color x:Key="PtColorProduct1" R="187" G="189" B="255" A="255"/>
+        <Color x:Key="PtColorProduct1" R="255" G="206" B="163" A="255"/>
         <SolidColorBrush x:Key="PtBrushProduct1" Color="{StaticResource PtColorProduct1}"/>
 
         <RadialGradientBrush x:Key="PtGradientProduct2">
@@ -164,6 +164,34 @@
             </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
 
+        <!-- Blues -->
+        <Color x:Key="PtColorProject3" R="50" G="55" B="255"  A="255"/>
+        <SolidColorBrush x:Key="PtBrushProject3" Color="{StaticResource PtColorProject3}"/>
+
+        <Color x:Key="PtColorProject2" R="120" G="123" B="255" A="255"/>
+        <SolidColorBrush x:Key="PtBrushProject2" Color="{StaticResource PtColorProject2}"/>
+
+        <Color x:Key="PtColorProject1" R="187" G="189" B="255" A="255"/>
+        <SolidColorBrush x:Key="PtBrushProject1" Color="{StaticResource PtColorProject1}"/>
+
+        <RadialGradientBrush x:Key="PtGradientProject2">
+            <RadialGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="{StaticResource PtColorProject2}" Offset="0"/>
+                    <GradientStop Color="{StaticResource PtColorProject3}" Offset="1"/>
+                </GradientStopCollection>
+            </RadialGradientBrush.GradientStops>
+        </RadialGradientBrush>
+
+        <RadialGradientBrush x:Key="PtGradientProject1">
+            <RadialGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="{StaticResource PtColorProject1}" Offset="0"/>
+                    <GradientStop Color="{StaticResource PtColorProject2}" Offset="1"/>
+                </GradientStopCollection>
+            </RadialGradientBrush.GradientStops>
+        </RadialGradientBrush>        
+        
         <!-- Greys -->
         <Color x:Key="PtColorHelp3" R="200" G="200" B="200"  A="255"/>
         <SolidColorBrush x:Key="PtBrushHelp3" Color="{StaticResource PtColorHelp3}"/>
@@ -190,6 +218,7 @@
         <ToolTip x:Key="StaffTip" Content="Staff includes ProjectTile users, and also other staff members who may work on projects"/>
         <ToolTip x:Key="ProductTip" Content="Products are the software packages used by clients, and implemented or amended via projects"/>
         <ToolTip x:Key="ClientTip" Content="Clients are software customers for (and with) whom projects are undertaken"/>
+        <ToolTip x:Key="ProjectTip" Content="Projects are initiatives to implement, upgrade or improve software, usually with and on behalf of clients"/>
         <ToolTip x:Key="ExitTip" Content="Leave the ProjectTile application"/>
         <ToolTip x:Key="HelpTip" Content="Find out more about ProjectTile"/>
 
@@ -240,7 +269,7 @@
             <Setter Property="Background" Value="#FFDDDDDD"/>
             <Setter Property="BorderBrush" Value="#FF707070"/>
             <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderThickness" Value="2"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Padding" Value="1"/>

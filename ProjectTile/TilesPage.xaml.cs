@@ -31,10 +31,11 @@ namespace ProjectTile
         List<Button> mainButtons = new List<Button>();
 
         List<Button> entityButtons = new List<Button>();
-        List<Button> adminButtons = new List<Button>();
+        List<Button> loginButtons = new List<Button>();
         List<Button> staffButtons = new List<Button>();
         List<Button> productButtons = new List<Button>();
         List<Button> clientButtons = new List<Button>();
+        List<Button> projectButtons = new List<Button>();
 
         // ---------------------- //
         // -- Page Management --- //
@@ -81,6 +82,7 @@ namespace ProjectTile
                 mainButtons.Add(StaffButton);
                 mainButtons.Add(ProductButton);
                 mainButtons.Add(ClientButton);
+                mainButtons.Add(ProjectButton);
 
                 entityButtons.Add(EntityButton_Change);
                 entityButtons.Add(EntityButton_Default);
@@ -89,9 +91,9 @@ namespace ProjectTile
                 else { EntityButton_Amend.Margin = EntityButton_New.Margin; }
                 if (myPermissions.Allow("EditEntities")) { entityButtons.Add(EntityButton_Amend); }
 
-                adminButtons.Add(LoginButton_Login);
-                adminButtons.Add(LoginButton_Password);
-                adminButtons.Add(LoginButton_Exit);
+                loginButtons.Add(LoginButton_Login);
+                loginButtons.Add(LoginButton_Password);
+                loginButtons.Add(LoginButton_Exit);
 
                 if (myPermissions.Allow("ViewStaff")) { staffButtons.Add(StaffButton_View); }
                 if (myPermissions.Allow("AddStaff")) { staffButtons.Add(StaffButton_New); }
@@ -107,9 +109,18 @@ namespace ProjectTile
                 if (myPermissions.Allow("ViewClients")) { clientButtons.Add(ClientButton_View); }
                 else { ClientButton_Contact.Margin = ClientButton_View.Margin; }
                 if (myPermissions.Allow("AddClients")) { clientButtons.Add(ClientButton_New); }
+                else { ClientButton_Amend.Margin = ClientButton_New.Margin; }
                 if (myPermissions.Allow("EditClients")) { clientButtons.Add(ClientButton_Amend); }
                 if (myPermissions.Allow("ViewClientStaff")) { clientButtons.Add(ClientButton_Contact); }
                 if (myPermissions.Allow("ViewClientProducts")) { clientButtons.Add(ClientButton_Product); }
+
+                if (myPermissions.Allow("ViewProjects")) { projectButtons.Add(ProjectButton_View); }
+                if (myPermissions.Allow("AddProjects")) { projectButtons.Add(ProjectButton_New); }
+                else { ProjectButton_Amend.Margin = ProjectButton_New.Margin; }
+                if (myPermissions.Allow("EditProjects")) { projectButtons.Add(ProjectButton_Amend); }
+                if (myPermissions.Allow("ViewProjectTeams")) { projectButtons.Add(ProjectButton_Staff); }
+                if (myPermissions.Allow("ViewClientTeams")) { projectButtons.Add(ProjectButton_Contact); }
+                if (myPermissions.Allow("ViewProjectProducts")) { projectButtons.Add(ProjectButton_Product); }
 
                 // More to come...
             }
@@ -158,10 +169,11 @@ namespace ProjectTile
                     toggleMainButtons(thisButton, false);
 
                     if (thisButton.Name == "EntityButton") { toggleChildButtons(true, ref entityButtons); }
-                    else if (thisButton.Name == "LoginButton") { toggleChildButtons(true, ref adminButtons); }
+                    else if (thisButton.Name == "LoginButton") { toggleChildButtons(true, ref loginButtons); }
                     else if (thisButton.Name == "StaffButton") { toggleChildButtons(true, ref staffButtons); }
                     else if (thisButton.Name == "ProductButton") { toggleChildButtons(true, ref productButtons); }
                     else if (thisButton.Name == "ClientButton") { toggleChildButtons(true, ref clientButtons); }
+                    else if (thisButton.Name == "ProjectButton") { toggleChildButtons(true, ref projectButtons); }
 
                     // More to come...
 
@@ -355,6 +367,36 @@ namespace ProjectTile
         private void ClientButton_Product_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowClientProductsPage();
+        }
+
+        private void ProjectButton_View_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowProjectPage(PageFunctions.View);
+        }
+
+        private void ProjectButton_New_Click(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void ProjectButton_Amend_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowProjectPage(PageFunctions.Amend);
+        }
+
+        private void ProjectButton_Contact_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ProjectButton_Product_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ProjectButton_Staff_Click(object sender, RoutedEventArgs e)
+        {
+
         }
         
     } // class

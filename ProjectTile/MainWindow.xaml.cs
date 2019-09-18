@@ -53,6 +53,13 @@ namespace ProjectTile
                 ClientContact.Visibility = myPermissions.ShowOrCollapse("ViewClientStaff");
                 ClientProduct.Visibility = myPermissions.ShowOrCollapse("ViewClientProducts");
 
+                ViewProject.Visibility = myPermissions.ShowOrCollapse("ViewProjects");
+                NewProject.Visibility = myPermissions.ShowOrCollapse("AddProjects");
+                AmendProject.Visibility = myPermissions.ShowOrCollapse("EditProjects");
+                ProjectStaff.Visibility = myPermissions.ShowOrCollapse("ViewProjectTeams");
+                ProjectContact.Visibility = myPermissions.ShowOrCollapse("ViewClientTeams");
+                ProjectProduct.Visibility = myPermissions.ShowOrCollapse("ViewProjectProducts");
+
                 // More to come...
             }
             catch (Exception generalException) { MessageFunctions.Error("Error setting menu permissions", generalException); }
@@ -235,6 +242,36 @@ namespace ProjectTile
         private void ExitMenu_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void ViewProject_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowProjectPage(PageFunctions.View);
+        }
+
+        private void NewProject_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void AmendProject_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowProjectPage(PageFunctions.Amend);
+        }
+
+        private void ProjectStaff_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ProjectContact_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ProjectProduct_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
 

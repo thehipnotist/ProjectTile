@@ -35,17 +35,26 @@
                       Padding="6,0,6,0" HorizontalContentAlignment="Center" Background="{StaticResource PtBrushBackgroundBlue}" Foreground="{StaticResource PtBrushProduct3}">
                 <MenuItem x:Name="ViewProduct" Header="View Products" FontWeight="Normal" Background="{StaticResource PtBrushProduct1}" Foreground="Black" Click="ViewProduct_Click"/>
                 <MenuItem x:Name="NewProduct" Header="Create New Product" FontWeight="Normal" Background="{StaticResource PtBrushProduct1}" Foreground="Black" Click="NewProduct_Click"/>
-                <MenuItem x:Name="AmendProduct" Header="Amend Products" FontWeight="Normal" Background="{StaticResource PtBrushProduct1}" Foreground="Black" Click="AmendProduct_Click"/>
+                <MenuItem x:Name="AmendProduct" Header="Amend or Manage Products" FontWeight="Normal" Background="{StaticResource PtBrushProduct1}" Foreground="Black" Click="AmendProduct_Click"/>
             </MenuItem>
             <MenuItem x:Name="ClientMenu" Header="_Clients" FontWeight="Bold" ToolTip="{StaticResource ClientTip}" BorderBrush="{x:Null}"
                       Padding="6,0,6,0" HorizontalContentAlignment="Center" Background="{StaticResource PtBrushBackgroundBlue}" Foreground="{StaticResource PtBrushClient3}">
                 <MenuItem x:Name="ViewClient" Header="View Clients" FontWeight="Normal" Background="{StaticResource PtBrushClient1}" Foreground="Black" Click="ViewClient_Click"/>
                 <MenuItem x:Name="NewClient" Header="Create New Clients" FontWeight="Normal" Background="{StaticResource PtBrushClient1}" Foreground="Black" Click="NewClient_Click"/>
-                <MenuItem x:Name="AmendClient" Header="Amend Clients" FontWeight="Normal" Background="{StaticResource PtBrushClient1}" Foreground="Black" Click="AmendClient_Click"/>
+                <MenuItem x:Name="AmendClient" Header="Amend or Manage Clients" FontWeight="Normal" Background="{StaticResource PtBrushClient1}" Foreground="Black" Click="AmendClient_Click"/>
                 <MenuItem x:Name="ClientContact" Header="Client Contacts" FontWeight="Normal" Background="{StaticResource PtBrushClient1}" Foreground="Black" Click="ClientContact_Click"/>
                 <MenuItem x:Name="ClientProduct" Header="Client Products" FontWeight="Normal" Background="{StaticResource PtBrushProduct1}" Foreground="Black" Click="ClientProduct_Click"/>
             </MenuItem>
-        </Menu>
+            <MenuItem x:Name="ProjectMenu" Header="_Projects" FontWeight="Bold" ToolTip="{StaticResource ProjectTip}" BorderBrush="{x:Null}"
+                          Padding="6,0,6,0" HorizontalContentAlignment="Center" Background="{StaticResource PtBrushBackgroundBlue}" Foreground="{StaticResource PtBrushProject3}">
+                <MenuItem x:Name="ViewProject" Header="View Projects" FontWeight="Normal" Background="{StaticResource PtBrushProject1}" Foreground="Black" Click="ViewProject_Click"/>
+                <MenuItem x:Name="NewProject" Header="Create New Projects" FontWeight="Normal" Background="{StaticResource PtBrushProject1}" Foreground="Black" Click="NewProject_Click"/>
+                <MenuItem x:Name="AmendProject" Header="Amend or Manage Projects" FontWeight="Normal" Background="{StaticResource PtBrushProject1}" Foreground="Black" Click="AmendProject_Click"/>
+                <MenuItem x:Name="ProjectStaff" Header="Project Teams (Staff)" FontWeight="Normal" Background="{StaticResource PtBrushStaff1}" Foreground="Black" Click="ProjectStaff_Click"/>
+                <MenuItem x:Name="ProjectContact" Header="Project Contacts" FontWeight="Normal" Background="{StaticResource PtBrushClient1}" Foreground="Black" Click="ProjectContact_Click"/>
+                <MenuItem x:Name="ProjectProduct" Header="Project Products" FontWeight="Normal" Background="{StaticResource PtBrushProduct1}" Foreground="Black" Click="ProjectProduct_Click"/>
+            </MenuItem>
+        </Menu>            
 
         <Menu x:Name="RightMenu" Height="20" HorizontalAlignment="Right" VerticalAlignment="Top" Background="{StaticResource PtBrushMenuBlue}" Visibility="Visible" VerticalContentAlignment="Center" 
               Margin="0,5,5,0" FontFamily="Yu Gothic" Foreground="White" Grid.ColumnSpan="2">

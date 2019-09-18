@@ -86,7 +86,6 @@
                         </Grid>
                     </Label>
                 </Button>                
-
                 <Button x:Name="ClientButton" HorizontalAlignment="Left" Height="120" Margin="0,255,0,0" VerticalAlignment="Top" Width="120" FontWeight="Bold" Background="{StaticResource PtBrushClient2}" 
                         MouseEnter="buttonMouseOver" MouseLeave="buttonMouseOut" GotFocus="buttonGotFocus" LostFocus="buttonLostFocus" Click="button_Click" ToolTip="{StaticResource ClientTip}" 
                         Grid.Column="2" Style="{DynamicResource TileStyle}">
@@ -95,6 +94,17 @@
                         <Grid>
                             <Frame x:Name="ClientImage" Content="{StaticResource ClientIcon}" Margin="0,0,75,75"/>
                             <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Clients" Foreground="White" Margin="0,30,0,30" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Label>
+                </Button>
+                <Button x:Name="ProjectButton" HorizontalAlignment="Left" Height="120" Margin="165,255,0,0" VerticalAlignment="Top" Width="120" FontWeight="Bold" Background="{StaticResource PtBrushProject2}" 
+                        MouseEnter="buttonMouseOver" MouseLeave="buttonMouseOut" GotFocus="buttonGotFocus" LostFocus="buttonLostFocus" Click="button_Click" ToolTip="{StaticResource ProjectTip}" 
+                        Grid.Column="2" Style="{DynamicResource TileStyle}">
+                    <Label VerticalContentAlignment="Center" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center"
+                           Style="{DynamicResource TileLabelStyle}" Background="{StaticResource PtGradientProject2}">
+                        <Grid>
+                            <Frame x:Name="ProjectImage" Content="{StaticResource ProjectIcon}" Margin="0,0,75,75"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Projects" Foreground="White" Margin="0,30,0,30" VerticalAlignment="Center"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -175,7 +185,7 @@
                         VerticalAlignment="Top" Visibility="Hidden" Click="ProductButton_Amend_Click" Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{StaticResource PtGradientProduct1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
-                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Amend Products"/>
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Amend or Manage Products"/>
                     </Label>
                 </Button>
 
@@ -219,7 +229,7 @@
                         VerticalAlignment="Top" Grid.Column="2" Visibility="Hidden" Click="ClientButton_Amend_Click" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{StaticResource PtGradientClient1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
-                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Amend Clients"/>
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Amend or Manage Clients"/>
                     </Label>
                 </Button>
                 <Button x:Name="ClientButton_Contact" Height="120" Width="120" Margin="240,255,0,0" Background="{StaticResource PtBrushClient1}" MouseLeave="buttonMouseOut" HorizontalAlignment="Left" 
@@ -234,6 +244,49 @@
                     <Label VerticalContentAlignment="Center" Background="{StaticResource PtGradientClient1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
                         <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Client Products"/>
+                    </Label>
+                </Button>
+
+                <Button x:Name="ProjectButton_View" Height="120" Width="120" Margin="45,254,0,0" Background="{StaticResource PtBrushProject1}" MouseLeave="buttonMouseOut" HorizontalAlignment="Left" 
+                        VerticalAlignment="Top" Grid.Column="2" Click="ProjectButton_View_Click" Visibility="Hidden" Style="{DynamicResource TileStyle}">
+                    <Label VerticalContentAlignment="Center" Background="{StaticResource PtGradientProject1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="View Projects"/>
+                    </Label>
+                </Button>
+                <Button x:Name="ProjectButton_New" Height="120" Width="120" Margin="165,135,0,0" Background="{StaticResource PtBrushProject1}" MouseLeave="buttonMouseOut" HorizontalAlignment="Left" 
+                        VerticalAlignment="Top" Grid.Column="2" Visibility="Hidden" Click="ProjectButton_New_Click" Style="{DynamicResource TileStyle}">
+                    <Label VerticalContentAlignment="Center" Background="{StaticResource PtGradientProject1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Create New Project"/>
+                    </Label>
+                </Button>
+                <Button x:Name="ProjectButton_Amend" Height="120" Width="120" Margin="165,15,0,0" Background="{StaticResource PtBrushProject1}" MouseLeave="buttonMouseOut" HorizontalAlignment="Left" 
+                        VerticalAlignment="Top" Grid.Column="2" Visibility="Hidden" Click="ProjectButton_Amend_Click" Style="{DynamicResource TileStyle}">
+                    <Label VerticalContentAlignment="Center" Background="{StaticResource PtGradientProject1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Amend or Manage Projects"/>
+                    </Label>
+                </Button>
+                <Button x:Name="ProjectButton_Staff" Height="120" Width="120" Margin="45,135,0,0" Background="{StaticResource PtBrushStaff1}" MouseLeave="buttonMouseOut" HorizontalAlignment="Left" 
+                        VerticalAlignment="Top" Grid.Column="2" Visibility="Hidden" Click="ProjectButton_Staff_Click" Style="{DynamicResource TileStyle}">
+                    <Label VerticalContentAlignment="Center" Background="{StaticResource PtGradientProject1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Project Teams (Staff)"/>
+                    </Label>
+                </Button>                
+                <Button x:Name="ProjectButton_Contact" Height="120" Width="120" Margin="285,135,0,0" Background="{StaticResource PtBrushClient1}" MouseLeave="buttonMouseOut" HorizontalAlignment="Left" 
+                        VerticalAlignment="Top" Grid.Column="2" Visibility="Hidden" Click="ProjectButton_Contact_Click" Style="{DynamicResource TileStyle}">
+                    <Label VerticalContentAlignment="Center" Background="{StaticResource PtGradientProject1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Project Contacts"/>
+                    </Label>
+                </Button>
+                <Button x:Name="ProjectButton_Product" Height="120" Width="120" Margin="285,255,0,0" Background="{StaticResource PtBrushProduct2}" MouseLeave="buttonMouseOut" HorizontalAlignment="Left" 
+                        VerticalAlignment="Top" Grid.Column="2" Visibility="Hidden" Click="ProjectButton_Product_Click" Style="{DynamicResource TileStyle}">
+                    <Label VerticalContentAlignment="Center" Background="{StaticResource PtGradientProject1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Project Products"/>
                     </Label>
                 </Button>
 
