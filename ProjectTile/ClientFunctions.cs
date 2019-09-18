@@ -947,10 +947,10 @@ namespace ProjectTile
                             ActiveClient = c.Active,
                             ProductID = p.ID,
                             ProductName = p.ProductName,
-                            LatestVersion = (decimal)p.LatestVersion,
+                            LatestVersion = Math.Floor((decimal)p.LatestVersion * 10) / 10,
                             Live = (bool) cp.Live,
                             StatusID = (cp.Live == true) ? ClientProductSummary.StatusType.Live : ClientProductSummary.StatusType.New,
-                            ClientVersion = (decimal)cp.ProductVersion
+                            ClientVersion = Math.Floor((decimal)cp.ProductVersion * 10) / 10
                         }
                         ).ToList();
 
@@ -1008,10 +1008,10 @@ namespace ProjectTile
                             ActiveClient = c.Active,
                             ProductID = p.ID,
                             ProductName = p.ProductName,
-                            LatestVersion = (decimal)p.LatestVersion,
+                            LatestVersion = Math.Floor((decimal)p.LatestVersion * 10) / 10,
                             Live = (bool)cp.Live,
                             StatusID = (cp.Live == true) ? ClientProductSummary.StatusType.Live : ClientProductSummary.StatusType.New,
-                            ClientVersion = (decimal)cp.ProductVersion
+                            ClientVersion = Math.Floor((decimal)cp.ProductVersion * 10) / 10
                         }
                         ).ToList();
 
@@ -1035,10 +1035,17 @@ namespace ProjectTile
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    return (from p in existingPtDb.Products
+                    List<Products> productList = (from p in existingPtDb.Products
                             where !productIDsForClient.Contains(p.ID)
                             orderby p.ProductName
                             select p).ToList();
+
+                    foreach (Products p in productList)
+                    {
+                        p.LatestVersion = Math.Floor((decimal)p.LatestVersion * 10) / 10;
+                    }
+
+                    return productList;
                 }
             }
             catch (Exception generalException)
@@ -1120,10 +1127,10 @@ namespace ProjectTile
                                     ActiveClient = thisClient.Active,
                                     ProductID = thisProduct.ID,
                                     ProductName = thisProduct.ProductName,
-                                    LatestVersion = (decimal)thisProduct.LatestVersion,
+                                    LatestVersion = Math.Floor((decimal)thisProduct.LatestVersion * 10) / 10,
                                     Live = false,
                                     StatusID = ClientProductSummary.StatusType.Added,
-                                    ClientVersion = Math.Round((decimal)thisProduct.LatestVersion, 1)
+                                    ClientVersion = Math.Floor((decimal)thisProduct.LatestVersion * 10) / 10
                                 };                            
                             ClientsForProduct.Add(addRecord);
                             ClientsNotForProduct.Remove(thisRecord);
@@ -1191,10 +1198,10 @@ namespace ProjectTile
                                 ActiveClient = thisClient.Active,
                                 ProductID = productID,
                                 ProductName = thisProduct.ProductName,
-                                LatestVersion = (decimal)thisProduct.LatestVersion,
+                                LatestVersion = Math.Floor((decimal)thisProduct.LatestVersion * 10) / 10,
                                 Live = false,
                                 StatusID = ClientProductSummary.StatusType.Added,
-                                ClientVersion = Math.Round((decimal)thisProduct.LatestVersion,1)
+                                ClientVersion = Math.Floor((decimal)thisProduct.LatestVersion * 10) / 10
                             };   
                             ProductsForClient.Add(addRecord);
                             ProductsNotForClient.Remove(thisRecord);
@@ -1245,9 +1252,8 @@ namespace ProjectTile
 
         public static bool IgnoreAnyChanges()
         {
-            if (ClientIDsToAdd.Count > 0 || ClientIDsToRemove.Count > 0 // || ClientDefaultsToSet.Count > 0
-                || ProductIDsToAdd.Count > 0 || ProductIDsToRemove.Count > 0 // || newDefaultID > 0
-                )
+            if (ClientIDsToAdd.Count > 0 || ClientIDsToRemove.Count > 0  || ClientIDsToUpdate.Count > 0
+                || ProductIDsToAdd.Count > 0 || ProductIDsToRemove.Count > 0 || ProductIDsToUpdate.Count > 0)
             {
                 return MessageFunctions.QuestionYesNo("This will undo any changes you made since you last saved. Continue?");
             }
@@ -1267,14 +1273,170 @@ namespace ProjectTile
             ProductIDsToRemove.Clear();
         }
 
-        public static bool SaveClientProductChanges(int clientID)
+        public static bool SaveProductClientChanges(int productID)
         {
-            throw new NotImplementedException();
+            ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+            using (existingPtDb)
+            {
+                try
+                {
+                    List<ClientProducts> recordsToRemove = (from cp in existingPtDb.ClientProducts
+                                           where cp.ProductID == productID && ClientIDsToRemove.Contains((int)cp.ClientID)
+                                           select cp).ToList();
+                    foreach (ClientProducts removeCP in recordsToRemove)
+                    {
+                        existingPtDb.ClientProducts.Remove(removeCP);
+                    }
+                }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error deleting client links with product ID " + productID.ToString(), generalException);
+                    return false;
+                }
+
+                try
+                {
+                    foreach (int addClientID in ClientIDsToAdd)
+                    {
+                        ClientProductSummary summaryRecord = ClientsForProduct.FirstOrDefault(cfp => cfp.ProductID == productID && cfp.ClientID == addClientID);
+                         if (summaryRecord == null)
+                         {
+                             MessageFunctions.Error("Error saving new client links with product ID " + productID.ToString() + ": no matching display record found", null);
+                             return false;
+                         }
+                         else
+                         {
+                             ClientProducts cp = new ClientProducts 
+                             { 
+                                 ProductID = productID, 
+                                 ClientID = addClientID, 
+                                 Live = summaryRecord.Live, 
+                                 ProductVersion = summaryRecord.ClientVersion 
+                             };
+                             existingPtDb.ClientProducts.Add(cp);
+                         }
+                    }
+                }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error saving client links with product ID " + productID.ToString(), generalException);
+                    return false;
+                }
+
+                try
+                {
+                    List<ClientProducts> recordsToUpdate = (from cp in existingPtDb.ClientProducts
+                                                            where cp.ProductID == productID && ClientIDsToUpdate.Contains((int)cp.ClientID)
+                                                            select cp).ToList();
+                    foreach (ClientProducts updateCP in recordsToUpdate)
+                    {
+                        ClientProductSummary summaryRecord = ClientsForProduct.FirstOrDefault(cfp => cfp.ID == updateCP.ID && cfp.ProductID == updateCP.ProductID 
+                            && cfp.ClientID == updateCP.ClientID);
+                        if (summaryRecord == null)
+                        {
+                            MessageFunctions.Error("Error updating client links with product ID " + productID.ToString() + ": no matching display record found", null);
+                            return false;
+                        }
+                        else
+                        {
+                            updateCP.Live = summaryRecord.Live;
+                            updateCP.ProductVersion = summaryRecord.ClientVersion;
+                        }                        
+                    }
+                }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error saving updates to client links with product ID " + productID.ToString(), generalException);
+                    return false;
+                }
+
+                existingPtDb.SaveChanges();
+                ClearAnyChanges();
+                return true;
+            }
         }
 
-        public static bool SaveProductClientChanges(int clientID)
+        public static bool SaveClientProductChanges(int clientID)
         {
-            throw new NotImplementedException();
+            ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+            using (existingPtDb)
+            {
+                try
+                {
+                    List<ClientProducts> recordsToRemove = (from cp in existingPtDb.ClientProducts
+                                           where cp.ClientID == clientID && ProductIDsToRemove.Contains((int)cp.ProductID)
+                                           select cp).ToList();
+                    foreach (ClientProducts removeCP in recordsToRemove)
+                    {
+                        existingPtDb.ClientProducts.Remove(removeCP);
+                    }
+                }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error deleting products from client ID " + clientID.ToString(), generalException);
+                    return false;
+                }
+
+                try
+                {
+                    foreach (int addProductID in ProductIDsToAdd)
+                    {
+                        ClientProductSummary summaryRecord = ProductsForClient.FirstOrDefault(cfp => cfp.ProductID == addProductID && cfp.ClientID == clientID);
+                        if (summaryRecord == null)
+                        {
+                            MessageFunctions.Error("Error saving new product links with client ID " + clientID.ToString() + ": no matching display record found", null);
+                            return false;
+                        }
+                        else
+                        {
+                            ClientProducts cp = new ClientProducts
+                            {
+                                ProductID = addProductID,
+                                ClientID = clientID,
+                                Live = summaryRecord.Live,
+                                ProductVersion = summaryRecord.ClientVersion
+                            };
+                            existingPtDb.ClientProducts.Add(cp);
+                        }
+                    }
+                }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error saving product links with client ID " + clientID.ToString(), generalException);
+                    return false;
+                }
+
+                try
+                {
+                    List<ClientProducts> recordsToUpdate = (from cp in existingPtDb.ClientProducts
+                                                            where cp.ClientID == clientID && ProductIDsToUpdate.Contains((int)cp.ProductID)
+                                                            select cp).ToList();
+                    foreach (ClientProducts updateCP in recordsToUpdate)
+                    {                        
+                        ClientProductSummary summaryRecord = ProductsForClient.FirstOrDefault(cfp => cfp.ID == updateCP.ID && cfp.ProductID == updateCP.ProductID
+                            && cfp.ClientID == updateCP.ClientID);
+                        if (summaryRecord == null)
+                        {
+                            MessageFunctions.Error("Error updating product links with client ID " + clientID.ToString() + ": no matching display record found", null);
+                            return false;
+                        }
+                        else
+                        {
+                            updateCP.Live = summaryRecord.Live;
+                            updateCP.ProductVersion = summaryRecord.ClientVersion;
+                        }
+                    }
+                }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error saving updates to product links with client ID " + clientID.ToString(), generalException);
+                    return false;
+                }
+
+                existingPtDb.SaveChanges();
+                ClearAnyChanges();
+                return true;
+            }
         }
 
         private static void queueClientProductUpdate(ClientProductSummary thisRecord, bool byClient)
@@ -1303,7 +1465,6 @@ namespace ProjectTile
             {            
                 string reason = "";
                 bool allowActivate = false;
-                //bool updateStatus = false;
 
                 if (thisRecord.Live)
                 {
@@ -1321,7 +1482,6 @@ namespace ProjectTile
                     case ClientProductSummary.StatusType.New: 
                         reason = "is new. A project is normally required to activate new products.";
                         allowActivate = true;
-                        //updateStatus = true;
                         break;
                     case ClientProductSummary.StatusType.InProgress:
                     case ClientProductSummary.StatusType.Updates:
@@ -1331,7 +1491,6 @@ namespace ProjectTile
                     default:  
                         reason = "";
                         allowActivate = true;
-                        //updateStatus = true;
                         break;
                 }                
 
@@ -1352,8 +1511,7 @@ namespace ProjectTile
                         queueClientProductUpdate(thisRecord, byClient);                        
                     }
                     return activate; 
-                } 
- 
+                }  
             }
             catch (Exception generalException) 
             { 
@@ -1367,8 +1525,6 @@ namespace ProjectTile
             try
             {
                 string reason = "";
-//                ClientProductSummary.StatusType newStatus = thisRecord.StatusID;
-
                 if (!thisRecord.Live)
                 {
                     MessageFunctions.Error("This record is not already Live", null);
@@ -1377,19 +1533,13 @@ namespace ProjectTile
 
                 switch (thisRecord.StatusID)
                 {
-//                    case ClientProductSummary.StatusType.Added:
-//                       break; // Just don't update the status
                     case ClientProductSummary.StatusType.InProgress:
                         reason = "has project work in progress. The status should normally be updated via the project.";
                         break;
-//                    case ClientProductSummary.StatusType.Live:
-//                        newStatus = ClientProductSummary.StatusType.Retired;
-//                        break;
                     case ClientProductSummary.StatusType.Updates:
                         reason = "has project work in progress. The status should normally be updated via the project.";
                         break;
                     default:
-//                        newStatus = ClientProductSummary.StatusType.Inactive;
                         break;
                 }
 
@@ -1398,7 +1548,6 @@ namespace ProjectTile
                 if (deactivate)
                 {
                     thisRecord.Live = false;
-//                    thisRecord.StatusID = newStatus;
                     thisRecord.StatusID = clientProductStatus(thisRecord);
                     queueClientProductUpdate(thisRecord, byClient);
                 }
@@ -1427,14 +1576,15 @@ namespace ProjectTile
                 MessageFunctions.InvalidMessage("The entered version number is higher than the latest product version. Please try again.", "Invalid version");
                 return false;
             }
-            else if (thisRecord.ClientVersion > versionNumber)
+            else if (thisRecord.ClientVersion > versionNumber && thisRecord.StatusID != ClientProductSummary.StatusType.Added)
             {
                 carryOn = MessageFunctions.QuestionYesNo("The entered version number is lower than the current one. Is this correct?");               
             }
-            else
+            else if ( thisRecord.StatusID != ClientProductSummary.StatusType.Added)
             {
                 carryOn = MessageFunctions.QuestionYesNo("Update the client's version of this product? This is not immediately saved, so it can be undone using the 'Back' button.");
             }
+            else { carryOn = true; }
 
             if (!carryOn) { return false; }
             else

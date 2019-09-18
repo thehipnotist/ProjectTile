@@ -460,10 +460,10 @@
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         </Style>
         <DataTemplate x:Key="LatestVersionTemplate">
-            <TextBlock HorizontalAlignment="Right" Text="{Binding LatestVersion}"/>
+            <TextBlock HorizontalAlignment="Right" Text="{Binding Path=LatestVersion, StringFormat=#.0}"/>
         </DataTemplate>
         <DataTemplate x:Key="ClientVersionTemplate">
-            <TextBlock HorizontalAlignment="Right" Text="{Binding ClientVersion}"/>
+            <TextBlock HorizontalAlignment="Right" Text="{Binding Path=ClientVersion, StringFormat=#.0}"/>
         </DataTemplate>    
         <DataTemplate x:Key="ActiveTemplate">
             <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Active}"/>

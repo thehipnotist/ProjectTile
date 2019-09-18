@@ -357,7 +357,7 @@ namespace ProjectTile
 
                 if (selectedClientProduct != null)
                 {
-                    Version.Text = selectedClientProduct.ClientVersion.ToString();
+                    Version.Text = selectedClientProduct.ClientVersion.ToString("#.0");
                     RemoveButton.IsEnabled = DisableButton.IsEnabled = Version.IsEnabled = true;
                     toggleDisableButton(selectedClientProduct.Live);
                 }
@@ -460,7 +460,7 @@ namespace ProjectTile
             }
         }
 
-        private void removeProducts()
+        private void removeProduct()
         {
             try
             {
@@ -488,73 +488,6 @@ namespace ProjectTile
                 MessageFunctions.Error("Error removing products from client", generalException);
             }
         }
-
-/*
-        private void setActive()
-        {
-            if (editMode == ByClient)
-            {
-                try
-                {
-                    if (ProductTo.SelectedItem == null)
-                    {
-                        MessageFunctions.Error("Error setting active Product: no Product selected.", null);
-                    }
-                    else if (ProductTo.SelectedItem.Count > 1)
-                    {
-                        MessageFunctions.InvalidMessage("Cannot set active product. Please ensure only one product is selected.", "Multiple Products selected");
-                    }
-                    else
-                    {
-                        Products thisRecord = (Products)ProductTo.SelectedItem;
-                        if (thisRecord.Active == false)
-                        {
-                            int productID = thisRecord.ID;
-                            bool success = ClientFunctions.changeActive(productID, selectedClientID);
-                            if (success)
-                            {
-                                refreshProductSummaries(false);
-                                CommitButton.IsEnabled = true;
-                            }
-                        }
-                    }
-                }
-                catch (Exception generalException)
-                {
-                    MessageFunctions.Error("Error setting active Product", generalException);
-                }
-            }
-            else
-            {
-                try
-                {
-                    if (ClientTo.SelectedItem != null)
-                    {
-                        List<ClientSummaryRecord> activeList = new List<ClientSummaryRecord>();
-                        foreach (var selectedRow in ClientTo.SelectedItem)
-                        {
-                            activeList.Add((ClientSummaryRecord)selectedRow);
-                        }
-
-                        bool success = ClientFunctions.makeActive(activeList, selectedProduct);
-                        if (success)
-                        {
-                            refreshClientSummaries(false);
-                            CommitButton.IsEnabled = true;
-                        }
-                    }
-                    else
-                    {
-                        MessageFunctions.Error("Error setting active Product: no client selected.", null);
-                    }
-                }
-                catch (Exception generalException)
-                {
-                    MessageFunctions.Error("Error setting active Product", generalException);
-                }
-            }
-        }
-*/
  
         private void clearChanges()
         {
@@ -751,7 +684,7 @@ namespace ProjectTile
 
         private void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
-            if (editMode == ByClient) { removeProducts(); }
+            if (editMode == ByClient) { removeProduct(); }
             else { removeClient(); }
         }
 
@@ -791,7 +724,11 @@ namespace ProjectTile
                 bool enabling = (EnableImage.Visibility == Visibility.Visible);
                 
                 success = enabling ? ClientFunctions.ActivateProduct(selectedClientProduct, byClient) : ClientFunctions.DisableProduct(selectedClientProduct, byClient); 
-                if (success) { refreshEditPage(); }
+                if (success) 
+                { 
+                    refreshEditPage();
+                    CommitButton.IsEnabled = true;
+                }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error processing status change", generalException); }
         }
@@ -800,8 +737,12 @@ namespace ProjectTile
         {            
             if (selectedClientProduct == null) { MessageFunctions.Error("No client product record selected.", null); }
             bool success = ClientFunctions.AmendVersion(selectedClientProduct, Version.Text, (editMode == ByClient));
-            if (success) { refreshEditPage(); }
-            else { Version.Text = selectedClientProduct.ClientVersion.ToString(); }
+            if (success) 
+            { 
+                refreshEditPage();
+                CommitButton.IsEnabled = true;
+            }
+            else { Version.Text = selectedClientProduct.ClientVersion.ToString("#.0"); }
         }
 
         private void Version_PreviewTextInput(object sender, TextCompositionEventArgs e)
