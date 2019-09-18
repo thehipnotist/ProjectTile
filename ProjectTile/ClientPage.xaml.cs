@@ -90,10 +90,9 @@ namespace ProjectTile
                 editMode(null);
                 EntityWarningLabel.Visibility = Visibility.Hidden;
             }
-
             else if (pageMode == PageFunctions.Amend)
             {
-                PageHeader.Content = "Amend Clients";
+                PageHeader.Content = "Amend or Manage Clients";
                 ClientDataGrid.SelectionMode = DataGridSelectionMode.Single;
                 AddButton.Visibility = myPermissions.Allow("AddClients")? Visibility.Visible : Visibility.Hidden;
                 setButtonSecurity();

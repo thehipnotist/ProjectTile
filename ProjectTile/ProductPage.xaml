@@ -33,7 +33,7 @@
                 <Label x:Name="SearchLabel" Content="Name/Description Contains" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="175" FontWeight="Bold"/>
                 <TextBox x:Name="SearchText" HorizontalAlignment="Left" Height="30" Margin="190,45,0,0" VerticalAlignment="Top" Width="175" ToolTip="Type and tab to filter" 
                          TabIndex="2" LostFocus="DescContains_LostFocus" KeyUp="DescContains_KeyUp" Style="{DynamicResource PaddedTextBox}" CharacterCasing="Upper"/>
-                <DataGrid x:Name="ProductGrid" MinHeight="290" Margin="15,90,290,15" MinWidth="350" AutoGenerateColumns="False" IsReadOnly="True" BorderBrush="{StaticResource PtBrushProduct3}" 
+                <DataGrid x:Name="ProductGrid" MinHeight="295" Margin="15,90,290,15" MinWidth="350" AutoGenerateColumns="False" IsReadOnly="True" BorderBrush="{StaticResource PtBrushProduct3}" 
                           HorizontalAlignment="Left" VerticalAlignment="Top" SelectionChanged="ProductGrid_SelectionChanged">
                     <DataGrid.Columns>
                         <DataGridTextColumn x:Name="IDColumn" Binding="{Binding ID}" ClipboardContentBinding="{x:Null}" Header="ID" Visibility="Collapsed"/>

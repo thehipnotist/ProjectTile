@@ -40,7 +40,7 @@
 
                 <Label x:Name="StaffLabel" Content="Staff Member" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="95" FontWeight="Bold"/>
                 <ComboBox x:Name="StaffCombo" HorizontalAlignment="Left" Height="30" Margin="115,45,15,0" VerticalAlignment="Top" Width="180" SelectionChanged="StaffCombo_SelectionChanged"/>
-                <DataGrid x:Name="StaffGrid" MinHeight="290" Margin="15,90,15,15" MinWidth="625" AutoGenerateColumns="False" IsReadOnly="True" BorderBrush="{StaticResource PtBrushStaff3}" SelectionChanged="StaffGrid_SelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Top" Height="256">
+                <DataGrid x:Name="StaffGrid" MinHeight="295" Margin="15,90,15,15" MinWidth="625" AutoGenerateColumns="False" IsReadOnly="True" BorderBrush="{StaticResource PtBrushStaff3}" SelectionChanged="StaffGrid_SelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Top" Height="256">
                     <DataGrid.Columns>
                         <DataGridTextColumn x:Name="IDColumn" Binding="{Binding ID}" ClipboardContentBinding="{x:Null}" Header="ID" Visibility="Collapsed"/>
                         <DataGridTextColumn x:Name="StaffNameColumn" Binding="{Binding StaffName}" ClipboardContentBinding="{x:Null}" Header="Name"/>

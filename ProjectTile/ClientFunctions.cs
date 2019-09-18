@@ -13,7 +13,6 @@ namespace ProjectTile
         public const string ManagerRole = "AM";
         public static string EntityWarning = "Note that only clients in the current Entity ('" + EntityFunctions.CurrentEntityName + "') are displayed.";
         public static string ShortEntityWarning = "Only clients in the current Entity are displayed.";
-        public const int LiveStage = 11;
         
         public static string ClientCodeFormat = "";
         public const char AlphaChar = '\u0040'; // @
@@ -509,8 +508,8 @@ namespace ProjectTile
                                   join e in existingPtDb.Entities on c.EntityID equals e.ID
                                   join cs in existingPtDb.ClientStaff on c.ID equals cs.ClientID
                                     into GroupJoin from scs in GroupJoin.DefaultIfEmpty()
-                                  where ((int)c.EntityID == entityID)
-                                    && contactContains == "" || (scs.FirstName + " " + scs.Surname).Contains(contactContains)
+                                  where c.EntityID == entityID
+                                    && (contactContains == "" || (scs.FirstName + " " + scs.Surname).Contains(contactContains))
                                     && (!activeOnly || c.Active)
                                     && (clientContains == "" || c.ClientName.Contains(clientContains))
                                   orderby c.ClientCode
@@ -545,7 +544,9 @@ namespace ProjectTile
                 using (existingPtDb)
                 {
                     return (from cs in existingPtDb.ClientStaff
+                            join c in existingPtDb.Clients on cs.ClientID equals c.ID
                             where ( (clientID == 0 || cs.ClientID == clientID)
+                                && c.EntityID == EntityFunctions.CurrentEntityID
                                 && (!ActiveOnly || cs.Active)
                                 && (contactContains == "" || (cs.FirstName + " " + cs.Surname).Contains(contactContains) || cs.JobTitle.Contains(contactContains)) )
                             select (new ContactGridRecord 
@@ -574,7 +575,9 @@ namespace ProjectTile
                 using (existingPtDb)
                 {
                     return (from cs in existingPtDb.ClientStaff
-                            where contactContains == "" || (cs.FirstName + " " + cs.Surname).Contains(contactContains)
+                            join c in existingPtDb.Clients on cs.ClientID equals c.ID
+                            where c.EntityID == EntityFunctions.CurrentEntityID 
+                                && (contactContains == "" || (cs.FirstName + " " + cs.Surname).Contains(contactContains))
                             select cs.FirstName + " " + cs.Surname
                                 /*
                                 JobTitle = cs.JobTitle,
@@ -881,7 +884,7 @@ namespace ProjectTile
                     {
                         foreach (Projects rp in relevantProjects)
                         {
-                            if (rp.StageCode >= LiveStage)
+                            if (rp.StageCode >= ProjectFunctions.LiveStage)
                             {
                                 newStatus = ClientProductSummary.StatusType.Retired; // This is checked first; if a project has been completed but the product is not active, it must have been retired
                                 break;
@@ -899,7 +902,7 @@ namespace ProjectTile
                         newStatus = ClientProductSummary.StatusType.Live;
                         foreach (Projects rp in relevantProjects)
                         {
-                            if (rp.StageCode <= LiveStage)
+                            if (rp.StageCode <= ProjectFunctions.LiveStage)
                             {
                                 newStatus = ClientProductSummary.StatusType.Updates;
                                 break;
@@ -1077,7 +1080,7 @@ namespace ProjectTile
 
                             List<Projects> openProjects = (from pj in existingPtDb.Projects
                                                            join pp in existingPtDb.ProjectProducts on pj.ID equals pp.ProjectID
-                                                           where pj.ClientID == clientID && pp.ProductID == productID && pj.StageCode < LiveStage
+                                                           where pj.ClientID == clientID && pp.ProductID == productID && pj.StageCode < ProjectFunctions.LiveStage
                                                            select pj).ToList();
                             if (openProjects.Count > 0)
                             {

@@ -43,7 +43,7 @@
                     <TextBox x:Name="ContactLike" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="140" ToolTip="Type part of a name and choose from the selection" 
                              TabIndex="2" LostFocus="ClientLike_LostFocus" KeyUp="ClientLike_KeyUp" Style="{DynamicResource PaddedTextBox}" CharacterCasing="Upper" GotFocus="ContactLike_GotFocus"/>
 
-                    <DataGrid x:Name="ClientDataGrid" MinHeight="290" Margin="15,90,0,0" Width="500" MinWidth="625" AutoGenerateColumns="False" IsReadOnly="True" 
+                    <DataGrid x:Name="ClientDataGrid" MinHeight="295" Margin="15,90,0,0" Width="500" MinWidth="625" AutoGenerateColumns="False" IsReadOnly="True" 
                               BorderBrush="{StaticResource PtBrushClient3}" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionChanged="ClientDataGrid_SelectionChanged" SelectionMode="Single">
                         <DataGrid.Columns>
                             <DataGridTextColumn x:Name="ClientIDColumn" Binding="{Binding ID}" ClipboardContentBinding="{x:Null}" Header="ID" Visibility="Collapsed"/>
@@ -68,7 +68,7 @@
                     <ComboBox x:Name="ClientCombo" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="155" 
                               SelectionChanged="ClientCombo_SelectionChanged" DisplayMemberPath="ClientName"/>
                         
-                    <DataGrid x:Name="ContactDataGrid" MinHeight="290" Margin="15,90,0,0" Width="500" MinWidth="625" AutoGenerateColumns="False" IsReadOnly="True" 
+                    <DataGrid x:Name="ContactDataGrid" MinHeight="295" Margin="15,90,0,0" Width="500" MinWidth="625" AutoGenerateColumns="False" IsReadOnly="True" 
                               BorderBrush="{StaticResource PtBrushClient3}" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionChanged="ContactDataGrid_SelectionChanged" SelectionMode="Single">
                         <DataGrid.Columns>
                             <DataGridTextColumn x:Name="ContactIDColumn" Binding="{Binding ID}" ClipboardContentBinding="{x:Null}" Header="ID" Visibility="Collapsed"/>
@@ -105,7 +105,7 @@
                     </StackPanel>
                 </Button>                
                 <Button x:Name="ContactButton" HorizontalAlignment="Center" Height="30" Margin="0,15,15,15" VerticalAlignment="Top" Width="110" 
-                		FontWeight="Bold" IsEnabled="False" Click="ContactButton_Click" Style="{StaticResource RoundedButton}">
+                		FontWeight="Bold" IsEnabled="False" Click="ContactButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{StaticResource PtBrushClient3}">
                     <StackPanel x:Name="ContactPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Frame x:Name="ContactImage" Content="{StaticResource ContactIcon2}" />
                         <TextBlock x:Name="ContactButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Contacts" Margin="5,0,0,0" VerticalAlignment="Center"/>

@@ -42,8 +42,8 @@
                     <ComboBox x:Name="MainManagersCombo" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="135" 
                               SelectionChanged="MainManagersCombo_SelectionChanged"/>
 
-                    <DataGrid x:Name="ClientDataGrid" MinHeight="290" Margin="15,90,0,0" Width="500" MinWidth="400" AutoGenerateColumns="False" IsReadOnly="True" 
-                              BorderBrush="{StaticResource PtBrushClient3}" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionChanged="ClientDataGrid_SelectionChanged">
+                    <DataGrid x:Name="ClientDataGrid" MinHeight="295" Margin="15,90,0,0" Width="500" MinWidth="400" AutoGenerateColumns="False" IsReadOnly="True" 
+                              BorderBrush="{StaticResource PtBrushClient3}" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionChanged="ClientDataGrid_SelectionChanged" SelectionMode="Single">
                         <DataGrid.Columns>
                             <DataGridTextColumn x:Name="IDColumn" Binding="{Binding ID}" ClipboardContentBinding="{x:Null}" Header="ID" Visibility="Collapsed"/>
                             <DataGridTextColumn x:Name="ClientCodeColumn" Binding="{Binding ClientCode}" ClipboardContentBinding="{x:Null}" Header="Code"/>
@@ -76,22 +76,22 @@
                             <TextBlock x:Name="CopyButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Copy" Margin="5,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>                    
-                    <Button x:Name="ContactButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,110" VerticalAlignment="Bottom" Width="110" 
-                		FontWeight="Bold" IsEnabled="False" Click="ContactButton_Click" Style="{StaticResource RoundedButton}">
-                        <StackPanel x:Name="ContactPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                            <Frame x:Name="ContactImage" Content="{StaticResource ContactIcon}" />
-                            <TextBlock x:Name="ContactButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Contacts" Margin="5,0,0,0" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button x:Name="ProductButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,65" VerticalAlignment="Bottom" Width="110" 
-                		FontWeight="Bold" IsEnabled="False" Click="ProductButton_Click" Style="{StaticResource RoundedButton}" BorderThickness="2" BorderBrush="{StaticResource PtBrushProduct3}">
+                    <Button x:Name="ProductButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,110" VerticalAlignment="Bottom" Width="110" 
+                		FontWeight="Bold" IsEnabled="False" Click="ProductButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{StaticResource PtBrushProduct3}">
                         <StackPanel x:Name="ProductPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                             <Frame x:Name="ProductImage" Content="{StaticResource ProductIcon}" />
                             <TextBlock x:Name="ProductButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Products" Margin="5,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
+                    <Button x:Name="ContactButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,65" VerticalAlignment="Bottom" Width="110" 
+                		FontWeight="Bold" IsEnabled="False" Click="ContactButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{StaticResource PtBrushClient3}">
+                        <StackPanel x:Name="ContactPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                            <Frame x:Name="ContactImage" Content="{StaticResource ContactIcon}" />
+                            <TextBlock x:Name="ContactButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Contacts" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>                    
                     <Button x:Name="ProjectButton" HorizontalAlignment="Right" Height="30" Margin="15,60,15,15" VerticalAlignment="Bottom" Width="110" 
-                		FontWeight="Bold" IsEnabled="False" Click="ProjectButton_Click" Style="{StaticResource RoundedButton}">
+                		FontWeight="Bold" IsEnabled="False" Click="ProjectButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{StaticResource PtBrushProject3}">
                         <StackPanel x:Name="ProjectPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                             <Frame x:Name="ProjectImage" Content="{StaticResource ProjectIcon}" />
                             <TextBlock x:Name="ProjectButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Projects" Margin="5,0,0,0" VerticalAlignment="Center"/>

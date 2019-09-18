@@ -179,7 +179,6 @@ namespace ProjectTile
                 contactContains = ContactContains.Text;
                 refreshContactGrid(); 
             }
-
         }
 
         private void clearClientSelection()
