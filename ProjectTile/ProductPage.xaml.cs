@@ -64,13 +64,12 @@ namespace ProjectTile
             if (pageMode == PageFunctions.View)
             {
                 CommitButton.Visibility = Visibility.Hidden;
-                AmendmentsGrid.Visibility = Visibility.Hidden;
+                AmendmentsGrid.Visibility = AmendButton.Visibility = AddButton.Visibility = Visibility.Hidden;
             }
             else if (pageMode == PageFunctions.New)
             {
                 additionMode();
-                AmendButton.Visibility = Visibility.Hidden;
-                AddButton.Visibility = Visibility.Hidden;
+                AmendButton.Visibility = AddButton.Visibility = Visibility.Hidden;
                 PageHeader.Content = "Create New Product";
             }
             else if (pageMode == PageFunctions.Amend)
@@ -219,7 +218,7 @@ namespace ProjectTile
 
         private void Version_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = !ProductFunctions.VersionFormat.IsMatch((sender as TextBox).Text.Insert((sender as TextBox).SelectionStart, e.Text));
+            e.Handled = !ProductFunctions.LatestVersionFormat.IsMatch((sender as TextBox).Text.Insert((sender as TextBox).SelectionStart, e.Text));
         }
 
         private void AddButton_Click(object sender, RoutedEventArgs e)

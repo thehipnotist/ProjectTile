@@ -747,7 +747,7 @@ namespace ProjectTile
 
         private void Version_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = !ProductFunctions.VersionFormat.IsMatch((sender as TextBox).Text.Insert((sender as TextBox).SelectionStart, e.Text));
+            e.Handled = !ProductFunctions.ClientVersionFormat.IsMatch((sender as TextBox).Text.Insert((sender as TextBox).SelectionStart, e.Text));
         }
 
 
