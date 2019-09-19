@@ -48,7 +48,7 @@ namespace ProjectTile
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             FirstName.Focus();
-            if (!LoginFunctions.MyPermissions.Allow("ActivateClientStaff"))
+            if (!Globals.MyPermissions.Allow("ActivateClientStaff"))
             {
                 Active_CheckBox.IsEnabled = false;
                 Active_CheckBox.ToolTip = ActiveLabel.ToolTip = "Your current permissions do not allow activating or disabling contacts";
@@ -67,8 +67,8 @@ namespace ProjectTile
             }
 
             //Clients thisClient = ClientFunctions.GetClientByID(selectedClientID, true);
-            ClientCode.Text = ClientFunctions.SelectedClient.ClientCode;
-            ClientName.Text = ClientFunctions.SelectedClient.ClientName;
+            ClientCode.Text = Globals.SelectedClient.ClientCode;
+            ClientName.Text = Globals.SelectedClient.ClientName;
 
             if (pageMode == PageFunctions.New)
             {

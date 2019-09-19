@@ -48,7 +48,7 @@ namespace ProjectTile
                     PageFunctions.ShowTilesPage();    
                 }
 
-                EntityList.ItemsSource = EntityFunctions.EntityList(LoginFunctions.CurrentStaffID, false);
+                EntityList.ItemsSource = EntityFunctions.EntityList(Globals.CurrentStaffID, false);
 
                 if (pageMode == PageFunctions.Switch)
                 {
@@ -96,7 +96,7 @@ namespace ProjectTile
                
                     try
                     {
-                        EntityList.SelectedItem = EntityFunctions.CurrentEntityName;
+                        EntityList.SelectedItem = Globals.CurrentEntityName;
                     }
                     catch (Exception generalException) { MessageFunctions.Error("Error setting current entity", generalException); }
                 
@@ -160,7 +160,7 @@ namespace ProjectTile
                 }
                 else if (pageMode == PageFunctions.Switch)
                 {
-                    if (selectedEntityID != EntityFunctions.DefaultEntityID)
+                    if (selectedEntityID != Globals.DefaultEntityID)
                     {
                         MakeDefault_CheckBox.IsEnabled = true;
                     }

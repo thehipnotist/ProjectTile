@@ -25,7 +25,7 @@ namespace ProjectTile
 
         // Global/page parameters //
         string pageMode;
-        TableSecurity myPermissions = LoginFunctions.MyPermissions;
+        TableSecurity myPermissions = Globals.MyPermissions;
         bool viewContacts;
         bool amendContacts;
         bool viewProducts;
@@ -33,17 +33,16 @@ namespace ProjectTile
         bool viewProjects;
         bool amendProjects;
         int editRecordID = 0;
-        List<ClientGridRecord> gridList;
+        List<ClientSummaryRecord> gridList;
 
         // Current variables //
         int accountManagerID = 0;
-        int selectedEntityID = EntityFunctions.CurrentEntityID; // This may be changed when copying a record
-        //int selectedClientID; // Used only for page load
+        int selectedEntityID = Globals.CurrentEntityID; // This may be changed when copying a record
 
         // Current records //
         bool activeOnly = false;
         string nameContains = "";
-        ClientGridRecord selectedRecord = null;
+        ClientSummaryRecord selectedRecord = null;
 
         // ---------------------- //
         // -- Page Management --- //
@@ -114,13 +113,13 @@ namespace ProjectTile
         {
             try
             {
-                gridList = ClientFunctions.ClientGridList(activeOnly, nameContains, accountManagerID, EntityFunctions.CurrentEntityID);
+                gridList = ClientFunctions.ClientGridList(activeOnly, nameContains, accountManagerID, Globals.CurrentEntityID);
                 ClientDataGrid.ItemsSource = gridList;               
-                if (selectedRecord != null || ClientFunctions.SelectedClient != null)
+                if (selectedRecord != null || Globals.SelectedClient != null)
                 {
                     try
                     {
-                        int selectedID = (selectedRecord != null) ? selectedRecord.ID : ClientFunctions.SelectedClient.ID;
+                        int selectedID = (selectedRecord != null) ? selectedRecord.ID : Globals.SelectedClient.ID;
                         if (gridList.Exists(c => c.ID == selectedID))
                         {
                             ClientDataGrid.SelectedItem = gridList.First(c => c.ID == selectedID);
@@ -129,7 +128,7 @@ namespace ProjectTile
                         }
                         else
                         {
-                            ClientFunctions.SelectedClient = null;
+                            Globals.SelectedClient = null;
                         }
                     }
                     catch (Exception generalException) { MessageFunctions.Error("Error selecting the current row", generalException); }
@@ -142,9 +141,9 @@ namespace ProjectTile
         {
             try
             {
-                string newSelection = PageFunctions.AllRecords;
+                string newSelection = Globals.AllRecords;
                 string currentSelection = (MainManagersCombo.SelectedItem != null)? MainManagersCombo.SelectedItem.ToString() : "";
-                List<string> managersList = ClientFunctions.CurrentManagersList(EntityFunctions.CurrentEntityID, true);
+                List<string> managersList = ClientFunctions.CurrentManagersList(Globals.CurrentEntityID, true);
                 if (currentSelection != "")
                 {
                     if(managersList.Contains(currentSelection) && (accountManager == "" || currentSelection == accountManager))
@@ -227,7 +226,7 @@ namespace ProjectTile
 
         private void clearSelection()
         {
-            ClientFunctions.SelectedClient = null;
+            Globals.SelectedClient = null;
             //selectedRecord = null; // Don't clear this automatically, as the refresh tries to reuse it
             toggleSideButtons(false);
         }
@@ -245,7 +244,7 @@ namespace ProjectTile
             if (!clicked) { ClientFunctions.ClientCodeFormat = ""; }
         }
 
-        private void editMode(ClientGridRecord gridRecord, bool copy = false)
+        private void editMode(ClientSummaryRecord gridRecord, bool copy = false)
         {
             try
             { 
@@ -313,9 +312,9 @@ namespace ProjectTile
             try
             {
                 //EntityList.SelectedValue="";
-                List<Entities> entityList = EntityFunctions.AllowedEntities(LoginFunctions.CurrentStaffID);
+                List<Entities> entityList = EntityFunctions.AllowedEntities(Globals.CurrentStaffID);
                 EntityCombo.ItemsSource = entityList;
-                int currentIndex = entityList.FindIndex(el => el.ID == EntityFunctions.CurrentEntity.ID);
+                int currentIndex = entityList.FindIndex(el => el.ID == Globals.CurrentEntity.ID);
                 EntityCombo.SelectedValue = entityList.ElementAt(currentIndex);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating Entities list", generalException); }	
@@ -348,7 +347,7 @@ namespace ProjectTile
         private void createNewClient(string accountManagerName)
         {
             int newID = 0;
-            bool inCurrentEntity = (selectedEntityID == EntityFunctions.CurrentEntityID);
+            bool inCurrentEntity = (selectedEntityID == Globals.CurrentEntityID);
             string savedInEntity = "";
             string contactsCopied = "";
 
@@ -427,7 +426,7 @@ namespace ProjectTile
         private void MainManagersCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string selectedName = MainManagersCombo.SelectedValue.ToString();
-            if (selectedName != PageFunctions.AllRecords)
+            if (selectedName != Globals.AllRecords)
             {
                 Staff accountManager = StaffFunctions.GetStaffMemberByName(selectedName);
                 accountManagerID = accountManager.ID;
@@ -494,7 +493,7 @@ namespace ProjectTile
             {
                 if (ClientDataGrid.SelectedItem != null)
                 {
-                    selectedRecord = (ClientGridRecord)ClientDataGrid.SelectedItem;
+                    selectedRecord = (ClientSummaryRecord)ClientDataGrid.SelectedItem;
                     ClientFunctions.SelectClient(selectedRecord.ID);
                     toggleSideButtons(true);
                 }
@@ -552,7 +551,7 @@ namespace ProjectTile
                     string accountManager = getEditAMName();
                     refreshEditManagersCombo((bool)NonAMs_CheckBox.IsChecked, accountManager);
                     if (CodeSuggestion.Visibility == Visibility.Visible) { suggestFormat(); }
-                    CopyContacts_CheckBox.Visibility = (selectedEntityID == EntityFunctions.CurrentEntityID) ? Visibility.Hidden : Visibility.Visible;
+                    CopyContacts_CheckBox.Visibility = (selectedEntityID == Globals.CurrentEntityID) ? Visibility.Hidden : Visibility.Visible;
                     CopyContacts_CheckBox.IsChecked = false;
                 }
             }

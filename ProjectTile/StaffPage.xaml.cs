@@ -24,14 +24,14 @@ namespace ProjectTile
         // Current variables //
         bool activeOnly = false;
         string nameContains = "";
-        string roleDescription = PageFunctions.AllRecords;
+        string roleDescription = Globals.AllRecords;
         int selectedStaffID = 0;
 
-        bool viewEntities = LoginFunctions.MyPermissions.Allow("ViewStaffEntities");
-        bool editEntities = LoginFunctions.MyPermissions.Allow("EditStaffEntities");
+        bool viewEntities = Globals.MyPermissions.Allow("ViewStaffEntities");
+        bool editEntities = Globals.MyPermissions.Allow("EditStaffEntities");
 
         // Current records //
-        StaffGridRecord selectedRecord;
+        StaffSummaryRecord selectedRecord;
 
         // ---------------------- //
         // -- Page Management --- //
@@ -71,7 +71,7 @@ namespace ProjectTile
                 PageHeader.Content = "Amend Staff Details";
                 Instructions.Content = "Choose a staff member and then click the 'Amend' button to change their details.";
                 StaffDataGrid.SelectionMode = DataGridSelectionMode.Single;
-                DisableButton.Visibility = LoginFunctions.MyPermissions.Allow("ActivateStaff")? Visibility.Visible : Visibility.Hidden;
+                DisableButton.Visibility = Globals.MyPermissions.Allow("ActivateStaff") ? Visibility.Visible : Visibility.Hidden;
 
                 EntitiesButton.Visibility = (viewEntities || editEntities) ? Visibility.Visible : Visibility.Hidden;
                 if (editEntities) { EntitiesButtonText.Text = "Entities"; }                
@@ -88,7 +88,7 @@ namespace ProjectTile
             try
             {
                 RoleList.ItemsSource = StaffFunctions.ListUserRoles(true);
-                RoleList.SelectedItem = PageFunctions.AllRecords;                 
+                RoleList.SelectedItem = Globals.AllRecords;                 
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating role filter list", generalException); }
         }
@@ -97,7 +97,7 @@ namespace ProjectTile
         {
             try
             {
-                List<StaffGridRecord> gridList = StaffFunctions.GetStaffGridData(activeOnly, nameContains, roleDescription, 0);
+                List<StaffSummaryRecord> gridList = StaffFunctions.GetStaffGridData(activeOnly, nameContains, roleDescription, 0);
                 StaffDataGrid.ItemsSource = gridList;
  
                 if (selectedStaffID > 0)
@@ -156,7 +156,7 @@ namespace ProjectTile
         {
             selectedRecord = null;
             // selectedStaffID = 0; // Don't clear this automatically, as the refresh tries to reuse it
-            StaffFunctions.SelectedStaffMember = null; // Ditto
+            Globals.SelectedStaffMember = null; // Ditto
             CommitButton.IsEnabled = false;
             toggleActiveButton(null);
             EntitiesButton.IsEnabled = false;
@@ -216,11 +216,11 @@ namespace ProjectTile
             {
                 if (StaffDataGrid.SelectedItem != null)
                 {
-                    selectedRecord = (StaffGridRecord) StaffDataGrid.SelectedItem;
+                    selectedRecord = (StaffSummaryRecord) StaffDataGrid.SelectedItem;
                     selectedStaffID = selectedRecord.ID;
-                    StaffFunctions.SelectedStaffMember = StaffFunctions.GetStaffMember(selectedStaffID);
+                    Globals.SelectedStaffMember = StaffFunctions.GetStaffMember(selectedStaffID);
                     CommitButton.IsEnabled = true;
-                    toggleActiveButton(StaffFunctions.SelectedStaffMember.Active);
+                    toggleActiveButton(Globals.SelectedStaffMember.Active);
                     EntitiesButton.IsEnabled = true;
                 }
                 else // No record selected, e.g. because filter changed

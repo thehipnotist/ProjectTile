@@ -18,12 +18,9 @@ namespace ProjectTile
         // Global/page parameters //		        
         MainWindow winMain = (MainWindow)App.Current.MainWindow;
         bool keepExpansion;
-        
+        TableSecurity myPermissions = Globals.MyPermissions;
         Thickness fatBorder = new Thickness (5, 5, 5, 5);
         Thickness thinBorder = new Thickness (1, 1, 1, 1); 
-
-        // Current records //
-        TableSecurity myPermissions = LoginFunctions.MyPermissions;
 
         // Create empty lists of associated buttons that are populated when loaded (below)
         // This is the most efficient way to show and hide only the necessary buttons without having to loop through all of them
@@ -55,7 +52,7 @@ namespace ProjectTile
             addAndGroupButtons();
 
             string demoCo = "";
-            if (EntityFunctions.CurrentEntityID == 1) // Logged into SampleCo, possibly a new user
+            if (Globals.CurrentEntityID == 1) // Logged into SampleCo, possibly a new user
             {
                 demoCo = ", a demonstration company";
                 if (LoginFunctions.FirstLoad)
@@ -69,7 +66,8 @@ namespace ProjectTile
                     Instructions.Visibility = Visibility.Visible;
                 }
             }
-            Welcome.Content = String.Format("Welcome to ProjectTile, {0}. You are logged into Entity {1}{2}.", LoginFunctions.CurrentStaffName, EntityFunctions.CurrentEntityName, demoCo);
+            string staffName = (Globals.CurrentUserID == "pjadmin") ? Globals.CurrentStaffName : Globals.CurrentUser.FirstName;
+            Welcome.Content = String.Format("Welcome to ProjectTile, {0}. You are logged into Entity {1}{2}.", staffName, Globals.CurrentEntityName, demoCo);
         }
 
         // Page changes //

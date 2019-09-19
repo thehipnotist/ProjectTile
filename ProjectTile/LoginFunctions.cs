@@ -4,17 +4,10 @@ using System.Data.SqlClient;
 
 namespace ProjectTile
 {
-    public class LoginFunctions
+    public class LoginFunctions : Globals
     {
         private static MainWindow winMain = (MainWindow)App.Current.MainWindow;
-
-        public static Staff CurrentUser;
-        public static int CurrentStaffID;
-        public static string CurrentStaffName = "";
-        public static string CurrentUserID;
-        public const string DbUserPrefix = "ProT_";
-
-        public static TableSecurity MyPermissions;
+                
         public static bool FirstLoad = true;
 
         //Password functions
@@ -213,12 +206,11 @@ namespace ProjectTile
             EntityFunctions.UpdateMyDefaultEntity(ref thisEntity);
 
             MyPermissions = new TableSecurity(CurrentUser);
-            //PageFunctions.ShowTilesPage();
         }
 
         public static void CompleteLogIn()
         {
-            winMain.MenuSecurity(ref LoginFunctions.MyPermissions);
+            winMain.MenuSecurity(ref MyPermissions);
             winMain.toggleMainMenus(true);
             PageFunctions.ShowTilesPage();
         }

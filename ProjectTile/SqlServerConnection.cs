@@ -90,8 +90,7 @@ namespace ProjectTile
                 return null;
             }
         }
-
-    }
+    } // class
 
     public partial class ProjectTileSqlDatabase : DbContext
     {
@@ -100,6 +99,6 @@ namespace ProjectTile
         {
             // Required to extend (via overload) the DbContext so that the connection string can be overridden
         }
+    } // class
 
-    }
-}
+} // namespace

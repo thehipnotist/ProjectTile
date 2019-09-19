@@ -74,7 +74,7 @@ namespace ProjectTile
                 int clientID = (ProjectFunctions.SelectedClientSummary != null)? ProjectFunctions.SelectedClientSummary.ID : 0;
                 int managerID = (ProjectFunctions.SelectedPMSummary != null)? ProjectFunctions.SelectedPMSummary.ID : 0;
                 
-                bool success = ProjectFunctions.SetProjectGridList(ProjectFunctions.StatusFilter.All, clientID, managerID);
+                bool success = ProjectFunctions.SetProjectGridList(ProjectFunctions.ProjectStatus.All, clientID, managerID);
                 if (success)
                 {
                     // To do: functionality to retain current or selected project and (re)select it
@@ -93,8 +93,8 @@ namespace ProjectTile
         {
             try
             {
-                ClientGridRecord currentRecord = (ProjectFunctions.SelectedClientSummary != null)? ProjectFunctions.SelectedClientSummary: null;
-                if (currentRecord == null && ClientCombo.SelectedItem != null) { currentRecord = (ClientGridRecord) ClientCombo.SelectedItem; }
+                ClientSummaryRecord currentRecord = (ProjectFunctions.SelectedClientSummary != null)? ProjectFunctions.SelectedClientSummary: null;
+                if (currentRecord == null && ClientCombo.SelectedItem != null) { currentRecord = (ClientSummaryRecord) ClientCombo.SelectedItem; }
                 
                 ProjectFunctions.SetClientComboList();
                 ClientCombo.ItemsSource = ProjectFunctions.ClientComboList;
@@ -151,7 +151,7 @@ namespace ProjectTile
                 if (ClientCombo.SelectedItem == null) { } //ProjectFunctions.SelectedClientSummary = ProjectFunctions.DefaultClientSummary; }
                 else
                 {
-                    ProjectFunctions.SelectedClientSummary = (ClientGridRecord)ClientCombo.SelectedItem;
+                    ProjectFunctions.SelectedClientSummary = (ClientSummaryRecord)ClientCombo.SelectedItem;
                     refreshMainProjectGrid();
                 }
             }

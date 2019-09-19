@@ -3,13 +3,13 @@ using System.Windows;
 
 namespace ProjectTile
 {
-    public class MessageFunctions
+    public class MessageFunctions : Globals
     {
         public static void Error(string customMessage, Exception exp, string caption = "Error")
         {
             try
             {
-                string message = customMessage.Replace(LoginFunctions.DbUserPrefix, "");
+                string message = customMessage.Replace(DbUserPrefix, "");
                 string innerException = "";
 
                 if (exp != null)
@@ -59,7 +59,7 @@ namespace ProjectTile
                     ExceptionType = errorType,
                     TargetSite = targetSite,
                     LoggedAt = DateTime.Now,
-                    LoggedBy = LoginFunctions.CurrentUserID,
+                    LoggedBy = CurrentUserID,
                     InnerException = innerException
                 };
 

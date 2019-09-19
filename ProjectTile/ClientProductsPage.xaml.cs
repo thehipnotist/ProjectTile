@@ -40,10 +40,10 @@ namespace ProjectTile
 
         // Lists //
         List<Products> productComboList;
-        List<ClientGridRecord> clientGridList;
+        List<ClientSummaryRecord> clientGridList;
 
         // Current records //
-        ClientGridRecord selectedGridRecord;
+        ClientSummaryRecord selectedGridRecord;
         Products selectedProduct;
         ClientProductSummary selectedClientProduct;
 
@@ -77,7 +77,7 @@ namespace ProjectTile
             ClientLabel.Margin = NameContainsLabel.Margin;
             ClientCombo.Margin = NameContains.Margin;
 
-            if (ClientFunctions.SelectedClient != null) // Opened from the Clients Page
+            if (Globals.SelectedClient != null) // Opened from the Clients Page
             {
                 fromSource = "ClientPage";
                 ClientCombo.IsEnabled = false; // Cannot easily recreate the same selection list
@@ -89,7 +89,7 @@ namespace ProjectTile
             }
             else
             {
-                fromSource = "TilesPage";
+                fromSource = Globals.TilesPageName;
                 ClientLabel.Visibility = ClientCombo.Visibility = Visibility.Hidden;
                 BackButton.Visibility = Visibility.Hidden;
                 ProductFrom.Visibility = ProductTo.Visibility = Visibility.Hidden;
@@ -118,7 +118,7 @@ namespace ProjectTile
             {
                 productComboList = ProductFunctions.ProductsList("", true);
                 ProductCombo.ItemsSource = productComboList;
-                ProductCombo.SelectedItem = productComboList.FirstOrDefault(p => p.ProductName == PageFunctions.AllRecords);
+                ProductCombo.SelectedItem = productComboList.FirstOrDefault(p => p.ProductName == Globals.AllRecords);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating Product filter list", generalException); }
         }
@@ -128,9 +128,9 @@ namespace ProjectTile
         {
             try
             {
-                int selectedID = (ClientFunctions.SelectedClient != null) ? ClientFunctions.SelectedClient.ID : 0;
-                
-                clientGridList = ClientFunctions.ClientGridListByProduct(activeOnly, nameContains, selectedProductID, EntityFunctions.CurrentEntityID); 
+                int selectedID = (Globals.SelectedClient != null) ? Globals.SelectedClient.ID : 0;
+
+                clientGridList = ClientFunctions.ClientGridListByProduct(activeOnly, nameContains, selectedProductID, Globals.CurrentEntityID); 
                 ClientDataGrid.ItemsSource = clientGridList;
                 ClientDataGrid.Items.SortDescriptions.Clear();
                 ClientDataGrid.Items.SortDescriptions.Add(new SortDescription("ClientCode", ListSortDirection.Ascending));
@@ -163,7 +163,7 @@ namespace ProjectTile
         {
             selectedGridRecord = null;
             // selectedClientID = 0; // Don't clear this automatically, as the refresh tries to reuse it
-            ClientFunctions.SelectedClient = null; // Ditto
+            Globals.SelectedClient = null; // Ditto
             ProductButton.IsEnabled = false;
         }
 
@@ -182,7 +182,7 @@ namespace ProjectTile
                 selectionOnly = Visibility.Visible;
                 editOnly = Visibility.Hidden;
                 backSource = fromSource;
-                BackButton.Visibility = (fromSource == "TilesPage") ? Visibility.Hidden : Visibility.Visible;
+                BackButton.Visibility = (fromSource == Globals.TilesPageName) ? Visibility.Hidden : Visibility.Visible;
                 Instructions.Content = activeInstructions;
                 FromLabel.Visibility = ToLabel.Visibility = Visibility.Hidden;
                 ProductVersionLabel.Content = "";
@@ -191,7 +191,7 @@ namespace ProjectTile
             {
                 selectionOnly = Visibility.Hidden;
                 editOnly = Visibility.Visible;
-                backSource = (fromSource == "TilesPage") ? editMode.ToString() : fromSource;
+                backSource = (fromSource == Globals.TilesPageName) ? editMode.ToString() : fromSource;
                 BackButton.Visibility = Visibility.Visible;
                 ToLabel.Content = (editMode == ByClient) ? "Linked Products (Live in Bold)" : "Linked Clients (Live in Bold)";
 
@@ -245,7 +245,7 @@ namespace ProjectTile
             try
             {
                 ClientCombo.ItemsSource = clientGridList;
-                ClientCombo.SelectedItem = clientGridList.First(s => s.ID == ClientFunctions.SelectedClient.ID);
+                ClientCombo.SelectedItem = clientGridList.First(s => s.ID == Globals.SelectedClient.ID);
                 refreshProductSummaries(true);
             }
             catch (Exception generalException)
@@ -297,8 +297,8 @@ namespace ProjectTile
         {
             if (fromDatabase)
             {
-                ClientFunctions.ProductsNotForClient = ClientFunctions.UnlinkedProducts(ClientFunctions.SelectedClient.ID);
-                ClientFunctions.ProductsForClient = ClientFunctions.LinkedProducts(ClientFunctions.SelectedClient.ID);
+                ClientFunctions.ProductsNotForClient = ClientFunctions.UnlinkedProducts(Globals.SelectedClient.ID);
+                ClientFunctions.ProductsForClient = ClientFunctions.LinkedProducts(Globals.SelectedClient.ID);
             }
             ProductFrom.ItemsSource = ClientFunctions.ProductsNotForClient;
             ProductFrom.Items.SortDescriptions.Clear();
@@ -313,9 +313,9 @@ namespace ProjectTile
             ProductTo.SelectedItem = null;
 
             disableButtons();
-            if (ClientFunctions.SelectedClient != null)
+            if (Globals.SelectedClient != null)
             {
-                PageHeader.Content = "Products for " + ClientFunctions.SelectedClient.ClientName;
+                PageHeader.Content = "Products for " + Globals.SelectedClient.ClientName;
             }
         }
 
@@ -413,7 +413,7 @@ namespace ProjectTile
                         addList.Add((Products)selectedRow);
                     }
 
-                    bool success = ClientFunctions.ToggleClientProducts(addList, true, ClientFunctions.SelectedClient);
+                    bool success = ClientFunctions.ToggleClientProducts(addList, true, Globals.SelectedClient);
                     if (success)
                     {
                         refreshProductSummaries(false);
@@ -471,7 +471,7 @@ namespace ProjectTile
                     Products thisProduct = ProductFunctions.GetProductByID(thisRecord.ProductID);
                     removeList.Add(thisProduct);
 
-                    bool success = ClientFunctions.ToggleClientProducts(removeList, false, ClientFunctions.SelectedClient);
+                    bool success = ClientFunctions.ToggleClientProducts(removeList, false, Globals.SelectedClient);
                     if (success)
                     {
                         refreshProductSummaries(false);
@@ -549,7 +549,7 @@ namespace ProjectTile
             {
                 if (ClientDataGrid.SelectedItem != null)
                 {
-                    selectedGridRecord = (ClientGridRecord)ClientDataGrid.SelectedItem;
+                    selectedGridRecord = (ClientSummaryRecord)ClientDataGrid.SelectedItem;
                     ClientFunctions.SelectClient(selectedGridRecord.ID);
                     ProductButton.IsEnabled = true;
                 }
@@ -561,7 +561,7 @@ namespace ProjectTile
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error processing selection change", generalException);
-                ClientFunctions.SelectedClient = null; // Avoid accidentally using the previous selection
+                Globals.SelectedClient = null; // Avoid accidentally using the previous selection
                 clearSelection();
             }
         }
@@ -572,7 +572,7 @@ namespace ProjectTile
             {
                 clearChanges();
                 Products selectedRecord = (Products) ProductCombo.SelectedItem;
-                if (selectedRecord.ProductName == PageFunctions.AllRecords)
+                if (selectedRecord.ProductName == Globals.AllRecords)
                 {
                     selectedProductID = 0;
                     selectedProduct = null;
@@ -692,7 +692,7 @@ namespace ProjectTile
         {
             bool confirm = MessageFunctions.QuestionYesNo("Are you sure you wish to save your amendments?", "Save changes?");
             if (!confirm) { return; }
-            bool success = (editMode == ByClient) ? ClientFunctions.SaveClientProductChanges(ClientFunctions.SelectedClient.ID) : ClientFunctions.SaveProductClientChanges(selectedProductID);
+            bool success = (editMode == ByClient) ? ClientFunctions.SaveClientProductChanges(Globals.SelectedClient.ID) : ClientFunctions.SaveProductClientChanges(selectedProductID);
             if (success)
             {
                 MessageFunctions.SuccessMessage("Your changes have been saved successfully. You can make further changes, go back to the previous screen, or close this window.", "Changes Saved");
@@ -707,7 +707,7 @@ namespace ProjectTile
                 clearChanges();
                 if (ClientCombo.SelectedItem != null)
                 {
-                    selectedGridRecord = (ClientGridRecord)ClientCombo.SelectedItem;
+                    selectedGridRecord = (ClientSummaryRecord)ClientCombo.SelectedItem;
                     ClientFunctions.SelectClient(selectedGridRecord.ID);
                     refreshProductSummaries(true);
                 }
@@ -747,7 +747,7 @@ namespace ProjectTile
 
         private void Version_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = !ProductFunctions.ClientVersionFormat.IsMatch((sender as TextBox).Text.Insert((sender as TextBox).SelectionStart, e.Text));
+            e.Handled = !Globals.ClientVersionFormat.IsMatch((sender as TextBox).Text.Insert((sender as TextBox).SelectionStart, e.Text));
         }
 
 

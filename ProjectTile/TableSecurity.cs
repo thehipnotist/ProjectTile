@@ -7,7 +7,7 @@ namespace ProjectTile
 {
     public class TableSecurity
     {
-        public Hashtable userPermissions = new Hashtable();
+        private Hashtable userPermissions = new Hashtable();
        
         public TableSecurity(Staff currentUser = null, int userID = 0)
         {
@@ -64,31 +64,6 @@ namespace ProjectTile
         {
             return Allow(keyName)? Visibility.Visible : Visibility.Collapsed;
         }
-
-        /*
-        public static bool CanCreateEntities(int intStaffID) // No longer required but left in as an example
-        {
-            try
-            {                          
-                ProjectTileSqlDatabase defaultPtDb = SqlServerConnection.defaultPtDbConnection();
-                using (defaultPtDb)
-                {
-                    var canCreate = from s in defaultPtDb.Staff
-                                    join tp in defaultPtDb.TablePermissions on s.RoleCode equals tp.RoleCode
-                                    where s.ID == intStaffID && tp.TableName == "Entities"                                    
-                                    select tp.InsertRows;
-                    var varCanCreate = canCreate.ToList();
-                    bool blnCanCreate = (bool) varCanCreate[0];
-                    return blnCanCreate;
-                }
-            }
-            catch (Exception generalException)
-            {
-                PopUpMessage.errorMessage("Error setting security permissions", generalException);
-                return false;
-            }
-        }
-        */ 
 
     } // class
 } // namespace

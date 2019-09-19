@@ -2,7 +2,7 @@
 
 namespace ProjectTile
 {
-    public class ProjectSummaryRecord
+    public class ProjectSummaryRecord : Globals
     {
         public int ProjectID { get; set; }
         public string ProjectCode { get; set; }

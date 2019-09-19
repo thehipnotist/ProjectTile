@@ -1,6 +1,6 @@
 ﻿namespace ProjectTile
 {
-    public class ContactGridRecord
+    public class ContactSummaryRecord : Globals
     {
         public int ID {get; set; }
         public int ClientID {get; set; }

@@ -7,40 +7,28 @@ using System.Windows.Controls;
 
 namespace ProjectTile
 {
-    public class ProjectFunctions
-    {
-        // Globals
-        public const string ProjectManagerRole = "PM";
-        private static int thisEntityID = EntityFunctions.CurrentEntityID;
-
-        // Stage/status
-        public enum StatusFilter { All, Current, Open, InProgress, Closed }
-        public const int StartStage = 2;
-        public const int LiveStage = 11;
-        public const int ClosedStage = 15;
-        public const string InProgressStatus = "In Progress";
-        public const string ClosedStatus = "Closed";
-
+    public class ProjectFunctions : Globals
+    {        
         // Lists
         public static List<ProjectSummaryRecord> FullProjectList;
         public static List<ProjectSummaryRecord> ProjectGridList;
-        public static List<StaffGridRecord> FullPMsList;
-        public static List<StaffGridRecord> PMComboList;
-        public static List<ClientGridRecord> FullClientList = ClientFunctions.ClientGridList(false, "", 0, thisEntityID);
-        public static List<ClientGridRecord> ClientComboList;
+        public static List<StaffSummaryRecord> FullPMsList;
+        public static List<StaffSummaryRecord> PMComboList;
+        public static List<ClientSummaryRecord> FullClientList = ClientFunctions.ClientGridList(false, "", 0, CurrentEntityID);
+        public static List<ClientSummaryRecord> ClientComboList;
 
         // Additional records (any, all or none)
-        public static ClientGridRecord AnyClient = new ClientGridRecord { ID = 0, ClientCode = "ANY", ClientName = PageFunctions.AnyRecord, EntityID = thisEntityID };
-        public static ClientGridRecord NoClient = new ClientGridRecord { ID = PageFunctions.NoID, ClientCode = "NONE", ClientName = PageFunctions.NoRecord, EntityID = thisEntityID };
-        public static StaffGridRecord AnyPM = new StaffGridRecord { ID = 0, StaffName = PageFunctions.AllRecords };
+        public static ClientSummaryRecord AnyClient = new ClientSummaryRecord { ID = 0, ClientCode = "ANY", ClientName = AnyRecord, EntityID = CurrentEntityID };
+        public static ClientSummaryRecord NoClient = new ClientSummaryRecord { ID = NoID, ClientCode = "NONE", ClientName = NoRecord, EntityID = CurrentEntityID };
+        public static StaffSummaryRecord AnyPM = new StaffSummaryRecord { ID = 0, StaffName = AllRecords };
 
         // Default records
-        public static ClientGridRecord DefaultClientSummary = AnyClient;
-        public static StaffGridRecord DefaultPMSummary = AnyPM;
+        public static ClientSummaryRecord DefaultClientSummary = AnyClient;
+        public static StaffSummaryRecord DefaultPMSummary = AnyPM;
 
         // Selected records
-        public static ClientGridRecord SelectedClientSummary; //= DefaultClientSummary;
-        public static StaffGridRecord SelectedPMSummary; //= DefaultPMSummary;
+        public static ClientSummaryRecord SelectedClientSummary; //= DefaultClientSummary;
+        public static StaffSummaryRecord SelectedPMSummary; //= DefaultPMSummary;
 
         // Data retrieval
         public static bool SetFullProjectList()
@@ -59,7 +47,7 @@ namespace ProjectTile
                          join s in existingPtDb.Staff on pt.StaffID equals s.ID
                          join ps in existingPtDb.ProjectStages on pj.StageCode equals ps.StageCode
                          join t in existingPtDb.ProjectTypes on pj.TypeCode equals t.TypeCode
-                         where pj.EntityID == thisEntityID
+                         where pj.EntityID == CurrentEntityID
                              && (pt.ProjectRoleCode == ProjectManagerRole)
                          select new ProjectSummaryRecord
                          {
@@ -71,7 +59,7 @@ namespace ProjectTile
                              TypeName = t.TypeName,
                              TypeDescription = t.TypeDescription,
                              EntityID = pj.EntityID,
-                             ClientID = (sc == null) ? PageFunctions.NoID : sc.ID,
+                             ClientID = (sc == null) ? NoID : sc.ID,
                              ClientCode = (sc == null) ? "" : sc.ClientCode,
                              ClientName = (sc == null) ? "" : sc.ClientName,
                              PMStaffID = s.ID,
@@ -94,7 +82,7 @@ namespace ProjectTile
             }
         }
 
-        public static bool SetProjectGridList(StatusFilter inStatus, int clientID = 0, int ourManagerID = 0)
+        public static bool SetProjectGridList(ProjectStatus inStatus, int clientID = 0, int ourManagerID = 0)
         {
             try
             {
@@ -105,11 +93,11 @@ namespace ProjectTile
                         (from fpl in FullProjectList
                         where  (clientID == 0 || fpl.ClientID == clientID)
                             &&  (ourManagerID == 0 || fpl.PMStaffID == ourManagerID)
-                            && ( inStatus == StatusFilter.All
-                                    || (inStatus == StatusFilter.Current && fpl.StageCode <= LiveStage)
-                                    || (inStatus == StatusFilter.Open && fpl.StageCode >= StartStage && fpl.StageCode <= LiveStage) 
-                                    || (inStatus == StatusFilter.InProgress && fpl.ProjectStatus == InProgressStatus) 
-                                    || (inStatus == StatusFilter.Closed && fpl.ProjectStatus == ClosedStatus)
+                            && ( inStatus == ProjectStatus.All
+                                    || (inStatus == ProjectStatus.Current && fpl.StageCode <= LiveStage)
+                                    || (inStatus == ProjectStatus.Open && fpl.StageCode >= StartStage && fpl.StageCode <= LiveStage) 
+                                    || (inStatus == ProjectStatus.InProgress && fpl.ProjectStatus == InProgressStatus) 
+                                    || (inStatus == ProjectStatus.Closed && fpl.ProjectStatus == ClosedStatus)
                                 )
                         select fpl
                         ).ToList();
@@ -129,7 +117,7 @@ namespace ProjectTile
         public static void SetFullPMsList()
         {
             List<int> currentManagers;
-            List<StaffGridRecord> managersList;
+            List<StaffSummaryRecord> managersList;
             
             try
             {
@@ -145,10 +133,10 @@ namespace ProjectTile
                          join sr in existingPtDb.StaffRoles on s.RoleCode equals sr.RoleCode
                          join se in existingPtDb.StaffEntities on s.ID equals se.StaffID
                          join de in existingPtDb.Entities on s.DefaultEntity equals de.ID
-                         where se.EntityID == thisEntityID 
+                         where se.EntityID == CurrentEntityID 
                             && (s.RoleCode == ProjectManagerRole || currentManagers.Contains(s.ID)) 
                          orderby new { s.FirstName, s.Surname, s.UserID }
-                         select new StaffGridRecord
+                         select new StaffSummaryRecord
                          {
                              ID = (int)s.ID,
                              UserID = (string)s.UserID,
@@ -173,7 +161,7 @@ namespace ProjectTile
         {
             try
             {
-                List<StaffGridRecord> comboList = FullPMsList;
+                List<StaffSummaryRecord> comboList = FullPMsList;
                 comboList.Add(AnyPM);
                 PMComboList = comboList;
             }
@@ -185,7 +173,7 @@ namespace ProjectTile
         {
             try
             {
-                List<ClientGridRecord> comboList = FullClientList;
+                List<ClientSummaryRecord> comboList = FullClientList;
                 comboList.Add(AnyClient);
                 comboList.Add(NoClient);
                 ClientComboList = comboList;

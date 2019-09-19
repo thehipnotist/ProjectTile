@@ -7,11 +7,9 @@ using System.Text;
 namespace ProjectTile
 {
 
-    class ClientFunctions
-    {
-        
-        public const string ManagerRole = "AM";
-        public static string EntityWarning = "Note that only clients in the current Entity ('" + EntityFunctions.CurrentEntityName + "') are displayed.";
+    class ClientFunctions : Globals
+    {        
+        public static string EntityWarning = "Note that only clients in the current Entity ('" + CurrentEntityName + "') are displayed.";
         public static string ShortEntityWarning = "Only clients in the current Entity are displayed.";
         
         public static string ClientCodeFormat = "";
@@ -37,9 +35,8 @@ namespace ProjectTile
         public static List<int> ProductIDsToUpdate = new List<int>();
 
         // The following must be updated when opening a page from the menu and choosing a client, or cleared when returning to the menu or clearing client selection
-        public static string SourcePage = "TilesPage";
+        public static string SourcePage = TilesPageName;
         public static string SourcePageMode = PageFunctions.None;
-        public static Clients SelectedClient = null;
         
         // Data retrieval
 
@@ -58,7 +55,7 @@ namespace ProjectTile
                                 select s.FirstName + " " + s.Surname)
                                 .Distinct().ToList();
 
-                    if (includeAll) { managerNames.Add(PageFunctions.AllRecords); }
+                    if (includeAll) { managerNames.Add(AllRecords); }
                     return managerNames;
                 }
             }
@@ -96,14 +93,14 @@ namespace ProjectTile
             }
         }   
         
-        public static List<ClientGridRecord> ClientGridList(bool activeOnly, string nameContains, int managerID, int entityID)
+        public static List<ClientSummaryRecord> ClientGridList(bool activeOnly, string nameContains, int managerID, int entityID)
         {
             try
             {
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    List<ClientGridRecord> clientList = new List<ClientGridRecord>();
+                    List<ClientSummaryRecord> clientList = new List<ClientSummaryRecord>();
                     clientList = (from c in existingPtDb.Clients
                                   join s in existingPtDb.Staff on c.AccountManagerID equals s.ID
                                   join e in existingPtDb.Entities on c.EntityID equals e.ID
@@ -112,7 +109,7 @@ namespace ProjectTile
                                     && (!activeOnly || c.Active)
                                     && (nameContains == "" || c.ClientName.Contains(nameContains))
                                   orderby c.ClientCode
-                                  select (new ClientGridRecord() 
+                                  select (new ClientSummaryRecord() 
                                   { 
                                       ID = c.ID, 
                                       ClientCode = c.ClientCode, 
@@ -300,7 +297,7 @@ namespace ProjectTile
                 }                
                 
                 int accountManagerID = StaffFunctions.GetStaffMemberByName(accountManager).ID;
-                int entityID = EntityFunctions.CurrentEntityID; // Always amending in the current Entity only
+                int entityID = CurrentEntityID; // Always amending in the current Entity only
 
                 try
                 {
@@ -495,14 +492,14 @@ namespace ProjectTile
             }	
         }
 
-        public static List<ClientGridRecord> ClientGridListByContact(bool activeOnly, string clientContains, string contactContains, int entityID)
+        public static List<ClientSummaryRecord> ClientGridListByContact(bool activeOnly, string clientContains, string contactContains, int entityID)
         {
             try
             {
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    List<ClientGridRecord> clientList = new List<ClientGridRecord>();
+                    List<ClientSummaryRecord> clientList = new List<ClientSummaryRecord>();
                     clientList = (from c in existingPtDb.Clients
                                   join s in existingPtDb.Staff on c.AccountManagerID equals s.ID
                                   join e in existingPtDb.Entities on c.EntityID equals e.ID
@@ -513,7 +510,7 @@ namespace ProjectTile
                                     && (!activeOnly || c.Active)
                                     && (clientContains == "" || c.ClientName.Contains(clientContains))
                                   orderby c.ClientCode
-                                  select (new ClientGridRecord()
+                                  select (new ClientSummaryRecord()
                                   {
                                       ID = c.ID,
                                       ClientCode = c.ClientCode,
@@ -536,7 +533,7 @@ namespace ProjectTile
             }
         }
 
-        public static List<ContactGridRecord> ContactGridList (string contactContains, bool ActiveOnly, int clientID)
+        public static List<ContactSummaryRecord> ContactGridList (string contactContains, bool ActiveOnly, int clientID)
         {
             try
             {
@@ -546,10 +543,10 @@ namespace ProjectTile
                     return (from cs in existingPtDb.ClientStaff
                             join c in existingPtDb.Clients on cs.ClientID equals c.ID
                             where ( (clientID == 0 || cs.ClientID == clientID)
-                                && c.EntityID == EntityFunctions.CurrentEntityID
+                                && c.EntityID == CurrentEntityID
                                 && (!ActiveOnly || cs.Active)
                                 && (contactContains == "" || (cs.FirstName + " " + cs.Surname).Contains(contactContains) || cs.JobTitle.Contains(contactContains)) )
-                            select (new ContactGridRecord 
+                            select (new ContactSummaryRecord 
                             {
                                 ID = cs.ID,
                                 ContactName = cs.FirstName + " " + cs.Surname,
@@ -576,7 +573,7 @@ namespace ProjectTile
                 {
                     return (from cs in existingPtDb.ClientStaff
                             join c in existingPtDb.Clients on cs.ClientID equals c.ID
-                            where c.EntityID == EntityFunctions.CurrentEntityID 
+                            where c.EntityID == CurrentEntityID 
                                 && (contactContains == "" || (cs.FirstName + " " + cs.Surname).Contains(contactContains))
                             select cs.FirstName + " " + cs.Surname
                                 /*
@@ -820,14 +817,14 @@ namespace ProjectTile
         }
 
         // Client Products
-        public static List<ClientGridRecord> ClientGridListByProduct(bool activeOnly, string clientContains, int productID, int entityID)
+        public static List<ClientSummaryRecord> ClientGridListByProduct(bool activeOnly, string clientContains, int productID, int entityID)
         {
             try
             {
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    List<ClientGridRecord> clientList = new List<ClientGridRecord>();
+                    List<ClientSummaryRecord> clientList = new List<ClientSummaryRecord>();
                     clientList = (from c in existingPtDb.Clients
                                   join s in existingPtDb.Staff on c.AccountManagerID equals s.ID
                                   join e in existingPtDb.Entities on c.EntityID equals e.ID
@@ -838,7 +835,7 @@ namespace ProjectTile
                                     && (!activeOnly || c.Active)
                                     && (clientContains == "" || c.ClientName.Contains(clientContains))
                                   orderby c.ClientCode
-                                  select (new ClientGridRecord()
+                                  select (new ClientSummaryRecord()
                                   {
                                       ID = c.ID,
                                       ClientCode = c.ClientCode,
@@ -861,13 +858,13 @@ namespace ProjectTile
             }
         }
 
-        private static ClientProductSummary.StatusType clientProductStatus(ClientProductSummary thisRecord)
+        private static ClientProductStatus clientProductStatus(ClientProductSummary thisRecord)
         {
             try
             {
-                ClientProductSummary.StatusType newStatus = ClientProductSummary.StatusType.Inactive;
+                ClientProductStatus newStatus = ClientProductStatus.Inactive;
 
-                if (! (thisRecord.ID > 0)) { return ClientProductSummary.StatusType.Added; }
+                if (! (thisRecord.ID > 0)) { return ClientProductStatus.Added; }
 
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
@@ -886,25 +883,25 @@ namespace ProjectTile
                         {
                             if (rp.StageCode >= ProjectFunctions.LiveStage)
                             {
-                                newStatus = ClientProductSummary.StatusType.Retired; // This is checked first; if a project has been completed but the product is not active, it must have been retired
+                                newStatus = ClientProductStatus.Retired; // This is checked first; if a project has been completed but the product is not active, it must have been retired
                                 break;
                             }
                             else if (rp.TypeCode == "AS" || rp.TypeCode == "NS" || rp.TypeCode == "TO")
                             {
-                                newStatus = ClientProductSummary.StatusType.InProgress;
+                                newStatus = ClientProductStatus.InProgress;
                                 break;
                             }
-                            else { newStatus = ClientProductSummary.StatusType.Inactive; }
+                            else { newStatus = ClientProductStatus.Inactive; }
                         }
                     }
                     else
                     {
-                        newStatus = ClientProductSummary.StatusType.Live;
+                        newStatus = ClientProductStatus.Live;
                         foreach (Projects rp in relevantProjects)
                         {
                             if (rp.StageCode <= ProjectFunctions.LiveStage)
                             {
-                                newStatus = ClientProductSummary.StatusType.Updates;
+                                newStatus = ClientProductStatus.Updates;
                                 break;
                             }
                         }
@@ -916,7 +913,7 @@ namespace ProjectTile
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error setting product statuses", generalException);
-                return ClientProductSummary.StatusType.New;
+                return ClientProductStatus.New;
             }
         }
 
@@ -939,7 +936,7 @@ namespace ProjectTile
                         (from p in existingPtDb.Products
                         join cp in existingPtDb.ClientProducts on p.ID equals cp.ProductID
                         join c in existingPtDb.Clients on cp.ClientID equals c.ID
-                        where (productID == 0 || p.ID == productID)  && (!activeOnly || c.Active) && c.EntityID == EntityFunctions.CurrentEntityID
+                        where (productID == 0 || p.ID == productID)  && (!activeOnly || c.Active) && c.EntityID == CurrentEntityID
                         orderby c.ClientName
                         select new ClientProductSummary 
                         {
@@ -952,7 +949,7 @@ namespace ProjectTile
                             ProductName = p.ProductName,
                             LatestVersion = Math.Floor((decimal)p.LatestVersion * 10) / 10,
                             Live = (bool) cp.Live,
-                            StatusID = (cp.Live == true) ? ClientProductSummary.StatusType.Live : ClientProductSummary.StatusType.New,
+                            StatusID = (cp.Live == true) ? ClientProductStatus.Live : ClientProductStatus.New,
                             ClientVersion = Math.Floor((decimal)cp.ProductVersion * 10) / 10
                         }
                         ).ToList();
@@ -977,7 +974,7 @@ namespace ProjectTile
                 using (existingPtDb)
                 {
                     return (from c in existingPtDb.Clients
-                            where (!activeOnly || c.Active) && !clientIDsWithProduct.Contains(c.ID) && c.EntityID == EntityFunctions.CurrentEntityID
+                            where (!activeOnly || c.Active) && !clientIDsWithProduct.Contains(c.ID) && c.EntityID == CurrentEntityID
                             orderby c.ClientCode
                             select c).ToList();
                 }
@@ -1013,7 +1010,7 @@ namespace ProjectTile
                             ProductName = p.ProductName,
                             LatestVersion = Math.Floor((decimal)p.LatestVersion * 10) / 10,
                             Live = (bool)cp.Live,
-                            StatusID = (cp.Live == true) ? ClientProductSummary.StatusType.Live : ClientProductSummary.StatusType.New,
+                            StatusID = (cp.Live == true) ? ClientProductStatus.Live : ClientProductStatus.New,
                             ClientVersion = Math.Floor((decimal)cp.ProductVersion * 10) / 10
                         }
                         ).ToList();
@@ -1132,7 +1129,7 @@ namespace ProjectTile
                                     ProductName = thisProduct.ProductName,
                                     LatestVersion = Math.Floor((decimal)thisProduct.LatestVersion * 10) / 10,
                                     Live = false,
-                                    StatusID = ClientProductSummary.StatusType.Added,
+                                    StatusID = ClientProductStatus.Added,
                                     ClientVersion = Math.Floor((decimal)thisProduct.LatestVersion * 10) / 10
                                 };                            
                             ClientsForProduct.Add(addRecord);
@@ -1203,7 +1200,7 @@ namespace ProjectTile
                                 ProductName = thisProduct.ProductName,
                                 LatestVersion = Math.Floor((decimal)thisProduct.LatestVersion * 10) / 10,
                                 Live = false,
-                                StatusID = ClientProductSummary.StatusType.Added,
+                                StatusID = ClientProductStatus.Added,
                                 ClientVersion = Math.Floor((decimal)thisProduct.LatestVersion * 10) / 10
                             };   
                             ProductsForClient.Add(addRecord);
@@ -1477,17 +1474,17 @@ namespace ProjectTile
 
                 switch (thisRecord.StatusID)
                 {
-                    case ClientProductSummary.StatusType.Added: 
+                    case ClientProductStatus.Added: 
                         reason = "has just been added. A project is normally required to activate new products.";
                         allowActivate = true;
                         //updateStatus = false;
                         break;
-                    case ClientProductSummary.StatusType.New: 
+                    case ClientProductStatus.New: 
                         reason = "is new. A project is normally required to activate new products.";
                         allowActivate = true;
                         break;
-                    case ClientProductSummary.StatusType.InProgress:
-                    case ClientProductSummary.StatusType.Updates:
+                    case ClientProductStatus.InProgress:
+                    case ClientProductStatus.Updates:
                         reason = "has project work in progress. The status should be updated via the project.";
                         allowActivate = false;
                         break;
@@ -1509,7 +1506,7 @@ namespace ProjectTile
                     if (activate) 
                     {
                         thisRecord.Live = true;
-                        //if (updateStatus) { thisRecord.StatusID = ClientProductSummary.StatusType.Live; }
+                        //if (updateStatus) { thisRecord.StatusID = StatusType.Live; }
                         thisRecord.StatusID = clientProductStatus(thisRecord);
                         queueClientProductUpdate(thisRecord, byClient);                        
                     }
@@ -1536,10 +1533,10 @@ namespace ProjectTile
 
                 switch (thisRecord.StatusID)
                 {
-                    case ClientProductSummary.StatusType.InProgress:
+                    case ClientProductStatus.InProgress:
                         reason = "has project work in progress. The status should normally be updated via the project.";
                         break;
-                    case ClientProductSummary.StatusType.Updates:
+                    case ClientProductStatus.Updates:
                         reason = "has project work in progress. The status should normally be updated via the project.";
                         break;
                     default:
@@ -1579,11 +1576,11 @@ namespace ProjectTile
                 MessageFunctions.InvalidMessage("The entered version number is higher than the latest product version. Please try again.", "Invalid version");
                 return false;
             }
-            else if (thisRecord.ClientVersion > versionNumber && thisRecord.StatusID != ClientProductSummary.StatusType.Added)
+            else if (thisRecord.ClientVersion > versionNumber && thisRecord.StatusID != ClientProductStatus.Added)
             {
                 carryOn = MessageFunctions.QuestionYesNo("The entered version number is lower than the current one. Is this correct?");               
             }
-            else if ( thisRecord.StatusID != ClientProductSummary.StatusType.Added)
+            else if ( thisRecord.StatusID != ClientProductStatus.Added)
             {
                 carryOn = MessageFunctions.QuestionYesNo("Update the client's version of this product? This is not immediately saved, so it can be undone using the 'Back' button.");
             }
@@ -1614,7 +1611,7 @@ namespace ProjectTile
         public static void ResetClientParameters()
         {
             SelectedClient = null;
-            SourcePage = "TilesPage";
+            SourcePage = TilesPageName;
             SourcePageMode = PageFunctions.None;   
         }
 

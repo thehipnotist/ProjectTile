@@ -51,9 +51,9 @@ namespace ProjectTile
             FirstName.Focus();
             CapsLockLabel.Visibility = Visibility.Hidden;
             refreshRoleList();
-            EntityList.ItemsSource = EntityFunctions.EntityList(LoginFunctions.CurrentStaffID, false);
+            EntityList.ItemsSource = EntityFunctions.EntityList(Globals.CurrentStaffID, false);
             toggleConfirm(false);
-            if (!LoginFunctions.MyPermissions.Allow("ActivateStaff"))
+            if (!Globals.MyPermissions.Allow("ActivateStaff"))
             {
                 Active_CheckBox.IsEnabled = false;
                 Active_CheckBox.ToolTip = ActiveLabel.ToolTip = "Your current permissions do not allow activating or disabling staff members";

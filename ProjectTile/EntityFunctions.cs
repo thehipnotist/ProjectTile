@@ -5,16 +5,9 @@ using System.Collections.Generic;
 
 namespace ProjectTile
 {
-    public class EntityFunctions
+    public class EntityFunctions : Globals
     {
-        private static MainWindow winMain = (MainWindow)App.Current.MainWindow;
-        
-        public static int CurrentEntityID;
-        public static string CurrentEntityName = "";
-        public static Entities CurrentEntity;
-
-        public static int DefaultEntityID;
-        public static string DefaultEntityName = "";
+        private static MainWindow winMain = (MainWindow)App.Current.MainWindow;       
         
         // Data retrieval
 
@@ -75,7 +68,7 @@ namespace ProjectTile
                         .Select(ent => ent.EntityName)
                         .ToList();
 
-                    if (includeAll) { entityList.Add(PageFunctions.AllRecords); }
+                    if (includeAll) { entityList.Add(AllRecords); }
                     string[] entityArray = entityList.ToArray();
                     return entityArray;
                 }
@@ -240,7 +233,7 @@ namespace ProjectTile
 
                         try
                         {
-                            Staff currentUser = LoginFunctions.CurrentUser;
+                            Staff currentUser = CurrentUser;
                             AllowEntity(newEntityID, currentUser.ID);
                         }
                         catch (Exception generalException)
@@ -368,15 +361,13 @@ namespace ProjectTile
             {
                 try
                 {
-                    if (staffID == 0) { staffID = LoginFunctions.CurrentStaffID; }
-
-//MessageFunctions.InvalidMessage(staffID.ToString());
+                    if (staffID == 0) { staffID = CurrentStaffID; }
 
                     Staff thisUser = existingPtDb.Staff.Find(staffID);                    
                     thisUser.DefaultEntity = selectedEntity.ID;
                     
                     existingPtDb.SaveChanges();
-                    if (staffID == LoginFunctions.CurrentStaffID) { UpdateMyDefaultEntity(ref selectedEntity); }
+                    if (staffID == CurrentStaffID) { UpdateMyDefaultEntity(ref selectedEntity); }
 
                 }
                 catch (SqlException sqlException)

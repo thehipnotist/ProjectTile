@@ -26,7 +26,7 @@ namespace ProjectTile
 
         // Global/page parameters //
         string pageMode;
-        bool allowAdd = LoginFunctions.MyPermissions.Allow("AddProducts");
+        bool allowAdd = Globals.MyPermissions.Allow("AddProducts");
 
         // Current variables //
         string descContains = "";
@@ -218,7 +218,7 @@ namespace ProjectTile
 
         private void Version_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = !ProductFunctions.LatestVersionFormat.IsMatch((sender as TextBox).Text.Insert((sender as TextBox).SelectionStart, e.Text));
+            e.Handled = !Globals.LatestVersionFormat.IsMatch((sender as TextBox).Text.Insert((sender as TextBox).SelectionStart, e.Text));
         }
 
         private void AddButton_Click(object sender, RoutedEventArgs e)

@@ -61,7 +61,7 @@ namespace ProjectTile
                     NewPasswordLabel.Visibility = Visibility.Hidden;
                     ConfirmPassword.Visibility = Visibility.Hidden;
                     ConfirmLabel.Visibility = Visibility.Hidden;
-                    if (LoginFunctions.CurrentStaffID > 0)    // already logged in, aiming to change login
+                    if (Globals.CurrentStaffID > 0)    // already logged in, aiming to change login
                     {
                         PageHeader.Content = "Log In as a Different User";
                         Welcome.Content = "Please enter a UserID and password to change your login.";
@@ -82,7 +82,7 @@ namespace ProjectTile
                     PageHeader.Content = "Change Your ProjectTile Password";
                     Welcome.Content = "Please enter your existing password, and your new password twice.";
                     UserID.IsEnabled = false;
-                    UserID.Text = LoginFunctions.CurrentUserID;
+                    UserID.Text = Globals.CurrentUserID;
                     RightHeader.Visibility = Visibility.Hidden;
                     PleaseWaitLabel.Content = "Attempting password change - please wait...";
                 }
@@ -174,7 +174,7 @@ namespace ProjectTile
                     }
                     else if (pageMode == PageFunctions.PassChange)
                     {
-                        bool success = LoginFunctions.ChangeLoginDetails(LoginFunctions.CurrentStaffID, userID, NewPassword.Password, ConfirmPassword.Password);
+                        bool success = LoginFunctions.ChangeLoginDetails(Globals.CurrentStaffID, userID, NewPassword.Password, ConfirmPassword.Password);
                         if (success) 
                         {
                             MessageFunctions.SuccessMessage("Your password has been changed successfully.", "Password Changed");
@@ -216,7 +216,7 @@ namespace ProjectTile
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            if (LoginFunctions.CurrentStaffID > 0)  { PageFunctions.ShowTilesPage(); }
+            if (Globals.CurrentStaffID > 0) { PageFunctions.ShowTilesPage(); }
             else { winMain.Close(); } // not yet logged in, so close application
         }
 

@@ -8,11 +8,8 @@ using System.Text.RegularExpressions;
 
 namespace ProjectTile
 {
-    class ProductFunctions
-    {
-        //public static Regex VersionFormat = new Regex("^[.][0-9]+$|^[0-9]*[.]{0,1}[0-9]*$");        
-        public static Regex ClientVersionFormat = new Regex("^[0-9]{0,2}[.]{0,1}[0-9]{0,1}$");
-        public static Regex LatestVersionFormat = new Regex("^[0-9]{0,2}[.]{0,1}[0-9]{0,2}$");
+    class ProductFunctions : Globals
+    {       
         
         // Data retrieval
         
@@ -31,7 +28,7 @@ namespace ProjectTile
 
                     if (includeAll)
                     {
-                        Products dummyProduct = new Products { ID = 0, ProductName = PageFunctions.AllRecords, ProductDescription = "", LatestVersion = 0 };
+                        Products dummyProduct = new Products { ID = 0, ProductName = AllRecords, ProductDescription = "", LatestVersion = 0 };
                         productGridList.Add(dummyProduct);
                     }
 

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿namespace ProjectTile
 
-namespace ProjectTile
 {
-    public class EntitiesSummaryRecord
+    public class EntitySummaryRecord : Globals
     {      
         public int ID { get; set; }
         public string Name { get; set; }

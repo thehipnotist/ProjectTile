@@ -44,13 +44,13 @@ namespace ProjectTile
         string contactContains = ""; 
 
         // Current records //
-        ClientGridRecord selectedClientGridRecord = null;
-        ContactGridRecord selectedContactGridRecord = null;
+        ClientSummaryRecord selectedClientGridRecord = null;
+        ContactSummaryRecord selectedContactGridRecord = null;
         ClientStaff selectedContact = null;
 
         // Lists //
-        List<ClientGridRecord> clientGridList;
-        List<ContactGridRecord> contactGridList;
+        List<ClientSummaryRecord> clientGridList;
+        List<ContactSummaryRecord> contactGridList;
         List<string> contactDropList;
 
         // ---------------------- //
@@ -91,7 +91,7 @@ namespace ProjectTile
                     originalInstructions = originalInstructions.Replace("View", "View or Amend");
                 }
 
-                if (ClientFunctions.SelectedClient != null)
+                if (Globals.SelectedClient != null)
                 {
                     contactMode();
                 }
@@ -123,10 +123,10 @@ namespace ProjectTile
             try
             {
                 int selectedID = 0;
-                if (ClientFunctions.SelectedClient != null) { selectedID = ClientFunctions.SelectedClient.ID; } 
+                if (Globals.SelectedClient != null) { selectedID = Globals.SelectedClient.ID; } 
                 if (selectedID == 0 && selectedClientGridRecord != null) { selectedID = selectedClientGridRecord.ID; } // Just in case
 
-                clientGridList = ClientFunctions.ClientGridListByContact(clientActiveOnly, clientContains, contactContains, EntityFunctions.CurrentEntityID);
+                clientGridList = ClientFunctions.ClientGridListByContact(clientActiveOnly, clientContains, contactContains, Globals.CurrentEntityID);
                 ClientDataGrid.ItemsSource = clientGridList;
                 ClientDataGrid.Items.SortDescriptions.Clear();
                 ClientDataGrid.Items.SortDescriptions.Add(new SortDescription("ClientCode", ListSortDirection.Ascending));
@@ -183,7 +183,7 @@ namespace ProjectTile
 
         private void clearClientSelection()
         {
-            ClientFunctions.SelectedClient = null;
+            Globals.SelectedClient = null;
             //selectedRecord = null; // Don't clear this automatically, as the refresh tries to reuse it
             ContactButton.IsEnabled = false;
         }
@@ -237,7 +237,7 @@ namespace ProjectTile
                 }
                 else if (selectedContactGridRecord != null) { selectedID = selectedContactGridRecord.ID; }
 
-                contactGridList = ClientFunctions.ContactGridList(contactContains, contactActiveOnly, ClientFunctions.SelectedClient.ID);
+                contactGridList = ClientFunctions.ContactGridList(contactContains, contactActiveOnly, Globals.SelectedClient.ID);
                 ContactDataGrid.ItemsSource = contactGridList;
                 if (selectedID > 0)
                 {
@@ -263,20 +263,20 @@ namespace ProjectTile
                 {
                     ClientCombo.IsEnabled = false; // Must come first as used in 'selection changed'                                        
                     ClientCombo.Items.Clear(); // Just in case!
-                    ClientCombo.Items.Add(ClientFunctions.SelectedClient);
-                    ClientCombo.SelectedItem = ClientFunctions.SelectedClient;
+                    ClientCombo.Items.Add(Globals.SelectedClient);
+                    ClientCombo.SelectedItem = Globals.SelectedClient;
                 }
                 else if (selectedClientGridRecord != null) 
                 {
                     ClientCombo.ItemsSource = clientGridList;
                     ClientCombo.SelectedItem = selectedClientGridRecord;
                 }
-                else if (ClientFunctions.SelectedClient != null) // Back from the client contact details page
+                else if (Globals.SelectedClient != null) // Back from the client contact details page
                 {
                     refreshClientGrid();                    
                     ClientCombo.Items.Clear(); // Just in case!
                     ClientCombo.ItemsSource = clientGridList;
-                    ClientGridRecord thisRecord = clientGridList.FirstOrDefault(cgl => cgl.ID == ClientFunctions.SelectedClient.ID);
+                    ClientSummaryRecord thisRecord = clientGridList.FirstOrDefault(cgl => cgl.ID == Globals.SelectedClient.ID);
                     if (thisRecord != null) { ClientCombo.SelectedItem = thisRecord; }
                 }                            
 
@@ -409,7 +409,7 @@ namespace ProjectTile
             {
                 if (ClientDataGrid.SelectedItem != null)
                 {
-                    selectedClientGridRecord = (ClientGridRecord)ClientDataGrid.SelectedItem;
+                    selectedClientGridRecord = (ClientSummaryRecord)ClientDataGrid.SelectedItem;
                     ClientFunctions.SelectClient(selectedClientGridRecord.ID);
                     ContactButton.IsEnabled = true;
                     checkForSingleContact();
@@ -483,7 +483,7 @@ namespace ProjectTile
                 {
                     if (ClientCombo.SelectedItem != null) // No need for an 'else', won't be long...
                     {
-                        ClientGridRecord thisRecord = (ClientGridRecord)ClientCombo.SelectedItem;
+                        ClientSummaryRecord thisRecord = (ClientSummaryRecord)ClientCombo.SelectedItem;
                         ClientFunctions.SelectClient(thisRecord.ID);
                     }
                 }
@@ -498,7 +498,7 @@ namespace ProjectTile
             {
                 if (ContactDataGrid.SelectedItem != null)
                 {
-                    selectedContactGridRecord = (ContactGridRecord) ContactDataGrid.SelectedItem;
+                    selectedContactGridRecord = (ContactSummaryRecord) ContactDataGrid.SelectedItem;
                     AmendButton.IsEnabled = true;                    
                     selectedContact = ClientFunctions.GetContact(selectedContactGridRecord.ID);
                     AmendButton.ToolTip = "Amend " + selectedContact.FirstName + " " + selectedContact.Surname + "'s details";

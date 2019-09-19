@@ -6,39 +6,38 @@ using System.Linq;
 
 namespace ProjectTile
 {
-    public class StaffFunctions
+    public class StaffFunctions : Globals
     {
         private static MainWindow winMain = (MainWindow)App.Current.MainWindow;        
         
-        public static IEnumerable<StaffGridRecord> StaffSummary;
-        public static Staff SelectedStaffMember;
+        public static IEnumerable<StaffSummaryRecord> StaffSummary;
         public static int newDefaultID = 0;
 
-        public static List<StaffSummaryRecord> StaffForEntity; // Initiated later
-        public static List<StaffSummaryRecord> StaffNotForEntity; // Initiated later
+        public static List<StaffSummarySmall> StaffForEntity; // Initiated later
+        public static List<StaffSummarySmall> StaffNotForEntity; // Initiated later
         public static List<int> StaffIDsToAdd = new List<int>();
         public static List<int> StaffIDsToRemove = new List<int>();
         public static List<int> StaffDefaultsToSet = new List<int>();
 
-        public static List<EntitiesSummaryRecord> EntitiesForStaff; // Initiated later
-        public static List<EntitiesSummaryRecord> EntitiesNotForStaff; // Initiated later
+        public static List<EntitySummaryRecord> EntitiesForStaff; // Initiated later
+        public static List<EntitySummaryRecord> EntitiesNotForStaff; // Initiated later
         public static List<int> EntityIDsToAdd = new List<int>();
         public static List<int> EntityIDsToRemove = new List<int>();
         public static List<int> EntityDefaultsToSet = new List<int>();
  
         // Get staff data
         
-        public static List<StaffGridRecord> GetStaffGridData(bool activeOnly, string nameContains, string roleDescription, int entityID)
+        public static List<StaffSummaryRecord> GetStaffGridData(bool activeOnly, string nameContains, string roleDescription, int entityID)
         {
             ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
             using (existingPtDb)
             {
                 try
                 {
-                    var gridList = new List<StaffGridRecord>();
+                    var gridList = new List<StaffSummaryRecord>();
 
                     // Only get Entities that the current user can access; if entity is specified, check it is valid and replace the array with its ID
-                    var myAllowedEntities = EntityFunctions.AllowedEntityIDs(LoginFunctions.CurrentStaffID);
+                    var myAllowedEntities = EntityFunctions.AllowedEntityIDs(CurrentStaffID);
                     if (entityID > 0)
                     {
                         if (!myAllowedEntities.Contains(entityID))
@@ -60,9 +59,9 @@ namespace ProjectTile
                                where (!activeOnly || s.Active)
                                     && (nameContains == "" || (s.FirstName + " " + s.Surname).Contains(nameContains))
                                     && (myAllowedEntities.Contains((int) se.EntityID))
-                                    && (roleDescription == PageFunctions.AllRecords || sr.RoleDescription == roleDescription)
+                                    && (roleDescription == AllRecords || sr.RoleDescription == roleDescription)
                                orderby new { s.FirstName, s.Surname, s.UserID }
-                               select (new StaffGridRecord()
+                               select (new StaffSummaryRecord()
                                {
                                    ID = (int)s.ID,
                                    UserID = (string)s.UserID,
@@ -153,7 +152,7 @@ namespace ProjectTile
                     string errorMessage = "";
 
                     if (SelectedStaffMember == null) { return null; }
-                    else if (LoginFunctions.CurrentStaffID == staffID)
+                    else if (CurrentStaffID == staffID)
                     {
                         errorMessage = "You cannot amend your own user account.|Changes Prohibited";
                     }
@@ -223,7 +222,7 @@ namespace ProjectTile
             {
                 MessageFunctions.InvalidMessage("Please select a staff member in the list above.", "No Record Selected");
             }
-            else if (LoginFunctions.CurrentStaffID == staffID)
+            else if (CurrentStaffID == staffID)
             {
                 MessageFunctions.InvalidMessage("You cannot amend your own user account.", "Changes Prohibited");
             }            
@@ -494,7 +493,7 @@ namespace ProjectTile
             }
         }
 
-        public static List<StaffSummaryRecord> StaffInEntity(bool activeOnly, int entityID)
+        public static List<StaffSummarySmall> StaffInEntity(bool activeOnly, int entityID)
         {
             ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
             using (existingPtDb)
@@ -502,13 +501,13 @@ namespace ProjectTile
                 try
                 {
                     var includeList = EntityStaffIDs(activeOnly, entityID);
-                    var listResults = new List<StaffSummaryRecord>();
+                    var listResults = new List<StaffSummarySmall>();
 
                     listResults = (from s in existingPtDb.Staff
                                 join de in existingPtDb.Entities on s.DefaultEntity equals de.ID
                                 where (!activeOnly || s.Active) && includeList.Contains(s.ID)
                                 orderby new { s.FirstName, s.Surname, s.UserID }
-                                select (new StaffSummaryRecord()
+                                select (new StaffSummarySmall()
                                 {
                                     ID = (int)s.ID,
                                     NameAndUser = (string)s.FirstName + " " + s.Surname + (s.UserID == null ? "" : " (" + s.UserID + ")"),
@@ -530,7 +529,7 @@ namespace ProjectTile
             }
         }
 
-        public static List<StaffSummaryRecord> StaffNotInEntity(bool activeOnly, int entityID)
+        public static List<StaffSummarySmall> StaffNotInEntity(bool activeOnly, int entityID)
         {
             ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
             using (existingPtDb)
@@ -538,13 +537,13 @@ namespace ProjectTile
                 try
                 {
                     var avoidList = EntityStaffIDs(activeOnly, entityID);
-                    var listResults = new List<StaffSummaryRecord>();
+                    var listResults = new List<StaffSummarySmall>();
 
                     listResults = (from s in existingPtDb.Staff
                                    join de in existingPtDb.Entities on s.DefaultEntity equals de.ID
                                    where (!activeOnly || s.Active) && !avoidList.Contains(s.ID)
                                    orderby new { s.FirstName, s.Surname, s.UserID }
-                                   select (new StaffSummaryRecord()
+                                   select (new StaffSummarySmall()
                                    {
                                        ID = (int)s.ID,
                                        NameAndUser = (string)s.FirstName + " " + s.Surname + (s.UserID == null ? "" : " (" + s.UserID + ")"),
@@ -573,7 +572,7 @@ namespace ProjectTile
             {
                 try
                 {
-                    var myAllowedEntities = EntityFunctions.AllowedEntityIDs(LoginFunctions.CurrentStaffID);                    
+                    var myAllowedEntities = EntityFunctions.AllowedEntityIDs(CurrentStaffID);                    
                     return (from se in existingPtDb.StaffEntities
                             where se.StaffID == staffID && myAllowedEntities.Contains((int) se.EntityID)
                             select (int)se.EntityID
@@ -587,7 +586,7 @@ namespace ProjectTile
             }
         }
         
-        public static List<EntitiesSummaryRecord> AllowedLinkedEntities (int staffID)
+        public static List<EntitySummaryRecord> AllowedLinkedEntities (int staffID)
         {
             ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
             using (existingPtDb)
@@ -597,10 +596,10 @@ namespace ProjectTile
                     var includeList = AllowedStaffEntityIDs(staffID);
                     int defaultEntity = (int)GetStaffMember(staffID).DefaultEntity;
 
-                    List<EntitiesSummaryRecord> entitiesList = (from e in existingPtDb.Entities
+                    List<EntitySummaryRecord> entitiesList = (from e in existingPtDb.Entities
                             where includeList.Contains(e.ID)
                             //orderby new { Default = (e.ID == defaultEntity), e.EntityName }
-                            select (new EntitiesSummaryRecord()
+                            select (new EntitySummaryRecord()
                             {                             
                                 ID = (int)e.ID,
                                 Name = e.EntityName,
@@ -618,7 +617,7 @@ namespace ProjectTile
             }
         }
 
-        public static List<EntitiesSummaryRecord> AllowedUnlinkedEntities(int staffID)
+        public static List<EntitySummaryRecord> AllowedUnlinkedEntities(int staffID)
         {
             ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
             using (existingPtDb)
@@ -628,10 +627,10 @@ namespace ProjectTile
                     var avoidList = AllowedStaffEntityIDs(staffID);
                     int defaultEntity = (int)GetStaffMember(staffID).DefaultEntity;
 
-                    List<EntitiesSummaryRecord> entitiesList = (from e in existingPtDb.Entities
+                    List<EntitySummaryRecord> entitiesList = (from e in existingPtDb.Entities
                             where !avoidList.Contains(e.ID)
                             //orderby new { Default = (e.ID == defaultEntity), e.EntityName }
-                            select (new EntitiesSummaryRecord()
+                            select (new EntitySummaryRecord()
                             {
                                 ID = (int)e.ID,
                                 Name = e.EntityName,
@@ -650,14 +649,14 @@ namespace ProjectTile
             }
         }     
         
-        public static bool ToggleEntityStaff(List<StaffSummaryRecord> affectedStaff, bool addition, Entities thisEntity)
+        public static bool ToggleEntityStaff(List<StaffSummarySmall> affectedStaff, bool addition, Entities thisEntity)
         {
             try
             {
                 int entityID = thisEntity.ID;
                 string sqlName = thisEntity.EntityName;
                 
-                foreach (StaffSummaryRecord thisRecord in affectedStaff)
+                foreach (StaffSummarySmall thisRecord in affectedStaff)
                 {
                     int selectedFromID = thisRecord.ID;
                     Staff thisPerson = GetStaffMember(selectedFromID);
@@ -720,14 +719,14 @@ namespace ProjectTile
             }
         }
 
-        public static bool ToggleStaffEntities(List<EntitiesSummaryRecord> affectedEntities, bool addition, Staff thisPerson)
+        public static bool ToggleStaffEntities(List<EntitySummaryRecord> affectedEntities, bool addition, Staff thisPerson)
         {
             try
             {
                 int staffID = thisPerson.ID;
                 string staffName = thisPerson.FirstName + " " + thisPerson.Surname;
 
-                foreach (EntitiesSummaryRecord thisRecord in affectedEntities)
+                foreach (EntitySummaryRecord thisRecord in affectedEntities)
                 {
                     int selectedFromID = thisRecord.ID;
                     Entities thisEntity = EntityFunctions.GetEntity(selectedFromID);
@@ -790,11 +789,11 @@ namespace ProjectTile
             }
         }
 
-        public static bool MakeDefault(List<StaffSummaryRecord> affectedStaff, Entities thisEntity)
+        public static bool MakeDefault(List<StaffSummarySmall> affectedStaff, Entities thisEntity)
         {
             try
             {
-                foreach (StaffSummaryRecord thisRecord in affectedStaff)
+                foreach (StaffSummarySmall thisRecord in affectedStaff)
                 {
                     int selectedStaffID = thisRecord.ID;
                     Staff thisPerson = GetStaffMember(selectedStaffID);
@@ -808,7 +807,7 @@ namespace ProjectTile
                     StaffDefaultsToSet.Add(thisPerson.ID);
 
                     int displayIndex = StaffForEntity.FindIndex(sfe => sfe.ID == selectedStaffID);
-                    StaffSummaryRecord displayRecord = StaffForEntity.ElementAt(displayIndex);
+                    StaffSummarySmall displayRecord = StaffForEntity.ElementAt(displayIndex);
                     if (displayRecord == null)
                     {
                         MessageFunctions.Error("Error updating default Entity in display: display record not found.", null);
@@ -831,7 +830,7 @@ namespace ProjectTile
             try
             {
                 int displayIndex;
-                EntitiesSummaryRecord displayRecord;
+                EntitySummaryRecord displayRecord;
                 Staff thisPerson = GetStaffMember(staffID);
                 if (thisPerson.DefaultEntity != entityID)
                 {
@@ -910,7 +909,7 @@ namespace ProjectTile
                     foreach (var staffRecord in defaultsToSet)
                     {
                         staffRecord.DefaultEntity = entityID;
-                        if (staffRecord.ID == LoginFunctions.CurrentStaffID) { myDefaultChanged = true; }
+                        if (staffRecord.ID == CurrentStaffID) { myDefaultChanged = true; }
                     }
                 }
                 catch (Exception generalException)
@@ -974,7 +973,7 @@ namespace ProjectTile
 
                 existingPtDb.SaveChanges();
 
-                if (staffID == LoginFunctions.CurrentStaffID && newDefaultID > 0)
+                if (staffID == CurrentStaffID && newDefaultID > 0)
                 {
                     Entities newDefault = existingPtDb.Entities.Find(newDefaultID);
                     EntityFunctions.UpdateMyDefaultEntity(ref newDefault);
@@ -1021,7 +1020,7 @@ namespace ProjectTile
                                 .Select(sr => sr.RoleDescription.ToString())
                                 .ToList();
 
-                    if (includeAll) { rolesList.Add(PageFunctions.AllRecords); }
+                    if (includeAll) { rolesList.Add(AllRecords); }
 
                     string[] rolesArray = rolesList.ToArray();
                     return rolesArray;

@@ -31,7 +31,7 @@ namespace ProjectTile
         }
 
         // Menu settings //
-        public void MenuSecurity(ref TableSecurity myPermissions)
+        public void MenuSecurity(ref TableSecurity myPermissions) // NB: the reference is needed or an error is thrown
         {
             try
             {                
@@ -87,11 +87,11 @@ namespace ProjectTile
             try
             {
                 DetailsBlock.Text =
-                    "UserID: " + LoginFunctions.CurrentUserID + "\n"
-                    + "Name: " + LoginFunctions.CurrentStaffName + "\n"
+                    "UserID: " + Globals.CurrentUserID + "\n"
+                    + "Name: " + Globals.CurrentStaffName + "\n"
                     + "\n"
-                    + "Entity: " + EntityFunctions.CurrentEntityName + "\n"
-                    + "Default: " + EntityFunctions.DefaultEntityName;
+                    + "Entity: " + Globals.CurrentEntityName + "\n"
+                    + "Default: " + Globals.DefaultEntityName;
             }
             catch (Exception generalException)
             {
@@ -106,7 +106,7 @@ namespace ProjectTile
             try
             {
                 string thisPage = PageFunctions.ThisPageName();
-                if (thisPage != "TilesPage" && thisPage != "LoginPage") { loseChanges = " Any unsaved changes you have made would be lost."; }
+                if (thisPage != Globals.TilesPageName && thisPage != "LoginPage") { loseChanges = " Any unsaved changes you have made would be lost."; }
             }
             catch 
             { 

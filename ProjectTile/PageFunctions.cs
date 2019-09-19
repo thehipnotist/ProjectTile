@@ -10,18 +10,11 @@ using System.Windows;
 
 namespace ProjectTile
 {
-    public class PageFunctions
+    public class PageFunctions : Globals
     {
         private static MainWindow winMain = (MainWindow)App.Current.MainWindow;
         private static Frame mainFrame = winMain.MainFrame;
-
         private static UriKind uriDefault = UriKind.RelativeOrAbsolute;
-        private const string TilesPage = "TilesPage.xaml";
-        
-        public const string AllRecords = "<All>";
-        public const string AnyRecord = "<Any or None>";
-        public const string NoRecord = "<None (Internal Only)>";
-        public const int NoID = -1;
 
         // Create variables for each page mode, to avoid any accidental mis-typing etc.
         public const string View = "View";
@@ -52,16 +45,16 @@ namespace ProjectTile
         
         public static void ChangePage(string newPageSource)
         {                
-            if (newPageSource != TilesPage)
+            if (newPageSource != TilesPageURI)
             {
                 try
                 {
                     string mainFrameSource = ThisPageName();
                     string newPageName = newPageSource.Replace(".xaml", "");
 
-                    if (mainFrameSource != "TilesPage" && mainFrameSource == newPageName)
+                    if (mainFrameSource != TilesPageName && mainFrameSource == newPageName)
                     {
-                        var dInv1 = winMain.Dispatcher.Invoke(new Action(() => { navigate(TilesPage); })); // Open the tiles page in between to reset
+                        var dInv1 = winMain.Dispatcher.Invoke(new Action(() => { navigate(TilesPageURI); })); // Open the tiles page in between to reset
                         var task1 = Task.Factory.StartNew(() => dInv1);
                         var dInv2 = winMain.Dispatcher.Invoke(new Action(() => { navigate(newPageSource); }));
                         Task task2 = task1.ContinueWith((antecedent) => dInv2);
@@ -92,7 +85,7 @@ namespace ProjectTile
         // Individual pages //
         public static void ShowTilesPage()
         {
-            ChangePage(TilesPage);
+            ChangePage(TilesPageURI);
             ClientFunctions.ResetClientParameters();
         }
 
@@ -120,7 +113,7 @@ namespace ProjectTile
         {
             string pageMode; // Mode is based on viewOnly or permissions; sourcePageMode tells us what the previous screen was
             if (viewOnly) { pageMode = View; }
-            else { pageMode = LoginFunctions.MyPermissions.Allow("EditStaffEntities") ? Amend : View; }
+            else { pageMode = MyPermissions.Allow("EditStaffEntities") ? Amend : View; }
 
             ChangePage("StaffEntitiesPage.xaml?Mode=" + pageMode + ",StaffID=" + selectedStaffID.ToString() + ",SourceMode=" + sourcePageMode);
         }
@@ -139,7 +132,7 @@ namespace ProjectTile
         {
             string pageMode;  // Mode is based on viewOnly or permissions; sourcePageMode tells us what the previous screen was
             if (ClientFunctions.SourcePageMode == PageFunctions.View) { pageMode = View; }
-            else { pageMode = LoginFunctions.MyPermissions.Allow("EditClientStaff") ? Amend : View; }
+            else { pageMode = MyPermissions.Allow("EditClientStaff") ? Amend : View; }
 
             ChangePage("ClientContactPage.xaml?Mode=" + pageMode + ",ContactID=" + contactID.ToString());
         }
@@ -154,7 +147,7 @@ namespace ProjectTile
         {
             string pageMode; // Mode is based on viewOnly or permissions; sourcePageMode tells us what the previous screen was
             if (ClientFunctions.SourcePageMode == PageFunctions.View) { pageMode = View; }
-            else { pageMode = LoginFunctions.MyPermissions.Allow("EditClientProducts") ? Amend : View; }
+            else { pageMode = MyPermissions.Allow("EditClientProducts") ? Amend : View; }
 
             ChangePage("ClientProductsPage.xaml?Mode=" + pageMode);
         }

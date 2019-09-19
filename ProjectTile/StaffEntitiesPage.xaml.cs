@@ -42,7 +42,7 @@ namespace ProjectTile
         modeType editMode;
 
         // Current records //
-        StaffGridRecord selectedRecord;
+        StaffSummaryRecord selectedRecord;
         Entities selectedEntity;
 
         // ---------------------- //
@@ -80,7 +80,7 @@ namespace ProjectTile
             if (selectedStaffID > 0) // Opened from the Staff Page
             {
                 fromSource = "StaffPage";                
-                StaffFunctions.SelectedStaffMember = StaffFunctions.GetStaffMember(selectedStaffID);
+                Globals.SelectedStaffMember = StaffFunctions.GetStaffMember(selectedStaffID);
                 StaffCombo.IsEnabled = false; // Cannot easily recreate the same selection list
                 viewEntitiesByStaffMember();
 
@@ -89,7 +89,7 @@ namespace ProjectTile
             }
             else
             {
-                fromSource = "TilesPage";
+                fromSource = Globals.TilesPageName;
                 StaffLabel.Visibility = StaffCombo.Visibility = Visibility.Hidden;
                 BackButton.Visibility = Visibility.Hidden;
                 EntitiesFrom.Visibility = EntitiesTo.Visibility =  Visibility.Hidden;
@@ -119,8 +119,8 @@ namespace ProjectTile
         {
             try
             {
-                EntityList.ItemsSource = EntityFunctions.EntityList(LoginFunctions.CurrentStaffID, true);
-                EntityList.SelectedItem = PageFunctions.AllRecords;
+                EntityList.ItemsSource = EntityFunctions.EntityList(Globals.CurrentStaffID, true);
+                EntityList.SelectedItem = Globals.AllRecords;
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating Entity filter list", generalException); }
         }
@@ -131,8 +131,8 @@ namespace ProjectTile
         private void refreshStaffGrid()
         {
             try
-            {               
-                var gridList = StaffFunctions.GetStaffGridData(activeOnly, nameContains, PageFunctions.AllRecords, selectedEntityID);
+            {
+                var gridList = StaffFunctions.GetStaffGridData(activeOnly, nameContains, Globals.AllRecords, selectedEntityID);
                 StaffGrid.ItemsSource = gridList;
 
                 if (selectedStaffID > 0)
@@ -163,7 +163,7 @@ namespace ProjectTile
         {
             selectedRecord = null;
             // selectedStaffID = 0; // Don't clear this automatically, as the refresh tries to reuse it
-            StaffFunctions.SelectedStaffMember = null; // Ditto
+            Globals.SelectedStaffMember = null; // Ditto
             EntitiesButton.IsEnabled = false;
         }
 
@@ -182,7 +182,7 @@ namespace ProjectTile
                 selectionOnly = Visibility.Visible;
                 editOnly = Visibility.Hidden;
                 backSource = fromSource;
-                BackButton.Visibility = (fromSource == "TilesPage") ? Visibility.Hidden : Visibility.Visible;
+                BackButton.Visibility = (fromSource == Globals.TilesPageName) ? Visibility.Hidden : Visibility.Visible;
                 Instructions.Content = defaultInstructions;
                 FromLabel.Visibility = ToLabel.Visibility = Visibility.Hidden;
             }
@@ -190,7 +190,7 @@ namespace ProjectTile
             {
                 selectionOnly = Visibility.Hidden;
                 editOnly = Visibility.Visible;
-                backSource = (fromSource == "TilesPage") ? editMode.ToString() : fromSource;
+                backSource = (fromSource == Globals.TilesPageName) ? editMode.ToString() : fromSource;
                 BackButton.Visibility = Visibility.Visible;
                 ToLabel.Content = (editMode == ByStaff) ? "Linked Entities (Default in Bold)" : "Linked Staff";
                 
@@ -239,7 +239,7 @@ namespace ProjectTile
             toggleSelectionControls(false);
             try
             {
-                var staffComboList = StaffFunctions.GetStaffGridData(activeOnly, nameContains, PageFunctions.AllRecords, 0);
+                var staffComboList = StaffFunctions.GetStaffGridData(activeOnly, nameContains, Globals.AllRecords, 0);
                 var staffNames = staffComboList.Select(sg => sg.StaffName);
                 StaffCombo.ItemsSource = staffNames;
                 selectedStaffName = StaffFunctions.GetSelectedName();
@@ -337,10 +337,10 @@ namespace ProjectTile
             {
                 if (StaffFrom.SelectedItems != null)
                 {                                       
-                    List<StaffSummaryRecord> fromList = new List<StaffSummaryRecord>();                    
+                    List<StaffSummarySmall> fromList = new List<StaffSummarySmall>();                    
                     foreach (var selectedRow in StaffFrom.SelectedItems)
                     {
-                        fromList.Add((StaffSummaryRecord)selectedRow);                        
+                        fromList.Add((StaffSummarySmall)selectedRow);                        
                     }
                     
                     bool success = StaffFunctions.ToggleEntityStaff(fromList, true, selectedEntity);
@@ -368,13 +368,13 @@ namespace ProjectTile
             {
                 if (EntitiesFrom.SelectedItems != null)
                 {
-                    List<EntitiesSummaryRecord> fromList = new List<EntitiesSummaryRecord>();
+                    List<EntitySummaryRecord> fromList = new List<EntitySummaryRecord>();
                     foreach (var selectedRow in EntitiesFrom.SelectedItems)
                     {
-                        fromList.Add((EntitiesSummaryRecord)selectedRow);
+                        fromList.Add((EntitySummaryRecord)selectedRow);
                     }
 
-                    bool success = StaffFunctions.ToggleStaffEntities(fromList, true, StaffFunctions.SelectedStaffMember);
+                    bool success = StaffFunctions.ToggleStaffEntities(fromList, true, Globals.SelectedStaffMember);
                     if (success)
                     {
                         refreshEntitySummaries(false);
@@ -399,10 +399,10 @@ namespace ProjectTile
             {
                 if (StaffTo.SelectedItems != null)
                 {
-                    List<StaffSummaryRecord> toList = new List<StaffSummaryRecord>();
+                    List<StaffSummarySmall> toList = new List<StaffSummarySmall>();
                     foreach (var selectedRow in StaffTo.SelectedItems)
                     {
-                        toList.Add((StaffSummaryRecord)selectedRow);
+                        toList.Add((StaffSummarySmall)selectedRow);
                     }
 
                     bool success = StaffFunctions.ToggleEntityStaff(toList, false, selectedEntity);
@@ -430,13 +430,13 @@ namespace ProjectTile
             {
                 if (EntitiesTo.SelectedItems != null)
                 {
-                    List<EntitiesSummaryRecord> toList = new List<EntitiesSummaryRecord>();
+                    List<EntitySummaryRecord> toList = new List<EntitySummaryRecord>();
                     foreach (var selectedRow in EntitiesTo.SelectedItems)
                     {
-                        toList.Add((EntitiesSummaryRecord)selectedRow);
+                        toList.Add((EntitySummaryRecord)selectedRow);
                     }
 
-                    bool success = StaffFunctions.ToggleStaffEntities(toList, false, StaffFunctions.SelectedStaffMember);
+                    bool success = StaffFunctions.ToggleStaffEntities(toList, false, Globals.SelectedStaffMember);
                     if (success)
                     {
                         refreshEntitySummaries(false);
@@ -471,7 +471,7 @@ namespace ProjectTile
                     }
                     else
                     {
-                        EntitiesSummaryRecord thisRecord = (EntitiesSummaryRecord) EntitiesTo.SelectedItem;
+                        EntitySummaryRecord thisRecord = (EntitySummaryRecord) EntitiesTo.SelectedItem;
                         if (thisRecord.Default == false)
                         {
                             int entityID = thisRecord.ID;
@@ -495,10 +495,10 @@ namespace ProjectTile
                 {
                     if (StaffTo.SelectedItems != null)
                     {
-                        List<StaffSummaryRecord> defaultList = new List<StaffSummaryRecord>();
+                        List<StaffSummarySmall> defaultList = new List<StaffSummarySmall>();
                         foreach (var selectedRow in StaffTo.SelectedItems)
                         {
-                            defaultList.Add((StaffSummaryRecord)selectedRow);
+                            defaultList.Add((StaffSummarySmall)selectedRow);
                         }
 
                         bool success = StaffFunctions.MakeDefault(defaultList, selectedEntity);
@@ -569,9 +569,9 @@ namespace ProjectTile
             {
                 if (StaffGrid.SelectedItem != null)
                 {
-                    selectedRecord = (StaffGridRecord)StaffGrid.SelectedItem;
+                    selectedRecord = (StaffSummaryRecord)StaffGrid.SelectedItem;
                     selectedStaffID = selectedRecord.ID;
-                    StaffFunctions.SelectedStaffMember = StaffFunctions.GetStaffMember(selectedStaffID);
+                    Globals.SelectedStaffMember = StaffFunctions.GetStaffMember(selectedStaffID);
                     EntitiesButton.IsEnabled = true;
                 }
                 else // No record selected, e.g. because filter changed
@@ -593,7 +593,7 @@ namespace ProjectTile
             {
                 StaffFunctions.ClearAnyChanges();
                 string displayName = EntityList.SelectedValue.ToString();
-                if ((displayName) == PageFunctions.AllRecords)
+                if ((displayName) == Globals.AllRecords)
                 {
                     selectedEntityID = 0;
                     selectedEntity = null;
@@ -732,8 +732,8 @@ namespace ProjectTile
             {
                 StaffFunctions.ClearAnyChanges();
                 selectedStaffName = StaffCombo.SelectedItem.ToString();
-                StaffFunctions.SelectedStaffMember = StaffFunctions.GetStaffMemberByName(selectedStaffName);
-                selectedStaffID = StaffFunctions.SelectedStaffMember.ID;                
+                Globals.SelectedStaffMember = StaffFunctions.GetStaffMemberByName(selectedStaffName);
+                selectedStaffID = Globals.SelectedStaffMember.ID;                
                 refreshEntitySummaries(true);
             }
         }

@@ -67,13 +67,14 @@
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="ClientFunctions.cs" />
-    <Compile Include="ClientGridRecord.cs" />
+    <Compile Include="ClientSummaryRecord.cs" />
     <Compile Include="ClientContactPage.xaml.cs">
       <DependentUpon>ClientContactPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ClientProducts.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Globals.cs" />
     <Compile Include="ProjectSummaryRecord.cs" />
     <Compile Include="Clients.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
@@ -102,7 +103,7 @@
     <Compile Include="Entities.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="EntitiesSummaryRecord.cs" />
+    <Compile Include="EntitySummaryRecord.cs" />
     <Compile Include="EntityFunctions.cs" />
     <Compile Include="EntityPage.xaml.cs">
       <DependentUpon>EntityPage.xaml</DependentUpon>
@@ -222,8 +223,8 @@
     </Compile>
     <Compile Include="LoginFunctions.cs" />
     <Compile Include="StaffFunctions.cs" />
-    <Compile Include="ContactGridRecord.cs" />
-    <Compile Include="StaffGridRecord.cs" />
+    <Compile Include="ContactSummaryRecord.cs" />
+    <Compile Include="StaffSummaryRecord.cs" />
     <Compile Include="StaffPage.xaml.cs">
       <DependentUpon>StaffPage.xaml</DependentUpon>
     </Compile>
@@ -231,7 +232,7 @@
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="ClientProductSummary.cs" />
-    <Compile Include="StaffSummaryRecord.cs" />
+    <Compile Include="StaffSummarySmall.cs" />
     <Compile Include="stf_GetStaffByID_Result.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
