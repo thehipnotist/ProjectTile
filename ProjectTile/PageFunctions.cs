@@ -17,7 +17,11 @@ namespace ProjectTile
 
         private static UriKind uriDefault = UriKind.RelativeOrAbsolute;
         private const string TilesPage = "TilesPage.xaml";
+        
         public const string AllRecords = "<All>";
+        public const string AnyRecord = "<Any or None>";
+        public const string NoRecord = "<None (Internal Only)>";
+        public const int NoID = -1;
 
         // Create variables for each page mode, to avoid any accidental mis-typing etc.
         public const string View = "View";

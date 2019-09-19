@@ -127,8 +127,8 @@
     <Compile Include="HelpPage.xaml.cs">
       <DependentUpon>HelpPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PageTemplate - Copy.xaml.cs">
-      <DependentUpon>PageTemplate - Copy.xaml</DependentUpon>
+    <Compile Include="PageTemplate.xaml.cs">
+      <DependentUpon>PageTemplate.xaml</DependentUpon>
     </Compile>
     <Compile Include="ProductFunctions.cs" />
     <Compile Include="ProductPage.xaml.cs">
@@ -307,7 +307,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="PageTemplate - Copy.xaml">
+    <Page Include="PageTemplate.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

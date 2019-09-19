@@ -31,6 +31,10 @@
                 <Label x:Name="Instructions" Content="This page is read-only. Click on column headers to sort by that column. Use the filters to restrict results." HorizontalAlignment="Left" 
                        Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
 
+                <Label x:Name="ClientLabel" Content="Client Name" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="95" FontWeight="Bold"/>
+                <ComboBox x:Name="ClientCombo" HorizontalAlignment="Left" Height="30" Margin="110,45,15,0" VerticalAlignment="Top" Width="160" SelectionChanged="ClientCombo_SelectionChanged"
+                          DisplayMemberPath="ClientName"/>
+
                 <DataGrid x:Name="ProjectDataGrid" MinHeight="295" Margin="15,90,0,0" Width="625" MinWidth="625" AutoGenerateColumns="False" IsReadOnly="True" 
                               BorderBrush="{StaticResource PtBrushProject3}" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionChanged="ProjectDataGrid_SelectionChanged" SelectionMode="Single">
                     <DataGrid.Columns>

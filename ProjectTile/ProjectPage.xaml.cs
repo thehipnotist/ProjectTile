@@ -56,7 +56,8 @@ namespace ProjectTile
                 PageFunctions.ShowTilesPage(); // To do: replace with a 'back' method that resets everything
             }
 
-            refreshMainProjectGrid();
+            refreshClientCombo();
+            //refreshMainProjectGrid(); // Can probably remove later
         }
 
 
@@ -70,9 +71,13 @@ namespace ProjectTile
         {
             try
             {
-                bool success = ProjectFunctions.SetProjectGridList(EntityFunctions.CurrentEntityID, openOnly, ProjectFunctions.SelectedClientID, ProjectFunctions.SelectedPMStaffID);
+                int clientID = (ProjectFunctions.SelectedClientSummary != null)? ProjectFunctions.SelectedClientSummary.ID : 0;
+                int managerID = (ProjectFunctions.SelectedPMSummary != null)? ProjectFunctions.SelectedPMSummary.ID : 0;
+                
+                bool success = ProjectFunctions.SetProjectGridList(ProjectFunctions.StatusFilter.All, clientID, managerID);
                 if (success)
                 {
+                    // To do: functionality to retain current or selected project and (re)select it
                     ProjectDataGrid.ItemsSource = ProjectFunctions.ProjectGridList;
                 }
                 else
@@ -81,7 +86,28 @@ namespace ProjectTile
                 }
 
             }
-            catch (Exception generalException) { MessageFunctions.Error("Error opulating project grid data", generalException); }	
+            catch (Exception generalException) { MessageFunctions.Error("Error populating project grid data", generalException); }	
+        }
+
+        private void refreshClientCombo()
+        {
+            try
+            {
+                ClientGridRecord currentRecord = (ProjectFunctions.SelectedClientSummary != null)? ProjectFunctions.SelectedClientSummary: null;
+                if (currentRecord == null && ClientCombo.SelectedItem != null) { currentRecord = (ClientGridRecord) ClientCombo.SelectedItem; }
+                
+                ProjectFunctions.SetClientComboList();
+                ClientCombo.ItemsSource = ProjectFunctions.ClientComboList;
+
+                ClientCombo.SelectedItem = (currentRecord != null) ? currentRecord : ProjectFunctions.DefaultClientSummary;
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error populating client combo list", generalException); }	
+        }
+
+        private void refreshPMCombo()
+        {
+            ProjectFunctions.SetPMComboList();
+            // PMCombo.ItemsSource = ProjectFunctions.PMComboList;
         }
 
         // Data retrieval //
@@ -115,7 +141,21 @@ namespace ProjectTile
 
         private void ProjectDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // Handle null selections
+        }
 
+        private void ClientCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                if (ClientCombo.SelectedItem == null) { } //ProjectFunctions.SelectedClientSummary = ProjectFunctions.DefaultClientSummary; }
+                else
+                {
+                    ProjectFunctions.SelectedClientSummary = (ClientGridRecord)ClientCombo.SelectedItem;
+                    refreshMainProjectGrid();
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error processing client combination selection", generalException); }	
         }
 
 
