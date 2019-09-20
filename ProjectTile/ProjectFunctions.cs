@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Text;
@@ -14,21 +16,9 @@ namespace ProjectTile
         public static List<ProjectSummaryRecord> ProjectGridList;
         public static List<StaffSummaryRecord> FullPMsList;
         public static List<StaffSummaryRecord> PMComboList;
-        public static List<ClientSummaryRecord> FullClientList = ClientFunctions.ClientGridList(false, "", 0, CurrentEntityID);
+        public static List<ClientSummaryRecord> FullClientList;
         public static List<ClientSummaryRecord> ClientComboList;
-
-        // Additional records (any, all or none)
-        public static ClientSummaryRecord AnyClient = new ClientSummaryRecord { ID = 0, ClientCode = "ANY", ClientName = AnyRecord, EntityID = CurrentEntityID };
-        public static ClientSummaryRecord NoClient = new ClientSummaryRecord { ID = NoID, ClientCode = "NONE", ClientName = NoRecord, EntityID = CurrentEntityID };
-        public static StaffSummaryRecord AnyPM = new StaffSummaryRecord { ID = 0, StaffName = AllRecords };
-
-        // Default records
-        public static ClientSummaryRecord DefaultClientSummary = AnyClient;
-        public static StaffSummaryRecord DefaultPMSummary = AnyPM;
-
-        // Selected records
-        public static ClientSummaryRecord SelectedClientSummary; //= DefaultClientSummary;
-        public static StaffSummaryRecord SelectedPMSummary; //= DefaultPMSummary;
+        public static List<string> StatusFilterList;
 
         // Data retrieval
         public static bool SetFullProjectList()
@@ -82,7 +72,7 @@ namespace ProjectTile
             }
         }
 
-        public static bool SetProjectGridList(ProjectStatus inStatus, int clientID = 0, int ourManagerID = 0)
+        public static bool SetProjectGridList(ProjectStatusFilter inStatus, int clientID = 0, int ourManagerID = 0)
         {
             try
             {
@@ -93,11 +83,11 @@ namespace ProjectTile
                         (from fpl in FullProjectList
                         where  (clientID == 0 || fpl.ClientID == clientID)
                             &&  (ourManagerID == 0 || fpl.PMStaffID == ourManagerID)
-                            && ( inStatus == ProjectStatus.All
-                                    || (inStatus == ProjectStatus.Current && fpl.StageCode <= LiveStage)
-                                    || (inStatus == ProjectStatus.Open && fpl.StageCode >= StartStage && fpl.StageCode <= LiveStage) 
-                                    || (inStatus == ProjectStatus.InProgress && fpl.ProjectStatus == InProgressStatus) 
-                                    || (inStatus == ProjectStatus.Closed && fpl.ProjectStatus == ClosedStatus)
+                            && ( inStatus == ProjectStatusFilter.All
+                                    || (inStatus == ProjectStatusFilter.Current && fpl.StageCode <= LiveStage)
+                                    || (inStatus == ProjectStatusFilter.Open && fpl.StageCode >= StartStage && fpl.StageCode <= LiveStage) 
+                                    || (inStatus == ProjectStatusFilter.InProgress && fpl.ProjectStatus == InProgressStatus) 
+                                    || (inStatus == ProjectStatusFilter.Closed && fpl.ProjectStatus == ClosedStatus)
                                 )
                         select fpl
                         ).ToList();
@@ -111,6 +101,27 @@ namespace ProjectTile
                 MessageFunctions.Error("Error retrieving project grid data", generalException);
                 return false;
             }
+        }
+
+        public static string StatusFilterName(string asString) // Overloaded - string input version
+        {
+            return (asString == "InProgress") ? "In Progress" : asString;
+        }
+
+        public static string StatusFilterName(ProjectStatusFilter asType = ProjectStatusFilter.All) // Overloaded - type input version
+        {
+            string asString = asType.ToString();
+            return StatusFilterName(asString);
+        }
+        
+        public static void SetProjectStatusFilter()
+        {
+            string[] filterArray = Enum.GetNames(typeof(ProjectStatusFilter)).ToArray();
+            for (int i = 0; i < filterArray.Length - 1; i++)
+            {
+                filterArray[i] = StatusFilterName(filterArray[i]);
+            }
+            StatusFilterList = filterArray.ToList();
         }
 
         // Project Managers (internal)
@@ -161,6 +172,7 @@ namespace ProjectTile
         {
             try
             {
+                SetFullPMsList();
                 List<StaffSummaryRecord> comboList = FullPMsList;
                 comboList.Add(AnyPM);
                 PMComboList = comboList;
@@ -169,17 +181,39 @@ namespace ProjectTile
         }
 
         // Clients
+        public static void SetFullClientList()
+        {
+            FullClientList = ClientFunctions.ClientGridList(false, "", 0, CurrentEntityID);
+        }
+        
         public static void SetClientComboList()
         {
             try
             {
+                if (ClientComboList != null) { ClientComboList.Clear(); }
+                SetFullClientList();
                 List<ClientSummaryRecord> comboList = FullClientList;
                 comboList.Add(AnyClient);
-                comboList.Add(NoClient);
+                comboList.Insert(0, NoClient);
                 ClientComboList = comboList;
             }
             catch (Exception generalException) { MessageFunctions.Error("Error retrieving data for client drop-down list", generalException); }
         }
 
+        // Navigation
+        public static void ReturnToTilesPage()
+        {
+            ResetProjectParameters();
+            PageFunctions.ShowTilesPage();
+        }
+
+        public static void ReturnToProjectPage()
+        {
+            PageFunctions.ShowProjectPage(ProjectSourceMode);
+        }
+
     } // class
+
+
+
 } // namespace

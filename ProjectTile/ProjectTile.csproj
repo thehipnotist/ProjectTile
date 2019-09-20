@@ -142,6 +142,9 @@
       <DependentUpon>ClientProductsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ProjectFunctions.cs" />
+    <Compile Include="ProjectDetailsPage.xaml.cs">
+      <DependentUpon>ProjectDetailsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="StaffEntitiesPage.xaml.cs">
       <DependentUpon>StaffEntitiesPage.xaml</DependentUpon>
     </Compile>
@@ -321,6 +324,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ClientProductsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ProjectDetailsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

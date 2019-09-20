@@ -31,9 +31,14 @@
                 <Label x:Name="Instructions" Content="This page is read-only. Click on column headers to sort by that column. Use the filters to restrict results." HorizontalAlignment="Left" 
                        Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
 
-                <Label x:Name="ClientLabel" Content="Client Name" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="95" FontWeight="Bold"/>
-                <ComboBox x:Name="ClientCombo" HorizontalAlignment="Left" Height="30" Margin="110,45,15,0" VerticalAlignment="Top" Width="160" SelectionChanged="ClientCombo_SelectionChanged"
+                <Label x:Name="ClientLabel" Content="Client" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
+                <ComboBox x:Name="ClientCombo" HorizontalAlignment="Left" Height="30" Margin="65,45,15,0" VerticalAlignment="Top" Width="150" SelectionChanged="ClientCombo_SelectionChanged"
                           DisplayMemberPath="ClientName"/>
+                <Label x:Name="StatusLabel" Content="Status" HorizontalAlignment="Center" Height="30" Margin="15,45,145,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>               
+                <ComboBox x:Name="StatusCombo" HorizontalAlignment="Center" Height="30" Margin="25,45,15,0" VerticalAlignment="Top" Width="90" SelectionChanged="StatusCombo_SelectionChanged"/>             
+                <Label x:Name="PMsLabel" Content="Project Manager" HorizontalAlignment="Right" Height="30" Margin="0,45,153,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
+                <ComboBox x:Name="PMsCombo" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="135" DisplayMemberPath="StaffName"
+                              SelectionChanged="PMsCombo_SelectionChanged"/>
 
                 <DataGrid x:Name="ProjectDataGrid" MinHeight="295" Margin="15,90,0,0" Width="625" MinWidth="625" AutoGenerateColumns="False" IsReadOnly="True" 
                               BorderBrush="{StaticResource PtBrushProject3}" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionChanged="ProjectDataGrid_SelectionChanged" SelectionMode="Single">
@@ -44,7 +49,7 @@
                         <DataGridTextColumn x:Name="ProjectTypeColumn" Binding="{Binding TypeName}" ClipboardContentBinding="{x:Null}" Header="Project Type" Width="*"/>
                         <DataGridTextColumn x:Name="ClientCodeColumn" Binding="{Binding ClientCode}" ClipboardContentBinding="{x:Null}" Header="Client Code"/>
                         <DataGridTextColumn x:Name="ClientNameColumn" Binding="{Binding ClientName}" ClipboardContentBinding="{x:Null}" Header="Client Name"/>
-                        <DataGridTextColumn x:Name="ManagerColumn" Binding="{Binding PMStaffName}" ClipboardContentBinding="{x:Null}" Header="Project Manager"/>                        
+                        <DataGridTextColumn x:Name="ProjectManagerColumn" Binding="{Binding PMStaffName}" ClipboardContentBinding="{x:Null}" Header="Project Manager"/>                        
                         <DataGridTextColumn x:Name="StageColumn" Binding="{Binding StageName}" ClipboardContentBinding="{x:Null}" Header="Stage"/>                        
                     </DataGrid.Columns>
                 </DataGrid>
@@ -61,14 +66,14 @@
                         FontWeight="Bold" Click="CancelButton_Click">
                     <StackPanel x:Name="CancelPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Frame x:Name="CancelImage" Content="{StaticResource CancelIcon}"/>
-                        <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Cancel" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Close" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" Click="CommitButton_Click">
                     <StackPanel x:Name="CommitPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Frame x:Name="CommitImage" Content="{StaticResource CommitIcon}"/>
-                        <TextBlock x:Name="CommitButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Commit" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="CommitButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Details" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
             </Grid>
