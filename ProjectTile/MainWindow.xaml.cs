@@ -206,31 +206,31 @@ namespace ProjectTile
 
         private void ViewClient_Click(object sender, RoutedEventArgs e)
         {
-            ClientFunctions.ResetClientParameters();
+            Globals.ResetClientParameters();
             PageFunctions.ShowClientPage(PageFunctions.View);
         }
 
         private void NewClient_Click(object sender, RoutedEventArgs e)
         {
-            ClientFunctions.ResetClientParameters();
+            Globals.ResetClientParameters();
             PageFunctions.ShowClientPage(PageFunctions.New);
         }
 
         private void AmendClient_Click(object sender, RoutedEventArgs e)
         {
-            ClientFunctions.ResetClientParameters();
+            Globals.ResetClientParameters();
             PageFunctions.ShowClientPage(PageFunctions.Amend);
         }
 
         private void ClientContact_Click(object sender, RoutedEventArgs e)
         {
-            ClientFunctions.ResetClientParameters();
+            Globals.ResetClientParameters();
             PageFunctions.ShowClientContactPage();
         }
 
         private void ClientProduct_Click(object sender, RoutedEventArgs e)
         {
-            ClientFunctions.ResetClientParameters();
+            Globals.ResetClientParameters();
             PageFunctions.ShowClientProductsPage();
         }
 

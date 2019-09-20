@@ -259,7 +259,7 @@ namespace ProjectTile
         {
             try
             {
-                if (ClientFunctions.SourcePage == "ClientPage") // Don't allow changing
+                if (Globals.ClientSourcePage == "ClientPage") // Don't allow changing
                 {
                     ClientCombo.IsEnabled = false; // Must come first as used in 'selection changed'                                        
                     ClientCombo.Items.Clear(); // Just in case!
@@ -430,7 +430,7 @@ namespace ProjectTile
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ClientFunctions.SourcePage == "ClientPage") { PageFunctions.ShowClientPage(pageMode = ClientFunctions.SourcePageMode); }
+            if (Globals.ClientSourcePage == "ClientPage") { PageFunctions.ShowClientPage(pageMode = Globals.ClientSourceMode); }
             else 
             {       
                 clientMode();

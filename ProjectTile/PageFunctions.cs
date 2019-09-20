@@ -86,7 +86,8 @@ namespace ProjectTile
         public static void ShowTilesPage()
         {
             ChangePage(TilesPageURI);
-            ClientFunctions.ResetClientParameters();
+            ResetClientParameters();
+            ResetProjectParameters();
         }
 
         public static void ShowEntityPage(string pageMode)
@@ -131,7 +132,7 @@ namespace ProjectTile
         public static void ShowClientContactPage(int contactID = 0)
         {
             string pageMode;  // Mode is based on viewOnly or permissions; sourcePageMode tells us what the previous screen was
-            if (ClientFunctions.SourcePageMode == PageFunctions.View) { pageMode = View; }
+            if (ClientSourceMode == View) { pageMode = View; }
             else { pageMode = MyPermissions.Allow("EditClientStaff") ? Amend : View; }
 
             ChangePage("ClientContactPage.xaml?Mode=" + pageMode + ",ContactID=" + contactID.ToString());
@@ -146,7 +147,7 @@ namespace ProjectTile
         public static void ShowClientProductsPage()
         {
             string pageMode; // Mode is based on viewOnly or permissions; sourcePageMode tells us what the previous screen was
-            if (ClientFunctions.SourcePageMode == PageFunctions.View) { pageMode = View; }
+            if (ClientSourceMode == View) { pageMode = View; }
             else { pageMode = MyPermissions.Allow("EditClientProducts") ? Amend : View; }
 
             ChangePage("ClientProductsPage.xaml?Mode=" + pageMode);
@@ -156,6 +157,20 @@ namespace ProjectTile
         {
             ChangePage("ProjectPage.xaml?Mode=" + pageMode);
         }
+
+        public static void ShowProjectDetailsPage(string pageMode = "")
+        {
+            if (pageMode == "")
+            {
+                if (ProjectSourceMode == View) { pageMode = View; }
+                else { pageMode = MyPermissions.Allow("EditProjects") ? Amend : View; }
+            }
+
+            ChangePage("ProjectDetailsPage.xaml?Mode=" + pageMode);
+        }
+
+
+
 
         public static void ShowHelpPage(string pageMode)
         {

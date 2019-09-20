@@ -615,7 +615,7 @@ namespace ProjectTile
                 clearChanges();
                 if (backSource == "ClientPage")
                 {
-                    PageFunctions.ShowClientPage(pageMode = ClientFunctions.SourcePageMode);
+                    PageFunctions.ShowClientPage(pageMode = Globals.ClientSourceMode);
                 }
                 else
                 {

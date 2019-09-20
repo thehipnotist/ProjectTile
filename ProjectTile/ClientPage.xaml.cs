@@ -61,9 +61,8 @@ namespace ProjectTile
             try
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
-                ClientFunctions.SourcePage = "ClientPage";
-                ClientFunctions.SourcePageMode = pageMode;
-                //selectedClientID = Int32.Parse(PageFunctions.pageParameter(this, "ClientID"));
+                Globals.ClientSourcePage = "ClientPage";
+                Globals.ClientSourceMode = pageMode;
             }
             catch (Exception generalException)
             {
@@ -124,7 +123,6 @@ namespace ProjectTile
                         {
                             ClientDataGrid.SelectedItem = gridList.First(c => c.ID == selectedID);
                             ClientDataGrid.ScrollIntoView(ClientDataGrid.SelectedItem);
-                            //selectedClientID = 0; // Clear this, it should only be used for initial load when going back from another page
                         }
                         else
                         {
@@ -151,8 +149,7 @@ namespace ProjectTile
                     MainManagersCombo.SelectedItem = newSelection;
                 }
                 MainManagersCombo.ItemsSource = managersList;
-                MainManagersCombo.SelectedItem = newSelection;
- 
+                MainManagersCombo.SelectedItem = newSelection; 
                 //refreshClientGrid(); // Not required as done by the automatic selection change
             }
             catch (Exception generalException) { MessageFunctions.Error("Error refreshing the list of current Account Managers", generalException); }
@@ -311,7 +308,6 @@ namespace ProjectTile
         {
             try
             {
-                //EntityList.SelectedValue="";
                 List<Entities> entityList = EntityFunctions.AllowedEntities(Globals.CurrentStaffID);
                 EntityCombo.ItemsSource = entityList;
                 int currentIndex = entityList.FindIndex(el => el.ID == Globals.CurrentEntity.ID);

@@ -33,10 +33,6 @@ namespace ProjectTile
         public static List<int> ProductIDsToAdd = new List<int>();
         public static List<int> ProductIDsToRemove = new List<int>();
         public static List<int> ProductIDsToUpdate = new List<int>();
-
-        // The following must be updated when opening a page from the menu and choosing a client, or cleared when returning to the menu or clearing client selection
-        public static string SourcePage = TilesPageName;
-        public static string SourcePageMode = PageFunctions.None;
         
         // Data retrieval
 
@@ -1606,13 +1602,6 @@ namespace ProjectTile
         {
             ResetClientParameters();
             PageFunctions.ShowTilesPage();
-        }
-
-        public static void ResetClientParameters()
-        {
-            SelectedClient = null;
-            SourcePage = TilesPageName;
-            SourcePageMode = PageFunctions.None;   
         }
 
     } // class

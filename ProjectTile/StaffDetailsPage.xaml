@@ -63,16 +63,9 @@
                             Padding="5"/>
 
                 <Label x:Name="DefaultEntityLabel" Content="Default Entity" HorizontalAlignment="Left" Height="30" Margin="15,255,0,0" VerticalAlignment="Top" Width="95" FontWeight="Bold"/>
-                <ComboBox x:Name="EntityList" HorizontalAlignment="Left" Height="30" Margin="115,255,0,0" VerticalAlignment="Top" Width="180">
-                    <ComboBox.ItemBindingGroup>
-                        <BindingGroup/>
-                    </ComboBox.ItemBindingGroup>
-                    <ComboBox.BindingGroup>
-                        <BindingGroup/>
-                    </ComboBox.BindingGroup>
-                </ComboBox>
-                <Label x:Name="RoleListLabel" Content="Main Role" HorizontalAlignment="Right" Height="30" Margin="0,255,215,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
-                <ComboBox x:Name="RoleList" HorizontalAlignment="Right" Height="30" Margin="0,255,30,0" VerticalAlignment="Top" Width="180"/>
+                <ComboBox x:Name="EntityCombo" HorizontalAlignment="Left" Height="30" Margin="115,255,0,0" VerticalAlignment="Top" Width="180"/>
+                <Label x:Name="RoleLabel" Content="Main Role" HorizontalAlignment="Right" Height="30" Margin="0,255,215,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
+                <ComboBox x:Name="RoleCombo" HorizontalAlignment="Right" Height="30" Margin="0,255,30,0" VerticalAlignment="Top" Width="180"/>
 
             </Grid>
         </Border>

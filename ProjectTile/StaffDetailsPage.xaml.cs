@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ProjectTile
 {
@@ -51,7 +42,7 @@ namespace ProjectTile
             FirstName.Focus();
             CapsLockLabel.Visibility = Visibility.Hidden;
             refreshRoleList();
-            EntityList.ItemsSource = EntityFunctions.EntityList(Globals.CurrentStaffID, false);
+            EntityCombo.ItemsSource = EntityFunctions.EntityList(Globals.CurrentStaffID, false);
             toggleConfirm(false);
             if (!Globals.MyPermissions.Allow("ActivateStaff"))
             {
@@ -88,10 +79,10 @@ namespace ProjectTile
                         Surname.Text = thisStaffMember.Surname;
                         UserID.Text = thisStaffMember.UserID;
                         if (thisStaffMember.UserID != null && thisStaffMember.UserID != "") { UserID.IsEnabled = false; }                        
-                        RoleList.SelectedItem = StaffFunctions.GetRoleDescription(thisStaffMember.RoleCode);
+                        RoleCombo.SelectedItem = StaffFunctions.GetRoleDescription(thisStaffMember.RoleCode);
                         if (thisStaffMember.StartDate != null) { StartDate.SelectedDate = thisStaffMember.StartDate; }
                         if (thisStaffMember.LeaveDate != null) { LeaveDate.SelectedDate = thisStaffMember.LeaveDate; }
-                        EntityList.SelectedItem = EntityFunctions.GetEntityName((int) thisStaffMember.DefaultEntity);
+                        EntityCombo.SelectedItem = EntityFunctions.GetEntityName((int) thisStaffMember.DefaultEntity);
                         Active_CheckBox.IsChecked = thisStaffMember.Active;
                     }
 
@@ -118,7 +109,7 @@ namespace ProjectTile
         {
             try
             {
-                RoleList.ItemsSource = StaffFunctions.ListUserRoles(false);
+                RoleCombo.ItemsSource = StaffFunctions.ListUserRoles(false);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating roles list", generalException); }
         }
@@ -194,8 +185,8 @@ namespace ProjectTile
                 bool active = (Active_CheckBox.IsChecked == true);
                 string passwd = NewPassword.Password;
 
-                if (RoleList.SelectedValue != null) { roleDescription = RoleList.SelectedValue.ToString(); }
-                if (EntityList.SelectedItem != null) { defaultEntityName = EntityList.SelectedItem.ToString(); }
+                if (RoleCombo.SelectedValue != null) { roleDescription = RoleCombo.SelectedValue.ToString(); }
+                if (EntityCombo.SelectedItem != null) { defaultEntityName = EntityCombo.SelectedItem.ToString(); }
 
                 if (passwd != "" && passwd != ConfirmPassword.Password)
                 {
