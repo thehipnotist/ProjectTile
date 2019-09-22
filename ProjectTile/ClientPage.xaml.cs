@@ -97,6 +97,12 @@ namespace ProjectTile
                 resetAmendPage();
                 // refreshMainManagersCombo(); // Not required as done by resetAmendPage
             }
+
+            if (!Globals.MyPermissions.Allow("ActivateClients"))
+            {
+                Active_CheckBox.IsEnabled = false;
+                Active_CheckBox.ToolTip = ActiveLabel.ToolTip = "Your current permissions do not allow activating or disabling clients";
+            }     
         }
 
         // ---------------------- //
