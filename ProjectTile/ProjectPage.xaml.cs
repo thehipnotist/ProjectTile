@@ -25,6 +25,7 @@ namespace ProjectTile
 
         // Global/page parameters //
         string pageMode;
+        bool viewOnly = false;
 
         // Current variables //
         bool openOnly = false;        
@@ -50,12 +51,12 @@ namespace ProjectTile
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
                 Globals.ProjectSourceMode = pageMode;
-                Globals.ProjectSourceMode = pageMode;
+                if (pageMode == PageFunctions.View || !Globals.MyPermissions.Allow("EditProjects")) { viewOnly = true; }
             }
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error retrieving query details", generalException);
-                PageFunctions.ShowTilesPage(); // To do: replace with a 'back' method that resets everything
+                ProjectFunctions.ReturnToTilesPage();
             }
 
             refreshClientCombo();
@@ -179,7 +180,8 @@ namespace ProjectTile
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowProjectDetailsPage();
+            string inputMode = viewOnly? PageFunctions.View : PageFunctions.Amend;  
+            PageFunctions.ShowProjectDetailsPage(inputMode);
         }
 
         private void ProjectDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)

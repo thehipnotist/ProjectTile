@@ -46,7 +46,7 @@
                         <DataGridTextColumn x:Name="IDColumn" Binding="{Binding ID}" ClipboardContentBinding="{x:Null}" Header="ID" Visibility="Collapsed"/>
                         <DataGridTextColumn x:Name="ProjectCodeColumn" Binding="{Binding ProjectCode}" ClipboardContentBinding="{x:Null}" Header="Project Code"/>
                         <DataGridTextColumn x:Name="ProjectNameColumn" Binding="{Binding ProjectName}" ClipboardContentBinding="{x:Null}" Header="Project Name" Width="*"/>
-                        <DataGridTextColumn x:Name="ProjectTypeColumn" Binding="{Binding TypeName}" ClipboardContentBinding="{x:Null}" Header="Project Type" Width="*"/>
+                        <DataGridTextColumn x:Name="ProjectTypeColumn" Binding="{Binding ProjectType.TypeName}" ClipboardContentBinding="{x:Null}" Header="Project Type" Width="*"/>
                         <DataGridTextColumn x:Name="ClientCodeColumn" Binding="{Binding ClientCode}" ClipboardContentBinding="{x:Null}" Header="Client Code"/>
                         <DataGridTextColumn x:Name="ClientNameColumn" Binding="{Binding ClientName}" ClipboardContentBinding="{x:Null}" Header="Client Name"/>
                         <DataGridTextColumn x:Name="ProjectManagerColumn" Binding="{Binding PMStaffName}" ClipboardContentBinding="{x:Null}" Header="Project Manager"/>                        

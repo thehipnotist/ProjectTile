@@ -374,7 +374,7 @@ namespace ProjectTile
 
         private void ProjectButton_New_Click(object sender, RoutedEventArgs e)
         {
-            
+            PageFunctions.ShowProjectDetailsPage(PageFunctions.New);
         }
 
         private void ProjectButton_Amend_Click(object sender, RoutedEventArgs e)

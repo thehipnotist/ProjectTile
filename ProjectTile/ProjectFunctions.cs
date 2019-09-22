@@ -19,6 +19,8 @@ namespace ProjectTile
         public static List<ClientSummaryRecord> FullClientList;
         public static List<ClientSummaryRecord> ClientComboList;
         public static List<string> StatusFilterList;
+        public static List<string> TypeNameList;
+        public static List<ProjectTypes> FullProjectTypeList;
 
         // Data retrieval
         public static bool SetFullProjectList()
@@ -45,9 +47,10 @@ namespace ProjectTile
                              ProjectCode = pj.ProjectCode,
                              ProjectName = pj.ProjectName,
                              ProjectSummary = pj.ProjectSummary,
-                             TypeCode = pj.TypeCode,
-                             TypeName = t.TypeName,
-                             TypeDescription = t.TypeDescription,
+                             ProjectType = t,
+                             //TypeCode = pj.TypeCode,
+                             //TypeName = t.TypeName,
+                             //TypeDescription = t.TypeDescription,
                              EntityID = pj.EntityID,
                              ClientID = (sc == null) ? NoID : sc.ID,
                              ClientCode = (sc == null) ? "" : sc.ClientCode,
@@ -122,6 +125,52 @@ namespace ProjectTile
                 filterArray[i] = StatusFilterName(filterArray[i]);
             }
             StatusFilterList = filterArray.ToList();
+        }
+
+        // Types
+        public static void SetTypeNameList()
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    TypeNameList = (from pt in existingPtDb.ProjectTypes
+                                    select pt.TypeName).ToList();
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error retrieving list of project type names", generalException); }
+        }
+
+        public static void SetFullProjectTypeList()
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    FullProjectTypeList = (from pt in existingPtDb.ProjectTypes
+                                            select pt).ToList();
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error retrieving list of project types", generalException); }
+        }
+
+        public static ProjectTypes GetTypeFromName(string typeName)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return existingPtDb.ProjectTypes.FirstOrDefault(pt => pt.TypeName == typeName);
+                }
+            }
+            catch (Exception generalException) 
+            { 
+                MessageFunctions.Error("Error retrieving project type matching name '" + typeName + "'", generalException);
+                return null;
+            }
         }
 
         // Project Managers (internal)

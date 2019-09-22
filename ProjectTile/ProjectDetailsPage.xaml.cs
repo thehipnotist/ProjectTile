@@ -19,7 +19,7 @@ namespace ProjectTile
     /// <summary>
     /// Interaction logic for ProjectDetailsPage.xaml
     /// </summary>
-    public partial class ProjectDetailsPage : Page, INotifyPropertyChanged
+    public partial class ProjectDetailsPage : Page //, INotifyPropertyChanged
     {
         // ---------------------- //
         // -- Global Variables -- //
@@ -29,7 +29,7 @@ namespace ProjectTile
 
         MainWindow winMain = (MainWindow)App.Current.MainWindow;
         string pageMode;
-        public event PropertyChangedEventHandler PropertyChanged;
+//        public event PropertyChangedEventHandler PropertyChanged;
 
         // Current variables //
 
@@ -41,6 +41,7 @@ namespace ProjectTile
             set 
             { 
                 thisProjectSummary = ThisProjectSummary;
+                //OnPropertyChanged("ThisProjectSummary");
             }
         }
 
@@ -69,17 +70,95 @@ namespace ProjectTile
             KeepAlive = false;
 
 
-            if (Globals.SelectedProjectSummary != null) { thisProjectSummary = Globals.SelectedProjectSummary; }
-//            ThisProject.Add(thisProjectSummary);
-          this.DataContext = ThisProjectSummary;
+//            ProjectFunctions.SetTypeNameList();
+//            TypeCombo.ItemsSource = ProjectFunctions.TypeNameList;
+
+
+
 //            this.DataContext = ThisProject;
+
+
+
+
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-//            if (Globals.SelectedProjectSummary != null) { ThisProjectSummary = Globals.SelectedProjectSummary; }
-            ThisProjectSummary.ProjectName = "Testy test";
-            OnPropertyChanged("ThisProjectSummary.ProjectName");
+            try
+            {
+                pageMode = PageFunctions.pageParameter(this, "Mode");
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving query details", generalException);
+                ProjectFunctions.ReturnToTilesPage();
+            }
+            
+            
+            if (pageMode==PageFunctions.View)
+            {
+                try
+                {
+                    ClientCombo.IsEnabled = ProjectName.IsEnabled = TypeCombo.IsEnabled = StartDate.IsEnabled = false;
+                    ManagerCombo.IsEnabled = StageCombo.IsEnabled = ProjectSummary.IsEnabled = false;
+                    CommitButton.Visibility = Visibility.Hidden;
+                    CancelButtonText.Text = "Close";
+                    PageHeader.Content = "View Project Details";
+                    Instructions.Content = "";
+                }
+                catch (Exception generalException) 
+                { 
+                    MessageFunctions.Error("Error displaying project details", generalException);
+                    ProjectFunctions.ReturnToTilesPage();
+                }
+
+                if (Globals.SelectedProjectSummary != null) // Just to be sure
+                {
+                    try
+                    {
+                        thisProjectSummary = Globals.SelectedProjectSummary;
+                        TypeCombo.Items.Add(thisProjectSummary.ProjectType);
+                        
+                    }
+                    catch (Exception generalException) { MessageFunctions.Error("Error selecting current project type", generalException); }
+                }
+            }
+            else
+            {
+                if (!Globals.MyPermissions.Allow("ActivateProjects"))
+                {
+                    StageCombo.IsEnabled = false;
+                    StageCombo.ToolTip = "Your current permissions do not allow updating the project stage";
+                }  
+                
+                try
+                {               
+                    ProjectFunctions.SetFullProjectTypeList();
+                    TypeCombo.ItemsSource = ProjectFunctions.FullProjectTypeList;
+                }
+                catch (Exception generalException) { MessageFunctions.Error("Error displaying project type name", generalException); }
+
+                if (pageMode == PageFunctions.Amend && Globals.SelectedProjectSummary != null)  // Just to be sure
+                {
+                    try
+                    {
+                        thisProjectSummary = Globals.SelectedProjectSummary;
+                        ProjectTypes selectedType = ProjectFunctions.FullProjectTypeList.FirstOrDefault(tl => tl.TypeCode == ThisProjectSummary.ProjectType.TypeCode);
+                        TypeCombo.SelectedIndex = ProjectFunctions.FullProjectTypeList.IndexOf(selectedType);
+                    }
+                    catch (Exception generalException) { MessageFunctions.Error("Error selecting current project type", generalException); }
+                }
+            }
+            
+            this.DataContext = ThisProjectSummary;
+
+
+
+
+//            ThisProjectSummary.ProjectName = "Testy test";
+            //OnPropertyChanged("ProjectName");
+
+            ClientCombo.ItemsSource = ProjectFunctions.ClientComboList;
             
             try
             {
@@ -125,19 +204,19 @@ namespace ProjectTile
 
 
         // Shared functions //
-        protected void OnPropertyChanged(string eventName)
-        {
-            try
-            {
-                MessageBox.Show("Hello");
-                PropertyChangedEventHandler thisHandler = PropertyChanged;
-                if (thisHandler != null)
-                {
-                    thisHandler(this, new PropertyChangedEventArgs(eventName));
-                }
-            }
-            catch (Exception generalException) { MessageFunctions.Error("Error handling changed property", generalException); }
-        }
+//        protected void OnPropertyChanged(string eventName)
+ //       {
+  //          try
+   //         {
+    //            MessageBox.Show("Hello");
+     //           PropertyChangedEventHandler thisHandler = PropertyChanged;
+      ///          if (thisHandler != null)
+        //        {
+         //           thisHandler(this, new PropertyChangedEventArgs(eventName));
+          //      }
+           // }
+            //catch (Exception generalException) { MessageFunctions.Error("Error handling changed property", generalException); }
+        //}
 
         // ---------------------- //
         // -- Event Management -- //
@@ -157,7 +236,21 @@ namespace ProjectTile
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(ThisProjectSummary.ProjectName);
+            MessageBox.Show(ThisProjectSummary.ProjectType.TypeCode.ToString() + " " + ThisProjectSummary.ProjectType.TypeName);
+        }
+
+        private void TypeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+//            try
+//            {
+//                if (TypeCombo.SelectedItem != null)
+//                {
+//                    //int selectedIndex = TypeCombo.SelectedIndex;
+//                    //ProjectTypes selectedType = (ProjectTypes)TypeCombo.SelectedItem;
+//                    //ThisProjectSummary.TypeDescription = selectedType.TypeDescription;
+//                }
+//            }
+//            catch (Exception generalException) { MessageFunctions.Error("Error processing project type selection", generalException); }
         }
  
     }
