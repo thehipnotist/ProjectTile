@@ -29,34 +29,12 @@ namespace ProjectTile
 
         MainWindow winMain = (MainWindow)App.Current.MainWindow;
         string pageMode;
-//        public event PropertyChangedEventHandler PropertyChanged;
+        bool fromProjectPage = (Globals.ProjectSourcePage != Globals.TilesPageName);
 
         // Current variables //
 
         // Current records //
         private ProjectSummaryRecord thisProjectSummary = null;
-        public ProjectSummaryRecord ThisProjectSummary
-        {
-            get { return thisProjectSummary; }
-            set 
-            { 
-                thisProjectSummary = ThisProjectSummary;
-                //OnPropertyChanged("ThisProjectSummary");
-            }
-        }
-
-        // Data context //
-        //private ObservableCollection<ProjectSummaryRecord> thisProject = new ObservableCollection<ProjectSummaryRecord>();
-        //public ObservableCollection<ProjectSummaryRecord> ThisProject
-        //{
-        //    get { return thisProject; }
-        //    set 
-        //    {
-        //        MessageBox.Show("Hi");
-        //        thisProject = value;
-        //        OnPropertyChanged("ThisProject");
-        //    }
-        //}   
 
         // ---------------------- //
         // -- Page Management --- //
@@ -68,18 +46,6 @@ namespace ProjectTile
             InitializeComponent();
             Style = (Style)FindResource(typeof(Page));
             KeepAlive = false;
-
-
-//            ProjectFunctions.SetTypeNameList();
-//            TypeCombo.ItemsSource = ProjectFunctions.TypeNameList;
-
-
-
-//            this.DataContext = ThisProject;
-
-
-
-
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -91,109 +57,40 @@ namespace ProjectTile
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error retrieving query details", generalException);
-                ProjectFunctions.ReturnToTilesPage();
-            }
+                closePage(false, false);
+            }            
             
-            
-            if (pageMode==PageFunctions.View)
-            {
-                try
-                {
-                    ClientCombo.IsEnabled = ProjectName.IsEnabled = TypeCombo.IsEnabled = StartDate.IsEnabled = false;
-                    ManagerCombo.IsEnabled = StageCombo.IsEnabled = ProjectSummary.IsEnabled = false;
-                    CommitButton.Visibility = Visibility.Hidden;
-                    CancelButtonText.Text = "Close";
-                    PageHeader.Content = "View Project Details";
-                    Instructions.Content = "";
-                }
-                catch (Exception generalException) 
-                { 
-                    MessageFunctions.Error("Error displaying project details", generalException);
-                    ProjectFunctions.ReturnToTilesPage();
-                }
-
-                if (Globals.SelectedProjectSummary != null) // Just to be sure
-                {
-                    try
-                    {
-                        thisProjectSummary = Globals.SelectedProjectSummary;
-                        TypeCombo.Items.Add(thisProjectSummary.ProjectType);
-                        
-                    }
-                    catch (Exception generalException) { MessageFunctions.Error("Error selecting current project type", generalException); }
-                }
-            }
+            if (pageMode==PageFunctions.View) { setUpViewMode(); }
             else
             {
                 if (!Globals.MyPermissions.Allow("ActivateProjects"))
                 {
                     StageCombo.IsEnabled = false;
                     StageCombo.ToolTip = "Your current permissions do not allow updating the project stage";
-                }  
-                
+                }
+
                 try
-                {               
+                {
                     ProjectFunctions.SetFullProjectTypeList();
                     TypeCombo.ItemsSource = ProjectFunctions.FullProjectTypeList;
                 }
-                catch (Exception generalException) { MessageFunctions.Error("Error displaying project type name", generalException); }
+                catch (Exception generalException) { MessageFunctions.Error("Error creating the list of available project types", generalException); }
 
-                if (pageMode == PageFunctions.Amend && Globals.SelectedProjectSummary != null)  // Just to be sure
+
+                if (pageMode == PageFunctions.New) { setUpNewMode(); }
+                else if (pageMode == PageFunctions.Amend && Globals.SelectedProjectSummary != null)  // Just to be sure
                 {
-                    try
-                    {
-                        thisProjectSummary = Globals.SelectedProjectSummary;
-                        ProjectTypes selectedType = ProjectFunctions.FullProjectTypeList.FirstOrDefault(tl => tl.TypeCode == ThisProjectSummary.ProjectType.TypeCode);
-                        TypeCombo.SelectedIndex = ProjectFunctions.FullProjectTypeList.IndexOf(selectedType);
-                    }
-                    catch (Exception generalException) { MessageFunctions.Error("Error selecting current project type", generalException); }
+                    setUpAmendMode();
+                }
+                else
+                {
+                    MessageFunctions.Error("Error: no project selected.", null);
+                    closePage(false, false);
                 }
             }
             
-            this.DataContext = ThisProjectSummary;
-
-
-
-
-//            ThisProjectSummary.ProjectName = "Testy test";
-            //OnPropertyChanged("ProjectName");
-
-            ClientCombo.ItemsSource = ProjectFunctions.ClientComboList;
-            
-            try
-            {
-                pageMode = PageFunctions.pageParameter(this, "Mode");
-            }
-            catch (Exception generalException)
-            {
-                MessageFunctions.Error("Error retrieving query details", generalException);
-                ProjectFunctions.ReturnToProjectPage();
-            }
-
-            if (pageMode == PageFunctions.New)
-            {
-                PageHeader.Content = "Create New Project";
-                Instructions.Content = "Fill in the details as required and then click 'Save' to create the record.";
-                BackButton.Visibility = Visibility.Hidden;          
-            }            
-            else 
-            {
-
-
-//                if (Globals.SelectedProjectSummary != null)
-                {
-                    //ProjectFunctions.setThisProject();                   
-                    
-//                }
-//                else
-//                {
- //                   MessageFunctions.Error("Load error: no project loaded.", null);
- //                   ProjectFunctions.ReturnToProjectPage();
-                }
-
-                if (pageMode == PageFunctions.View) { } // disable controls and submit button
-
-            }
+            this.DataContext = thisProjectSummary;
+            ClientCombo.ItemsSource = ProjectFunctions.ClientComboList;            
         }
 
         // ---------------------- //
@@ -201,22 +98,70 @@ namespace ProjectTile
         // ---------------------- //
 
         // Data updates //
+        private void setUpViewMode()
+        {
+            try
+            {
+                ClientCombo.IsEnabled = ProjectName.IsEnabled = TypeCombo.IsEnabled = StartDate.IsEnabled = false;
+                ManagerCombo.IsEnabled = StageCombo.IsEnabled = ProjectSummary.IsEnabled = false;
+                CommitButton.Visibility = Visibility.Hidden;
+                CancelButtonText.Text = "Close";
+                PageHeader.Content = "View Project Details";
+                Instructions.Content = "";
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error displaying project details", generalException);
+                closePage(false, false);
+            }
 
+            if (Globals.SelectedProjectSummary != null) // Just to be sure
+            {
+                try
+                {
+                    thisProjectSummary = Globals.SelectedProjectSummary;
+                    TypeCombo.Items.Add(thisProjectSummary.ProjectType);
+                }
+                catch (Exception generalException) { MessageFunctions.Error("Error selecting current project type", generalException); }
+            }
+        }
+
+        private void setUpNewMode()
+        {
+            thisProjectSummary = new ProjectSummaryRecord();
+            PageHeader.Content = "Create New Project";
+            Instructions.Content = "Fill in the details as required and then click 'Save' to create the record.";
+            if (fromProjectPage)
+            {
+                // To do: set up certain fields as with an amendment based on current selection - combine those parts into a single function?
+            }
+            else { BackButton.Visibility = Visibility.Hidden; }       
+        }
+
+        private void setUpAmendMode()
+        {
+            try
+            {
+                thisProjectSummary = Globals.SelectedProjectSummary;
+                ProjectTypes selectedType = ProjectFunctions.FullProjectTypeList.FirstOrDefault(tl => tl.TypeCode == thisProjectSummary.ProjectType.TypeCode);
+                TypeCombo.SelectedIndex = ProjectFunctions.FullProjectTypeList.IndexOf(selectedType);
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error selecting current project type", generalException); }
+        }
+
+        private void closePage(bool closeAll, bool checkFirst)
+        {
+            if (checkFirst && pageMode != PageFunctions.View)
+            {
+                bool doClose = MessageFunctions.QuestionYesNo("Are you sure you want to close this page? Any changes you have made will be lost.");
+                if (!doClose) { return; }
+            }            
+            bool closeFully = closeAll ? true : !fromProjectPage;            
+            if (closeFully) { ProjectFunctions.ReturnToTilesPage(); }
+            else { ProjectFunctions.ReturnToProjectPage(); }
+        }
 
         // Shared functions //
-//        protected void OnPropertyChanged(string eventName)
- //       {
-  //          try
-   //         {
-    //            MessageBox.Show("Hello");
-     //           PropertyChangedEventHandler thisHandler = PropertyChanged;
-      ///          if (thisHandler != null)
-        //        {
-         //           thisHandler(this, new PropertyChangedEventArgs(eventName));
-          //      }
-           // }
-            //catch (Exception generalException) { MessageFunctions.Error("Error handling changed property", generalException); }
-        //}
 
         // ---------------------- //
         // -- Event Management -- //
@@ -226,31 +171,35 @@ namespace ProjectTile
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            ProjectFunctions.ReturnToTilesPage();
+            closePage(true, true);
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
-        {            
-            ProjectFunctions.ReturnToProjectPage();
+        {
+            closePage(false, true);
         }
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(ThisProjectSummary.ProjectType.TypeCode.ToString() + " " + ThisProjectSummary.ProjectType.TypeName);
+            MessageBox.Show(thisProjectSummary.ProjectType.TypeCode.ToString() + " " + thisProjectSummary.ProjectType.TypeName);
         }
 
         private void TypeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // To do - validate if it is an internal project bu the client is selected, or vice versa if 'no client' is selected
+
 //            try
 //            {
 //                if (TypeCombo.SelectedItem != null)
 //                {
-//                    //int selectedIndex = TypeCombo.SelectedIndex;
-//                    //ProjectTypes selectedType = (ProjectTypes)TypeCombo.SelectedItem;
-//                    //ThisProjectSummary.TypeDescription = selectedType.TypeDescription;
 //                }
 //            }
 //            catch (Exception generalException) { MessageFunctions.Error("Error processing project type selection", generalException); }
+        }
+
+        private void ClientCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // To do - validation from above
         }
  
     }

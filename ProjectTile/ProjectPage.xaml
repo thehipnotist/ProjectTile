@@ -69,6 +69,13 @@
                         <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Close" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
+                <Button x:Name="AddButton" HorizontalAlignment="Right" Height="30" Margin="15,15,140,15" VerticalAlignment="Top" Width="110" 
+                		FontWeight="Bold" Click="AddButton_Click" Style="{StaticResource RoundedButton}">
+                    <StackPanel x:Name="AddPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                        <Frame x:Name="AddImage" Content="{StaticResource AddIcon}" />
+                        <TextBlock x:Name="AddButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Add New" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>                
                 <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" Click="CommitButton_Click">
                     <StackPanel x:Name="CommitPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">

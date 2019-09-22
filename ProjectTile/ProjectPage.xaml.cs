@@ -51,12 +51,20 @@ namespace ProjectTile
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
                 Globals.ProjectSourceMode = pageMode;
+                Globals.ProjectSourcePage = "ProjectPage";
                 if (pageMode == PageFunctions.View || !Globals.MyPermissions.Allow("EditProjects")) { viewOnly = true; }
             }
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error retrieving query details", generalException);
                 ProjectFunctions.ReturnToTilesPage();
+            }
+
+            if (pageMode == PageFunctions.View) { AddButton.Visibility = Visibility.Hidden; }
+            else
+            {
+                PageHeader.Content = "Amend or Manage Projects";
+                Instructions.Content = "Use filters to restrict results and column headers to sort them, then choose the required option.";
             }
 
             refreshClientCombo();
@@ -173,16 +181,6 @@ namespace ProjectTile
 
 
 
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            ProjectFunctions.ReturnToTilesPage();
-        }
-
-        private void CommitButton_Click(object sender, RoutedEventArgs e)
-        {
-            string inputMode = viewOnly? PageFunctions.View : PageFunctions.Amend;  
-            PageFunctions.ShowProjectDetailsPage(inputMode);
-        }
 
         private void ProjectDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -248,6 +246,22 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error processing status filter selection", generalException); }	
         }
 
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            ProjectFunctions.ReturnToTilesPage();
+        }
+
+
+        private void AddButton_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowProjectDetailsPage(PageFunctions.New);
+        }
+
+        private void CommitButton_Click(object sender, RoutedEventArgs e)
+        {
+            string inputMode = viewOnly ? PageFunctions.View : PageFunctions.Amend;
+            PageFunctions.ShowProjectDetailsPage(inputMode);
+        }
 
 
     } // class

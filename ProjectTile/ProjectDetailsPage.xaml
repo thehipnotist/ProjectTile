@@ -38,7 +38,7 @@
                          ToolTip="This is set automatically" Style="{DynamicResource PaddedTextBox}" IsEnabled="false" Text="{Binding Path=ProjectCode, Mode=TwoWay}"/>
                 <Label x:Name="ClientNameLabel" Content="Client Name" HorizontalAlignment="Right" Height="30" Margin="0,75,210,0" VerticalAlignment="Top" Width="110" FontWeight="Bold"/>
                 <ComboBox x:Name="ClientCombo" HorizontalAlignment="Right" Height="30" Margin="15,75,30,0" VerticalAlignment="Top" Width="180" 
-                          DisplayMemberPath="ClientName" SelectedItem="{Binding Path=ClientName, Mode=TwoWay}"/>
+                          DisplayMemberPath="ClientName" SelectedItem="{Binding Path=ClientName, Mode=TwoWay}" SelectionChanged="ClientCombo_SelectionChanged"/>
                 
                 <Label x:Name="ProjectNameLabel" Content="Project Name" HorizontalAlignment="Left" Margin="15,120,0,0" VerticalAlignment="Top" Width="90" FontWeight="Bold" Height="30" />
                 <TextBox x:Name="ProjectName" HorizontalAlignment="Left" Height="30" Margin="115,120,0,0"  VerticalAlignment="Top" Width="510" ToolTip="Enter a name for the project" 

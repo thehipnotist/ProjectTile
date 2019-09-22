@@ -128,19 +128,19 @@ namespace ProjectTile
         }
 
         // Types
-        public static void SetTypeNameList()
-        {
-            try
-            {
-                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
-                using (existingPtDb)
-                {
-                    TypeNameList = (from pt in existingPtDb.ProjectTypes
-                                    select pt.TypeName).ToList();
-                }
-            }
-            catch (Exception generalException) { MessageFunctions.Error("Error retrieving list of project type names", generalException); }
-        }
+        //public static void SetTypeNameList()
+        //{
+        //    try
+        //    {
+        //        ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+        //        using (existingPtDb)
+        //        {
+        //            TypeNameList = (from pt in existingPtDb.ProjectTypes
+        //                            select pt.TypeName).ToList();
+        //        }
+        //    }
+        //    catch (Exception generalException) { MessageFunctions.Error("Error retrieving list of project type names", generalException); }
+        //}
 
         public static void SetFullProjectTypeList()
         {
