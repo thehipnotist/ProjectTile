@@ -10,7 +10,7 @@ namespace ProjectTile
     {
         private static MainWindow winMain = (MainWindow)App.Current.MainWindow;        
         
-        public static IEnumerable<StaffSummaryRecord> StaffSummary;
+        //public static IEnumerable<StaffSummaryRecord> StaffSummary;
         public static int newDefaultID = 0;
 
         public static List<StaffSummarySmall> StaffForEntity; // Initiated later
