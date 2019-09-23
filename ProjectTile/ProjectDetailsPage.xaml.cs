@@ -89,8 +89,7 @@ namespace ProjectTile
                 }
             }
             
-            this.DataContext = thisProjectSummary;
-            ClientCombo.ItemsSource = ProjectFunctions.ClientComboList;            
+            this.DataContext = thisProjectSummary;                        
         }
 
         // ---------------------- //
@@ -109,25 +108,47 @@ namespace ProjectTile
                 {
                     try
                     {
-                        StaffSummaryRecord selectedManager = ProjectFunctions.GetPMSummary(currentManagerID);
+                        StaffSummaryRecord selectedManager = ProjectFunctions.GetPMInOptionsList(currentManagerID);
                         ManagerCombo.SelectedIndex = ProjectFunctions.PMOptionsList.IndexOf(selectedManager);
                     }
                     catch (Exception generalException) { MessageFunctions.Error("Error selecting current Project Manager", generalException); }
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating the drop-down list of Project Managers", generalException); }
-        }        
+        }
+        
+        private void refreshClientCombo()
+        {
+            try
+            {
+                int currentClientID = (thisProjectSummary.Client != null) ? thisProjectSummary.Client.ID : 0;
+                ProjectFunctions.SetClientOptionsList(currentClientID);
+                ClientCombo.ItemsSource = ProjectFunctions.ClientOptionsList;
+                if (currentClientID != 0)
+                {
+                    try
+                    {
+                        ClientSummaryRecord selectedClient = ProjectFunctions.GetClientInOptionsList(currentClientID);
+                        ClientCombo.SelectedIndex = ProjectFunctions.ClientOptionsList.IndexOf(selectedClient);
+                    }
+                    catch (Exception generalException) { MessageFunctions.Error("Error selecting current client", generalException); }
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error populating the drop-down list of clients", generalException); }
+        }
         
         private void setUpViewMode()
         {
             try
             {
-                ClientCombo.IsEnabled = ProjectName.IsEnabled = TypeCombo.IsEnabled = StartDate.IsEnabled = false;
-                ManagerCombo.IsEnabled = StageCombo.IsEnabled = ProjectSummary.IsEnabled = false;
+                ClientCombo.IsReadOnly = ProjectName.IsReadOnly = TypeCombo.IsReadOnly = true;
+                ManagerCombo.IsReadOnly = StageCombo.IsReadOnly = ProjectSummary.IsReadOnly = true;
+                StartDate.IsEnabled = false; // This cannot be read-only so an inner style trigger makes it appear read-only
+                ProjectCode.IsEnabled = true; ProjectCode.IsReadOnly = true;
                 CommitButton.Visibility = NextButton.Visibility = NonPMs_CheckBox.Visibility = Visibility.Hidden;
                 CancelButtonText.Text = "Close";
                 PageHeader.Content = "View Project Details";
-                Instructions.Content = "";
+                Instructions.Content = "This page is read-only; values can be selected but not changed.";
             }
             catch (Exception generalException)
             {
@@ -140,9 +161,15 @@ namespace ProjectTile
                 try
                 {
                     thisProjectSummary = Globals.SelectedProjectSummary;
-                    TypeCombo.Items.Add(thisProjectSummary.ProjectType);
-                    StageCombo.Items.Add(thisProjectSummary.ProjectStage);
+                    TypeCombo.Items.Add(thisProjectSummary.Type);
+                    StageCombo.Items.Add(thisProjectSummary.Stage);
                     ManagerCombo.Items.Add(thisProjectSummary.ProjectManager);
+                    if (thisProjectSummary.Client != null  && thisProjectSummary.Client.ID > 0) { ClientCombo.Items.Add(thisProjectSummary.Client); }
+                    else
+                    {
+                        ClientCombo.Items.Add(Globals.NoClient);
+                        ClientCombo.SelectedIndex = 0;
+                    }
                 }
                 catch (Exception generalException) { MessageFunctions.Error("Error setting current project details", generalException); }
             }
@@ -153,13 +180,14 @@ namespace ProjectTile
             thisProjectSummary = new ProjectSummaryRecord();
             PageHeader.Content = "Create New Project";
             Instructions.Content = "Fill in the details as required and then click 'Save' to create the record.";
-            thisProjectSummary.ProjectStage = ProjectFunctions.GetStageByCode(0);
+            thisProjectSummary.Stage = ProjectFunctions.GetStageByCode(0);
             if (fromProjectPage)
             {
                 // To do: set up certain fields as with an amendment based on current selection - combine those parts into a single function?
             }
             else { BackButton.Visibility = Visibility.Hidden; }
             refreshManagerCombo(false);
+            refreshClientCombo();
         }
 
         private void setUpAmendMode()
@@ -168,18 +196,19 @@ namespace ProjectTile
             try
             {                      
                 // For some reason this is necessary initially (alternatively can add the project's type first, then all others, then sort)
-                ProjectTypes selectedType = ProjectFunctions.FullTypeList.FirstOrDefault(tl => tl.TypeCode == thisProjectSummary.ProjectType.TypeCode);
+                ProjectTypes selectedType = ProjectFunctions.FullTypeList.FirstOrDefault(tl => tl.TypeCode == thisProjectSummary.Type.TypeCode);
                 TypeCombo.SelectedIndex = ProjectFunctions.FullTypeList.IndexOf(selectedType);          
             }
             catch (Exception generalException) { MessageFunctions.Error("Error selecting current project type", generalException); }
             try
             {
                 // As above)
-                ProjectStages selectedStage = ProjectFunctions.GetStageByCode(thisProjectSummary.ProjectStage.StageCode);
+                ProjectStages selectedStage = ProjectFunctions.GetStageByCode(thisProjectSummary.Stage.StageCode);
                 StageCombo.SelectedIndex = ProjectFunctions.FullStageList.IndexOf(selectedStage);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error selecting current project stage", generalException); }
             refreshManagerCombo(false);
+            refreshClientCombo();
         }
 
         private void closePage(bool closeAll, bool checkFirst)
@@ -214,7 +243,7 @@ namespace ProjectTile
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(thisProjectSummary.ProjectType.TypeCode.ToString() + " " + thisProjectSummary.ProjectType.TypeName);
+            MessageBox.Show(thisProjectSummary.Type.TypeCode.ToString() + " " + thisProjectSummary.Type.TypeName);
         }
 
         private void TypeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -231,7 +260,7 @@ namespace ProjectTile
         {
             if (StageCombo.SelectedItem != null && pageMode != PageFunctions.View)
             {
-                int newStage = thisProjectSummary.ProjectStage.StageCode;
+                int newStage = thisProjectSummary.Stage.StageCode;
                 
                 // To do - validate and process the logic of the selection change - possibly only at saving stage though, e.g. 
                 //    - if now Live then the product should be Live
@@ -245,8 +274,8 @@ namespace ProjectTile
         {
             try
             {
-                int newStage = thisProjectSummary.ProjectStage.StageCode + 1;
-                thisProjectSummary.ProjectStage = ProjectFunctions.GetStageByCode(newStage);
+                int newStage = thisProjectSummary.Stage.StageCode + 1;
+                thisProjectSummary.Stage = ProjectFunctions.GetStageByCode(newStage);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error moving to the next stage", generalException); }
         }

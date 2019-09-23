@@ -7,27 +7,37 @@ namespace ProjectTile
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private ProjectTypes projectType;
-        private ProjectStages projectStage;
+        private ProjectTypes type;
+        private ProjectStages stage;
         private StaffSummaryRecord projectManager;
+        private ClientSummaryRecord client;
         
         public int ProjectID { get; set; }
         public string ProjectCode { get; set; }
         public string ProjectName { get; set; }
         public string ProjectSummary { get; set; }
-        public ProjectTypes ProjectType
+        public ProjectTypes Type
         {
-            get { return projectType; }
+            get { return type; }
             set
             {
-                projectType = value;
-                OnPropertyChanged("ProjectType");
+                type = value;
+                OnPropertyChanged("Type");
             }
         }
         public int EntityID { get; set; }
-        public int? ClientID { get; set; }
-        public string ClientCode { get; set; }
-        public string ClientName { get; set; }
+        public ClientSummaryRecord Client
+        {
+            get { return client; }
+            set
+            {
+                client = value;
+                OnPropertyChanged("Client");
+            }
+        }
+        //public int? ClientID { get; set; }
+        //public string ClientCode { get; set; }
+        //public string ClientName { get; set; }
         public StaffSummaryRecord ProjectManager
         {
             get { return projectManager; }
@@ -37,15 +47,13 @@ namespace ProjectTile
                 OnPropertyChanged("ProjectManager");
             }
         }
-        //public int PMStaffID { get; set; }
-        //public string PMStaffName { get; set; }
-        public ProjectStages ProjectStage
+        public ProjectStages Stage
         {
-            get { return projectStage;  }
+            get { return stage;  }
             set
             {
-                projectStage = value;
-                OnPropertyChanged("ProjectStage");
+                stage = value;
+                OnPropertyChanged("Stage");
             }
         }
         public DateTime? StartDate { get; set; }

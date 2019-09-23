@@ -14,65 +14,71 @@ namespace ProjectTile
         // Lists
         public static List<ProjectSummaryRecord> FullProjectList;
         public static List<ProjectSummaryRecord> ProjectGridList;
-        public static List<ClientSummaryRecord> FullClientList;
-        public static List<ClientSummaryRecord> ClientComboList;
         public static List<string> StatusFilterList;
         public static List<ProjectStages> FullStageList;
         public static List<ProjectTypes> FullTypeList;
         public static List<StaffSummaryRecord> FullPMsList;
         public static List<StaffSummaryRecord> PMFilterList;
         public static List<StaffSummaryRecord> PMOptionsList;
+        public static List<ClientSummaryRecord> FullClientList;
+        public static List<ClientSummaryRecord> ClientFilterList;
+        public static List<ClientSummaryRecord> ClientOptionsList;
 
         // Data retrieval
         public static bool SetFullProjectList()
         {
             try
             {
+                List<ProjectSummaryRecord> projectList = null;
+                
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    FullProjectList =
-                        (from pj in existingPtDb.Projects
-                         join c in existingPtDb.Clients on pj.ClientID equals c.ID
-                             into GroupJoin
-                         from sc in GroupJoin.DefaultIfEmpty()
-                         join pt in existingPtDb.ProjectTeams on pj.ID equals pt.ProjectID
-                         join s in existingPtDb.Staff on pt.StaffID equals s.ID
-                         join sr in existingPtDb.StaffRoles on s.RoleCode equals sr.RoleCode
-                         join de in existingPtDb.Entities on s.DefaultEntity equals de.ID
-                         join ps in existingPtDb.ProjectStages on pj.StageCode equals ps.StageCode
-                         join t in existingPtDb.ProjectTypes on pj.TypeCode equals t.TypeCode
-                         where pj.EntityID == CurrentEntityID
-                             && (pt.ProjectRoleCode == ProjectManagerRole)
-                         select new ProjectSummaryRecord
-                         {
-                             ProjectID = pj.ID,
-                             ProjectCode = pj.ProjectCode,
-                             ProjectName = pj.ProjectName,
-                             ProjectSummary = pj.ProjectSummary,
-                             ProjectType = t,
-                             EntityID = pj.EntityID,
-                             ClientID = (sc == null) ? NoID : sc.ID,
-                             ClientCode = (sc == null) ? "" : sc.ClientCode,
-                             ClientName = (sc == null) ? "" : sc.ClientName,
-                             ProjectManager = new StaffSummaryRecord
-                             {
-                                 ID = (int)s.ID,
-                                 UserID = (string)s.UserID,
-                                 StaffName = (string)s.FirstName + " " + s.Surname,
-                                 RoleDescription = (string)sr.RoleDescription,
-                                 StartDate = (DateTime?)DbFunctions.TruncateTime(s.StartDate),
-                                 LeaveDate = (DateTime?)DbFunctions.TruncateTime(s.LeaveDate),
-                                 ActiveUser = (bool)s.Active,
-                                 DefaultEntity = (string)de.EntityName
-                             },
-                             ProjectStage = ps,
-                             StartDate = pj.StartDate
-                         }
+                    projectList = (from pj in existingPtDb.Projects
+                                   //join c in existingPtDb.Clients on pj.ClientID equals c.ID
+                                   //    into GroupJoin
+                                   //from sc in GroupJoin.DefaultIfEmpty()
+                                   join pt in existingPtDb.ProjectTeams on pj.ID equals pt.ProjectID
+                                   join s in existingPtDb.Staff on pt.StaffID equals s.ID
+                                   join sr in existingPtDb.StaffRoles on s.RoleCode equals sr.RoleCode
+                                   join de in existingPtDb.Entities on s.DefaultEntity equals de.ID
+                                   join ps in existingPtDb.ProjectStages on pj.StageCode equals ps.StageCode
+                                   join t in existingPtDb.ProjectTypes on pj.TypeCode equals t.TypeCode
+                                   where pj.EntityID == CurrentEntityID
+                                       && (pt.ProjectRoleCode == ProjectManagerRole)
+                                   select new ProjectSummaryRecord
+                                   {
+                                       ProjectID = pj.ID,
+                                       ProjectCode = pj.ProjectCode,
+                                       ProjectName = pj.ProjectName,
+                                       ProjectSummary = pj.ProjectSummary,
+                                       Type = t,
+                                       EntityID = pj.EntityID,
+                                       //Client = Globals.NoClient,
+                                       ProjectManager = new StaffSummaryRecord
+                                       {
+                                           ID = (int)s.ID,
+                                           UserID = (string)s.UserID,
+                                           StaffName = (string)s.FirstName + " " + s.Surname,
+                                           RoleDescription = (string)sr.RoleDescription,
+                                           StartDate = (DateTime?)DbFunctions.TruncateTime(s.StartDate),
+                                           LeaveDate = (DateTime?)DbFunctions.TruncateTime(s.LeaveDate),
+                                           ActiveUser = (bool)s.Active,
+                                           DefaultEntity = (string)de.EntityName
+                                       },
+                                       Stage = ps,
+                                       StartDate = pj.StartDate
+                                   }
                         ).ToList();
-
-                    return true;
                 }
+
+                foreach (ProjectSummaryRecord thisProject in projectList)
+                {
+                    thisProject.Client = GetProjectClientSummary(thisProject.ProjectID);
+                }
+
+                FullProjectList = projectList;
+                return true;
             }
             catch (Exception generalException)
             {
@@ -90,13 +96,13 @@ namespace ProjectTile
                 {
                     ProjectGridList = 
                         (from fpl in FullProjectList
-                        where  (clientID == 0 || fpl.ClientID == clientID)
+                        where  (clientID == 0 || fpl.Client.ID == clientID)
                             &&  (ourManagerID == 0 || fpl.ProjectManager.ID == ourManagerID)
                             && ( inStatus == ProjectStatusFilter.All
-                                    || (inStatus == ProjectStatusFilter.Current && fpl.ProjectStage.StageCode <= LiveStage)
-                                    || (inStatus == ProjectStatusFilter.Open && fpl.ProjectStage.StageCode >= StartStage && fpl.ProjectStage.StageCode <= LiveStage)
-                                    || (inStatus == ProjectStatusFilter.InProgress && fpl.ProjectStage.ProjectStatus == InProgressStatus)
-                                    || (inStatus == ProjectStatusFilter.Closed && fpl.ProjectStage.ProjectStatus == ClosedStatus)
+                                    || (inStatus == ProjectStatusFilter.Current && fpl.Stage.StageCode <= LiveStage)
+                                    || (inStatus == ProjectStatusFilter.Open && fpl.Stage.StageCode >= StartStage && fpl.Stage.StageCode <= LiveStage)
+                                    || (inStatus == ProjectStatusFilter.InProgress && fpl.Stage.ProjectStatus == InProgressStatus)
+                                    || (inStatus == ProjectStatusFilter.Closed && fpl.Stage.ProjectStatus == ClosedStatus)
                                 )
                         select fpl
                         ).ToList();
@@ -275,36 +281,35 @@ namespace ProjectTile
                 comboList.Add(AnyPM);
                 PMFilterList = comboList;
             }
-            catch (Exception generalException) { MessageFunctions.Error("Error retrieving data for Project Managers drop-down list", generalException); }
+            catch (Exception generalException) { MessageFunctions.Error("Error retrieving data for Project Manager filter", generalException); }
         }
 
         public static void SetPMOptionsList(bool anyActiveUser, int currentManagerID = 0)
         {
             try
             {
-                if (anyActiveUser) { PMOptionsList = StaffFunctions.GetStaffGridData(activeOnly: true, nameContains: "", roleDescription: AllRecords, entityID: CurrentEntityID); }
+                List<StaffSummaryRecord> managerList = null;
+                if (anyActiveUser) { managerList = StaffFunctions.GetStaffGridData(activeOnly: true, nameContains: "", roleDescription: AllRecords, entityID: CurrentEntityID); }
                 else
                 {
                     SetFullPMsList();
-                    PMOptionsList = FullPMsList.Where(fpl => fpl.ActiveUser || fpl.ID == currentManagerID).ToList();
+                    managerList = FullPMsList.Where(fpl => fpl.ActiveUser || fpl.ID == currentManagerID).ToList();
                 }
-
-                if (currentManagerID > 0  && !PMOptionsList.Exists(pol => pol.ID == currentManagerID))
+                if (currentManagerID > 0  && !managerList.Exists(pol => pol.ID == currentManagerID))
                 {                    
                     StaffSummaryRecord thisManager = StaffFunctions.GetStaffSummary(currentManagerID);
-                    PMOptionsList.Add(thisManager);
-                    PMOptionsList.OrderBy(pol => pol.StaffName);
-                }                
+                    managerList.Add(thisManager);                    
+                }
+                PMOptionsList = managerList.OrderBy(pol => pol.StaffName).ToList();
             }
             catch (Exception generalException) { MessageFunctions.Error("Error retrieving data for Project Managers drop-down list", generalException); }
         }
 
-        public static StaffSummaryRecord GetPMSummary(int managerID)
+        public static StaffSummaryRecord GetPMInOptionsList(int managerID)
         {
             try
             {
-                //SetFullPMsList();
-                StaffSummaryRecord thisPM = PMOptionsList.Where(fpl => fpl.ID == managerID).FirstOrDefault();
+                StaffSummaryRecord thisPM = PMOptionsList.Where(pol => pol.ID == managerID).FirstOrDefault();
                 if (thisPM != null) { return thisPM; }
                 else
                 {
@@ -325,18 +330,79 @@ namespace ProjectTile
             FullClientList = ClientFunctions.ClientGridList(false, "", 0, CurrentEntityID);
         }
         
-        public static void SetClientComboList()
+        public static void SetClientFilterList()
         {
             try
             {
-                if (ClientComboList != null) { ClientComboList.Clear(); }
+                if (ClientFilterList != null) { ClientFilterList.Clear(); }
                 SetFullClientList();
                 List<ClientSummaryRecord> comboList = FullClientList;
                 comboList.Add(AnyClient);
                 comboList.Insert(0, NoClient);
-                ClientComboList = comboList;
+                ClientFilterList = comboList;
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error retrieving data for client filter", generalException); }
+        }
+
+        public static void SetClientOptionsList(int currentClientID = 0)
+        {
+            try
+            {
+                if (ClientOptionsList != null) { ClientOptionsList.Clear(); }
+                SetFullClientList();
+                List<ClientSummaryRecord> comboList = FullClientList.Where(fcl => fcl.ActiveClient || fcl.ID == currentClientID).ToList();
+                comboList.Insert(0, NoClient);
+                ClientOptionsList = comboList;
             }
             catch (Exception generalException) { MessageFunctions.Error("Error retrieving data for client drop-down list", generalException); }
+        }
+
+        public static ClientSummaryRecord GetClientInOptionsList(int clientID)
+        {
+            try
+            {
+                ClientSummaryRecord thisClient = ClientOptionsList.Where(col => col.ID == clientID).FirstOrDefault();
+                if (thisClient != null) { return thisClient; }
+                else
+                {
+                    MessageFunctions.Error("Error retrieving client details with ID " + clientID.ToString() + ": no matching record found.", null);
+                    return null;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving client details with ID " + clientID.ToString(), generalException);
+                return null;
+            }
+        }
+
+        public static ClientSummaryRecord GetProjectClientSummary(int projectID)
+        {
+            ClientSummaryRecord noClient = new ClientSummaryRecord { ID = NoID, ClientCode = "", ClientName = "", EntityID = CurrentEntityID };
+            
+            if (projectID == 0) { return noClient; }
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    Projects thisProject = existingPtDb.Projects.Where(p => p.ID == projectID).FirstOrDefault();
+                    if (thisProject == null)
+                    {
+                        MessageFunctions.Error("Error retrieving project client details for project ID " + projectID.ToString() + ": no project found.", null);
+                        return NoClient;
+                    }
+                    
+                    int? clientID = thisProject.ClientID;
+                    if (clientID == null || clientID == 0) { return noClient; }
+                    else { return ClientFunctions.GetClientSummary((int) clientID); }
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving project client details for project ID " + projectID.ToString(), generalException);
+                return noClient;
+            }	
         }
 
         // Navigation

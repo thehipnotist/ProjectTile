@@ -127,11 +127,11 @@ namespace ProjectTile
             try
             {
                 ClientSummaryRecord currentRecord = (Globals.SelectedClientSummary != null) ? Globals.SelectedClientSummary : Globals.DefaultClientSummary;     
-                ProjectFunctions.SetClientComboList();
-                ClientCombo.ItemsSource = ProjectFunctions.ClientComboList;
-                if (ProjectFunctions.ClientComboList.Exists(ccl => ccl.ID == currentRecord.ID))
+                ProjectFunctions.SetClientFilterList();
+                ClientCombo.ItemsSource = ProjectFunctions.ClientFilterList;
+                if (ProjectFunctions.ClientFilterList.Exists(ccl => ccl.ID == currentRecord.ID))
                 {
-                    ClientCombo.SelectedItem = ProjectFunctions.ClientComboList.First(ccl => ccl.ID == currentRecord.ID);
+                    ClientCombo.SelectedItem = ProjectFunctions.ClientFilterList.First(ccl => ccl.ID == currentRecord.ID);
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating client drop-down list", generalException); }	

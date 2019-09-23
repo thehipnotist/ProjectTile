@@ -162,6 +162,28 @@ namespace ProjectTile
             }
         }
 
+        public static ClientSummaryRecord GetClientSummary(int clientID, int entityID = 0)
+        {
+            try
+            {
+                if (clientID == -1) { return NoClient; }
+                
+                if (entityID == 0) { entityID = CurrentEntityID; }
+                List<ClientSummaryRecord> allClientsInEntity = ClientGridList(activeOnly: false, nameContains: "", managerID: 0, entityID: entityID);
+                if (allClientsInEntity.Exists(ace => ace.ID == clientID)) { return allClientsInEntity.First(ace => ace.ID == clientID); }
+                else
+                {
+                    MessageFunctions.Error("Error retrieving summary data for client with ID " + clientID.ToString() + ": no matching record found.", null);
+                    return null;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving summary data for client with ID " + clientID.ToString(), generalException);
+                return null;
+            }
+        }
+
         // Data amendment
 
         public static bool ValidateClient(ref Clients thisClient, int existingID, bool managerChanged)

@@ -46,11 +46,11 @@
                         <DataGridTextColumn x:Name="IDColumn" Binding="{Binding ID}" ClipboardContentBinding="{x:Null}" Header="ID" Visibility="Collapsed"/>
                         <DataGridTextColumn x:Name="ProjectCodeColumn" Binding="{Binding ProjectCode}" ClipboardContentBinding="{x:Null}" Header="Project Code"/>
                         <DataGridTextColumn x:Name="ProjectNameColumn" Binding="{Binding ProjectName}" ClipboardContentBinding="{x:Null}" Header="Project Name" Width="*"/>
-                        <DataGridTextColumn x:Name="ProjectTypeColumn" Binding="{Binding ProjectType.TypeName}" ClipboardContentBinding="{x:Null}" Header="Project Type" Width="*"/>
-                        <DataGridTextColumn x:Name="ClientCodeColumn" Binding="{Binding ClientCode}" ClipboardContentBinding="{x:Null}" Header="Client Code"/>
-                        <DataGridTextColumn x:Name="ClientNameColumn" Binding="{Binding ClientName}" ClipboardContentBinding="{x:Null}" Header="Client Name"/>
+                        <DataGridTextColumn x:Name="TypeColumn" Binding="{Binding Type.TypeName}" ClipboardContentBinding="{x:Null}" Header="Project Type" Width="*"/>
+                        <DataGridTextColumn x:Name="ClientCodeColumn" Binding="{Binding Client.ClientCode}" ClipboardContentBinding="{x:Null}" Header="Client Code"/>
+                        <DataGridTextColumn x:Name="ClientNameColumn" Binding="{Binding Client.ClientName}" ClipboardContentBinding="{x:Null}" Header="Client Name"/>
                         <DataGridTextColumn x:Name="ProjectManagerColumn" Binding="{Binding ProjectManager.StaffName}" ClipboardContentBinding="{x:Null}" Header="Project Manager"/>                        
-                        <DataGridTextColumn x:Name="StageColumn" Binding="{Binding ProjectStage.StageName}" ClipboardContentBinding="{x:Null}" Header="Stage"/>                        
+                        <DataGridTextColumn x:Name="StageColumn" Binding="{Binding Stage.StageName}" ClipboardContentBinding="{x:Null}" Header="Stage"/>                        
                     </DataGrid.Columns>
                 </DataGrid>
 
