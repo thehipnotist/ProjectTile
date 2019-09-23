@@ -27,8 +27,7 @@ namespace ProjectTile
         string pageMode;
         bool viewOnly = false;
 
-        // Current variables //
-        bool openOnly = false;        
+        // Current variables //     
 
         // Current records //
 
@@ -57,7 +56,7 @@ namespace ProjectTile
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error retrieving query details", generalException);
-                ProjectFunctions.ReturnToTilesPage();
+                closePage();
             }
 
             if (pageMode == PageFunctions.View) { AddButton.Visibility = Visibility.Hidden; }
@@ -67,11 +66,21 @@ namespace ProjectTile
                 Instructions.Content = "Use filters to restrict results and column headers to sort them, then choose the required option.";
             }
 
-            refreshClientCombo();
-            refreshPMsCombo();
-            if (ProjectFunctions.PMComboList.Exists(ssr => ssr.ID == Globals.CurrentStaffID)) { PMsCombo.SelectedItem = ProjectFunctions.PMComboList.First(ssr => ssr.ID == Globals.CurrentStaffID); }
-            refreshStatusCombo();
+            try
+            {
+                refreshClientCombo();
+                refreshPMsCombo();
+                if (ProjectFunctions.PMFilterList.Exists(ssr => ssr.ID == Globals.CurrentStaffID)) { PMsCombo.SelectedItem = ProjectFunctions.PMFilterList.First(ssr => ssr.ID == Globals.CurrentStaffID); }
+                refreshStatusCombo();
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error refreshing filters", generalException);
+                closePage();
+            }
+
         }
+
 
 
 
@@ -146,11 +155,11 @@ namespace ProjectTile
             try
             {
                 StaffSummaryRecord currentRecord = (Globals.SelectedPMSummary != null) ? Globals.SelectedPMSummary : Globals.DefaultPMSummary;            
-                ProjectFunctions.SetPMComboList();
-                PMsCombo.ItemsSource = ProjectFunctions.PMComboList;
-                if (ProjectFunctions.PMComboList.Exists(pcl => pcl.ID == currentRecord.ID))
+                ProjectFunctions.SetPMFilterList();
+                PMsCombo.ItemsSource = ProjectFunctions.PMFilterList;
+                if (ProjectFunctions.PMFilterList.Exists(pcl => pcl.ID == currentRecord.ID))
                 {
-                    PMsCombo.SelectedItem = ProjectFunctions.PMComboList.First(pcl => pcl.ID == currentRecord.ID);
+                    PMsCombo.SelectedItem = ProjectFunctions.PMFilterList.First(pcl => pcl.ID == currentRecord.ID);
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating Project Managers drop-down list", generalException); }	
@@ -167,6 +176,12 @@ namespace ProjectTile
         private void toggleProjectButtons(bool projectSelected)
         {
             CommitButton.IsEnabled = projectSelected;
+        }
+
+
+        private void closePage()
+        {
+            ProjectFunctions.ReturnToTilesPage();
         }
 
         // ---------------------- //
@@ -248,7 +263,7 @@ namespace ProjectTile
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            ProjectFunctions.ReturnToTilesPage();
+            closePage();
         }
 
 
