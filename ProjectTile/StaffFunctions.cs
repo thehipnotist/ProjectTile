@@ -59,7 +59,7 @@ namespace ProjectTile
                                where (!activeOnly || s.Active)
                                     && (nameContains == "" || (s.FirstName + " " + s.Surname).Contains(nameContains))
                                     && (myAllowedEntities.Contains((int) se.EntityID))
-                                    && (roleDescription == AllRecords || sr.RoleDescription == roleDescription)
+                                    && (roleDescription == AllRecords || roleDescription == "" || sr.RoleDescription == roleDescription)
                                orderby new { s.FirstName, s.Surname, s.UserID }
                                select (new StaffSummaryRecord()
                                {
@@ -100,6 +100,27 @@ namespace ProjectTile
                     MessageFunctions.Error("Error retrieving database record", generalException);
                     return null;
                 }
+            }
+        }
+
+        public static StaffSummaryRecord GetStaffSummary(int staffID, int entityID = 0)
+        {
+            try
+            {
+                if (entityID == 0) { entityID = CurrentEntityID; }
+                
+                List<StaffSummaryRecord> allStaffinEntity = StaffFunctions.GetStaffGridData(activeOnly: true, nameContains: "", roleDescription: AllRecords, entityID: CurrentEntityID);
+                if (allStaffinEntity.Exists(ase => ase.ID == staffID)) { return allStaffinEntity.First(ase => ase.ID == staffID); }
+                else
+                {
+                    MessageFunctions.Error("Error retrieving summary data for staff member with ID " + staffID.ToString() + ": no matching record found.", null);
+                    return null;
+                }
+            }
+            catch (Exception generalException) 
+            { 
+                MessageFunctions.Error("Error retrieving summary data for staff member with ID " + staffID.ToString(), generalException);
+                return null;
             }
         }
 

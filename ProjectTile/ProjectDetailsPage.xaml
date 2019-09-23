@@ -55,9 +55,12 @@
                 <DatePicker x:Name="StartDate" HorizontalAlignment="Left" Height="30" Margin="115,210,0,0" VerticalAlignment="Top" Width="140" SelectedDateFormat="Short" Background="White"
                             Padding="5" SelectedDate="{Binding Path=StartDate, Mode=TwoWay}"/>
 
-                <Label x:Name="ManagerLabel" Content="Project Manager" HorizontalAlignment="Right" Height="30" Margin="0,210,210,0" VerticalAlignment="Top" Width="110" FontWeight="Bold"/>
-                <ComboBox x:Name="ManagerCombo" HorizontalAlignment="Right" Height="30" Margin="0,210,30,0" VerticalAlignment="Top" Width="180"
+                <Label x:Name="ManagerLabel" Content="Project Manager" HorizontalAlignment="Right" Height="30" Margin="0,210,250,0" VerticalAlignment="Top" Width="110" FontWeight="Bold"/>
+                <ComboBox x:Name="ManagerCombo" HorizontalAlignment="Right" Height="30" Margin="0,210,90,0" VerticalAlignment="Top" Width="160"
                           DisplayMemberPath="StaffName" SelectedItem="{Binding Path=ProjectManager, Mode=TwoWay}" SelectionChanged="ManagerCombo_SelectionChanged"/>
+                <CheckBox x:Name="NonPMs_CheckBox" HorizontalAlignment="Right" Height="30" Margin="305,210,30,0" VerticalAlignment="Top" Width="50" FontWeight="Bold" 
+                	        VerticalContentAlignment="Center" UseLayoutRounding="False" Content="Any" Checked="NonPMs_CheckBox_Checked" Unchecked="NonPMs_CheckBox_Unchecked"
+                            ToolTip="Include staff who are not Project Managers by role"/>
 
                 <Label x:Name="StageLabel" Content="Project Stage" HorizontalAlignment="Left" Height="30" Margin="15,255,0,0" VerticalAlignment="Top" Width="95" FontWeight="Bold"/>
                 <ComboBox x:Name="StageCombo" HorizontalAlignment="Left" Height="30" Margin="115,255,0,0" VerticalAlignment="Top" Width="140" SelectedItem="{Binding Path=ProjectStage, Mode=TwoWay}" 

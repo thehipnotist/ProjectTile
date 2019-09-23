@@ -74,10 +74,6 @@ namespace ProjectTile
                     TypeCombo.ItemsSource = ProjectFunctions.FullTypeList;
                     ProjectFunctions.SetFullStageList();
                     StageCombo.ItemsSource = ProjectFunctions.FullStageList;
-
-                    int currentManagerID = (Globals.SelectedProjectSummary != null) ? Globals.SelectedProjectSummary.ProjectManager.ID : 0;
-                    ProjectFunctions.SetPMOptionsList(currentManagerID);
-                    ManagerCombo.ItemsSource = ProjectFunctions.PMOptionsList;
                 }
                 catch (Exception generalException) { MessageFunctions.Error("Error populating drop-down lists", generalException); }
 
@@ -102,13 +98,33 @@ namespace ProjectTile
         // ---------------------- //
 
         // Data updates //
+        private void refreshManagerCombo(bool anyActive)
+        {
+            try
+            {
+                int currentManagerID = (thisProjectSummary.ProjectManager != null)? thisProjectSummary.ProjectManager.ID : 0;
+                ProjectFunctions.SetPMOptionsList(anyActive, currentManagerID);
+                ManagerCombo.ItemsSource = ProjectFunctions.PMOptionsList;
+                if (currentManagerID > 0)
+                {
+                    try
+                    {
+                        StaffSummaryRecord selectedManager = ProjectFunctions.GetPMSummary(currentManagerID);
+                        ManagerCombo.SelectedIndex = ProjectFunctions.PMOptionsList.IndexOf(selectedManager);
+                    }
+                    catch (Exception generalException) { MessageFunctions.Error("Error selecting current Project Manager", generalException); }
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error populating the drop-down list of Project Managers", generalException); }
+        }        
+        
         private void setUpViewMode()
         {
             try
             {
                 ClientCombo.IsEnabled = ProjectName.IsEnabled = TypeCombo.IsEnabled = StartDate.IsEnabled = false;
                 ManagerCombo.IsEnabled = StageCombo.IsEnabled = ProjectSummary.IsEnabled = false;
-                CommitButton.Visibility = NextButton.Visibility = Visibility.Hidden;
+                CommitButton.Visibility = NextButton.Visibility = NonPMs_CheckBox.Visibility = Visibility.Hidden;
                 CancelButtonText.Text = "Close";
                 PageHeader.Content = "View Project Details";
                 Instructions.Content = "";
@@ -142,7 +158,8 @@ namespace ProjectTile
             {
                 // To do: set up certain fields as with an amendment based on current selection - combine those parts into a single function?
             }
-            else { BackButton.Visibility = Visibility.Hidden; }       
+            else { BackButton.Visibility = Visibility.Hidden; }
+            refreshManagerCombo(false);
         }
 
         private void setUpAmendMode()
@@ -162,14 +179,7 @@ namespace ProjectTile
                 StageCombo.SelectedIndex = ProjectFunctions.FullStageList.IndexOf(selectedStage);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error selecting current project stage", generalException); }
-            try
-            {
-                // As above)
-                StaffSummaryRecord selectedManager = ProjectFunctions.GetPMSummary(thisProjectSummary.ProjectManager.ID);                
-                ManagerCombo.SelectedIndex = ProjectFunctions.PMOptionsList.IndexOf(selectedManager);
-                //MessageBox.Show(ProjectFunctions.PMOptionsList.IndexOf(selectedManager).ToString());
-            }
-            catch (Exception generalException) { MessageFunctions.Error("Error selecting current Project Manager", generalException); }
+            refreshManagerCombo(false);
         }
 
         private void closePage(bool closeAll, bool checkFirst)
@@ -244,6 +254,16 @@ namespace ProjectTile
         private void ManagerCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
+        }
+
+        private void NonPMs_CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            refreshManagerCombo(true);
+        }
+
+        private void NonPMs_CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            refreshManagerCombo(false);
         }
  
     }

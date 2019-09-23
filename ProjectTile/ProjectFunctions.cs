@@ -66,8 +66,6 @@ namespace ProjectTile
                                  ActiveUser = (bool)s.Active,
                                  DefaultEntity = (string)de.EntityName
                              },
-                             //PMStaffID = s.ID,
-                             //PMStaffName = s.FirstName + " " + s.Surname,
                              ProjectStage = ps,
                              StartDate = pj.StartDate
                          }
@@ -232,7 +230,7 @@ namespace ProjectTile
             
             try
             {
-
+                SetFullProjectList();
                 currentManagers = (from fpl in FullProjectList
                                    select fpl.ProjectManager.ID).Distinct().ToList();               
                 
@@ -280,12 +278,23 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error retrieving data for Project Managers drop-down list", generalException); }
         }
 
-        public static void SetPMOptionsList(int currentManagerID = 0)
+        public static void SetPMOptionsList(bool anyActiveUser, int currentManagerID = 0)
         {
             try
             {
-                SetFullPMsList();
-                PMOptionsList = FullPMsList.Where(fpl => fpl.ActiveUser || fpl.ID == currentManagerID).ToList();
+                if (anyActiveUser) { PMOptionsList = StaffFunctions.GetStaffGridData(activeOnly: true, nameContains: "", roleDescription: AllRecords, entityID: CurrentEntityID); }
+                else
+                {
+                    SetFullPMsList();
+                    PMOptionsList = FullPMsList.Where(fpl => fpl.ActiveUser || fpl.ID == currentManagerID).ToList();
+                }
+
+                if (currentManagerID > 0  && !PMOptionsList.Exists(pol => pol.ID == currentManagerID))
+                {                    
+                    StaffSummaryRecord thisManager = StaffFunctions.GetStaffSummary(currentManagerID);
+                    PMOptionsList.Add(thisManager);
+                    PMOptionsList.OrderBy(pol => pol.StaffName);
+                }                
             }
             catch (Exception generalException) { MessageFunctions.Error("Error retrieving data for Project Managers drop-down list", generalException); }
         }
