@@ -1159,14 +1159,14 @@ BEGIN TRY
 		INSERT INTO dbo.ProjectTypes(
 							TypeCode,	TypeName,				TypeDescription)
 			SELECT			'NS',		'New site',				'New system installation for a brand new client'
-			UNION SELECT	'AS',		'Add system',			'Additional new system for an existing client with other TechNickel systems'
-			UNION SELECT	'RB',		'Rebuild',				'Migrate to new restructured installation on existing version'
-			UNION SELECT	'UG',		'Upgrade',				'Upgrade existing client to new version (may include new functionality)'
-			UNION SELECT	'UR',		'Upgrade and rebuild',	'Migrate to new restructured installation on new version'
+			UNION SELECT	'AS',		'Add system',			'Additional new system for existing client'
+			UNION SELECT	'RB',		'Rebuild',				'Migrate to new (restructured) instance of existing version'
+			UNION SELECT	'UG',		'Upgrade',				'Move existing client to new version (may add functionality)'
+			UNION SELECT	'UR',		'Upgrade and rebuild',	'Migrate to new (restructured) installation of new version'
 			UNION SELECT	'RS',		'Restructure',			'Significant restructuring of current system'
 			UNION SELECT	'AF',		'Add functionality',	'Implement new functionality in existing version'
 			UNION SELECT	'TO',		'Take-on',				'Adapt existing system for new client'
-			UNION SELECT	'IP',		'Internal project',		'Project without client'			
+			UNION SELECT	'IP',		'Internal project',		'Project without a client, e.g. internal upgrades'			
 
 		PRINT 'Populated project types table'
 
@@ -1226,7 +1226,7 @@ BEGIN TRY
 			UNION SELECT	3,			'Installation',			'Installation of new software',					'In Progress'
 			UNION SELECT	4,			'Data Migration',		'Initial migration of data',					'In Progress'
 			UNION SELECT	5,			'Configuration',		'Application build, setup or reconfiguration',	'In Progress'
-			UNION SELECT	6,			'System Test',			'Testing by TechNickel team before handover',	'In Progress'
+			UNION SELECT	6,			'System Test',			'Testing by consultant(s) before handover',		'In Progress'
 			UNION SELECT	7,			'Admin Training',		'Training of administrators and superusers',	'In Progress'
 			UNION SELECT	8,			'User Test',			'User Acceptance Testing by client staff',		'In Progress'
 			UNION SELECT	9,			'End User Training',	'Roll-out to all users before Go-Live',			'In Progress'
