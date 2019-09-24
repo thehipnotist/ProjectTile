@@ -474,6 +474,12 @@
   <ItemGroup>
     <Resource Include="109_AllAnnotations_Help_24x24_72.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="112_RightArrowShort_Orange_24x24_72.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

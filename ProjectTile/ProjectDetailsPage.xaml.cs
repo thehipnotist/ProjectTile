@@ -21,26 +21,28 @@ namespace ProjectTile
     /// </summary>
     public partial class ProjectDetailsPage : Page
     {
-        // ---------------------- //
-        // -- Global Variables -- //
-        // ---------------------- //
+        // ---------------------------------------------------------- //
+        // -------------------- Global Variables -------------------- //
+        // ---------------------------------------------------------- //
 
-        // Global/page parameters //
+        // --------- Global/page parameters --------- //
 
         MainWindow winMain = (MainWindow)App.Current.MainWindow;
         string pageMode;
         bool fromProjectPage = (Globals.ProjectSourcePage != Globals.TilesPageName);
 
-        // Current variables //
+        // ------------ Current variables ----------- //
 
-        // Current records //
+        // ------------- Current records ------------ //
+
         private ProjectSummaryRecord thisProjectSummary = null;
 
-        // ---------------------- //
-        // -- Page Management --- //
-        // ---------------------- //
+        // ---------------------------------------------------------- //
+        // -------------------- Page Management --------------------- //
+        // ---------------------------------------------------------- //
 
-        // Initialize and Load //
+        // ---------- Initialize and Load ----------- //
+
         public ProjectDetailsPage()
         {
             InitializeComponent();
@@ -57,7 +59,7 @@ namespace ProjectTile
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error retrieving query details", generalException);
-                closePage(false, false);
+                closeDetailsPage(false, false);
             }            
             
             if (pageMode==PageFunctions.View) { setUpViewMode(); }
@@ -85,18 +87,19 @@ namespace ProjectTile
                 else
                 {
                     MessageFunctions.Error("Error: no project selected.", null);
-                    closePage(false, false);
+                    closeDetailsPage(false, false);
                 }
             }
             
             this.DataContext = thisProjectSummary;                        
         }
 
-        // ---------------------- //
-        // -- Data Management --- //
-        // ---------------------- //
+        // ---------------------------------------------------------- //
+        // -------------------- Data Management --------------------- //
+        // ---------------------------------------------------------- //  
 
-        // Data updates //
+        // -------------- Data updates -------------- //
+
         private void refreshManagerCombo(bool anyActive)
         {
             try
@@ -136,7 +139,9 @@ namespace ProjectTile
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating the drop-down list of clients", generalException); }
         }
-        
+
+        // --------- Other/shared functions --------- // 
+
         private void setUpViewMode()
         {
             try
@@ -145,7 +150,7 @@ namespace ProjectTile
                 ManagerCombo.IsReadOnly = StageCombo.IsReadOnly = ProjectSummary.IsReadOnly = true;
                 StartDate.IsEnabled = false; // This cannot be read-only so an inner style trigger makes it appear read-only
                 ProjectCode.IsEnabled = true; ProjectCode.IsReadOnly = true;
-                CommitButton.Visibility = NextButton.Visibility = NonPMs_CheckBox.Visibility = Visibility.Hidden;
+                CommitButton.Visibility = NextButton.Visibility = NonPMs_CheckBox.Visibility = SearchButton.Visibility = Visibility.Hidden;
                 CancelButtonText.Text = "Close";
                 PageHeader.Content = "View Project Details";
                 Instructions.Content = "This page is read-only; values can be selected but not changed.";
@@ -153,7 +158,7 @@ namespace ProjectTile
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error displaying project details", generalException);
-                closePage(false, false);
+                closeDetailsPage(false, false);
             }
 
             if (Globals.SelectedProjectSummary != null) // Just to be sure
@@ -164,7 +169,7 @@ namespace ProjectTile
                     TypeCombo.Items.Add(thisProjectSummary.Type);
                     StageCombo.Items.Add(thisProjectSummary.Stage);
                     ManagerCombo.Items.Add(thisProjectSummary.ProjectManager);
-                    if (thisProjectSummary.Client != null  && thisProjectSummary.Client.ID > 0) { ClientCombo.Items.Add(thisProjectSummary.Client); }
+                    if (thisProjectSummary.Client != null && thisProjectSummary.Client.ID > 0) { ClientCombo.Items.Add(thisProjectSummary.Client); }
                     else
                     {
                         ClientCombo.Items.Add(Globals.NoClient);
@@ -190,55 +195,96 @@ namespace ProjectTile
             refreshClientCombo();
         }
 
-        private void setUpAmendMode()
+        private void displaySelectedStage()
         {
-            thisProjectSummary = Globals.SelectedProjectSummary;            
-            try
-            {                      
-                // For some reason this is necessary initially (alternatively can add the project's type first, then all others, then sort)
-                ProjectTypes selectedType = ProjectFunctions.FullTypeList.FirstOrDefault(tl => tl.TypeCode == thisProjectSummary.Type.TypeCode);
-                TypeCombo.SelectedIndex = ProjectFunctions.FullTypeList.IndexOf(selectedType);          
-            }
-            catch (Exception generalException) { MessageFunctions.Error("Error selecting current project type", generalException); }
             try
             {
-                // As above)
+                // Necessary because the binding won't find the record in the list automatically
                 ProjectStages selectedStage = ProjectFunctions.GetStageByCode(thisProjectSummary.Stage.StageCode);
                 StageCombo.SelectedIndex = ProjectFunctions.FullStageList.IndexOf(selectedStage);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error selecting current project stage", generalException); }
+        }
+
+        private void setUpAmendMode()
+        {
+            thisProjectSummary = Globals.SelectedProjectSummary;
+            try
+            {
+                // For some reason this is necessary initially (alternatively can add the project's type first, then all others, then sort)
+                ProjectTypes selectedType = ProjectFunctions.FullTypeList.FirstOrDefault(tl => tl.TypeCode == thisProjectSummary.Type.TypeCode);
+                TypeCombo.SelectedIndex = ProjectFunctions.FullTypeList.IndexOf(selectedType);
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error selecting current project type", generalException); }
+            displaySelectedStage();
             refreshManagerCombo(false);
             refreshClientCombo();
         }
 
-        private void closePage(bool closeAll, bool checkFirst)
+        private void closeDetailsPage(bool closeAll, bool checkFirst)
         {
             if (checkFirst && pageMode != PageFunctions.View)
             {
                 bool doClose = MessageFunctions.QuestionYesNo("Are you sure you want to close this page? Any changes you have made will be lost.");
                 if (!doClose) { return; }
-            }            
-            bool closeFully = closeAll ? true : !fromProjectPage;            
+            }
+            bool closeFully = closeAll ? true : !fromProjectPage;
             if (closeFully) { ProjectFunctions.ReturnToTilesPage(); }
             else { ProjectFunctions.ReturnToProjectPage(); }
         }
 
-        // Shared functions //
+        // ---------- Links to other pages ---------- //	
 
-        // ---------------------- //
-        // -- Event Management -- //
-        // ---------------------- //
+        public void OpenClientLookup()
+        {
+            try
+            {
+                NormalGrid.Visibility = Visibility.Hidden;
+                LookupFrame.Visibility = Visibility.Visible;
+                LookupFrame.Navigate(new Uri("ClientPage.xaml?Mode=Lookup", UriKind.RelativeOrAbsolute));
+                ClientFunctions.SelectClientForProject += SelectProjectClient;
+                ClientFunctions.CancelProjectClientSelection += CancelClientLookup;
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error setting up client selection", generalException); }
+        }
 
-        // Control-specific events //
+        public void CloseClientLookup()
+        {
+            LookupFrame.Content = null;
+            LookupFrame.Visibility = Visibility.Hidden;
+            NormalGrid.Visibility = Visibility.Visible;
+        }
+
+        public void SelectProjectClient()
+        {
+            try
+            {
+                CloseClientLookup();
+                thisProjectSummary.Client = ClientFunctions.SelectedProjectClient;
+                refreshClientCombo();
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error processing client selection", generalException); }
+        }
+
+        public void CancelClientLookup()
+        {
+            CloseClientLookup();
+        }
+
+        // ---------------------------------------------------------- //
+        // -------------------- Event Management -------------------- //
+        // ---------------------------------------------------------- //  
+
+        // -------- Control-specific events --------- //
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            closePage(true, true);
+            closeDetailsPage(true, true);
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            closePage(false, true);
+            closeDetailsPage(false, true);
         }
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)
@@ -276,6 +322,8 @@ namespace ProjectTile
             {
                 int newStage = thisProjectSummary.Stage.StageCode + 1;
                 thisProjectSummary.Stage = ProjectFunctions.GetStageByCode(newStage);
+                displaySelectedStage();
+                NextButton.IsEnabled = (!ProjectFunctions.IsLastStage(newStage));
             }
             catch (Exception generalException) { MessageFunctions.Error("Error moving to the next stage", generalException); }
         }
@@ -293,6 +341,11 @@ namespace ProjectTile
         private void NonPMs_CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             refreshManagerCombo(false);
+        }
+
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenClientLookup();
         }
  
     }

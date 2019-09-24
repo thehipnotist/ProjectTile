@@ -68,6 +68,7 @@ namespace ProjectTile
         public const int StartStage = 2;
         public const int LiveStage = 11;
         public const int ClosedStage = 15;
+        public const int CancelledStage = 99;
         public const string InProgressStatus = "In Progress";
         public const string ClosedStatus = "Closed";
 

@@ -180,8 +180,10 @@ namespace ProjectTile
         {
             try
             {
+                if (stageCode == CancelledStage) { return true; }
+                
                 SetFullStageList();
-                int lastStageCode = FullStageList.OrderByDescending(fsl => fsl.StageCode).FirstOrDefault().StageCode;
+                int lastStageCode = FullStageList.Where(tl => tl.StageCode != CancelledStage).OrderByDescending(fsl => fsl.StageCode).FirstOrDefault().StageCode;
                 if (lastStageCode > 0) { return (stageCode == lastStageCode); }
                 else
                 {
@@ -412,9 +414,15 @@ namespace ProjectTile
             PageFunctions.ShowTilesPage();
         }
 
+        public static void ReturnToClientPage(string pageMode)
+        {
+            ResetProjectParameters();
+            PageFunctions.ShowClientPage(pageMode);
+        }
+
         public static void ReturnToProjectPage()
         {
-            PageFunctions.ShowProjectPage(ProjectSourceMode);
+            PageFunctions.ShowProjectPage(ProjectSourceMode, ProjectSourcePage);
         }
 
     } // class

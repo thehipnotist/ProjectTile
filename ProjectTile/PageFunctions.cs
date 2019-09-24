@@ -26,6 +26,7 @@ namespace ProjectTile
         public const string Default = "Default";
         public const string About = "About";
         public const string None = "None";
+        public const string Lookup = "Lookup";
 
         // Page changes //
         public static string ThisPageName()
@@ -153,8 +154,9 @@ namespace ProjectTile
             ChangePage("ClientProductsPage.xaml?Mode=" + pageMode);
         }
 
-        public static void ShowProjectPage(string pageMode)
+        public static void ShowProjectPage(string pageMode, string sourcePage = "")
         {
+            Globals.ProjectSourcePage = (sourcePage != "") ? sourcePage : "ProjectPage";
             ChangePage("ProjectPage.xaml?Mode=" + pageMode);
         }
 

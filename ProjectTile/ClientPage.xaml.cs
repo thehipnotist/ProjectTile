@@ -97,6 +97,24 @@ namespace ProjectTile
                 resetAmendPage();
                 // refreshMainManagersCombo(); // Not required as done by resetAmendPage
             }
+            else if (pageMode == PageFunctions.Lookup)
+            {
+                EditGrid.Visibility = AddButton.Visibility = AmendButton.Visibility = CopyButton.Visibility = Visibility.Hidden;
+                ProductButton.Visibility = ContactButton.Visibility = ProjectButton.Visibility = Visibility.Hidden;
+                ActiveOnly_CheckBox.IsChecked = true;
+                ActiveOnly_CheckBox.IsEnabled = false;
+                MainClientGrid.Visibility = Visibility.Visible;
+                CommitButton.Visibility = Visibility.Visible;
+                CommitButton.IsEnabled = false;
+                CommitButtonText.Text = "Select";
+                CancelButtonText.Text = "Cancel";
+                refreshMainManagersCombo();
+                double width = CentreColumn.ActualWidth - 30;
+                ClientDataGrid.Width = width;
+                PageHeader.Content = "Client Lookup";
+                Instructions.Content = "Use the filters to help find the required client record, then select it and click 'Select'.";
+                EntityWarningLabel.Visibility = Visibility.Hidden;
+            }
 
             if (!Globals.MyPermissions.Allow("ActivateClients"))
             {
@@ -232,6 +250,7 @@ namespace ProjectTile
             Globals.SelectedClient = null;
             //selectedRecord = null; // Don't clear this automatically, as the refresh tries to reuse it
             toggleSideButtons(false);
+            if (pageMode == PageFunctions.Lookup) { CommitButton.IsEnabled = false; }
         }
 
         private void toggleSuggestionMode(bool clicked)
@@ -486,7 +505,8 @@ namespace ProjectTile
 
         private void ProjectButton_Click(object sender, RoutedEventArgs e)
         {
-            // To do: add link to projects
+            Globals.SelectedClientSummary = selectedRecord;
+            PageFunctions.ShowProjectPage(pageMode, "ClientPage");
         }
 
         private void ClientDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -498,6 +518,7 @@ namespace ProjectTile
                     selectedRecord = (ClientSummaryRecord)ClientDataGrid.SelectedItem;
                     ClientFunctions.SelectClient(selectedRecord.ID);
                     toggleSideButtons(true);
+                    if (pageMode == PageFunctions.Lookup) { CommitButton.IsEnabled = true; }
                 }
                 else { clearSelection(); }
             }            
@@ -520,7 +541,8 @@ namespace ProjectTile
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            ClientFunctions.ReturnToTilesPage();
+            if (pageMode == PageFunctions.Lookup) { ClientFunctions.CancelProjectClientSelection(); }
+            else { ClientFunctions.ReturnToTilesPage(); }
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -530,10 +552,13 @@ namespace ProjectTile
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
-            string accountManager = EditManagersCombo.SelectedItem.ToString();
-
-            if (editRecordID == 0) { createNewClient(accountManager); }
-            else { saveClientAmend(accountManager); }
+            if (pageMode == PageFunctions.Lookup) { ClientFunctions.SelectProjectClient(selectedRecord); }
+            else
+            {
+                string accountManager = EditManagersCombo.SelectedItem.ToString();
+                if (editRecordID == 0) { createNewClient(accountManager); }
+                else { saveClientAmend(accountManager); }
+            }
         }
 
         private void SuggestButton_Click(object sender, RoutedEventArgs e)

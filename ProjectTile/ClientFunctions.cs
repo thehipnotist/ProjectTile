@@ -33,6 +33,11 @@ namespace ProjectTile
         public static List<int> ProductIDsToAdd = new List<int>();
         public static List<int> ProductIDsToRemove = new List<int>();
         public static List<int> ProductIDsToUpdate = new List<int>();
+
+        public static ClientSummaryRecord SelectedProjectClient = null;
+        public delegate void ReturnToProjectsDelegate();
+        public static ReturnToProjectsDelegate SelectClientForProject;
+        public static ReturnToProjectsDelegate CancelProjectClientSelection;
         
         // Data retrieval
 
@@ -1625,6 +1630,22 @@ namespace ProjectTile
             ResetClientParameters();
             PageFunctions.ShowTilesPage();
         }
+
+        public static void SelectProjectClient(ClientSummaryRecord selectedRecord)
+        {
+            try
+            {            
+                SelectedProjectClient = selectedRecord;
+                SelectClientForProject();
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error handling client selection", generalException); }	
+        }
+
+        public static void BackToProjct()
+        {
+            CancelProjectClientSelection();
+        }
+
 
     } // class
 } // namespace

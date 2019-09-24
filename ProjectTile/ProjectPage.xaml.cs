@@ -50,7 +50,7 @@ namespace ProjectTile
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
                 Globals.ProjectSourceMode = pageMode;
-                Globals.ProjectSourcePage = "ProjectPage";
+                //Globals.ProjectSourcePage = "ProjectPage"; // Now set in Page Functions beforehand
                 if (pageMode == PageFunctions.View || !Globals.MyPermissions.Allow("EditProjects")) { viewOnly = true; }
             }
             catch (Exception generalException)
@@ -68,6 +68,7 @@ namespace ProjectTile
 
             try
             {
+                if (Globals.ProjectSourcePage == "ProjectPage") { BackButton.Visibility = Visibility.Hidden; }
                 refreshClientCombo();
                 refreshPMsCombo();
                 if (ProjectFunctions.PMFilterList.Exists(ssr => ssr.ID == Globals.CurrentStaffID)) { PMsCombo.SelectedItem = ProjectFunctions.PMFilterList.First(ssr => ssr.ID == Globals.CurrentStaffID); }
@@ -80,9 +81,6 @@ namespace ProjectTile
             }
 
         }
-
-
-
 
         // ---------------------- //
         // -- Data Management --- //
@@ -178,7 +176,6 @@ namespace ProjectTile
             CommitButton.IsEnabled = projectSelected;
         }
 
-
         private void closePage()
         {
             ProjectFunctions.ReturnToTilesPage();
@@ -192,11 +189,6 @@ namespace ProjectTile
 
         // Control-specific events //
 
-
-
-
-
-
         private void ProjectDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
@@ -204,7 +196,7 @@ namespace ProjectTile
                 if (ProjectDataGrid.SelectedItem == null)
                 {
                     Globals.SelectedProjectSummary = null;
-                    CommitButton.IsEnabled = false;
+                    toggleProjectButtons(false);
                 }
                 else
                 {
@@ -266,7 +258,6 @@ namespace ProjectTile
             closePage();
         }
 
-
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowProjectDetailsPage(PageFunctions.New);
@@ -276,6 +267,12 @@ namespace ProjectTile
         {
             string inputMode = viewOnly ? PageFunctions.View : PageFunctions.Amend;
             PageFunctions.ShowProjectDetailsPage(inputMode);
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (Globals.ProjectSourcePage == "ClientPage") { ProjectFunctions.ReturnToClientPage(pageMode); }
+            else { MessageFunctions.Error("Error returning to previous page: no page history.", null); }
         }
 
 
