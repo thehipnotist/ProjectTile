@@ -30,6 +30,7 @@ namespace ProjectTile
         MainWindow winMain = (MainWindow)App.Current.MainWindow;
         string pageMode;
         bool fromProjectPage = (Globals.ProjectSourcePage != Globals.TilesPageName);
+        int originalManagerID = 0;
 
         // ------------ Current variables ----------- //
 
@@ -67,8 +68,8 @@ namespace ProjectTile
             {
                 if (!Globals.MyPermissions.Allow("ActivateProjects"))
                 {
-                    StageCombo.IsEnabled = false;
-                    StageCombo.ToolTip = "Your current permissions do not allow updating the project stage";
+                    StageCombo.IsEnabled = NextButton.IsEnabled = false;
+                    StageCombo.ToolTip = NextButton.ToolTip = "Your current permissions do not allow updating the project stage";
                 }
                 try
                 {
@@ -107,15 +108,7 @@ namespace ProjectTile
                 int currentManagerID = (thisProjectSummary.ProjectManager != null)? thisProjectSummary.ProjectManager.ID : 0;
                 ProjectFunctions.SetPMOptionsList(anyActive, currentManagerID);
                 ManagerCombo.ItemsSource = ProjectFunctions.PMOptionsList;
-                if (currentManagerID > 0)
-                {
-                    try
-                    {
-                        StaffSummaryRecord selectedManager = ProjectFunctions.GetPMInOptionsList(currentManagerID);
-                        ManagerCombo.SelectedIndex = ProjectFunctions.PMOptionsList.IndexOf(selectedManager);
-                    }
-                    catch (Exception generalException) { MessageFunctions.Error("Error selecting current Project Manager", generalException); }
-                }
+                if (currentManagerID > 0) { displaySelectedManager(currentManagerID); }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating the drop-down list of Project Managers", generalException); }
         }
@@ -127,15 +120,7 @@ namespace ProjectTile
                 int currentClientID = (thisProjectSummary.Client != null) ? thisProjectSummary.Client.ID : 0;
                 ProjectFunctions.SetClientOptionsList(currentClientID);
                 ClientCombo.ItemsSource = ProjectFunctions.ClientOptionsList;
-                if (currentClientID != 0)
-                {
-                    try
-                    {
-                        ClientSummaryRecord selectedClient = ProjectFunctions.GetClientInOptionsList(currentClientID);
-                        ClientCombo.SelectedIndex = ProjectFunctions.ClientOptionsList.IndexOf(selectedClient);
-                    }
-                    catch (Exception generalException) { MessageFunctions.Error("Error selecting current client", generalException); }
-                }
+                if (currentClientID != 0) { displaySelectedClient(currentClientID); }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating the drop-down list of clients", generalException); }
         }
@@ -149,7 +134,8 @@ namespace ProjectTile
                 ClientCombo.IsReadOnly = ProjectName.IsReadOnly = TypeCombo.IsReadOnly = true;
                 ManagerCombo.IsReadOnly = StageCombo.IsReadOnly = ProjectSummary.IsReadOnly = true;
                 StartDate.IsEnabled = false; // This cannot be read-only so an inner style trigger makes it appear read-only
-                ProjectCode.IsEnabled = true; ProjectCode.IsReadOnly = true;
+                ProjectCode.IsEnabled = true; 
+                ProjectCode.IsReadOnly = true;
                 CommitButton.Visibility = NextButton.Visibility = NonPMs_CheckBox.Visibility = SearchButton.Visibility = Visibility.Hidden;
                 CancelButtonText.Text = "Close";
                 PageHeader.Content = "View Project Details";
@@ -161,7 +147,7 @@ namespace ProjectTile
                 closeDetailsPage(false, false);
             }
 
-            if (Globals.SelectedProjectSummary != null) // Just to be sure
+            if (Globals.SelectedProjectSummary != null) // Just to be sure (for view mode)
             {
                 try
                 {
@@ -183,49 +169,86 @@ namespace ProjectTile
         private void setUpNewMode()
         {
             thisProjectSummary = new ProjectSummaryRecord();
+            thisProjectSummary.EntityID = Globals.CurrentEntityID;
             PageHeader.Content = "Create New Project";
             Instructions.Content = "Fill in the details as required and then click 'Save' to create the record.";
-            thisProjectSummary.Stage = ProjectFunctions.GetStageByCode(0);
             if (fromProjectPage)
             {
-                // To do: set up certain fields as with an amendment based on current selection - combine those parts into a single function?
+                bool usedFilters = ProjectFunctions.PopulateFromFilters(ref thisProjectSummary);
+                //if (usedFilters)
+                //{
+                //    if (thisProjectSummary.ProjectManager != null) { displaySelectedManager(thisProjectSummary.ProjectManager.ID);  }
+                //    if (thisProjectSummary.Client != null) { displaySelectedClient(thisProjectSummary.Client.ID); }
+                //}
             }
             else { BackButton.Visibility = Visibility.Hidden; }
             refreshManagerCombo(false);
             refreshClientCombo();
+            updateProjectStage(0);
+        }
+
+        private void setUpAmendMode()
+        {
+            thisProjectSummary = Globals.SelectedProjectSummary;
+            originalManagerID = thisProjectSummary.ProjectManager.ID;
+            displaySelectedType();
+            displaySelectedStage();
+            refreshManagerCombo(false);
+            refreshClientCombo();
+        }
+
+        private void displaySelectedClient(int currentClientID)
+        {
+            // Necessary because the binding won't find the record in the list automatically
+            try
+            {
+                ClientSummaryRecord selectedClient = ProjectFunctions.GetClientInOptionsList(currentClientID);
+                ClientCombo.SelectedIndex = ProjectFunctions.ClientOptionsList.IndexOf(selectedClient);
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error selecting current client", generalException); }
+        }
+
+        private void displaySelectedManager(int currentManagerID)
+        {
+            try
+            {
+                StaffSummaryRecord selectedManager = ProjectFunctions.GetPMInOptionsList(currentManagerID);
+                ManagerCombo.SelectedIndex = ProjectFunctions.PMOptionsList.IndexOf(selectedManager);
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error selecting current Project Manager", generalException); }
         }
 
         private void displaySelectedStage()
         {
             try
             {
-                // Necessary because the binding won't find the record in the list automatically
                 ProjectStages selectedStage = ProjectFunctions.GetStageByCode(thisProjectSummary.Stage.StageCode);
                 StageCombo.SelectedIndex = ProjectFunctions.FullStageList.IndexOf(selectedStage);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error selecting current project stage", generalException); }
         }
 
-        private void setUpAmendMode()
+        private void displaySelectedType()
         {
-            thisProjectSummary = Globals.SelectedProjectSummary;
             try
             {
-                // For some reason this is necessary initially (alternatively can add the project's type first, then all others, then sort)
                 ProjectTypes selectedType = ProjectFunctions.FullTypeList.FirstOrDefault(tl => tl.TypeCode == thisProjectSummary.Type.TypeCode);
                 TypeCombo.SelectedIndex = ProjectFunctions.FullTypeList.IndexOf(selectedType);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error selecting current project type", generalException); }
+        }
+
+        private void updateProjectStage(int newStageCode)
+        {
+            thisProjectSummary.Stage = ProjectFunctions.GetStageByCode(newStageCode);
             displaySelectedStage();
-            refreshManagerCombo(false);
-            refreshClientCombo();
         }
 
         private void closeDetailsPage(bool closeAll, bool checkFirst)
         {
             if (checkFirst && pageMode != PageFunctions.View)
             {
-                bool doClose = MessageFunctions.QuestionYesNo("Are you sure you want to close this page? Any changes you have made will be lost.");
+                bool doClose = MessageFunctions.WarningYesNo("Are you sure you want to close this page? Any changes you have made will be lost.");
                 if (!doClose) { return; }
             }
             bool closeFully = closeAll ? true : !fromProjectPage;
@@ -289,7 +312,17 @@ namespace ProjectTile
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(thisProjectSummary.Type.TypeCode.ToString() + " " + thisProjectSummary.Type.TypeName);
+            if (pageMode == PageFunctions.New) 
+            {
+                bool success = ProjectFunctions.CreateProject(ref thisProjectSummary);
+                if (success) { closeDetailsPage(false, false); }
+            }
+            else
+            {
+                bool managerChanged = (thisProjectSummary.ProjectManager.ID != originalManagerID);
+                bool success = ProjectFunctions.SaveProjectChanges(thisProjectSummary, managerChanged);
+                if (success) { closeDetailsPage(false, false); }
+            }
         }
 
         private void TypeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -321,8 +354,7 @@ namespace ProjectTile
             try
             {
                 int newStage = thisProjectSummary.Stage.StageCode + 1;
-                thisProjectSummary.Stage = ProjectFunctions.GetStageByCode(newStage);
-                displaySelectedStage();
+                updateProjectStage(newStage);
                 NextButton.IsEnabled = (!ProjectFunctions.IsLastStage(newStage));
             }
             catch (Exception generalException) { MessageFunctions.Error("Error moving to the next stage", generalException); }

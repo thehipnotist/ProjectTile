@@ -28,13 +28,16 @@ namespace ProjectTile
         public const string AnyRecord = "<Any or None>";
         public const string NoRecord = "<None (Internal Only)>";
         public const int NoID = -1;
-        public static ClientSummaryRecord AnyClient = new ClientSummaryRecord { ID = 0, ClientCode = "ANY", ClientName = AnyRecord, EntityID = CurrentEntityID };
-        public static ClientSummaryRecord NoClient = new ClientSummaryRecord { ID = NoID, ClientCode = "NONE", ClientName = NoRecord, EntityID = CurrentEntityID };
-        public static StaffSummaryRecord AnyPM = new StaffSummaryRecord { ID = 0, StaffName = AllRecords };
+        public static ClientSummaryRecord AnyClient = new ClientSummaryRecord { ID = 0, ClientCode = "ANY", ClientName = AnyRecord, EntityID = CurrentEntityID, ActiveClient = false };
+        public static ClientSummaryRecord NoClient = new ClientSummaryRecord { ID = NoID, ClientCode = "NONE", ClientName = NoRecord, EntityID = CurrentEntityID, ActiveClient = true };
+        public static StaffSummaryRecord AnyPM = new StaffSummaryRecord { ID = 0, StaffName = AllRecords, ActiveUser = false };
 
         // Standard universal strings
         public const string ManagerRole = "AM";
         public const string ProjectManagerRole = "PM";
+        public const string InternalProjectType = "IP";
+        public const string NewSiteType = "NS";
+        public const string TakeOnType = "TS";
         public const string DbUserPrefix = "ProT_";
 
         // Default records
@@ -84,6 +87,7 @@ namespace ProjectTile
         {
             SelectedClientSummary = DefaultClientSummary;
             SelectedPMSummary = DefaultPMSummary;
+            SelectedStatusFilter = DefaultStatusFilter;
             ProjectSourcePage = TilesPageName;
             ProjectSourceMode = PageFunctions.None;
         }
