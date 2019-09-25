@@ -152,7 +152,7 @@ namespace ProjectTile
         // Control-specific events //
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            bool confirm = MessageFunctions.QuestionYesNo("This returns back to the application's Main Menu without saving any changes. Are you sure?", "Return to main menu?");
+            bool confirm = MessageFunctions.WarningYesNo("This returns back to the application's Main Menu without saving any changes. Are you sure?", "Return to main menu?");
             if (confirm) { ClientFunctions.ReturnToTilesPage(); }
         }
 

@@ -64,13 +64,14 @@ namespace ProjectTile
                                select (new StaffSummaryRecord()
                                {
                                    ID = (int)s.ID,
-                                   UserID = (string)s.UserID,
-                                   StaffName = (string)s.FirstName + " " + s.Surname,
-                                   RoleDescription = (string)sr.RoleDescription,
+                                   UserID = s.UserID,
+                                   StaffName = s.FirstName + " " + s.Surname,
+                                   RoleCode = s.RoleCode,
+                                   RoleDescription = sr.RoleDescription,
                                    StartDate = (DateTime?)DbFunctions.TruncateTime(s.StartDate),
                                    LeaveDate = (DateTime?)DbFunctions.TruncateTime(s.LeaveDate),
                                    ActiveUser = (bool)s.Active,
-                                   DefaultEntity = (string)de.EntityName
+                                   DefaultEntity = de.EntityName
                                } )
                                ).Distinct().ToList();
 
@@ -101,6 +102,13 @@ namespace ProjectTile
                     return null;
                 }
             }
+        }
+
+        public static string GetStaffName(int staffID)
+        {
+            Staff thisPerson = GetStaffMember(staffID);
+            if (thisPerson == null) { return ""; } // Errors will be thrown by GetStaffMember
+            else { return thisPerson.FirstName + " " + thisPerson.Surname; }
         }
 
         public static StaffSummaryRecord GetStaffSummary(int staffID, int entityID = 0)
@@ -203,7 +211,7 @@ namespace ProjectTile
                         string changeName = SelectedStaffMember.Active ? "Disable" : "Enable";
                         string changeAction = SelectedStaffMember.Active ? "disabling" : "enabling";
 
-                        bool confirm = MessageFunctions.QuestionYesNo(
+                        bool confirm = MessageFunctions.ConfirmOKCancel(
                                 changeName + " " + SelectedStaffMember.FirstName + " " + SelectedStaffMember.Surname + "'s account? This will take effect immediately.",
                                 changeName + " user?");
                         if (!confirm)
@@ -354,7 +362,7 @@ namespace ProjectTile
                                     int[] allowedEntities = EntityFunctions.AllowedEntityIDs(staffID);
                                     if (!allowedEntities.Contains(defaultEntityID))
                                     {
-                                        addEntity = MessageFunctions.QuestionYesNo("This staff member does not currently have access to " + defaultEnt + ". Is this correct?", "Allow new Entity?");
+                                        addEntity = MessageFunctions.WarningYesNo("This staff member does not currently have access to " + defaultEnt + ". Is this correct?", "Allow new Entity?");
                                         if (addEntity) { EntityFunctions.AllowEntity(defaultEntityID, staffID); }
                                         else { return 0; }
                                     }
@@ -1010,7 +1018,7 @@ namespace ProjectTile
             if (StaffIDsToAdd.Count > 0 || StaffIDsToRemove.Count > 0 || StaffDefaultsToSet.Count > 0 
                 || EntityIDsToAdd.Count > 0 || EntityIDsToRemove.Count > 0 || newDefaultID > 0)
             {
-                return MessageFunctions.QuestionYesNo("This will undo any changes you made since you last saved. Continue?");
+                return MessageFunctions.WarningYesNo("This will undo any changes you made since you last saved. Continue?");
             }
             else
             {

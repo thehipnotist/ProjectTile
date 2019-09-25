@@ -76,6 +76,11 @@ namespace ProjectTile
             ClientFrom.Visibility = ClientTo.Visibility = Visibility.Hidden;
             ClientLabel.Margin = NameContainsLabel.Margin;
             ClientCombo.Margin = NameContains.Margin;
+            if (!Globals.MyPermissions.Allow("ActivateClientProducts"))
+            {
+                DisableButton.IsEnabled = false;
+                DisableButton.ToolTip = "Your current permissions do not allow activating or disabling client products";
+            }   
 
             if (Globals.SelectedClient != null) // Opened from the Clients Page
             {
@@ -358,7 +363,8 @@ namespace ProjectTile
                 if (selectedClientProduct != null)
                 {
                     Version.Text = selectedClientProduct.ClientVersion.ToString("#.0");
-                    RemoveButton.IsEnabled = DisableButton.IsEnabled = Version.IsEnabled = true;
+                    RemoveButton.IsEnabled = Version.IsEnabled = true;
+                    DisableButton.IsEnabled = (Globals.MyPermissions.Allow("ActivateClientProducts"));
                     toggleDisableButton(selectedClientProduct.Live);
                 }
                 else
@@ -690,7 +696,7 @@ namespace ProjectTile
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
-            bool confirm = MessageFunctions.QuestionYesNo("Are you sure you wish to save your amendments?", "Save changes?");
+            bool confirm = MessageFunctions.ConfirmOKCancel("Are you sure you wish to save your amendments?", "Save changes?");
             if (!confirm) { return; }
             bool success = (editMode == ByClient) ? ClientFunctions.SaveClientProductChanges(Globals.SelectedClient.ID) : ClientFunctions.SaveProductClientChanges(selectedProductID);
             if (success)

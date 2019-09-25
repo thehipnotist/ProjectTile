@@ -136,7 +136,7 @@ namespace ProjectTile
             BackImage.Visibility = Visibility.Collapsed;
 
             AddButton.IsEnabled = true;
-            AddButtonText.Text = additionMade? "Add Another" : "Add New";
+            AddButtonText.Text = additionMade? "Add Another" : "New Product";
             AddImage.Visibility = Visibility.Visible;
             BackImage2.Visibility = Visibility.Collapsed;
 

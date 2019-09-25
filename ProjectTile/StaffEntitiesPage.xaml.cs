@@ -716,7 +716,7 @@ namespace ProjectTile
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
-            bool confirm = MessageFunctions.QuestionYesNo("Are you sure you wish to save your amendments?", "Save changes?");
+            bool confirm = MessageFunctions.ConfirmOKCancel("Are you sure you wish to save your amendments?", "Save changes?");
             if (!confirm) { return; }
             bool success = (editMode == ByStaff) ? StaffFunctions.SaveStaffEntitiesChanges(selectedStaffID) : StaffFunctions.SaveEntityStaffChanges(selectedEntityID);
             if (success)

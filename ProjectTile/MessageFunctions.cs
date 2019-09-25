@@ -101,9 +101,21 @@ namespace ProjectTile
             }
         }
 
-        public static bool QuestionYesNo(string message, string caption = "Continue?")
+        public static bool ConfirmOKCancel(string message, string caption = "Continue?")
         {
-            MessageBoxResult answer = MessageBox.Show(message, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
+            MessageBoxResult answer = MessageBox.Show(message, caption, MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            return (answer == MessageBoxResult.OK);
+        }
+
+        public static bool QuestionYesNo(string message, string caption)
+        {
+            MessageBoxResult answer = MessageBox.Show(message, caption, MessageBoxButton.YesNo, MessageBoxImage.Asterisk);
+            return (answer == MessageBoxResult.Yes);
+        }
+
+        public static bool WarningYesNo(string message, string caption = "Are You Sure?")
+        {
+            MessageBoxResult answer = MessageBox.Show(message, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
             return (answer == MessageBoxResult.Yes);
         }
 

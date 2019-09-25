@@ -102,17 +102,25 @@ namespace ProjectTile
         // Other/shared functions //
         public bool ConfirmClosure()
         {
-            string loseChanges = "";
             try
             {
                 string thisPage = PageFunctions.ThisPageName();
-                if (thisPage != Globals.TilesPageName && thisPage != "LoginPage") { loseChanges = " Any unsaved changes you have made would be lost."; }
+                string question = "Are you sure you want to exit?";
+                if (thisPage != Globals.TilesPageName && thisPage != "LoginPage") 
+                { 
+                    question = question + " Any unsaved changes you have made would be lost.";
+                    return MessageFunctions.WarningYesNo(question, "Close ProjectTile Application?");
+                }
+                else
+                {
+                    return MessageFunctions.ConfirmOKCancel(question, "Close ProjectTile Application?");
+                }
             }
             catch 
             { 
                 // Do nothing as it's not worth raising an error when the user wants to leave
-            }
-            return MessageFunctions.QuestionYesNo("Are you sure you want to exit?" + loseChanges, "Close ProjectTile Application?");
+                return true;
+            }            
         }
         
         // ---------------------- //

@@ -224,7 +224,7 @@ namespace ProjectTile
                         string checkFormat = SuggestCode(entityID, existingID, clientCode);
                         if (checkFormat != "")
                         {
-                            bool keepSaving = MessageFunctions.QuestionYesNo("The entered Client Code of '" + clientCode + "' does not fit the suggested format of '" + checkFormat
+                            bool keepSaving = MessageFunctions.WarningYesNo("The entered Client Code of '" + clientCode + "' does not fit the suggested format of '" + checkFormat
                                 + "'. Are you sure this is correct?" + trySuggestion);
                             if (!keepSaving) { return false; }
                         }
@@ -250,7 +250,7 @@ namespace ProjectTile
                         string managerRole = accountManager.RoleCode;
                         if (managerRole != ManagerRole)
                         {
-                            bool confirmOK = MessageFunctions.QuestionYesNo(accountManager.FirstName + " " + accountManager.Surname + " is not normally an Account Manager. Is this correct?");
+                            bool confirmOK = MessageFunctions.WarningYesNo(accountManager.FirstName + " " + accountManager.Surname + " is not normally an Account Manager. Is this correct?");
                             if (!confirmOK) { return false; }
                         }
                     }
@@ -676,7 +676,7 @@ namespace ProjectTile
 
                 string changeName = selectedContact.Active ? "Disable" : "Enable";
                 string changeAction = selectedContact.Active ? "disabling" : "enabling";
-                bool confirm = MessageFunctions.QuestionYesNo(
+                bool confirm = MessageFunctions.ConfirmOKCancel(
                         changeName + " " + selectedContact.FirstName + " " + selectedContact.Surname + "'s record? This will take effect immediately.",
                         changeName + " user?");
                     
@@ -735,7 +735,7 @@ namespace ProjectTile
 
                     if (thisContact.JobTitle == "")
                     {
-                        bool keepSaving = MessageFunctions.QuestionYesNo("You have not entered a job title for this contact, which may make them difficult to identify later. " + 
+                        bool keepSaving = MessageFunctions.WarningYesNo("You have not entered a job title for this contact, which may make them difficult to identify later. " + 
                             "Is this intentional? If in doubt enter your best guess, followed by '(To be confirmed)' for example.");
                         if (!keepSaving) { return false; }
                     } 
@@ -743,12 +743,12 @@ namespace ProjectTile
                     string email = thisContact.Email;
                     if (email == "" && thisContact.PhoneNumber == "")
                     {
-                        bool keepSaving = MessageFunctions.QuestionYesNo("You have not entered any contact details for this contact. Is this intentional?");
+                        bool keepSaving = MessageFunctions.WarningYesNo("You have not entered any contact details for this contact. Is this intentional?");
                         if (!keepSaving) { return false; }
                     }
                     if ((email != "" && !email.Contains("@") || !email.Contains(".")))
                     {
-                        bool keepSaving = MessageFunctions.QuestionYesNo("The entered e-mail address of '" + email + "' does not appear to be valid. Are you sure this is correct?");
+                        bool keepSaving = MessageFunctions.WarningYesNo("The entered e-mail address of '" + email + "' does not appear to be valid. Are you sure this is correct?");
                         if (!keepSaving) { return false; }
                     }
 
@@ -1278,7 +1278,7 @@ namespace ProjectTile
             if (ClientIDsToAdd.Count > 0 || ClientIDsToRemove.Count > 0  || ClientIDsToUpdate.Count > 0
                 || ProductIDsToAdd.Count > 0 || ProductIDsToRemove.Count > 0 || ProductIDsToUpdate.Count > 0)
             {
-                return MessageFunctions.QuestionYesNo("This will undo any changes you made since you last saved. Continue?");
+                return MessageFunctions.WarningYesNo("This will undo any changes you made since you last saved. Continue?");
             }
             else
             {
@@ -1525,7 +1525,7 @@ namespace ProjectTile
                 else
                 {
                     string check = (reason == "")? "": " It " + reason; 
-                    bool activate = MessageFunctions.QuestionYesNo("Are you sure you want to activate this product?" + check);
+                    bool activate = MessageFunctions.ConfirmOKCancel("Are you sure you want to activate this product?" + check);
                     if (activate) 
                     {
                         thisRecord.Live = true;
@@ -1567,7 +1567,7 @@ namespace ProjectTile
                 }
 
                 string check = (reason == "") ? "" : " It " + reason;
-                bool deactivate = MessageFunctions.QuestionYesNo("Are you sure you want to disable this product?" + check);
+                bool deactivate = MessageFunctions.ConfirmOKCancel("Are you sure you want to disable this product?" + check);
                 if (deactivate)
                 {
                     thisRecord.Live = false;
@@ -1601,11 +1601,11 @@ namespace ProjectTile
             }
             else if (thisRecord.ClientVersion > versionNumber && thisRecord.StatusID != ClientProductStatus.Added)
             {
-                carryOn = MessageFunctions.QuestionYesNo("The entered version number is lower than the current one. Is this correct?");               
+                carryOn = MessageFunctions.WarningYesNo("The entered version number is lower than the current one. Is this correct?");               
             }
             else if ( thisRecord.StatusID != ClientProductStatus.Added)
             {
-                carryOn = MessageFunctions.QuestionYesNo("Update the client's version of this product? This is not immediately saved, so it can be undone using the 'Back' button.");
+                carryOn = MessageFunctions.ConfirmOKCancel("Update the client's version of this product? This is not immediately saved, so it can be undone using the 'Back' button.");
             }
             else { carryOn = true; }
 
