@@ -224,11 +224,21 @@
 
         <!-- Images -->
         <Image x:Key="AddIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="112_Plus_Blue_24x24_72.png"/>
+        <Image x:Key="AddIcon2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="112_Plus_Blue_24x24_72.png"/>
+        <Image x:Key="AddIcon3" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="112_Plus_Blue_24x24_72.png"/>
+        <Image x:Key="AddIcon4" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="112_Plus_Blue_24x24_72.png"/>
+        <Image x:Key="AddIcon5" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="112_Plus_Blue_24x24_72.png"/>        
         <Image x:Key="AmendIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="Rename.png"/>
+        <Image x:Key="AmendIcon2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="Rename.png"/>
+        <Image x:Key="AmendIcon3" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="Rename.png"/>
+        <Image x:Key="AmendIcon4" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="Rename.png"/>
+        <Image x:Key="AmendIcon5" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="Rename.png"/>        
         <Image x:Key="BackIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="112_LeftArrowLong_Grey_24x24_72.png"/>
         <Image x:Key="BackIcon2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="112_LeftArrowLong_Grey_24x24_72.png"/> <!-- For projects, in case Clients is opened -->
         <Image x:Key="CancelIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="1385_Disable_24x24_72.png"/>
         <Image x:Key="CancelIcon2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="1385_Disable_24x24_72.png"/> <!-- For projects, in case Clients is opened -->
+        <Image x:Key="ChangeEntityIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="0205_WebInsertHyperlink_32.png"/>
+        <Image x:Key="ChangeLoginIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="base_key_32.png"/>        
         <Image x:Key="ClientIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="filecabinet.png"/>
         <Image x:Key="ClientIcon2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="filecabinet.png"/> <!-- Required for Client Products, which uses this icon twice -->
         <Image x:Key="CommitIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="112_Tick_Green_32x32_72.png"/>        <!-- For projects, in case Clients is opened -->
@@ -236,26 +246,36 @@
         <Image x:Key="ContactIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="base_business_contacts.png"/>
         <Image x:Key="ContactIcon2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="base_business_contacts.png"/> <!-- Required for Client Products-->
         <Image x:Key="CopyIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="copy.png"/>
+        <Image x:Key="DefaultIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="FavoriteStar_FrontFacing_24x24_72.png"/>
         <Image x:Key="DisableIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="25" Source="CheckMixed.bmp"/>
         <Image x:Key="EnableIcon" HorizontalAlignment="Left" Height="25" VerticalAlignment="Center" Width="25" Source="base_checkboxes.png" Stretch="UniformToFill"/>
-        <Image x:Key="EntitiesIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="1403_Globe.png"/>
-        <Image x:Key="LeftIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="112_LeftArrowShort_Blue_24x24_72.png"/>
+        <Image x:Key="EntitiesIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="base_globe_32.png" Stretch="UniformToFill"/>
+        <Image x:Key="EntitiesIcon2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="base_globe_32.png" Stretch="UniformToFill"/>
+        <Image x:Key="ExitIcon" HorizontalAlignment="Right" Height="20" VerticalAlignment="Top" Width="20" Source="112_ArrowReturnRight_Blue_24x24_72 (2).png"/>
         <Image x:Key="HelpIcon" HorizontalAlignment="Right" Height="20" VerticalAlignment="Top" Width="20" Source="109_AllAnnotations_Help_24x24_72.png"/>
+        <Image x:Key="LeftIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="112_LeftArrowShort_Blue_24x24_72.png"/>        
         <Image x:Key="LoginIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="Keys.png"/>
-        <Image x:Key="NextIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="112_RightArrowShort_Orange_24x24_72.png"/>        
+        <Image x:Key="NextIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="112_RightArrowShort_Orange_24x24_72.png"/>
+        <Image x:Key="PasswordIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="25" Source="2608_GoldLock_48x48.png"/>
         <Image x:Key="PinIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="25" Source="138_PushPin_24x24_72.png" Stretch="UniformToFill"/>
         <Image x:Key="PlusIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="112_Plus_Blue_24x24_72.png"/>
         <Image x:Key="ProductIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="Setup_Install.png"/>
+        <Image x:Key="ProductIcon2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="Setup_Install.png"/>
+        <Image x:Key="ProductIcon3" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="Setup_Install.png"/>        
         <Image x:Key="ProjectIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="book_notebook.png"/>
         <Image x:Key="ProjectIcon2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="book_notebook.png"/> <!-- For projects, in case Clients is opened -->
         <Image x:Key="RightIcon" HorizontalAlignment="Right" Height="20" VerticalAlignment="Top" Width="20" Source="112_RightArrowShort_Blue_24x24_72.png"/>
-        <Image x:Key="SearchIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="search.png"/>
+        <Image x:Key="SearchIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="base_binoculars_32.png"/>
         <Image x:Key="StaffIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="Users.png"/>
         <Image x:Key="StaffIcon2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="Users.png"/> <!-- Required for Staff Entities, which uses this icon twice -->
         <Image x:Key="SubtractIcon" HorizontalAlignment="Right" Height="20" VerticalAlignment="Top" Width="20" Source="112_Minus_Blue_24x24_72.png"/>
         <Image x:Key="SuggestIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="Function_32.png"/>
         <Image x:Key="TilesIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="1460_PaintPalette_48x48.png"/>
         <Image x:Key="UpIcon" HorizontalAlignment="Right" Height="20" VerticalAlignment="Top" Width="20" Source="112_UpArrowShort_Blue_24x24_72.png"/>
+        <Image x:Key="ViewIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="search.png"/>
+        <Image x:Key="ViewIcon2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="search.png"/>
+        <Image x:Key="ViewIcon3" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="search.png"/>
+        <Image x:Key="ViewIcon4" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="search.png"/>        
 
         <!-- Styles -->
         <Style x:Key="RoundedButton" TargetType="{x:Type Button}">

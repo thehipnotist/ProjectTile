@@ -480,6 +480,27 @@
   <ItemGroup>
     <Resource Include="112_RightArrowShort_Orange_24x24_72.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="FavoriteStar_FrontFacing_24x24_72.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="2608_GoldLock_48x48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="base_key_32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="base_binoculars_32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="0205_WebInsertHyperlink_32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="base_globe_32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="112_ArrowReturnRight_Blue_24x24_72 %282%29.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
