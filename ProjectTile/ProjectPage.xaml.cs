@@ -42,6 +42,7 @@ namespace ProjectTile
             InitializeComponent();
             Style = (Style)FindResource(typeof(Page));
             KeepAlive = false;
+            ensureCurrentRecordDisplayed();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -87,17 +88,42 @@ namespace ProjectTile
         // ---------------------- //
 
         // Data updates //
+        private void ensureCurrentRecordDisplayed()
+        {
+            ProjectSummaryRecord currentRecord = (Globals.SelectedProjectSummary != null) ? Globals.SelectedProjectSummary : null;
+            int clientID = (Globals.SelectedClientSummary != null) ? ProjectFunctions.SelectedClientSummary.ID : 0;
+            int managerID = (Globals.SelectedPMSummary != null) ? ProjectFunctions.SelectedPMSummary.ID : 0;
+            Globals.ProjectStatusFilter statusFilter = Globals.SelectedStatusFilter;  
+
+            if (currentRecord != null) // Reset filters if necessary to show the selected record
+            {
+                if (clientID != 0 && clientID != currentRecord.Client.ID)
+                {
+                    Globals.SelectedClientSummary = Globals.AnyClient;
+
+                }
+                if (managerID != 0 && managerID != currentRecord.ProjectManager.ID)
+                {
+                    Globals.SelectedPMSummary = Globals.AnyPM;
+                }
+                if (!ProjectFunctions.IsInFilter(statusFilter, currentRecord.Stage))
+                {
+                    Globals.SelectedStatusFilter = Globals.ProjectStatusFilter.All;
+                }
+            }
+        }
+
         private void refreshMainProjectGrid()
         {
             try
-            {
+            {                
                 ProjectSummaryRecord currentRecord = (Globals.SelectedProjectSummary != null) ? Globals.SelectedProjectSummary : null;
-//                if (currentRecord != null) { MessageBox.Show(currentRecord.ProjectName); }
-                
+
                 int clientID = (Globals.SelectedClientSummary != null)? ProjectFunctions.SelectedClientSummary.ID : 0;
                 int managerID = (Globals.SelectedPMSummary != null) ? ProjectFunctions.SelectedPMSummary.ID : 0;
+                Globals.ProjectStatusFilter statusFilter = Globals.SelectedStatusFilter;               
 
-                bool success = ProjectFunctions.SetProjectGridList(Globals.SelectedStatusFilter, clientID, managerID);
+                bool success = ProjectFunctions.SetProjectGridList(statusFilter, clientID, managerID);
                 if (success)
                 {                   
                     ProjectDataGrid.ItemsSource = ProjectFunctions.ProjectGridList;

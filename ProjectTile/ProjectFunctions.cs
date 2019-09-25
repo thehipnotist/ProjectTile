@@ -71,6 +71,7 @@ namespace ProjectTile
                                    join ps in existingPtDb.ProjectStages on pj.StageCode equals ps.StageCode
                                    join t in existingPtDb.ProjectTypes on pj.TypeCode equals t.TypeCode
                                    where pj.EntityID == CurrentEntityID
+                                   orderby ps.StageCode
                                    select new ProjectSummaryRecord
                                    {
                                        ProjectID = pj.ID,
@@ -101,6 +102,18 @@ namespace ProjectTile
             }
         }
 
+        public static bool IsInFilter(ProjectStatusFilter inStatus, ProjectStages stageRecord)
+        {
+            int stage = stageRecord.StageCode;
+            string status = stageRecord.ProjectStatus;
+            
+            return ( inStatus == ProjectStatusFilter.All
+                || (inStatus == ProjectStatusFilter.Current && stage < CompletedStage)
+                || (inStatus == ProjectStatusFilter.Open && stage >= StartStage && stage < CompletedStage)
+                || (inStatus == ProjectStatusFilter.InProgress && status == InProgressStatus)
+                || (inStatus == ProjectStatusFilter.Closed && status == ClosedStatus) );
+        }
+        
         public static bool SetProjectGridList(ProjectStatusFilter inStatus, int clientID = 0, int ourManagerID = 0)
         {
             try
@@ -112,12 +125,12 @@ namespace ProjectTile
                         (from fpl in FullProjectList
                         where  (clientID == 0 || fpl.Client.ID == clientID)
                             &&  (ourManagerID == 0 || fpl.ProjectManager.ID == ourManagerID)
-                            && ( inStatus == ProjectStatusFilter.All
-                                    || (inStatus == ProjectStatusFilter.Current && fpl.Stage.StageCode <= LiveStage)
-                                    || (inStatus == ProjectStatusFilter.Open && fpl.Stage.StageCode >= StartStage && fpl.Stage.StageCode <= LiveStage)
-                                    || (inStatus == ProjectStatusFilter.InProgress && fpl.Stage.ProjectStatus == InProgressStatus)
-                                    || (inStatus == ProjectStatusFilter.Closed && fpl.Stage.ProjectStatus == ClosedStatus)
-                                )
+                            //&& ( inStatus == ProjectStatusFilter.All
+                            //        || (inStatus == ProjectStatusFilter.Current && fpl.Stage.StageCode < CompletedStage)
+                            //        || (inStatus == ProjectStatusFilter.Open && fpl.Stage.StageCode >= StartStage && fpl.Stage.StageCode < CompletedStage)
+                            //        || (inStatus == ProjectStatusFilter.InProgress && fpl.Stage.ProjectStatus == InProgressStatus)
+                            //        || (inStatus == ProjectStatusFilter.Closed && fpl.Stage.ProjectStatus == ClosedStatus)
+                            && IsInFilter(inStatus, fpl.Stage)
                         select fpl
                         ).ToList();
 
@@ -639,37 +652,45 @@ namespace ProjectTile
                 {
                     int originalStage = (existingProjectRecord == null) ? 0 : existingProjectRecord.StageCode;
                     bool goLive = IsGoLive(originalStage, stage);
-                    string goLiveQuery = goLive? "This will set the project to Live, and update all linked products appropriately. Is this correct?" : "";
+                    string goLiveQuery = goLive? "This will set the project to Live, and update all linked products appropriately." : "";
                     bool reversal = goLive? false : IsLiveReversal(originalStage, stage);
-                    string reversalQuery = reversal? "This will reverse the 'Go-Live' action, and all status and version changes to linked products. Is this correct?" : "";
+                    string reversalQuery = reversal? "This will reverse the 'Go-Live' action, and all status and version changes to linked products." : "";
                     
                     if (managerChanged && summary.ProjectManager.RoleCode != ProjectManagerRole)
-                    { queryDetails = queryDetails + "\n" + "Its Project Manager is not normally a Project Manager by role."; }
+                    { queryDetails = queryDetails + "\n" + "The Project Manager is also not normally a Project Manager by role."; }
                     if (isUnderway && linkedProjectProducts == null)
-                    { queryDetails = queryDetails + "\n" + "It is marked as underway, but has no linked products."; }
-                    if (summary.StartDate == null && stage != CancelledStage) { queryDetails = queryDetails + "\n" + "It has no predicted start date at present."; } // Only projects not yet underway
-                    if (summary.StartDate > DateTime.Today.AddYears(1)) { queryDetails = queryDetails + "\n" + "It starts more than a year in the future."; }
+                    { queryDetails = queryDetails + "\n" + "The project stage also indicates that the project is underway, but it has no linked products."; }
+                    if (summary.StartDate == null && stage != CancelledStage) { queryDetails = queryDetails + "\n" + "The project also has no predicted start date at present."; } // Only projects not yet underway
+                    if (summary.StartDate > DateTime.Today.AddYears(1)) { queryDetails = queryDetails + "\n" + "The project also starts more than a year in the future."; }
                     if ((existingProjectRecord == null || existingProjectRecord.StartDate == null || existingProjectRecord.StartDate > summary.StartDate)
-                        && summary.StartDate < DateTime.Today.AddYears(-1)) { queryDetails = queryDetails + "\n" + "It starts more than a year in the past."; }
+                        && summary.StartDate < DateTime.Today.AddYears(-1)) { queryDetails = queryDetails + "\n" + "The project also starts more than a year in the past."; }
                     if (originalStage > stage && !reversal) // Live reversals are handled separately
-                    { queryDetails = queryDetails + "\n" + "The new stage is less advanced than the previous one."; }
+                    { queryDetails = queryDetails + "\n" + "The new stage is also less advanced than the previous one."; }
                     if (!internalProject)
                     {
-                        if (liveClientProducts.Count == 0 && type != NewSiteType && type != TakeOnType)
-                        { queryDetails = queryDetails + "\n" + "The project type indicates a change to an existing product, but this client has no Live products."; }
+                        if (liveClientProducts.Count == 0 && type != NewSiteType)
+                        { queryDetails = queryDetails + "\n" + "The project type also indicates a change to an existing product, but this client has no Live products."; }
                         else if (liveClientProducts.Count != 0 && (type == NewSiteType))
-                        { queryDetails = queryDetails + "\n" + "The project type indicates a brand new installation for a new client, but this client already has one or more Live products."; }
+                        { queryDetails = queryDetails + "\n" + "The project type also indicates a brand new installation for a new client, but this client already has one or more Live products."; }
                     }
 
                     // Query if jumping a number of steps
 
+                    string isCorrect = " Is this correct?";
                     if (queryDetails != "")
                     {
-                        string otherQueries = "This project also has one or more queries:\n" + queryDetails;
-                        
+                        string otherQueries = "Are the following also intentional?\n" + queryDetails.Replace("also ","");
+                        if (queryDetails.Count(qd => qd == '\n') == 1) { otherQueries = queryDetails.Replace("\n", ""); }
+
                         if (goLive) { queryMessage = goLiveQuery + " " + otherQueries; }
                         else if (reversal) { queryMessage = reversalQuery + " " + otherQueries; }
-                        else { queryMessage = otherQueries.Replace("also ", ""); }
+                        else 
+                        { 
+                            queryMessage = otherQueries.Replace("also ", "");
+                            
+                        }
+                        if (queryMessage.Count(qd => qd == '\n') == 0) { queryMessage = queryMessage + isCorrect; }
+                        
                         return MessageFunctions.WarningYesNo(queryMessage);
                     }
                     else if (stage == CancelledStage && existingProjectRecord != null && existingProjectRecord.StageCode != CancelledStage)
@@ -683,12 +704,12 @@ namespace ProjectTile
                         return MessageFunctions.ConfirmOKCancel(queryMessage);
                     }
                     else if (goLive)
-                    {                        
-                        return MessageFunctions.ConfirmOKCancel(goLiveQuery);
+                    {
+                        return MessageFunctions.ConfirmOKCancel(goLiveQuery + isCorrect);
                     }
                     else if (reversal)
                     {
-                        return MessageFunctions.ConfirmOKCancel(reversalQuery);
+                        return MessageFunctions.ConfirmOKCancel(reversalQuery + isCorrect);
                     }
                     else { return true; }
                 }
@@ -810,8 +831,7 @@ namespace ProjectTile
 
                                 if (lastPMRecord.FromDate != null && lastPMRecord.FromDate > OneMonthAgo) // To do: also ask if the project is in the early stages
                                 {
-                                    Staff lastPM = StaffFunctions.GetStaffMember(lastPMRecord.StaffID);
-                                    string lastPMName = lastPM.FirstName + " " + lastPM.Surname;
+                                    string lastPMName = StaffFunctions.GetStaffName(lastPMRecord.StaffID);
                                     DateTime fromDateTime = (DateTime)lastPMRecord.FromDate;
                                     string fromDate = fromDateTime.ToString("dd MMMM yyyy");
                                     bool overwrite = MessageFunctions.WarningYesNo("A Project Manager history record exists for " + lastPMName + " starting on " + fromDate

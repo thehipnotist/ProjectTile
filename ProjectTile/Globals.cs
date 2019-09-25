@@ -44,9 +44,9 @@ namespace ProjectTile
         public const string DbUserPrefix = "ProT_";
 
         // Project stage/status
-        public const int StartStage = 2;
-        public const int LiveStage = 11;
-        public const int CompletedStage = 15;
+        public const int StartStage = 1; // First stage of 'In Progress'
+        public const int LiveStage = 12; // First stage of 'Live'
+        public const int CompletedStage = 15; // First stage of 'Closed'
         public const int CancelledStage = 99;
         public const string InProgressStatus = "In Progress";
         public const string ClosedStatus = "Closed";

@@ -52,6 +52,21 @@
                         <DataGridTextColumn x:Name="StageColumn" Binding="{Binding Stage.StageName}" ClipboardContentBinding="{x:Null}" Header="Stage"/>
                         <DataGridTextColumn x:Name="ProjectManagerColumn" Binding="{Binding ProjectManager.StaffName}" ClipboardContentBinding="{x:Null}" Header="Project Manager"/>                                                                      
                     </DataGrid.Columns>
+                    <DataGrid.Resources>
+                        <Style TargetType="DataGridRow">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}"  Value="Closed">
+                                    <Setter Property="Foreground" Value="DarkGray"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}"  Value="Not Started">
+                                    <Setter Property="Foreground" Value="LightBlue"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}"  Value="Live">
+                                    <Setter Property="Foreground" Value="Green"/>
+                                </DataTrigger>                                
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.Resources>
                 </DataGrid>
 
             </Grid>

@@ -1231,7 +1231,7 @@ BEGIN TRY
 			UNION SELECT	8,			'User Test',			'User Acceptance Testing by client staff',		'In Progress'
 			UNION SELECT	9,			'End User Training',	'Roll-out to all users before Go-Live',			'In Progress'
 			UNION SELECT	10,			'Live Preparation',		'Re-migration and/or preparation for Go-Live',	'In Progress'
-			UNION SELECT	11,			'Go-Live',				'Live Cutover',									'Live'
+			UNION SELECT	11,			'Go-Live',				'Live Cutover',									'In Progress'
 			UNION SELECT	12,			'Live Running',			'Initial assistance with Live use',				'Live'
 			UNION SELECT	13,			'Post-Live Work',		'Any follow-up work for after the Go-Live',		'Live'
 			UNION SELECT	14,			'Closure',				'Formal project completion and closure',		'Live'
