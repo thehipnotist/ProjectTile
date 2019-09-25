@@ -49,7 +49,7 @@
                            Style="{DynamicResource TileLabelStyle}" Background="{DynamicResource PtGradientEntity2}">
                         <Grid>
                             <Frame x:Name="EntitiesImage" Content="{DynamicResource EntitiesIcon}" Margin="0,0,75,75"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Entities" Foreground="White" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="EntityText" TextAlignment="Center" TextWrapping="Wrap" Text="Entities" Foreground="White" VerticalAlignment="Center"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -60,7 +60,7 @@
                            Style="{DynamicResource TileLabelStyle2}" Background="{DynamicResource PtGradientStaff2}">
                         <Grid>
                             <Frame x:Name="StaffImage" Content="{DynamicResource StaffIcon}" Margin="0,0,75,75"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Staff" Foreground="White" VerticalAlignment="Center"/>
+                            <TextBlock Name="StaffText" TextAlignment="Center" TextWrapping="Wrap" Text="Staff" Foreground="White" VerticalAlignment="Center"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -71,7 +71,7 @@
                            Style="{DynamicResource TileLabelStyle}" Background="{DynamicResource PtGradientProduct2}">
                         <Grid>
                             <Frame x:Name="ProductImage" Content="{DynamicResource ProductIcon}" Margin="0,0,75,75"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Products" Foreground="White" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="ProductText" TextAlignment="Center" TextWrapping="Wrap" Text="Products" Foreground="White" VerticalAlignment="Center"/>
                         </Grid>
                     </Label>
                 </Button>                
@@ -82,7 +82,7 @@
                            Style="{DynamicResource TileLabelStyle}" Background="{DynamicResource PtGradientLogin2}">
                         <Grid>
                             <Frame x:Name="LoginImage" Content="{DynamicResource LoginIcon}" Margin="0,0,75,75"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Login" Foreground="White" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="LoginText" TextAlignment="Center" TextWrapping="Wrap" Text="Login" Foreground="White" VerticalAlignment="Center"/>
                         </Grid>
                     </Label>
                 </Button>                
@@ -93,7 +93,7 @@
                            Style="{DynamicResource TileLabelStyle}" Background="{DynamicResource PtGradientClient2}">
                         <Grid>
                             <Frame x:Name="ClientImage" Content="{DynamicResource ClientIcon}" Margin="0,0,75,75"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Clients" Foreground="White" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="ClientText" TextAlignment="Center" TextWrapping="Wrap" Text="Clients" Foreground="White" VerticalAlignment="Center"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -104,7 +104,7 @@
                            Style="{DynamicResource TileLabelStyle}" Background="{DynamicResource PtGradientProject2}">
                         <Grid>
                             <Frame x:Name="ProjectImage" Content="{DynamicResource ProjectIcon}" Margin="0,0,75,75"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Projects" Foreground="White" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="ProjectText" TextAlignment="Center" TextWrapping="Wrap" Text="Projects" Foreground="White" VerticalAlignment="Center"/>
                         </Grid>
                     </Label>
                 </Button>

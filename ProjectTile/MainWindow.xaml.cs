@@ -61,6 +61,13 @@ namespace ProjectTile
                 ProjectProduct.Visibility = myPermissions.ShowOrCollapse("ViewProjectProducts");
 
                 // More to come...
+
+                if (!StaffMenu.Items.IsEmpty) { StaffMenu.IsEnabled = false; }
+                if (!ProductMenu.Items.IsEmpty) { ProductMenu.IsEnabled = false; }
+                if (!ClientMenu.Items.IsEmpty) { ClientMenu.IsEnabled = false; }
+                if (!ProjectMenu.Items.IsEmpty) { ProjectMenu.IsEnabled = false; }
+
+
             }
             catch (Exception generalException) { MessageFunctions.Error("Error setting menu permissions", generalException); }
         }

@@ -121,6 +121,29 @@ namespace ProjectTile
                 if (myPermissions.Allow("ViewProjectProducts")) { projectButtons.Add(ProjectButton_Product); }
 
                 // More to come...
+
+
+                if (staffButtons.Count == 0) 
+                { 
+                    StaffButton.IsEnabled = false;
+                    StaffText.Text = StaffText.Text + "\n (Disabled)";
+                }
+                if (productButtons.Count == 0)
+                {
+                    ProductButton.IsEnabled = false;
+                    ProductText.Text = ProductText.Text + "\n (Disabled)";
+                }
+                if (clientButtons.Count == 0)
+                {
+                    ClientButton.IsEnabled = false;
+                    ClientText.Text = ClientText.Text + "\n (Disabled)";
+                }
+                if (projectButtons.Count == 0)
+                {
+                    ProjectButton.IsEnabled = false;
+                    ProjectText.Text = ProjectText.Text + "\n (Disabled)";
+                }
+
             }
             catch (Exception generalException) { MessageFunctions.Error("Error setting tile permissions", generalException); }
         }
