@@ -68,17 +68,9 @@ namespace ProjectTile
                 using (existingPtDb)
                 {
                     projectList = (from pj in existingPtDb.Projects
-                                   //join c in existingPtDb.Clients on pj.ClientID equals c.ID
-                                   //    into GroupJoin
-                                   //from sc in GroupJoin.DefaultIfEmpty()
-                                   //join pt in existingPtDb.ProjectTeams on pj.ID equals pt.ProjectID
-                                   //join s in existingPtDb.Staff on pt.StaffID equals s.ID
-                                   //join sr in existingPtDb.StaffRoles on s.RoleCode equals sr.RoleCode
-                                   //join de in existingPtDb.Entities on s.DefaultEntity equals de.ID
                                    join ps in existingPtDb.ProjectStages on pj.StageCode equals ps.StageCode
                                    join t in existingPtDb.ProjectTypes on pj.TypeCode equals t.TypeCode
                                    where pj.EntityID == CurrentEntityID
-                                       //&& (pt.ProjectRoleCode == ProjectManagerRole)
                                    select new ProjectSummaryRecord
                                    {
                                        ProjectID = pj.ID,
@@ -87,19 +79,6 @@ namespace ProjectTile
                                        ProjectSummary = pj.ProjectSummary,
                                        Type = t,
                                        EntityID = pj.EntityID,
-                                       //Client = Globals.NoClient,
-                                       //ProjectManager = new StaffSummaryRecord
-                                       //{
-                                       //    ID = (int)s.ID,
-                                       //    UserID = s.UserID,
-                                       //    StaffName = s.FirstName + " " + s.Surname,
-                                       //    RoleCode = s.RoleCode,
-                                       //    RoleDescription = sr.RoleDescription,
-                                       //    StartDate = (DateTime?)DbFunctions.TruncateTime(s.StartDate),
-                                       //    LeaveDate = (DateTime?)DbFunctions.TruncateTime(s.LeaveDate),
-                                       //    ActiveUser = (bool)s.Active,
-                                       //    DefaultEntity = de.EntityName
-                                       //},
                                        Stage = ps,
                                        StartDate = pj.StartDate
                                    }
@@ -423,17 +402,15 @@ namespace ProjectTile
             {
                 ProjectTeams currentPMRecord = null;
                 StaffSummaryRecord currentPM = null;
-                DateTime today = DateTime.Today;
-                DateTime yesterday = today.AddDays(-1);
-                List<ProjectTeams> eligiblePMs = CurrentAndFuturePMs(projectID, yesterday);
+                List<ProjectTeams> eligiblePMs = CurrentAndFuturePMs(projectID, Yesterday);
                 
                 if (eligiblePMs.Count == 0) { return null; } // Shouldn't happen, but just in case
                 else if (eligiblePMs.Count == 1) { currentPMRecord = eligiblePMs.First(); }
                 else
                 {
                     List<ProjectTeams> possiblePMs = eligiblePMs
-                            .Where(ep => (ep.FromDate == null || ep.FromDate <= today) 
-                                && (ep.ToDate == null || ep.ToDate >= today))
+                            .Where(ep => (ep.FromDate == null || ep.FromDate <= Today) 
+                                && (ep.ToDate == null || ep.ToDate >= Today))
                             .OrderByDescending(ep => ep.FromDate)
                             .ToList();
                     currentPMRecord = possiblePMs.FirstOrDefault();                    
@@ -537,6 +514,16 @@ namespace ProjectTile
 
         // -------------- Data updates -------------- // 
 
+        public static bool IsGoLive(int originalStage, int newStage)
+        {
+            return (newStage >= LiveStage && newStage != CancelledStage && originalStage < LiveStage);
+        }
+
+        public static bool IsLiveReversal(int originalStage, int newStage)
+        {
+            return (originalStage >= LiveStage && originalStage != CancelledStage && newStage < LiveStage);
+        }
+        
         public static bool ValidateProject(ProjectSummaryRecord summary, bool amendExisting, bool managerChanged)
         {
             try
@@ -578,6 +565,11 @@ namespace ProjectTile
                     else if (isUnderway && summary.StartDate == null)
                     {
                         errorDetails = ", as no start date has been set. Please enter a start date or keep the project in the 'Initation' stage."
+                            + "|No Start Date";
+                    }
+                    else if (isUnderway && summary.StartDate > Today)
+                    {
+                        errorDetails = ", as the start date is in the future. Please change the start date or keep the project in the 'Initation' stage."
                             + "|No Start Date";
                     }
                     else if (summary.ProjectManager == null)
@@ -645,15 +637,21 @@ namespace ProjectTile
 
                 try
                 {
+                    int originalStage = (existingProjectRecord == null) ? 0 : existingProjectRecord.StageCode;
+                    bool goLive = IsGoLive(originalStage, stage);
+                    string goLiveQuery = goLive? "This will set the project to Live, and update all linked products appropriately. Is this correct?" : "";
+                    bool reversal = goLive? false : IsLiveReversal(originalStage, stage);
+                    string reversalQuery = reversal? "This will reverse the 'Go-Live' action, and all status and version changes to linked products. Is this correct?" : "";
+                    
                     if (managerChanged && summary.ProjectManager.RoleCode != ProjectManagerRole)
                     { queryDetails = queryDetails + "\n" + "Its Project Manager is not normally a Project Manager by role."; }
                     if (isUnderway && linkedProjectProducts == null)
                     { queryDetails = queryDetails + "\n" + "It is marked as underway, but has no linked products."; }
-                    if (summary.StartDate == null && stage != CancelledStage) { queryDetails = queryDetails + "\n" + "It has no predicted start date at present."; }
-                    if (summary.StartDate > DateTime.Today.AddDays(365)) { queryDetails = queryDetails + "\n" + "It starts more than a year in the future."; }
+                    if (summary.StartDate == null && stage != CancelledStage) { queryDetails = queryDetails + "\n" + "It has no predicted start date at present."; } // Only projects not yet underway
+                    if (summary.StartDate > DateTime.Today.AddYears(1)) { queryDetails = queryDetails + "\n" + "It starts more than a year in the future."; }
                     if ((existingProjectRecord == null || existingProjectRecord.StartDate == null || existingProjectRecord.StartDate > summary.StartDate)
-                        && summary.StartDate < DateTime.Today.AddDays(-365)) { queryDetails = queryDetails + "\n" + "It starts more than a year in the past."; }
-                    if (existingProjectRecord != null && existingProjectRecord.StageCode > stage)
+                        && summary.StartDate < DateTime.Today.AddYears(-1)) { queryDetails = queryDetails + "\n" + "It starts more than a year in the past."; }
+                    if (originalStage > stage && !reversal) // Live reversals are handled separately
                     { queryDetails = queryDetails + "\n" + "The new stage is less advanced than the previous one."; }
                     if (!internalProject)
                     {
@@ -663,25 +661,34 @@ namespace ProjectTile
                         { queryDetails = queryDetails + "\n" + "The project type indicates a brand new installation for a new client, but this client already has one or more Live products."; }
                     }
 
-                    //else if (thisSummary. ) { queryDetails = queryDetails + "\n" + "."; }
-
-                    // If there are products, type fits the products selected?? Or handle this when editing products
                     // Query if jumping a number of steps
 
                     if (queryDetails != "")
                     {
-                        queryMessage = "Are you sure the details are correct? This project has one or more queries:\n" + queryDetails;
+                        string otherQueries = "This project also has one or more queries:\n" + queryDetails;
+                        
+                        if (goLive) { queryMessage = goLiveQuery + " " + otherQueries; }
+                        else if (reversal) { queryMessage = reversalQuery + " " + otherQueries; }
+                        else { queryMessage = otherQueries.Replace("also ", ""); }
                         return MessageFunctions.WarningYesNo(queryMessage);
                     }
                     else if (stage == CancelledStage && existingProjectRecord != null && existingProjectRecord.StageCode != CancelledStage)
                     {
                         queryMessage = "Are you sure you wish to cancel this project?";
-                        return MessageFunctions.WarningYesNo(queryMessage);
+                        return MessageFunctions.ConfirmOKCancel(queryMessage);
                     }
                     else if (summary.ProjectID == 0)
                     {
                         queryMessage = "Are you sure you wish to create this project? Project records cannot be deleted, although they can be cancelled.";
-                        return MessageFunctions.WarningYesNo(queryMessage);
+                        return MessageFunctions.ConfirmOKCancel(queryMessage);
+                    }
+                    else if (goLive)
+                    {                        
+                        return MessageFunctions.ConfirmOKCancel(goLiveQuery);
+                    }
+                    else if (reversal)
+                    {
+                        return MessageFunctions.ConfirmOKCancel(reversalQuery);
                     }
                     else { return true; }
                 }
@@ -732,7 +739,7 @@ namespace ProjectTile
                 if (!converted || thisProject == null) { return false; } // Errors should be thrown by the conversion
                 ProjectTeams addPM = new ProjectTeams
                 {
-                    ProjectID = 0, // To be set below when the project is saved
+                    ProjectID = 0, // Set below when the project is saved
                     StaffID = projectSummary.ProjectManager.ID,
                     ProjectRoleCode = ProjectManagerRole,
                     FromDate = (DateTime.Today < thisProject.StartDate) ? DateTime.Today : thisProject.StartDate
@@ -761,16 +768,19 @@ namespace ProjectTile
             }		            
         }
 
-        public static bool SaveProjectChanges(ProjectSummaryRecord projectSummary, bool managerChanged)
+        public static bool SaveProjectChanges(ProjectSummaryRecord projectSummary, bool managerChanged, int originalStage)
         {
+                   
             if (!ValidateProject(projectSummary, true, managerChanged)) { return false; }
 
             try
             {
+                int projectID = projectSummary.ProjectID;
+                
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    Projects thisProject = existingPtDb.Projects.Where(p => p.ID == projectSummary.ProjectID).FirstOrDefault();
+                    Projects thisProject = existingPtDb.Projects.Where(p => p.ID == projectID).FirstOrDefault();
                     if (thisProject == null)
                     {
                         MessageFunctions.Error("Error saving project amendments to the database: no matching project found.", null);
@@ -781,69 +791,111 @@ namespace ProjectTile
 
                     if (managerChanged)
                     {
-                        DateTime today = DateTime.Today;
-                        DateTime yesterday = today.AddDays(-1);
-                        DateTime oneMonthAgo = today.AddMonths(-1);
-
-                        ProjectTeams newPMRecord = new ProjectTeams
+                        try
                         {
-                            ProjectID = projectSummary.ProjectID,
-                            StaffID = projectSummary.ProjectManager.ID,
-                            ProjectRoleCode = ProjectManagerRole,
-                            FromDate = (DateTime.Today < thisProject.StartDate) ? DateTime.Today : thisProject.StartDate
-                        };
-
-                        List<ProjectTeams> existingPMs = CurrentAndFuturePMs(projectSummary.ProjectID, yesterday);
-                        if (existingPMs.Count == 0) { existingPtDb.ProjectTeams.Add(newPMRecord); } // Shouldn't happen, but just in case
-                        else
-                        {
-                            ProjectTeams lastPMRecord = existingPMs.First();
-                            lastPMRecord = existingPtDb.ProjectTeams.Find(lastPMRecord.ID); // Get it from the database again so we can amend/remove it
-
-                            if (lastPMRecord.FromDate != null && lastPMRecord.FromDate > oneMonthAgo) // To do: also ask if the project is in the early stages
+                            ProjectTeams newPMRecord = new ProjectTeams
                             {
-                                Staff lastPM = StaffFunctions.GetStaffMember(lastPMRecord.StaffID);
-                                string lastPMName = lastPM.FirstName + " " + lastPM.Surname;
-                                DateTime fromDateTime = (DateTime) lastPMRecord.FromDate;
-                                string fromDate = fromDateTime.ToString("dd MMMM yyyy");
-                                bool overwrite = MessageFunctions.WarningYesNo("A Project Manager history record exists for " + lastPMName + " starting on " + fromDate 
-                                    + ". Should it be overwritten? Selecting 'Yes' will replace that record; 'No' will retain it in the history.", "Replace Project Manager Record?");
-                                if (overwrite) 
+                                ProjectID = projectID,
+                                StaffID = projectSummary.ProjectManager.ID,
+                                ProjectRoleCode = ProjectManagerRole,
+                                FromDate = (DateTime.Today < thisProject.StartDate) ? DateTime.Today : thisProject.StartDate
+                            };
+
+                            List<ProjectTeams> existingPMs = CurrentAndFuturePMs(projectID, Yesterday);
+                            if (existingPMs.Count == 0) { existingPtDb.ProjectTeams.Add(newPMRecord); } // Shouldn't happen, but just in case
+                            else
+                            {
+                                ProjectTeams lastPMRecord = existingPMs.First();
+                                lastPMRecord = existingPtDb.ProjectTeams.Find(lastPMRecord.ID); // Get it from the database again so we can amend/remove it
+
+                                if (lastPMRecord.FromDate != null && lastPMRecord.FromDate > OneMonthAgo) // To do: also ask if the project is in the early stages
                                 {
-                                    existingPtDb.ProjectTeams.Remove(lastPMRecord);
-                                    existingPtDb.ProjectTeams.Add(newPMRecord);
-                                }
-                                else if (lastPMRecord.FromDate > today)
-                                {
-                                    DateTime toDate = (DateTime)lastPMRecord.FromDate;
-                                    toDate = toDate.AddDays(-1);
-                                    newPMRecord.ToDate = toDate;
-                                    existingPtDb.ProjectTeams.Add(newPMRecord);
+                                    Staff lastPM = StaffFunctions.GetStaffMember(lastPMRecord.StaffID);
+                                    string lastPMName = lastPM.FirstName + " " + lastPM.Surname;
+                                    DateTime fromDateTime = (DateTime)lastPMRecord.FromDate;
+                                    string fromDate = fromDateTime.ToString("dd MMMM yyyy");
+                                    bool overwrite = MessageFunctions.WarningYesNo("A Project Manager history record exists for " + lastPMName + " starting on " + fromDate
+                                        + ". Should it be overwritten? Selecting 'Yes' will replace that record; 'No' will retain it in the history.", "Replace Project Manager Record?");
+                                    if (overwrite)
+                                    {
+                                        existingPtDb.ProjectTeams.Remove(lastPMRecord);
+                                        existingPtDb.ProjectTeams.Add(newPMRecord);
+                                    }
+                                    else if (lastPMRecord.FromDate > Today)
+                                    {
+                                        DateTime toDate = (DateTime)lastPMRecord.FromDate;
+                                        toDate = toDate.AddDays(-1);
+                                        newPMRecord.ToDate = toDate;
+                                        existingPtDb.ProjectTeams.Add(newPMRecord);
+                                    }
+                                    else
+                                    {
+                                        lastPMRecord.ToDate = Yesterday;
+                                        newPMRecord.FromDate = Today;
+                                        existingPtDb.ProjectTeams.Add(newPMRecord);
+                                    }
                                 }
                                 else
                                 {
-                                    lastPMRecord.ToDate = yesterday;
-                                    newPMRecord.FromDate = today;
+                                    lastPMRecord.ToDate = Yesterday;
+                                    newPMRecord.FromDate = Today;
                                     existingPtDb.ProjectTeams.Add(newPMRecord);
                                 }
                             }
-                            else
-                            {
-                                lastPMRecord.ToDate = yesterday;
-                                newPMRecord.FromDate = today;
-                                existingPtDb.ProjectTeams.Add(newPMRecord);
-                            }
+                        }
+                        catch (Exception generalException)
+                        {
+                            MessageFunctions.Error("Error processing change of Project Manager", generalException);
+                            return false;
                         }
                     }
+
+                    bool goLive = IsGoLive(originalStage, projectSummary.Stage.StageCode);
+                    bool reversal = goLive ? false : IsLiveReversal(originalStage, projectSummary.Stage.StageCode);
+                    bool completion = (projectSummary.Stage.StageCode == CompletedStage && originalStage != CompletedStage);
+                    
+                    if (goLive || reversal)
+                    {
+                        try
+                        {
+                                var linkedProducts = from p in existingPtDb.Projects
+                                                     join pp in existingPtDb.ProjectProducts on p.ID equals pp.ProjectID
+                                                     join cp in existingPtDb.ClientProducts on pp.ProductID equals cp.ProductID
+                                                     where p.ID == projectID && cp.ClientID == p.ClientID
+                                                     select new { ProjectProducts = pp, ClientProducts = cp };
+                                                    
+                                foreach (var product in linkedProducts)
+                                {
+                                    if (goLive)
+                                    {
+                                        product.ClientProducts.Live = true;
+                                        product.ClientProducts.ProductVersion = product.ProjectProducts.NewVersion;
+                                    }
+                                    else
+                                    {
+                                        if (Array.IndexOf(NewProductTypes, projectSummary.Type.TypeCode) >= 0) { product.ClientProducts.Live = false; }
+                                        if (product.ClientProducts.ProductVersion == product.ProjectProducts.NewVersion) 
+                                        { 
+                                            product.ClientProducts.ProductVersion = product.ProjectProducts.OldVersion; 
+                                        }
+                                    }                                                                      
+                                }
+                            }
+                        catch (Exception generalException)
+                        {
+                            MessageFunctions.Error("Error updating linked products", generalException);
+                            return false;
+                        }
+                    }	
 
                     existingPtDb.SaveChanges();
                     SelectedProjectSummary = projectSummary;
 
-                    // To Do: if going Live, update products if relevant - check with user first!
-
-
-                    // To Do: add congratulations if Live or Closed!
-                    MessageFunctions.SuccessMessage("Project amendments saved successfully.", "Changes Saved");
+                    string congratulations = "";
+                    if (completion) { congratulations = " Congratulations on completing the project."; }
+                    else if (goLive) { congratulations = " Congratulations on going Live.";  }
+                    
+                    MessageFunctions.SuccessMessage("Project amendments saved successfully." + congratulations, "Changes Saved");
                     return true;
                 }
             }

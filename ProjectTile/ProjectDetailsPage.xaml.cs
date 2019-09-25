@@ -31,6 +31,7 @@ namespace ProjectTile
         string pageMode;
         bool fromProjectPage = (Globals.ProjectSourcePage != Globals.TilesPageName);
         int originalManagerID = 0;
+        int originalStage = 0;
 
         // ------------ Current variables ----------- //
 
@@ -191,6 +192,7 @@ namespace ProjectTile
         {
             thisProjectSummary = Globals.SelectedProjectSummary;
             originalManagerID = thisProjectSummary.ProjectManager.ID;
+            originalStage = thisProjectSummary.Stage.StageCode;
             displaySelectedType();
             displaySelectedStage();
             refreshManagerCombo(false);
@@ -320,19 +322,17 @@ namespace ProjectTile
             else
             {
                 bool managerChanged = (thisProjectSummary.ProjectManager.ID != originalManagerID);
-                bool success = ProjectFunctions.SaveProjectChanges(thisProjectSummary, managerChanged);
+                bool success = ProjectFunctions.SaveProjectChanges(thisProjectSummary, managerChanged, originalStage);
                 if (success) { closeDetailsPage(false, false); }
             }
         }
 
         private void TypeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // To do - validate if it is an internal project bu the client is selected, or vice versa if 'no client' is selected
         }
 
         private void ClientCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // To do - validation from above
         }
 
         private void StageCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -340,11 +340,6 @@ namespace ProjectTile
             if (StageCombo.SelectedItem != null && pageMode != PageFunctions.View)
             {
                 int newStage = thisProjectSummary.Stage.StageCode;
-                
-                // To do - validate and process the logic of the selection change - possibly only at saving stage though, e.g. 
-                //    - if now Live then the product should be Live
-                //    - if beyond pre-project, should have all of the details
-                
                 NextButton.IsEnabled = (!ProjectFunctions.IsLastStage(newStage));
             }
         }
@@ -362,7 +357,6 @@ namespace ProjectTile
 
         private void ManagerCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
         }
 
         private void NonPMs_CheckBox_Checked(object sender, RoutedEventArgs e)

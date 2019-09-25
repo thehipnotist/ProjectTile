@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 
 namespace ProjectTile
 {
@@ -38,7 +39,17 @@ namespace ProjectTile
         public const string InternalProjectType = "IP";
         public const string NewSiteType = "NS";
         public const string TakeOnType = "TS";
+        public const string AddSystemType = "AS";
+        public static string[] NewProductTypes = { NewSiteType, AddSystemType };
         public const string DbUserPrefix = "ProT_";
+
+        // Project stage/status
+        public const int StartStage = 2;
+        public const int LiveStage = 11;
+        public const int CompletedStage = 15;
+        public const int CancelledStage = 99;
+        public const string InProgressStatus = "In Progress";
+        public const string ClosedStatus = "Closed";
 
         // Default records
         public static ClientSummaryRecord DefaultClientSummary = AnyClient;
@@ -67,13 +78,10 @@ namespace ProjectTile
         public static Regex ClientVersionFormat = new Regex("^[0-9]{0,2}[.]{0,1}[0-9]{0,1}$");
         public static Regex LatestVersionFormat = new Regex("^[0-9]{0,2}[.]{0,1}[0-9]{0,2}$");
 
-        // Project stage/status
-        public const int StartStage = 2;
-        public const int LiveStage = 11;
-        public const int ClosedStage = 15;
-        public const int CancelledStage = 99;
-        public const string InProgressStatus = "In Progress";
-        public const string ClosedStatus = "Closed";
+        // Dates
+        public static DateTime Today = DateTime.Today;
+        public static DateTime Yesterday = Today.AddDays(-1);
+        public static DateTime OneMonthAgo = Today.AddMonths(-1);
 
         // Shared methods
         public static void ResetClientParameters()
