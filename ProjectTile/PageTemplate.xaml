@@ -45,7 +45,7 @@
                     </StackPanel>
                 </Button>
                 <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
-                        FontWeight="Bold" Click="CommitButton_Click">
+                        FontWeight="Bold" Click="CommitButton_Click" BorderBrush="{DynamicResource PtBrushStaff3}">
                     <StackPanel x:Name="CommitPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Frame x:Name="CommitImage" Content="{StaticResource CommitIcon}"/>
                         <TextBlock x:Name="CommitButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Commit" Margin="5,0,0,0" VerticalAlignment="Center"/>

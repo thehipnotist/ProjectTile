@@ -159,27 +159,21 @@
                     </StackPanel>
                 </Button>
                 <Button x:Name="EntitiesButton" HorizontalAlignment="Center" Height="30" Margin="0,15,15,0" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
-                        FontWeight="Bold" ToolTip="Entities that the selected user can access" BorderThickness="2" IsEnabled="False" Click="EntitiesButton_Click">
-                    <Button.BorderBrush>
-                        <SolidColorBrush Color="{DynamicResource PtColorEntity3}"/>
-                    </Button.BorderBrush>
+                        FontWeight="Bold" ToolTip="Entities that the selected user can access" IsEnabled="False" Click="EntitiesButton_Click"  BorderBrush="{DynamicResource PtBrushEntity3}">
                     <StackPanel x:Name="EntitiesPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Frame x:Name="EntitiesImage" Content="{StaticResource EntitiesIcon}"/>
                         <TextBlock x:Name="EntitiesButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Entities" Margin="5,0,5,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>                  
                 <Button x:Name="StaffButton" HorizontalAlignment="Center" Height="30" Margin="230,15,0,0" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
-                        FontWeight="Bold" ToolTip="Staff that the selected user can access" BorderThickness="2" IsEnabled="False" Click="StaffButton_Click">
-                    <Button.BorderBrush>
-                        <SolidColorBrush Color="{DynamicResource PtColorStaff3}"/>
-                    </Button.BorderBrush>
+                        FontWeight="Bold" ToolTip="Staff that the selected user can access" IsEnabled="False" Click="StaffButton_Click" BorderBrush="{DynamicResource PtBrushStaff3}">
                     <StackPanel x:Name="StaffPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">                       
                         <Frame x:Name="StaffImage" Content="{StaticResource StaffIcon}"/>                   
                         <TextBlock x:Name="StaffButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Staff" Margin="5,0,5,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
-                        FontWeight="Bold" IsEnabled="False" Click="CommitButton_Click">
+                        FontWeight="Bold" IsEnabled="False" Click="CommitButton_Click" BorderBrush="{DynamicResource PtBrushStaff3}">
                     <StackPanel x:Name="CommitPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Frame x:Name="CommitImage" Content="{StaticResource CommitIcon}"/>
                         <TextBlock x:Name="CommitButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Save" Margin="5,0,0,0" VerticalAlignment="Center"/>

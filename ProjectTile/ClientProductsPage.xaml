@@ -185,27 +185,21 @@
                 </Button>
                 <Label x:Name="ProductVersionLabel" HorizontalAlignment="Left" Height="30" Margin="245,15,0,0" VerticalAlignment="Top" Width="400"/>
                 <Button x:Name="ProductButton" HorizontalAlignment="Center" Height="30" Margin="0,15,15,0" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
-                        FontWeight="Bold" ToolTip="Products the selected client has purchased" BorderThickness="2" IsEnabled="False" Click="ProductButton_Click">
-                    <Button.BorderBrush>
-                        <SolidColorBrush Color="{DynamicResource PtColorProduct3}"/>
-                    </Button.BorderBrush>
+                        FontWeight="Bold" ToolTip="Products the selected client has purchased" IsEnabled="False" Click="ProductButton_Click" BorderBrush="{DynamicResource PtBrushProduct3}">
                     <StackPanel x:Name="ProductPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Frame x:Name="ProductImage" Content="{StaticResource ProductIcon}"/>
                         <TextBlock x:Name="ProductButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Products" Margin="5,0,5,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button x:Name="ClientButton" HorizontalAlignment="Center" Height="30" Margin="230,15,0,0" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
-                        FontWeight="Bold" ToolTip="Clients with the selected product" BorderThickness="2" IsEnabled="False" Click="ClientButton_Click">
-                    <Button.BorderBrush>
-                        <SolidColorBrush Color="{DynamicResource PtColorClient3}"/>
-                    </Button.BorderBrush>
+                        FontWeight="Bold" ToolTip="Clients with the selected product" IsEnabled="False" Click="ClientButton_Click" BorderBrush="{DynamicResource PtBrushClient3}">
                     <StackPanel x:Name="ClientPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Frame x:Name="ClientImage" Content="{StaticResource ClientIcon}"/>
                         <TextBlock x:Name="ClientButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Clients" Margin="5,0,5,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
-                        FontWeight="Bold" IsEnabled="False" Click="CommitButton_Click">
+                        FontWeight="Bold" IsEnabled="False" Click="CommitButton_Click" BorderBrush="{DynamicResource PtBrushClient3}">
                     <StackPanel x:Name="CommitPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Frame x:Name="CommitImage" Content="{StaticResource CommitIcon}"/>
                         <TextBlock x:Name="CommitButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Save" Margin="5,0,0,0" VerticalAlignment="Center"/>

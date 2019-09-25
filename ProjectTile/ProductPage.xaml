@@ -76,7 +76,7 @@
                     </StackPanel>
                 </Button>
                 <Button x:Name="AmendButton" HorizontalAlignment="Center" Height="30" Margin="15,15,137.5,15" VerticalAlignment="Bottom" Width="110" 
-                            FontWeight="Bold" Style="{StaticResource RoundedButton}" IsEnabled="False" Click="AmendButton_Click">
+                            FontWeight="Bold" Style="{StaticResource RoundedButton}" IsEnabled="False" Click="AmendButton_Click" BorderBrush="{DynamicResource PtBrushProduct3}">
                     <StackPanel x:Name="AmendPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Frame x:Name="AmendImage" Content="{StaticResource AmendIcon}"/>
                         <Frame x:Name="BackImage" Content="{StaticResource BackIcon}" Visibility="Collapsed"/>
@@ -84,14 +84,15 @@
                     </StackPanel>
                 </Button>
                 <Button x:Name="AddButton" HorizontalAlignment="Center" Height="30" Margin="137.5,15,15,15" VerticalAlignment="Bottom" Width="110" 
-                            FontWeight="Bold" Style="{StaticResource RoundedButton}" IsEnabled="True" Click="AddButton_Click">
+                            FontWeight="Bold" Style="{StaticResource RoundedButton}" IsEnabled="True" Click="AddButton_Click" BorderBrush="{DynamicResource PtBrushProduct3}">
                     <StackPanel x:Name="AddPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Frame x:Name="AddImage" Content="{StaticResource AddIcon}"/>
                         <Frame x:Name="BackImage2" Content="{StaticResource BackIcon}" Visibility="Collapsed"/>
-                        <TextBlock x:Name="AddButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Add New" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="AddButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="New Product" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" FontWeight="Bold" Click="CommitButton_Click">
+                <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
+                        FontWeight="Bold" Click="CommitButton_Click" BorderBrush="{DynamicResource PtBrushProduct3}">
                     <StackPanel x:Name="CommitPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Frame x:Name="CommitImage" Content="{StaticResource CommitIcon}"/>
                         <TextBlock x:Name="CommitButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Save" Margin="5,0,0,0" VerticalAlignment="Center"/>
