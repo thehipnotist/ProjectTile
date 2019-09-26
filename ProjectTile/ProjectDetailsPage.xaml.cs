@@ -140,6 +140,7 @@ namespace ProjectTile
                 CommitButton.Visibility = NextButton.Visibility = NonPMs_CheckBox.Visibility = SearchButton.Visibility = Visibility.Hidden;
                 CancelButtonText.Text = "Close";
                 PageHeader.Content = "View Project Details";
+                HeaderImage2.SetResourceReference(Frame.ContentProperty, "ViewIcon");
                 Instructions.Content = "This page is read-only; values can be selected but not changed.";
             }
             catch (Exception generalException)
@@ -172,6 +173,7 @@ namespace ProjectTile
             thisProjectSummary = new ProjectSummaryRecord();
             thisProjectSummary.EntityID = Globals.CurrentEntityID;
             PageHeader.Content = "Create New Project";
+            HeaderImage2.SetResourceReference(Frame.ContentProperty, "AddIcon");
             Instructions.Content = "Fill in the details as required and then click 'Save' to create the record.";
             if (fromProjectPage)
             {

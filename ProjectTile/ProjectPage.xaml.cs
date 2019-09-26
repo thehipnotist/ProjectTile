@@ -65,6 +65,7 @@ namespace ProjectTile
             {
                 PageHeader.Content = "Amend or Manage Projects";
                 Instructions.Content = "Use filters to restrict results and column headers to sort them, then choose the required option.";
+                HeaderImage2.SetResourceReference(Frame.ContentProperty, "AmendIcon");
             }
 
             try
@@ -165,7 +166,7 @@ namespace ProjectTile
         {
             try
             {
-                Globals.ProjectStatusFilter currentFilter = (Globals.SelectedStatusFilter != null) ? Globals.SelectedStatusFilter : Globals.DefaultStatusFilter;
+                Globals.ProjectStatusFilter currentFilter = Globals.SelectedStatusFilter;
                 string currentName = ProjectFunctions.StatusFilterName(currentFilter);
                 if (ProjectFunctions.StatusFilterList == null) { ProjectFunctions.SetProjectStatusFilter(); }
                 StatusCombo.ItemsSource = ProjectFunctions.StatusFilterList;
