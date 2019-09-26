@@ -25,6 +25,8 @@ namespace ProjectTile
         public static List<StaffSummaryRecord> FullPMsList;
         public static List<StaffSummaryRecord> PMFilterList;
         public static List<StaffSummaryRecord> PMOptionsList;
+        public static List<ProjectRoles> FullRolesList;
+        public static List<ProjectRoles> RolesFilterList;
         public static List<ClientSummaryRecord> FullClientList;
         public static List<ClientSummaryRecord> ClientFilterList;
         public static List<ClientSummaryRecord> ClientOptionsList;
@@ -306,7 +308,7 @@ namespace ProjectTile
                          join se in existingPtDb.StaffEntities on s.ID equals se.StaffID
                          join de in existingPtDb.Entities on s.DefaultEntity equals de.ID
                          where se.EntityID == CurrentEntityID 
-                            && (s.RoleCode == ProjectManagerRole || currentManagers.Contains(s.ID)) 
+                            && (s.RoleCode == ProjectManagerCode || currentManagers.Contains(s.ID)) 
                          orderby new { s.FirstName, s.Surname, s.UserID }
                          select new StaffSummaryRecord
                          {
@@ -391,7 +393,7 @@ namespace ProjectTile
                 {            
                     return existingPtDb.ProjectTeams.OrderByDescending(pt => pt.FromDate)
                             .Where(pt => pt.ProjectID == projectID 
-                                && pt.ProjectRoleCode == ProjectManagerRole 
+                                && pt.ProjectRoleCode == ProjectManagerCode 
                                 && (pt.ToDate == null || pt.ToDate >= upTo))
                             .OrderByDescending(pt => new {pt.FromDate, pt.ID})
                             .ToList();
@@ -437,6 +439,51 @@ namespace ProjectTile
                 MessageFunctions.Error("Error retrieving current Project Manager record for project with ID " + projectID.ToString(), generalException);
                 return null;
             }	
+        }
+
+        // Project staff in general
+        public static ProjectRoles GetRole(string roleCode)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return existingPtDb.ProjectRoles.Where(pr => pr.RoleCode == roleCode).FirstOrDefault();
+                }
+            }
+            catch (Exception generalException) 
+            { 
+                MessageFunctions.Error("Error retrieving project role", generalException);
+                return null;
+            }	
+        }
+        
+        public static int RolePosition(string roleCode)
+        {
+            int position = Array.IndexOf(ProjectRoleHeirarchy, roleCode);
+            return (position >= 0)? position : ProjectRoleHeirarchy.Length;
+        }
+        
+        public static void SetFullRolesList()
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    List<ProjectRoles> rolesList = existingPtDb.ProjectRoles.ToList();
+                    FullRolesList = rolesList.OrderBy(rl => RolePosition(rl.RoleCode)).ToList();
+				}
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error listing project roles", generalException); }	
+        }
+
+        public static void SetRolesFilterList()
+        {
+            SetFullRolesList();
+            RolesFilterList = FullRolesList;
+            RolesFilterList.Add(AllRoles);
         }
 
         // Clients
@@ -645,7 +692,7 @@ namespace ProjectTile
                     bool reversal = goLive? false : IsLiveReversal(originalStage, stage);
                     string reversalQuery = reversal? "This will reverse the 'Go-Live' action, and all status and version changes to linked products." : "";
                     
-                    if (managerChanged && summary.ProjectManager.RoleCode != ProjectManagerRole)
+                    if (managerChanged && summary.ProjectManager.RoleCode != ProjectManagerCode)
                     { queryDetails = queryDetails + "\n" + "The Project Manager is also not normally a Project Manager by role."; }
                     if (isUnderway && linkedProjectProducts == null)
                     { queryDetails = queryDetails + "\n" + "The project stage also indicates that the project is underway, but it has no linked products."; }
@@ -658,9 +705,9 @@ namespace ProjectTile
                     if (!summary.IsNew && stage - originalStage > 4 && !summary.IsCancelled) { queryDetails = queryDetails + "\n" + "The project has moved through several stages."; }
                     if (!summary.IsInternal)
                     {
-                        if (liveClientProducts.Count == 0 && type != NewSiteType)
+                        if (liveClientProducts.Count == 0 && type != NewSiteCode)
                         { queryDetails = queryDetails + "\n" + "The project type also indicates a change to an existing product, but this client has no Live products."; }
-                        else if (liveClientProducts.Count != 0 && (type == NewSiteType))
+                        else if (liveClientProducts.Count != 0 && (type == NewSiteCode))
                         { queryDetails = queryDetails + "\n" + "The project type also indicates a brand new installation for a new client, but this client already has one or more Live products."; }
                     }
 
@@ -728,7 +775,7 @@ namespace ProjectTile
                 {
                     ProjectID = 0, // Set below when the project is saved
                     StaffID = projectSummary.ProjectManager.ID,
-                    ProjectRoleCode = ProjectManagerRole,
+                    ProjectRoleCode = ProjectManagerCode,
                     FromDate = (DateTime.Today < thisProject.StartDate) ? DateTime.Today : thisProject.StartDate
                 };
                 
@@ -783,7 +830,7 @@ namespace ProjectTile
                             {
                                 ProjectID = projectID,
                                 StaffID = projectSummary.ProjectManager.ID,
-                                ProjectRoleCode = ProjectManagerRole,
+                                ProjectRoleCode = ProjectManagerCode,
                                 FromDate = (DateTime.Today < thisProject.StartDate) ? DateTime.Today : thisProject.StartDate
                             };
 
@@ -857,7 +904,7 @@ namespace ProjectTile
                                     }
                                     else
                                     {
-                                        if (Array.IndexOf(NewProductTypes, projectSummary.Type.TypeCode) >= 0) { product.ClientProducts.Live = false; }
+                                        if (Array.IndexOf(NewProductTypeCodes, projectSummary.Type.TypeCode) >= 0) { product.ClientProducts.Live = false; }
                                         if (product.ClientProducts.ProductVersion == product.ProjectProducts.NewVersion) 
                                         { 
                                             product.ClientProducts.ProductVersion = product.ProjectProducts.OldVersion; 

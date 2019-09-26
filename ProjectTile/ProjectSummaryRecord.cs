@@ -75,7 +75,7 @@ namespace ProjectTile
     
         public bool IsInternal
         {
-            get { return type.TypeCode == InternalProjectType; }
+            get { return type.TypeCode == InternalProjectCode; }
         }
 
         public bool IsNew
