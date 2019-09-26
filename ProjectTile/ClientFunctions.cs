@@ -77,7 +77,7 @@ namespace ProjectTile
                     List<string> managerNames = new List<string>();
                     managerNames = (from s in existingPtDb.Staff
                                     join se in existingPtDb.StaffEntities on s.ID equals se.StaffID
-                                    where (se.EntityID == entityID) && (includeNonAMs || s.RoleCode == ManagerRole || s.FirstName + " " + s.Surname == includeIfInEntity)
+                                    where (se.EntityID == entityID) && (includeNonAMs || s.RoleCode == AccountManagerCode || s.FirstName + " " + s.Surname == includeIfInEntity)
                                     orderby s.FirstName, s.Surname
                                     select s.FirstName + " " + s.Surname)
                                 .Distinct().ToList();
@@ -248,7 +248,7 @@ namespace ProjectTile
                         int managerID = (int)thisClient.AccountManagerID;
                         Staff accountManager = StaffFunctions.GetStaffMember(managerID);
                         string managerRole = accountManager.RoleCode;
-                        if (managerRole != ManagerRole)
+                        if (managerRole != AccountManagerCode)
                         {
                             bool confirmOK = MessageFunctions.WarningYesNo(accountManager.FirstName + " " + accountManager.Surname + " is not normally an Account Manager. Is this correct?");
                             if (!confirmOK) { return false; }

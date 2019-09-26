@@ -276,7 +276,7 @@ namespace ProjectTile
 
         private void ProjectStaff_Click(object sender, RoutedEventArgs e)
         {
-
+            PageFunctions.ShowProjectTeamsPage();
         }
 
         private void ProjectContact_Click(object sender, RoutedEventArgs e)

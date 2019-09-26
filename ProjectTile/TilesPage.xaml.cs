@@ -417,7 +417,7 @@ namespace ProjectTile
 
         private void ProjectButton_Staff_Click(object sender, RoutedEventArgs e)
         {
-
+            PageFunctions.ShowProjectTeamsPage();
         }
         
     } // class

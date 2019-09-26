@@ -64,6 +64,7 @@ namespace ProjectTile
             if (pageMode == PageFunctions.New)
             {
                 PageHeader.Content = "Create New Staff Member";
+                HeaderImage2.SetResourceReference(Frame.ContentProperty, "AddIcon");
                 Instructions.Content = "Fill in the details as required and then click 'Save' to create the record.";
                 BackButton.Visibility = Visibility.Hidden;          
             }            

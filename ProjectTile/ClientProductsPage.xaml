@@ -20,8 +20,9 @@
         </Grid.RowDefinitions>
 
         <Frame x:Name="HeaderImage" Content="{StaticResource ClientIcon2}" Grid.Row="0" Grid.Column="1" Margin="0,5,0,0"  VerticalAlignment="Top" Width="20" HorizontalAlignment="Left" Height="20"/>
-        <Label x:Name="PageHeader" Content="Products for each Client" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="635" FontWeight="Bold" Background="{x:Null}" 
-               Margin="20,0,0,0" Foreground="White" Grid.Column="1"/>
+        <Frame x:Name="HeaderImage2" Content="{StaticResource ProductIcon2}" Grid.Row="0" Grid.Column="1" Margin="25,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
+        <Label x:Name="PageHeader" Content="Products for each Client" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="605" FontWeight="Bold" Background="{x:Null}" 
+               Margin="50,0,0,0" Foreground="White" Grid.Column="1"/>
 
         <Border MinHeight="400" MinWidth="655" Height="Auto" Width="Auto" Margin="0,0,0,0" BorderBrush="{StaticResource PtBrushProduct3}" Style="{DynamicResource SectionBorder}" Grid.Row="1" 
                 Grid.Column="1">

@@ -171,6 +171,17 @@ namespace ProjectTile
             ChangePage("ProjectDetailsPage.xaml?Mode=" + pageMode);
         }
 
+        public static void ShowProjectTeamsPage(string pageMode = "")
+        {
+            if (pageMode == "")
+            {
+                if (ProjectSourceMode == View) { pageMode = View; }
+                else { pageMode = MyPermissions.Allow("EditProjectTeams") ? Amend : View; }
+            }
+
+            ChangePage("ProjectTeamsPage.xaml?Mode=" + pageMode);
+        }
+
 
 
 

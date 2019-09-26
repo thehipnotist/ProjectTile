@@ -84,13 +84,13 @@ namespace ProjectTile
             }
             else if (pageMode == PageFunctions.New)
             {
-                PageHeader.Content = "Create New Client";
+                //PageHeader.Content = "Create New Client";
+                //HeaderImage2.SetResourceReference(Frame.ContentProperty, "AddIcon");
                 editMode(null);
-                EntityWarningLabel.Visibility = Visibility.Hidden;
+                //EntityWarningLabel.Visibility = Visibility.Hidden;
             }
             else if (pageMode == PageFunctions.Amend)
-            {
-                PageHeader.Content = "Amend or Manage Clients";
+            {                
                 ClientDataGrid.SelectionMode = DataGridSelectionMode.Single;
                 AddButton.Visibility = myPermissions.Allow("AddClients")? Visibility.Visible : Visibility.Hidden;
                 setButtonSecurity();
@@ -112,6 +112,7 @@ namespace ProjectTile
                 double width = CentreColumn.ActualWidth - 30;
                 ClientDataGrid.Width = width;
                 PageHeader.Content = "Client Lookup";
+                HeaderImage2.SetResourceReference(Frame.ContentProperty, "LookupIcon");
                 Instructions.Content = "Use the filters to help find the required client record, then select it and click 'Select'.";
                 EntityWarningLabel.Visibility = Visibility.Hidden;
             }
@@ -200,7 +201,8 @@ namespace ProjectTile
                 MainClientGrid.Visibility = Visibility.Visible;
                 ButtonsGrid.Visibility = Visibility.Visible;
                 EditGrid.Visibility = Visibility.Hidden;
-                PageHeader.Content = "Amend Client Details";
+                PageHeader.Content = "Amend or Manage Clients";
+                HeaderImage2.SetResourceReference(Frame.ContentProperty, "AmendIcon2");
                 Instructions.Content = "Choose a client and then click 'Amend' to change their details, or use the other options as required.";
                 EntityWarningLabel.Visibility = Visibility.Visible;
                 toggleEntityControls(false);
@@ -286,6 +288,7 @@ namespace ProjectTile
                         {
                             editRecordID = 0;
                             PageHeader.Content = "Copy Client Details";
+                            HeaderImage2.SetResourceReference(Frame.ContentProperty, "CopyIcon2");
                             Instructions.Content = "Amend the details as required for the new record, then click 'Save' to create it.";
                             toggleEntityControls(true);
                             refreshEntityList();
@@ -294,6 +297,7 @@ namespace ProjectTile
                         {
                             editRecordID = gridRecord.ID;
                             PageHeader.Content = "Amend Client Details";
+                            //HeaderImage2.SetResourceReference(Frame.ContentProperty, "AmendIcon2");
                             Instructions.Content = "Amend the selected record as required and then click 'Save' to apply changes.";
                             toggleEntityControls(false);
                         }
@@ -312,6 +316,7 @@ namespace ProjectTile
                     { 
                         editRecordID = 0;
                         PageHeader.Content = "Create New Client";
+                        HeaderImage2.SetResourceReference(Frame.ContentProperty, "AddIcon2");
                         Instructions.Content = "Fill in the details as required and then click 'Save' to create the record.";
                         toggleEntityControls(false);
                         refreshEditManagersCombo((bool)NonAMs_CheckBox.IsChecked, "");

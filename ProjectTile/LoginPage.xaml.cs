@@ -80,6 +80,7 @@ namespace ProjectTile
                 {
                     CommitButtonText.Text = "Change";
                     PageHeader.Content = "Change Your ProjectTile Password";
+                    HeaderImage2.SetResourceReference(Frame.ContentProperty, "PasswordIcon");
                     Welcome.Content = "Please enter your existing password, and your new password twice.";
                     UserID.IsEnabled = false;
                     UserID.Text = Globals.CurrentUserID;

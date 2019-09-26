@@ -19,23 +19,33 @@ namespace ProjectTile
     /// </summary>
     public partial class PageTemplate : Page
     {
-        // ---------------------- //
-        // -- Global Variables -- //
-        // ---------------------- //   
+        // ---------------------------------------------------------- //
+        // -------------------- Global Variables -------------------- //
+        // ---------------------------------------------------------- //
 
-        // Global/page parameters //
+        // --------- Global/page parameters --------- // 
+
         string pageMode;
 
-        // Current variables //
 
-        // Current records //
+        // ------------ Current variables ----------- // 
 
 
-        // ---------------------- //
-        // -- Page Management --- //
-        // ---------------------- //
 
-        // Initialize and Load //
+        // ------------- Current records ------------ //
+
+
+
+        // ------------------ Lists ----------------- //
+
+
+
+        // ---------------------------------------------------------- //
+        // -------------------- Page Management --------------------- //
+        // ---------------------------------------------------------- //
+
+        // ---------- Initialize and Load ----------- //
+
         public PageTemplate()
         {
             InitializeComponent();
@@ -54,30 +64,44 @@ namespace ProjectTile
                 MessageFunctions.Error("Error retrieving query details", generalException);
                 PageFunctions.ShowTilesPage();
             }
-            
+
+            if (pageMode == PageFunctions.Amend) 
+            {
+                HeaderImage2.SetResourceReference(Frame.ContentProperty, "AmendIcon");
+            }
         }
 
 
 
-        // ---------------------- //
-        // -- Data Management --- //
-        // ---------------------- //
+        // ---------------------------------------------------------- //
+        // -------------------- Data Management --------------------- //
+        // ---------------------------------------------------------- //  
 
-        // Data updates //
-
-        // Data retrieval //
-
-        // Other/shared functions //
+        // ------------- Data retrieval ------------- // 		
 
 
-        // ---------------------- //
-        // -- Event Management -- //
-        // ---------------------- //
 
-        // Generic (shared) control events //
+        // -------------- Data updates -------------- // 
 
-        // Control-specific events //
 
+
+        // --------- Other/shared functions --------- // 
+
+
+
+        // ---------- Links to other pages ---------- //		
+
+
+
+        // ---------------------------------------------------------- //
+        // -------------------- Event Management -------------------- //
+        // ---------------------------------------------------------- //  
+
+        // ---- Generic (shared) control events ----- // 		   
+
+
+
+        // -------- Control-specific events --------- // 
 
 
 

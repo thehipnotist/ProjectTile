@@ -75,6 +75,9 @@
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Globals.cs" />
+    <Compile Include="ProjectTeamsPage.xaml.cs">
+      <DependentUpon>ProjectTeamsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ProjectSummaryRecord.cs" />
     <Compile Include="Clients.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
@@ -311,6 +314,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="ProjectTeamsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="PageTemplate.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -500,6 +507,21 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="112_ArrowReturnRight_Blue_24x24_72 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="112_Plus_Grey_24x24_72.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="user_32xSM.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="user_32xLG.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="base_map.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

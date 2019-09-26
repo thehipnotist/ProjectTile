@@ -53,6 +53,7 @@ namespace ProjectTile
                 if (pageMode == PageFunctions.Switch)
                 {
                     PageHeader.Content = "Change Current Entity";
+                    HeaderImage2.SetResourceReference(Frame.ContentProperty, "ChangeEntityIcon");
                     Instructions.Content = "Pick an Entity from the list to change to it.";
                     EntityName.Visibility = Visibility.Hidden;
                     SwitchTo_CheckBox.Visibility = Visibility.Hidden;
@@ -70,6 +71,7 @@ namespace ProjectTile
                 else if (pageMode == PageFunctions.Amend)
                 {
                     PageHeader.Content = "Amend Existing Entity";
+                    HeaderImage2.SetResourceReference(Frame.ContentProperty, "AmendIcon");
                     Instructions.Content = "Pick an Entity from the list to amend it.";
                     SwitchTo_CheckBox.Visibility = Visibility.Hidden;
                     MakeDefault_CheckBox.Visibility = Visibility.Hidden;
@@ -85,6 +87,7 @@ namespace ProjectTile
                 else if (pageMode == PageFunctions.Default) 
                 {
                     PageHeader.Content = "Change Default Entity";
+                    HeaderImage2.SetResourceReference(Frame.ContentProperty, "PinIcon");
                     Instructions.Content = "Pick an Entity from the list to set it as your default.";
                     EntityName.Visibility = Visibility.Hidden;
                     SwitchTo_CheckBox.Visibility = Visibility.Hidden;
