@@ -211,7 +211,7 @@ namespace ProjectTile
         public static void CompleteLogIn()
         {
             winMain.MenuSecurity(ref MyPermissions);
-            winMain.toggleMainMenus(true);
+            winMain.ToggleMainMenus(true);
             PageFunctions.ShowTilesPage();
         }
 
