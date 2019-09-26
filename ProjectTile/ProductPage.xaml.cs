@@ -71,11 +71,13 @@ namespace ProjectTile
                 additionMode();
                 AmendButton.Visibility = AddButton.Visibility = Visibility.Hidden;
                 PageHeader.Content = "Create New Product";
+                HeaderImage2.SetResourceReference(Frame.ContentProperty, "AddIcon2");
             }
             else if (pageMode == PageFunctions.Amend)
             {
                 ProductGrid.SelectionMode = DataGridSelectionMode.Single;
                 PageHeader.Content = allowAdd? "Amend (or Create) Products" : "Amend Products";
+                HeaderImage2.SetResourceReference(Frame.ContentProperty, "AmendIcon2");
                 amendmentSetup();
             }
 
