@@ -67,7 +67,7 @@ namespace ProjectTile
 
             refreshProjectRoleCombo();
             refreshStatusCombo();
-
+            refreshProjectCombo();
         }
 
 
@@ -78,6 +78,21 @@ namespace ProjectTile
 
         // ------------- Data retrieval ------------- // 		
 
+        private void refreshProjectCombo()
+        {
+            try
+            {
+                ProjectSummaryRecord currentRecord = (Globals.SelectedProjectSummary != null) ? Globals.SelectedProjectSummary : Globals.DefaultProjectSummary;
+                ProjectFunctions.SetProjectFilterList(Globals.SelectedStatusFilter);
+                ProjectCombo.ItemsSource = ProjectFunctions.ProjectFilterList;
+                if (ProjectFunctions.ProjectFilterList.Exists(pfl => pfl.ProjectCode == currentRecord.ProjectCode))
+                {
+                    ProjectCombo.SelectedItem = ProjectFunctions.ProjectFilterList.First(pfl => pfl.ProjectCode == currentRecord.ProjectCode);
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error populating projects drop-down list", generalException); }
+        }
+        
         private void refreshProjectRoleCombo()
         {
             try
@@ -136,7 +151,7 @@ namespace ProjectTile
         {
             // To do: check for changes if appropriate
 
-            PageFunctions.ShowTilesPage();
+            ProjectFunctions.ReturnToTilesPage();
         }
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)
@@ -146,7 +161,17 @@ namespace ProjectTile
 
         private void StatusCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            try
+            {
+                if (StatusCombo.SelectedItem != null)
+                {
+                    string selection = StatusCombo.SelectedItem.ToString();
+                    selection = selection.Replace(" ", "");
+                    Globals.SelectedStatusFilter = (Globals.ProjectStatusFilter)Enum.Parse(typeof(Globals.ProjectStatusFilter), selection);
+                    refreshProjectCombo();
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error processing status filter selection", generalException); }	            
         }
 
         private void RoleCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)

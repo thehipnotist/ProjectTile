@@ -31,15 +31,42 @@
                     <RowDefinition Height="{Binding ElementName=MiddleRow, Path=ActualHeight}" MinHeight="400"/>
                 </Grid.RowDefinitions>
                 <Label x:Name="Instructions" Content="Instructions." HorizontalAlignment="Left" Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-                
-                <Label x:Name="StatusLabel" Content="Status" HorizontalAlignment="Center" Height="30" Margin="15,45,145,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
-                <ComboBox x:Name="StatusCombo" HorizontalAlignment="Center" Height="30" Margin="25,45,15,0" VerticalAlignment="Top" Width="90" SelectionChanged="StatusCombo_SelectionChanged"/>
-                <Label x:Name="RoleLabel" Content="Project Role" HorizontalAlignment="Right" Height="30" Margin="0,45,165,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
+
+                <Label x:Name="ProjectLabel" Content="Project Code" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
+                <ComboBox x:Name="ProjectCombo" HorizontalAlignment="Left" Height="30" Margin="100,45,15,0" VerticalAlignment="Top" Width="90" SelectionChanged="ProjectCombo_SelectionChanged"
+                          DisplayMemberPath="ProjectCode">
+                    <ComboBox.Resources>
+                        <Style TargetType="ComboBoxItem">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}"  Value="Closed">
+                                    <Setter Property="Foreground" Value="DarkGray"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}"  Value="Not Started">
+                                    <Setter Property="Foreground" Value="LightBlue"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}"  Value="Live">
+                                    <Setter Property="Foreground" Value="Green"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ComboBox.Resources>
+                </ComboBox>
+                <Label x:Name="StatusLabel" Content="Project Status" HorizontalAlignment="Center" Height="30" Margin="15,45,145,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
+                <ComboBox x:Name="StatusCombo" HorizontalAlignment="Center" Height="30" Margin="70,45,15,0" VerticalAlignment="Top" Width="90" SelectionChanged="StatusCombo_SelectionChanged">
+                    <ComboBox.Resources>
+                        <Style TargetType="ComboBoxItem">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding}" Value="Closed">
+                                    <Setter Property="Foreground" Value="DarkGray"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ComboBox.Resources>
+                </ComboBox>
+                <Label x:Name="RoleLabel" Content="Team Role" HorizontalAlignment="Right" Height="30" Margin="0,45,165,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
                 <ComboBox x:Name="RoleCombo" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="150" SelectionChanged="RoleCombo_SelectionChanged"
                           DisplayMemberPath="RoleDescription"/>
-                <Label x:Name="ProjectLabel" Content="Project" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
-                <ComboBox x:Name="ProjectCombo" HorizontalAlignment="Left" Height="30" Margin="70,45,15,0" VerticalAlignment="Top" Width="150" SelectionChanged="ProjectCombo_SelectionChanged"
-                          DisplayMemberPath="ProjectName"/>
+
             </Grid>
         </Border>
         <Border Height="60" Margin="0,0,0,15" BorderBrush="{StaticResource PtBrushProject3}" MinWidth="655" Style="{DynamicResource SectionBorder}" Grid.Row="2" Grid.Column="1" Width="Auto" 

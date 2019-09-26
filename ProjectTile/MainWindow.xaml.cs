@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Collections;
+using System.Windows.Controls;
 
 namespace ProjectTile
 {
@@ -18,7 +19,7 @@ namespace ProjectTile
         {
             InitializeComponent();
             Style = (Style)FindResource(typeof(Window));
-            toggleMainMenus(false);
+            ToggleMainMenus(false);
         }
 
         private void Main_Loaded(object sender, RoutedEventArgs e)
@@ -62,17 +63,27 @@ namespace ProjectTile
 
                 // More to come...
 
-                if (!StaffMenu.Items.IsEmpty) { StaffMenu.IsEnabled = false; }
-                if (!ProductMenu.Items.IsEmpty) { ProductMenu.IsEnabled = false; }
-                if (!ClientMenu.Items.IsEmpty) { ClientMenu.IsEnabled = false; }
-                if (!ProjectMenu.Items.IsEmpty) { ProjectMenu.IsEnabled = false; }
-
+                //ToggleMenuItem(StaffMenu);
+                StaffMenu.IsEnabled = subMenuItemsVisible(StaffMenu);
+                ProductMenu.IsEnabled = subMenuItemsVisible(ProductMenu);
+                ClientMenu.IsEnabled = subMenuItemsVisible(ClientMenu);
+                ProjectMenu.IsEnabled = subMenuItemsVisible(ProjectMenu);
 
             }
             catch (Exception generalException) { MessageFunctions.Error("Error setting menu permissions", generalException); }
         }
         
-        public void toggleMainMenus(bool Show)
+        private bool subMenuItemsVisible(MenuItem smi)
+        {
+            Visibility vi = Visibility.Visible;            
+            foreach (MenuItem ssmi in smi.Items) 
+            {
+                if (ssmi.Visibility == vi) { return true; }
+            }
+            return false;
+        }
+        
+        public void ToggleMainMenus(bool Show)
         {
             if (Show)
             {

@@ -19,6 +19,7 @@ namespace ProjectTile
 
         public static List<ProjectSummaryRecord> FullProjectList;
         public static List<ProjectSummaryRecord> ProjectGridList;
+        public static List<ProjectSummaryRecord> ProjectFilterList;
         public static List<string> StatusFilterList;
         public static List<ProjectStages> FullStageList;
         public static List<ProjectTypes> FullTypeList;
@@ -140,6 +141,25 @@ namespace ProjectTile
                 MessageFunctions.Error("Error retrieving project grid data", generalException);
                 return false;
             }
+        }
+
+        public static void SetProjectFilterList(ProjectStatusFilter inStatus)
+        {
+            try
+            {
+                bool success = SetFullProjectList();
+                if (success)
+                {
+                    ProjectFilterList =
+                        (from fpl in FullProjectList
+                         where IsInFilter(inStatus, fpl.Stage)
+                         select fpl
+                        ).ToList();
+                    ProjectFilterList.Insert(0, SearchProjects);
+                    ProjectFilterList.Add(AllProjects);
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error retrieving project drop-down data", generalException); }
         }
 
         public static bool PopulateFromFilters(ref ProjectSummaryRecord thisSummary)
@@ -338,7 +358,7 @@ namespace ProjectTile
             {
                 SetFullPMsList();
                 List<StaffSummaryRecord> comboList = FullPMsList;
-                comboList.Add(AnyPM);
+                comboList.Add(AllPMs);
                 PMFilterList = comboList;
             }
             catch (Exception generalException) { MessageFunctions.Error("Error retrieving data for Project Manager filter", generalException); }

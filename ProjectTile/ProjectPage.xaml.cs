@@ -60,12 +60,16 @@ namespace ProjectTile
                 closePage();
             }
 
-            if (pageMode == PageFunctions.View) { AddButton.Visibility = Visibility.Hidden; }
-            else
+            if (pageMode == PageFunctions.View) 
+            { 
+                AddButton.Visibility = Visibility.Hidden;
+                AmendImage.SetResourceReference(Frame.ContentProperty, "ViewIcon2");
+            }
+            else if (pageMode == PageFunctions.Amend)
             {
                 PageHeader.Content = "Amend or Manage Projects";
                 Instructions.Content = "Use filters to restrict results and column headers to sort them, then choose the required option.";
-                HeaderImage2.SetResourceReference(Frame.ContentProperty, "AmendIcon");
+                HeaderImage2.SetResourceReference(Frame.ContentProperty, "AmendIcon2");
             }
 
             try
@@ -91,27 +95,31 @@ namespace ProjectTile
         // Data updates //
         private void ensureCurrentRecordDisplayed()
         {
-            ProjectSummaryRecord currentRecord = (Globals.SelectedProjectSummary != null) ? Globals.SelectedProjectSummary : null;
-            int clientID = (Globals.SelectedClientSummary != null) ? ProjectFunctions.SelectedClientSummary.ID : 0;
-            int managerID = (Globals.SelectedPMSummary != null) ? ProjectFunctions.SelectedPMSummary.ID : 0;
-            Globals.ProjectStatusFilter statusFilter = Globals.SelectedStatusFilter;  
-
-            if (currentRecord != null) // Reset filters if necessary to show the selected record
+            try
             {
-                if (clientID != 0 && clientID != currentRecord.Client.ID)
-                {
-                    Globals.SelectedClientSummary = Globals.AnyClient;
+                ProjectSummaryRecord currentRecord = (Globals.SelectedProjectSummary != null && Globals.SelectedProjectSummary.ProjectID > 0 ) ? Globals.SelectedProjectSummary : null;
+                int clientID = (Globals.SelectedClientSummary != null) ? ProjectFunctions.SelectedClientSummary.ID : 0;
+                int managerID = (Globals.SelectedPMSummary != null) ? ProjectFunctions.SelectedPMSummary.ID : 0;
+                Globals.ProjectStatusFilter statusFilter = Globals.SelectedStatusFilter;
 
-                }
-                if (managerID != 0 && managerID != currentRecord.ProjectManager.ID)
+                if (currentRecord != null) // Reset filters if necessary to show the selected record
                 {
-                    Globals.SelectedPMSummary = Globals.AnyPM;
-                }
-                if (!ProjectFunctions.IsInFilter(statusFilter, currentRecord.Stage))
-                {
-                    Globals.SelectedStatusFilter = Globals.ProjectStatusFilter.All;
+                    if (clientID != 0 && clientID != currentRecord.Client.ID)
+                    {
+                        Globals.SelectedClientSummary = Globals.AnyClient;
+
+                    }
+                    if (managerID != 0 && managerID != currentRecord.ProjectManager.ID)
+                    {
+                        Globals.SelectedPMSummary = Globals.AllPMs;
+                    }
+                    if (!ProjectFunctions.IsInFilter(statusFilter, currentRecord.Stage))
+                    {
+                        Globals.SelectedStatusFilter = Globals.ProjectStatusFilter.All;
+                    }
                 }
             }
+            catch (Exception generalException) { MessageFunctions.Error("Error displaying the current project record", generalException); }
         }
 
         private void refreshMainProjectGrid()
@@ -200,7 +208,7 @@ namespace ProjectTile
 
         private void toggleProjectButtons(bool projectSelected)
         {
-            CommitButton.IsEnabled = projectSelected;
+            AmendButton.IsEnabled = projectSelected;
         }
 
         private void closePage()
@@ -290,7 +298,7 @@ namespace ProjectTile
             PageFunctions.ShowProjectDetailsPage(PageFunctions.New);
         }
 
-        private void CommitButton_Click(object sender, RoutedEventArgs e)
+        private void AmendButton_Click(object sender, RoutedEventArgs e)
         {
             string inputMode = viewOnly ? PageFunctions.View : PageFunctions.Amend;
             PageFunctions.ShowProjectDetailsPage(inputMode);
@@ -300,6 +308,11 @@ namespace ProjectTile
         {
             if (Globals.ProjectSourcePage == "ClientPage") { ProjectFunctions.ReturnToClientPage(pageMode); }
             else { MessageFunctions.Error("Error returning to previous page: no page history.", null); }
+        }
+
+        private void MoreButton_Click(object sender, RoutedEventArgs e)
+        {
+            MoreMenu.IsSubmenuOpen = true;
         }
 
 
