@@ -192,7 +192,7 @@ namespace ProjectTile
         {
             thisProjectSummary = Globals.SelectedProjectSummary;
             originalManagerID = thisProjectSummary.ProjectManager.ID;
-            originalStage = thisProjectSummary.Stage.StageCode;
+            originalStage = thisProjectSummary.StageID;
             displaySelectedType();
             displaySelectedStage();
             refreshManagerCombo(false);
@@ -224,7 +224,7 @@ namespace ProjectTile
         {
             try
             {
-                ProjectStages selectedStage = ProjectFunctions.GetStageByCode(thisProjectSummary.Stage.StageCode);
+                ProjectStages selectedStage = ProjectFunctions.GetStageByCode(thisProjectSummary.StageID); // Gets it from FullStageList, so it is picked up
                 StageCombo.SelectedIndex = ProjectFunctions.FullStageList.IndexOf(selectedStage);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error selecting current project stage", generalException); }
@@ -316,7 +316,7 @@ namespace ProjectTile
         {
             if (pageMode == PageFunctions.New) 
             {
-                bool success = ProjectFunctions.CreateProject(ref thisProjectSummary);
+                bool success = ProjectFunctions.SaveNewProject(ref thisProjectSummary);
                 if (success) { closeDetailsPage(false, false); }
             }
             else
@@ -339,7 +339,7 @@ namespace ProjectTile
         {
             if (StageCombo.SelectedItem != null && pageMode != PageFunctions.View)
             {
-                int newStage = thisProjectSummary.Stage.StageCode;
+                int newStage = thisProjectSummary.StageID;
                 NextButton.IsEnabled = (!ProjectFunctions.IsLastStage(newStage));
             }
         }
@@ -348,7 +348,7 @@ namespace ProjectTile
         {
             try
             {
-                int newStage = thisProjectSummary.Stage.StageCode + 1;
+                int newStage = thisProjectSummary.StageID + 1;
                 updateProjectStage(newStage);
                 NextButton.IsEnabled = (!ProjectFunctions.IsLastStage(newStage));
             }

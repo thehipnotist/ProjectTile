@@ -71,7 +71,7 @@ namespace ProjectTile
                                    join ps in existingPtDb.ProjectStages on pj.StageCode equals ps.StageCode
                                    join t in existingPtDb.ProjectTypes on pj.TypeCode equals t.TypeCode
                                    where pj.EntityID == CurrentEntityID
-                                   orderby ps.StageCode
+                                   orderby (new { ps.StageCode, pj.StartDate })
                                    select new ProjectSummaryRecord
                                    {
                                        ProjectID = pj.ID,
@@ -125,11 +125,6 @@ namespace ProjectTile
                         (from fpl in FullProjectList
                         where  (clientID == 0 || fpl.Client.ID == clientID)
                             &&  (ourManagerID == 0 || fpl.ProjectManager.ID == ourManagerID)
-                            //&& ( inStatus == ProjectStatusFilter.All
-                            //        || (inStatus == ProjectStatusFilter.Current && fpl.Stage.StageCode < CompletedStage)
-                            //        || (inStatus == ProjectStatusFilter.Open && fpl.Stage.StageCode >= StartStage && fpl.Stage.StageCode < CompletedStage)
-                            //        || (inStatus == ProjectStatusFilter.InProgress && fpl.Stage.ProjectStatus == InProgressStatus)
-                            //        || (inStatus == ProjectStatusFilter.Closed && fpl.Stage.ProjectStatus == ClosedStatus)
                             && IsInFilter(inStatus, fpl.Stage)
                         select fpl
                         ).ToList();
@@ -549,28 +544,27 @@ namespace ProjectTile
                 List<ProjectProducts> linkedProjectProducts = null;
                 List<ClientProducts> liveClientProducts = null;
                 string type = (summary.Type != null) ? summary.Type.TypeCode : "";
-                int stage = (summary.Stage != null) ? summary.Stage.StageCode : -1;
-                bool isUnderway = (summary.Stage != null && stage > StartStage && stage != CancelledStage);
+                int stage = (summary.Stage != null) ? summary.StageID : -1;
+                bool isUnderway = (summary.Stage != null && stage > StartStage && !summary.IsCancelled);
                 Projects existingProjectRecord = null;
                 ClientSummaryRecord client = summary.Client ?? null;
-                bool internalProject = (type == InternalProjectType);
 
                 try
                 {
                     if (client == null)
                     { errorDetails = ". Please select a client record from the drop-down list. If this is an internal project, select '" + NoRecord + "'|No Client Selected"; }
-                    else if (!internalProject && !client.ActiveClient)
+                    else if (!summary.IsInternal && !client.ActiveClient)
                     { errorDetails = ", as the selected client record is not active.|Inactive Client"; }
                     else if (summary.ProjectName == null || summary.ProjectName == "")
                     { errorDetails = ". Please enter a name for the project.|No Project Name"; }
                     else if (type == "")
                     { errorDetails = ". Please select a project type from the drop-down list.|No Type Selected"; }
-                    else if (internalProject && client.ID != NoID)
+                    else if (summary.IsInternal && client.ID != NoID)
                     {
                         errorDetails = ". Projects for clients cannot be internal. Please choose a different "
                             + "project type if the client selection is correct, or select '" + NoRecord + "' from the client drop-down for an internal project.|Client and Project Type Mismatch";
                     }
-                    else if (!internalProject && client.ID == NoID)
+                    else if (!summary.IsInternal && client.ID == NoID)
                     {
                         errorDetails = ". Projects without clients must use the 'Internal project' type. "
                             + "Please choose the correct project type if this is an internal project, or select a client from the client drop-down.|Client and Project Type Mismatch";
@@ -592,7 +586,7 @@ namespace ProjectTile
                     }
                     else if (!summary.ProjectManager.ActiveUser)
                     { errorDetails = ", as the selected Project Manager is not an active user. Ask an administrator for help if required." + "|Inactive Project Manager"; }
-                    else if (stage < 0)
+                    else if (summary.Stage == null)
                     { errorDetails = ". Please select a project stage from the drop-down list.|No Stage Selected"; }
                     else if (summary.ProjectSummary == null || summary.ProjectSummary == "")
                     { errorDetails = ". Please enter a summary description of the project.|No Project Summary"; }
@@ -605,26 +599,21 @@ namespace ProjectTile
                             {
                                 otherClientProjects = existingPtDb.Projects.Where(
                                     p => p.ID != summary.ProjectID
-                                    && (p.ClientID == client.ID || (internalProject && (p.ClientID == null || p.ClientID <= 0)))
+                                    && (p.ClientID == client.ID || (summary.IsInternal && (p.ClientID == null || p.ClientID <= 0)))
                                     ).ToList();
                                 liveClientProducts = existingPtDb.ClientProducts.Where(
                                     cp => cp.ClientID == client.ID && cp.Live == true).ToList();
-                                if (summary.ProjectID > 0)
+                                if (!summary.IsNew)
                                 {
                                     existingProjectRecord = existingPtDb.Projects.Where(p => p.ID == summary.ProjectID).FirstOrDefault();
                                     linkedProjectProducts = existingPtDb.ProjectProducts.Where(pp => pp.ProjectID == summary.ProjectID).ToList();
-                                    //existingManagerID = existingPtDb.ProjectTeams
-                                    //    .Where(pt => pt.ProjectID == summary.ProjectID && pt.ProjectRoleCode == ProjectManagerRole)
-                                    //    .OrderByDescending(pt => pt.FromDate)
-                                    //    .Select(pt => pt.StaffID).FirstOrDefault();
                                 }
                             }
-
                             if (otherClientProjects.Exists(p => p.ProjectName == summary.ProjectName))
                             { errorDetails = ", as another project exists for the same client with the same name. Please change the project name."; }
                             else if (otherClientProjects.Exists(p => p.ProjectSummary == summary.ProjectSummary))
                             { errorDetails = ", as another project exists for the same client with the same project summary. Please change the summary details."; }
-                            if (internalProject)
+                            if (summary.IsInternal)
                             { errorDetails = errorDetails.Replace("another project exists for the same client", "another internal project exists"); }
                         }
                         catch (Exception generalException)
@@ -660,13 +649,14 @@ namespace ProjectTile
                     { queryDetails = queryDetails + "\n" + "The Project Manager is also not normally a Project Manager by role."; }
                     if (isUnderway && linkedProjectProducts == null)
                     { queryDetails = queryDetails + "\n" + "The project stage also indicates that the project is underway, but it has no linked products."; }
-                    if (summary.StartDate == null && stage != CancelledStage) { queryDetails = queryDetails + "\n" + "The project also has no predicted start date at present."; } // Only projects not yet underway
+                    if (summary.StartDate == null && !summary.IsCancelled) { queryDetails = queryDetails + "\n" + "The project also has no predicted start date at present."; } // Only projects not yet underway
                     if (summary.StartDate > DateTime.Today.AddYears(1)) { queryDetails = queryDetails + "\n" + "The project also starts more than a year in the future."; }
                     if ((existingProjectRecord == null || existingProjectRecord.StartDate == null || existingProjectRecord.StartDate > summary.StartDate)
                         && summary.StartDate < DateTime.Today.AddYears(-1)) { queryDetails = queryDetails + "\n" + "The project also starts more than a year in the past."; }
                     if (originalStage > stage && !reversal) // Live reversals are handled separately
                     { queryDetails = queryDetails + "\n" + "The new stage is also less advanced than the previous one."; }
-                    if (!internalProject)
+                    if (!summary.IsNew && stage - originalStage > 4 && !summary.IsCancelled) { queryDetails = queryDetails + "\n" + "The project has moved through several stages."; }
+                    if (!summary.IsInternal)
                     {
                         if (liveClientProducts.Count == 0 && type != NewSiteType)
                         { queryDetails = queryDetails + "\n" + "The project type also indicates a change to an existing product, but this client has no Live products."; }
@@ -693,12 +683,12 @@ namespace ProjectTile
                         
                         return MessageFunctions.WarningYesNo(queryMessage);
                     }
-                    else if (stage == CancelledStage && existingProjectRecord != null && existingProjectRecord.StageCode != CancelledStage)
+                    else if (summary.IsCancelled && existingProjectRecord != null && existingProjectRecord.StageCode != CancelledStage)
                     {
                         queryMessage = "Are you sure you wish to cancel this project?";
                         return MessageFunctions.ConfirmOKCancel(queryMessage);
                     }
-                    else if (summary.ProjectID == 0)
+                    else if (summary.IsNew)
                     {
                         queryMessage = "Are you sure you wish to create this project? Project records cannot be deleted, although they can be cancelled.";
                         return MessageFunctions.ConfirmOKCancel(queryMessage);
@@ -726,37 +716,13 @@ namespace ProjectTile
             }		
         }
 
-        public static bool ConvertSummaryToProject(ProjectSummaryRecord projectSummary, ref Projects project)
+        public static bool SaveNewProject(ref ProjectSummaryRecord projectSummary)
         {
-            try
-            {
-                project.ID = projectSummary.ProjectID;
-                project.EntityID = projectSummary.EntityID;
-                project.ProjectCode = projectSummary.ProjectCode;
-                project.TypeCode = projectSummary.Type.TypeCode;
-                project.ProjectName = projectSummary.ProjectName;                
-                project.StartDate = projectSummary.StartDate;
-                project.StageCode = projectSummary.Stage.StageCode;
-                project.ProjectSummary = projectSummary.ProjectSummary;
-                if (projectSummary.Client.ID != NoID) { project.ClientID = projectSummary.Client.ID; } // 'No client' is null in the database)
-
-                return true;
-            }
-            catch (Exception generalException) 
-            { 
-                MessageFunctions.Error("Error converting project summary to project record", generalException);
-                return false;
-            }
-        }
-
-        public static bool CreateProject(ref ProjectSummaryRecord projectSummary)
-        {
-            if (!ValidateProject(projectSummary, false, true)) { return false; }
-            
+            if (!ValidateProject(projectSummary, false, true)) { return false; }            
             try
             {
                 Projects thisProject = new Projects();
-                bool converted = ConvertSummaryToProject(projectSummary, ref thisProject);
+                bool converted = projectSummary.ConvertToProject(ref thisProject);
                 if (!converted || thisProject == null) { return false; } // Errors should be thrown by the conversion
                 ProjectTeams addPM = new ProjectTeams
                 {
@@ -793,7 +759,6 @@ namespace ProjectTile
         {
                    
             if (!ValidateProject(projectSummary, true, managerChanged)) { return false; }
-
             try
             {
                 int projectID = projectSummary.ProjectID;
@@ -807,7 +772,7 @@ namespace ProjectTile
                         MessageFunctions.Error("Error saving project amendments to the database: no matching project found.", null);
                         return false;
                     }
-                    bool converted = ConvertSummaryToProject(projectSummary, ref thisProject);
+                    bool converted = projectSummary.ConvertToProject(ref thisProject);
                     if (!converted) { return false; } // Errors should be thrown by the conversion
 
                     if (managerChanged)
@@ -829,7 +794,7 @@ namespace ProjectTile
                                 ProjectTeams lastPMRecord = existingPMs.First();
                                 lastPMRecord = existingPtDb.ProjectTeams.Find(lastPMRecord.ID); // Get it from the database again so we can amend/remove it
 
-                                if (lastPMRecord.FromDate != null && lastPMRecord.FromDate > OneMonthAgo) // To do: also ask if the project is in the early stages
+                                if (( lastPMRecord.FromDate != null && lastPMRecord.FromDate > OneMonthAgo) || projectSummary.StageID <= StartStage)
                                 {
                                     string lastPMName = StaffFunctions.GetStaffName(lastPMRecord.StaffID);
                                     DateTime fromDateTime = (DateTime)lastPMRecord.FromDate;
@@ -870,10 +835,9 @@ namespace ProjectTile
                         }
                     }
 
-                    bool goLive = IsGoLive(originalStage, projectSummary.Stage.StageCode);
-                    bool reversal = goLive ? false : IsLiveReversal(originalStage, projectSummary.Stage.StageCode);
-                    bool completion = (projectSummary.Stage.StageCode == CompletedStage && originalStage != CompletedStage);
-                    
+                    bool goLive = IsGoLive(originalStage, projectSummary.StageID);
+                    bool reversal = goLive ? false : IsLiveReversal(originalStage, projectSummary.StageID);
+                    bool completion = (projectSummary.StageID == CompletedStage && originalStage != CompletedStage);                    
                     if (goLive || reversal)
                     {
                         try
@@ -910,7 +874,6 @@ namespace ProjectTile
 
                     existingPtDb.SaveChanges();
                     SelectedProjectSummary = projectSummary;
-
                     string congratulations = "";
                     if (completion) { congratulations = " Congratulations on completing the project."; }
                     else if (goLive) { congratulations = " Congratulations on going Live.";  }

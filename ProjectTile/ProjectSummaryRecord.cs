@@ -35,9 +35,6 @@ namespace ProjectTile
                 OnPropertyChanged("Client");
             }
         }
-        //public int? ClientID { get; set; }
-        //public string ClientCode { get; set; }
-        //public string ClientName { get; set; }
         public StaffSummaryRecord ProjectManager
         {
             get { return projectManager; }
@@ -49,7 +46,7 @@ namespace ProjectTile
         }
         public ProjectStages Stage
         {
-            get { return stage;  }
+            get { return stage; }
             set
             {
                 stage = value;
@@ -71,8 +68,49 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error handling changed property", generalException); }
         }
     
+        public bool IsCancelled
+        {
+            get { return stage.StageCode == CancelledStage; }
+        }
     
-    
+        public bool IsInternal
+        {
+            get { return type.TypeCode == InternalProjectType; }
+        }
+
+        public bool IsNew
+        {
+            get { return (ProjectID == 0); }
+        }
+
+        public int StageID
+        {
+            get { return stage.StageCode; }
+        }
+
+        public bool ConvertToProject(ref Projects project) // Uses a reference to easily amend an existing database record
+        {
+            try
+            {
+                project.ID = ProjectID;
+                project.EntityID = EntityID;
+                project.ProjectCode = ProjectCode;
+                project.TypeCode = Type.TypeCode;
+                project.ProjectName = ProjectName;
+                project.StartDate = StartDate;
+                project.StageCode = Stage.StageCode;
+                project.ProjectSummary = ProjectSummary;
+                if (Client.ID != NoID) { project.ClientID = Client.ID; } // 'No client' is null in the database)
+
+                return true;
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error converting project summary to project record", generalException);
+                return false;
+            }
+        }
+
     }
 }
 
