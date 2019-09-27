@@ -57,7 +57,7 @@ namespace ProjectTile
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error retrieving query details", generalException);
-                closePage();
+                closePage(true);
             }
 
             if (pageMode == PageFunctions.View) 
@@ -79,11 +79,12 @@ namespace ProjectTile
                 refreshPMsCombo();
                 if (ProjectFunctions.PMFilterList.Exists(ssr => ssr.ID == Globals.CurrentStaffID)) { PMsCombo.SelectedItem = ProjectFunctions.PMFilterList.First(ssr => ssr.ID == Globals.CurrentStaffID); }
                 refreshStatusCombo();
+                toggleMoreButton();
             }
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error refreshing filters", generalException);
-                closePage();
+                closePage(true);
             }
 
         }
@@ -122,12 +123,28 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error displaying the current project record", generalException); }
         }
 
+        private void toggleMoreButton()
+        {
+            bool allowTeams = ( Globals.MyPermissions.Allow("ViewProjectTeams") || Globals.MyPermissions.Allow("EditProjectTeams") );
+            bool allowContacts = (Globals.MyPermissions.Allow("ViewClientTeams") || Globals.MyPermissions.Allow("EditClientTeams") ) ;
+            bool allowProducts = (Globals.MyPermissions.Allow("ViewProjectProducts") || Globals.MyPermissions.Allow("EditProjectTeams") );
+            
+            TeamMenu.Visibility = allowTeams ? Visibility.Visible : Visibility.Collapsed;
+            ContactMenu.Visibility = allowContacts ? Visibility.Visible : Visibility.Collapsed;
+            ProductMenu.Visibility = allowProducts ? Visibility.Visible : Visibility.Collapsed;
+            
+            if (!allowTeams && !allowContacts && !allowProducts)
+            {
+                MoreButton.Visibility = Visibility.Hidden;
+                MoreMenu.Visibility = Visibility.Hidden;
+            }
+        }
+
         private void refreshMainProjectGrid()
         {
             try
             {                
                 ProjectSummaryRecord currentRecord = (Globals.SelectedProjectSummary != null) ? Globals.SelectedProjectSummary : null;
-
                 int clientID = (Globals.SelectedClientSummary != null)? ProjectFunctions.SelectedClientSummary.ID : 0;
                 int managerID = (Globals.SelectedPMSummary != null) ? ProjectFunctions.SelectedPMSummary.ID : 0;
                 Globals.ProjectStatusFilter statusFilter = Globals.SelectedStatusFilter;               
@@ -149,7 +166,7 @@ namespace ProjectTile
                 }
                 else
                 {
-                    // What happens if it doesn't work? Already throwing an error...
+                    closePage(true);
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating project grid data", generalException); }	
@@ -208,12 +225,17 @@ namespace ProjectTile
 
         private void toggleProjectButtons(bool projectSelected)
         {
-            AmendButton.IsEnabled = projectSelected;
+            AmendButton.IsEnabled = MoreButton.IsEnabled = projectSelected;
         }
 
-        private void closePage()
+        private void closePage(bool goBack)
         {
-            ProjectFunctions.ReturnToTilesPage();
+            if (goBack)
+            {
+                if (Globals.ProjectSourcePage == "ClientPage") { ProjectFunctions.ReturnToClientPage(pageMode); }
+                else { ProjectFunctions.ReturnToTilesPage(); }
+            }
+            else { ProjectFunctions.ReturnToTilesPage(); }
         }
 
         // ---------------------- //
@@ -290,7 +312,7 @@ namespace ProjectTile
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            closePage();
+            closePage(false);
         }
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
@@ -306,13 +328,27 @@ namespace ProjectTile
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            if (Globals.ProjectSourcePage == "ClientPage") { ProjectFunctions.ReturnToClientPage(pageMode); }
-            else { MessageFunctions.Error("Error returning to previous page: no page history.", null); }
+            closePage(true);
         }
 
         private void MoreButton_Click(object sender, RoutedEventArgs e)
         {
             MoreMenu.IsSubmenuOpen = true;
+        }
+
+        private void TeamMenu_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowProjectTeamsPage();
+        }
+
+        private void ContactMenu_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ProductMenu_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
 

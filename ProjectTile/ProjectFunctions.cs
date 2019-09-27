@@ -26,6 +26,8 @@ namespace ProjectTile
         public static List<StaffSummaryRecord> FullPMsList;
         public static List<StaffSummaryRecord> PMFilterList;
         public static List<StaffSummaryRecord> PMOptionsList;
+        public static List<TeamSummaryRecord> FullTeamsList;
+        public static List<TeamSummaryRecord> TeamsGridList;
         public static List<ProjectRoles> FullRolesList;
         public static List<ProjectRoles> RolesFilterList;
         public static List<ClientSummaryRecord> FullClientList;
@@ -504,6 +506,67 @@ namespace ProjectTile
             SetFullRolesList();
             RolesFilterList = FullRolesList;
             RolesFilterList.Add(AllRoles);
+        }
+
+        public static void SetFullTeamsList()
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    FullTeamsList = (from pt in existingPtDb.ProjectTeams
+                                     join pj in existingPtDb.Projects on pt.ProjectID equals pj.ID
+                                     join s in existingPtDb.Staff on pt.StaffID equals s.ID
+                                     join pr in existingPtDb.ProjectRoles on pt.ProjectRoleCode equals pr.RoleCode
+                                     select new TeamSummaryRecord
+                                     {
+                                         ID = pt.ID,
+                                         Project = pj,
+                                         StaffMember = s,
+                                         ProjectRole = pr,
+                                         FromDate = pt.FromDate,
+                                         ToDate = pt.ToDate
+                                     }
+                                     ).ToList();
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error retrieving full list of project team members", generalException); }	
+        }
+
+        public static bool IsInTimeFilter(TeamTimeFilter timeFilter, TeamSummaryRecord teamMembership)
+        {
+            DateTime? fromDate = teamMembership.FromDate;
+            DateTime? toDate = teamMembership.ToDate;
+            
+            if (timeFilter == TeamTimeFilter.All) { return true; }
+            else if (toDate != null && toDate < Today) { return false; }
+            else if (timeFilter == TeamTimeFilter.Current && fromDate != null && fromDate > Today) { return false; }
+            else { return true; };
+        }
+
+        public static bool IsCurrentRole(TeamSummaryRecord teamMembership)
+        {
+            return IsInTimeFilter(TeamTimeFilter.Current, teamMembership);
+        }
+
+        public static bool SetTeamsGridList(ProjectStatusFilter inStatus, ProjectRoles teamRole, TeamTimeFilter timeFilter, int projectID = 0, string nameContains = "")
+        {
+            try
+            {
+                SetFullTeamsList();
+                TeamsGridList = FullTeamsList.Where(ftl => (IsInFilter(inStatus, ftl.ProjectStage) || (projectID != 0 && ftl.Project.ID == projectID ))
+                                                && (nameContains == "" || ftl.StaffName.Contains(nameContains))
+                                                && (teamRole == AllRoles || ftl.ProjectRole == teamRole)
+                                                && (timeFilter == TeamTimeFilter.All || IsInTimeFilter(timeFilter, ftl))
+                                                ).ToList();
+                return true;
+            }
+            catch (Exception generalException) 
+            { 
+                MessageFunctions.Error("Error retrieving project team members to display", generalException);
+                return false;
+            }
         }
 
         // Clients

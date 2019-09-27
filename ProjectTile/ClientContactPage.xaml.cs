@@ -526,12 +526,12 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error changing status", generalException); }
         }
 
-        private void ClientLike_LostFocus(object sender, RoutedEventArgs e)
+        private void ContactLike_LostFocus(object sender, RoutedEventArgs e)
         {
             contactFilter(true);
         }
 
-        private void ClientLike_KeyUp(object sender, KeyEventArgs e)
+        private void ContactLike_KeyUp(object sender, KeyEventArgs e)
         {
             refreshNamesList();
         }
@@ -543,10 +543,7 @@ namespace ProjectTile
 
         private void PossibleContacts_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (PossibleContacts.SelectedItem != null)
-            {
-                chooseContactName();
-            }
+            if (PossibleContacts.SelectedItem != null) { chooseContactName(); }
         }
 
     } // class

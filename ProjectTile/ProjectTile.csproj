@@ -67,6 +67,7 @@
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="ClientFunctions.cs" />
+    <Compile Include="TeamSummaryRecord.cs" />
     <Compile Include="ClientSummaryRecord.cs" />
     <Compile Include="ClientContactPage.xaml.cs">
       <DependentUpon>ClientContactPage.xaml</DependentUpon>

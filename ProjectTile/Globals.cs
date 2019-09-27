@@ -22,12 +22,13 @@ namespace ProjectTile
         // Common enumerations
         public enum ClientProductStatus { Added = 1, New = 2, InProgress = 3, Live = 4, Updates = 5, Inactive = 6, Retired = 7 }
         public enum ProjectStatusFilter { All, Current, Open, InProgress, Closed }
+        public enum TeamTimeFilter { All, Future, Current }
         
         // Additional records for all/any/none
         public const string AllRecords = "<All>";
         public const string AnyRecord = "<Any or None>";
         public const string NoRecord = "<None (Internal Only)>";
-        public const string SearchRecords = "<Search>";
+        public const string SearchRecords = "<Search...>";
         public const int NoID = -1;
         public const string AllCodes = "!!";
 
@@ -68,6 +69,7 @@ namespace ProjectTile
         public static ProjectStatusFilter DefaultStatusFilter = ProjectStatusFilter.Current;
         public static ProjectRoles DefaultProjectRole = AllRoles;
         public static ProjectSummaryRecord DefaultProjectSummary = AllProjects;
+        public static TeamTimeFilter DefaultTeamFilter = TeamTimeFilter.Future;
 
         // Selected records affecting multiple pages
         public static Clients SelectedClient = null;
@@ -77,8 +79,9 @@ namespace ProjectTile
         public static StaffSummaryRecord SelectedPMSummary = DefaultPMSummary;
         public static ProjectSummaryRecord SelectedProjectSummary = DefaultProjectSummary;
 
-        public static ProjectStatusFilter SelectedStatusFilter = ProjectStatusFilter.Current;
+        public static ProjectStatusFilter SelectedStatusFilter = DefaultStatusFilter;
         public static ProjectRoles SelectedProjectRole = DefaultProjectRole;
+        public static TeamTimeFilter SelectedTeamFilter = DefaultTeamFilter;
 
         // Page references
         public static string TilesPageName = "TilesPage";
@@ -112,6 +115,7 @@ namespace ProjectTile
             SelectedStatusFilter = DefaultStatusFilter;
             SelectedProjectSummary = DefaultProjectSummary;
             SelectedProjectRole = DefaultProjectRole;
+            SelectedTeamFilter = DefaultTeamFilter;
             ProjectSourcePage = TilesPageName;
             ProjectSourceMode = PageFunctions.None;
         }

@@ -29,14 +29,15 @@ namespace ProjectTile
 
         // ------------ Current variables ----------- // 
 
-
+        string nameLike = "";
 
         // ------------- Current records ------------ //
 
 
 
         // ------------------ Lists ----------------- //
-
+        
+        List<StaffSummaryRecord> staffDropList;
 
 
 
@@ -68,6 +69,7 @@ namespace ProjectTile
             refreshProjectRoleCombo();
             refreshStatusCombo();
             refreshProjectCombo();
+            setTeamTimeRadio();
         }
 
 
@@ -78,6 +80,24 @@ namespace ProjectTile
 
         // ------------- Data retrieval ------------- // 		
 
+        private void refreshTeamDataGrid()
+        {
+            try
+            {
+                ProjectSummaryRecord currentProjectSummary = (Globals.SelectedProjectSummary != null) ? Globals.SelectedProjectSummary : null;
+                Globals.ProjectStatusFilter statusFilter = Globals.SelectedStatusFilter;
+                ProjectRoles projectRole = Globals.SelectedProjectRole;
+                Globals.TeamTimeFilter timeFilter = Globals.SelectedTeamFilter;
+
+                bool success = ProjectFunctions.SetTeamsGridList(statusFilter, projectRole, timeFilter, currentProjectSummary.ProjectID, nameLike);
+                if (success)
+                {
+                    TeamDataGrid.ItemsSource = ProjectFunctions.TeamsGridList;
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error populating contact grid data", generalException); }
+        }
+        
         private void refreshProjectCombo()
         {
             try
@@ -121,6 +141,59 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error populating status drop-down list", generalException); }
         }
 
+        private void refreshNamesList()
+        {
+            string nameLike = NameLike.Text;
+            if (nameLike == "")
+            {
+                PossibleNames.Visibility = Visibility.Hidden;
+                //AmendButton.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                PossibleNames.Visibility = Visibility.Visible;
+                staffDropList = StaffFunctions.GetStaffGridData(activeOnly: false, nameContains: nameLike, roleDescription: "", entityID: Globals.CurrentEntityID);
+                PossibleNames.ItemsSource = staffDropList;
+            }
+        }
+
+        private void chooseStaffName()
+        {
+            StaffSummaryRecord selectedStaff = (StaffSummaryRecord)PossibleNames.SelectedItem;
+            NameLike.Text = selectedStaff.StaffName;
+            nameFilter();
+            //checkForSingleRecord(); // In case the selection doesn't change automatically
+        }
+
+        private void nameFilter()
+        {
+            PossibleNames.Visibility = Visibility.Hidden;
+            nameLike = NameLike.Text;
+            refreshTeamDataGrid();    
+        }
+
+        private void setTeamTimeRadio()
+        {
+            switch (Globals.SelectedTeamFilter)
+            {
+                case Globals.TeamTimeFilter.All: AllRadio.IsChecked = true; break;
+                case Globals.TeamTimeFilter.Future: FutureRadio.IsChecked = true; break;
+                case Globals.TeamTimeFilter.Current: CurrentRadio.IsChecked = true; break;
+                default: FutureRadio.IsChecked = true; break;
+            }
+        }
+
+        //private void teamTimeChanged(string option)
+        //{
+        //    Globals.SelectedTeamFilter = (Globals.TeamTimeFilter)Enum.Parse(typeof(Globals.TeamTimeFilter), option);
+        //    refreshTeamMemberGrid();
+        //}
+
+        private void teamTimeChanged(Globals.TeamTimeFilter option)
+        {
+            Globals.SelectedTeamFilter = option;
+            refreshTeamDataGrid();
+        }
 
         // -------------- Data updates -------------- // 
 
@@ -146,19 +219,6 @@ namespace ProjectTile
 
 
 
-
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            // To do: check for changes if appropriate
-
-            ProjectFunctions.ReturnToTilesPage();
-        }
-
-        private void CommitButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void StatusCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
@@ -169,6 +229,7 @@ namespace ProjectTile
                     selection = selection.Replace(" ", "");
                     Globals.SelectedStatusFilter = (Globals.ProjectStatusFilter)Enum.Parse(typeof(Globals.ProjectStatusFilter), selection);
                     refreshProjectCombo();
+                    refreshTeamDataGrid();
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error processing status filter selection", generalException); }	            
@@ -176,15 +237,65 @@ namespace ProjectTile
 
         private void RoleCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            
+            refreshTeamDataGrid();
         }
 
         private void ProjectCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
+            refreshTeamDataGrid();
         }
 
+        private void NameLike_LostFocus(object sender, RoutedEventArgs e)
+        {
+            nameFilter();
+        }
 
+        private void NameLike_KeyUp(object sender, KeyEventArgs e)
+        {
+            refreshNamesList();
+        }
+
+        private void NameLike_GotFocus(object sender, RoutedEventArgs e)
+        {
+            refreshNamesList();
+        }
+
+        private void PossibleNames_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (PossibleNames.SelectedItem != null) { chooseStaffName(); }
+        }
+
+        private void AmendButton_Click(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void AddButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void AllRadio_Checked(object sender, RoutedEventArgs e)
+        {
+            teamTimeChanged(Globals.TeamTimeFilter.All);
+        }
+
+        private void FutureRadio_Checked(object sender, RoutedEventArgs e)
+        {
+            teamTimeChanged(Globals.TeamTimeFilter.Future);
+        }
+
+        private void CurrentRadio_Checked(object sender, RoutedEventArgs e)
+        {
+            teamTimeChanged(Globals.TeamTimeFilter.Current);
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            ProjectFunctions.ReturnToTilesPage();
+        }
 
     } // class
 } // namespace

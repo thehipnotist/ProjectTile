@@ -88,6 +88,11 @@ namespace ProjectTile
             get { return stage.StageCode; }
         }
 
+        public string CodeName
+        {
+            get { return (ProjectCode == ProjectName)? ProjectCode : ProjectCode + ": " + ProjectName; }
+        }
+
         public bool ConvertToProject(ref Projects project) // Uses a reference to easily amend an existing database record
         {
             try

@@ -42,7 +42,7 @@
                               VerticalContentAlignment="Center" Padding="5" Checked="ActiveClient_CheckBox_Checked" Unchecked="ActiveClient_CheckBox_Unchecked"/>
                     <Label x:Name="ContactLikeLabel" Content="Contact Contains" HorizontalAlignment="Right" Height="30" Margin="0,45,155,0" VerticalAlignment="Top" Width="115" FontWeight="Bold"/>
                     <TextBox x:Name="ContactLike" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="140" ToolTip="Type part of a name and choose from the selection" 
-                             TabIndex="2" LostFocus="ClientLike_LostFocus" KeyUp="ClientLike_KeyUp" Style="{DynamicResource PaddedTextBox}" CharacterCasing="Upper" GotFocus="ContactLike_GotFocus"/>
+                             TabIndex="2" LostFocus="ContactLike_LostFocus" KeyUp="ContactLike_KeyUp" Style="{DynamicResource PaddedTextBox}" CharacterCasing="Upper" GotFocus="ContactLike_GotFocus"/>
 
                     <DataGrid x:Name="ClientDataGrid" MinHeight="295" Margin="15,90,0,0" Width="500" MinWidth="625" AutoGenerateColumns="False" IsReadOnly="True" 
                               BorderBrush="{StaticResource PtBrushClient3}" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionChanged="ClientDataGrid_SelectionChanged" SelectionMode="Single">

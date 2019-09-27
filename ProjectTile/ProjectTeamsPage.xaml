@@ -32,9 +32,21 @@
                 </Grid.RowDefinitions>
                 <Label x:Name="Instructions" Content="Instructions." HorizontalAlignment="Left" Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
 
-                <Label x:Name="ProjectLabel" Content="Project Code" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
-                <ComboBox x:Name="ProjectCombo" HorizontalAlignment="Left" Height="30" Margin="100,45,15,0" VerticalAlignment="Top" Width="90" SelectionChanged="ProjectCombo_SelectionChanged"
-                          DisplayMemberPath="ProjectCode">
+                <Label x:Name="StatusLabel" Content="Project Status" HorizontalAlignment="Left" Height="30" Margin="15,45,145,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
+                <ComboBox x:Name="StatusCombo" HorizontalAlignment="Left" Height="30" Margin="115,45,15,0" VerticalAlignment="Top" Width="90" SelectionChanged="StatusCombo_SelectionChanged">
+                    <ComboBox.Resources>
+                        <Style TargetType="ComboBoxItem">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding}" Value="Closed">
+                                    <Setter Property="Foreground" Value="DarkGray"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ComboBox.Resources>
+                </ComboBox>                
+                <Label x:Name="ProjectLabel" Content="Project" HorizontalAlignment="Right" Height="30" Margin="15,45,365,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
+                <ComboBox x:Name="ProjectCombo" HorizontalAlignment="Right" Height="30" Margin="70,45,15,0" VerticalAlignment="Top" Width="345" SelectionChanged="ProjectCombo_SelectionChanged"
+                          DisplayMemberPath="CodeName">
                     <ComboBox.Resources>
                         <Style TargetType="ComboBoxItem">
                             <Style.Triggers>
@@ -51,21 +63,40 @@
                         </Style>
                     </ComboBox.Resources>
                 </ComboBox>
-                <Label x:Name="StatusLabel" Content="Project Status" HorizontalAlignment="Center" Height="30" Margin="15,45,145,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
-                <ComboBox x:Name="StatusCombo" HorizontalAlignment="Center" Height="30" Margin="70,45,15,0" VerticalAlignment="Top" Width="90" SelectionChanged="StatusCombo_SelectionChanged">
-                    <ComboBox.Resources>
-                        <Style TargetType="ComboBoxItem">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding}" Value="Closed">
-                                    <Setter Property="Foreground" Value="DarkGray"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ComboBox.Resources>
-                </ComboBox>
-                <Label x:Name="RoleLabel" Content="Team Role" HorizontalAlignment="Right" Height="30" Margin="0,45,165,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
-                <ComboBox x:Name="RoleCombo" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="150" SelectionChanged="RoleCombo_SelectionChanged"
+
+                <DataGrid x:Name="TeamDataGrid" MinHeight="250" Margin="15,90,15,60" Width="625" MinWidth="625" AutoGenerateColumns="False" IsReadOnly="True" 
+                              BorderBrush="{StaticResource PtBrushProject3}" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionMode="Single">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn x:Name="IDColumn" Binding="{Binding ID}" ClipboardContentBinding="{x:Null}" Header="ID" Visibility="Collapsed"/>
+                        <DataGridTextColumn x:Name="ProjectCodeColumn" Binding="{Binding Project.ProjectCode}" ClipboardContentBinding="{x:Null}" Header="Code"/>
+                        <DataGridTextColumn x:Name="ProjectNameColumn" Binding="{Binding Project.ProjectName}" ClipboardContentBinding="{x:Null}" Header="Project Name" Width="*"/>
+                        <DataGridTextColumn x:Name="StaffNameColumn" Binding="{Binding StaffName}" ClipboardContentBinding="{x:Null}" Header="Staff Name" Width="*"/>
+                        <DataGridTextColumn x:Name="RoleDescriptionColumn" Binding="{Binding ProjectRole.RoleDescription}" ClipboardContentBinding="{x:Null}" Header="Project Role"/>
+                        <DataGridTextColumn x:Name="FromDateColumn" Binding="{Binding EffectiveFrom}" ClipboardContentBinding="{x:Null}" Header="From Date"/>
+                        <DataGridTextColumn x:Name="ToDateColumn" Binding="{Binding ToDate}" ClipboardContentBinding="{x:Null}" Header="To Date"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <Label x:Name="NameLikeLabel" Content="Name" HorizontalAlignment="Left" Height="30" Margin="15,45,155,15" VerticalAlignment="Bottom" Width="Auto" FontWeight="Bold"/>
+                <TextBox x:Name="NameLike" HorizontalAlignment="Left" Height="30" Margin="65,45,15,15" VerticalAlignment="Bottom" Width="140" ToolTip="Type part of a name and choose from the selection" 
+                          TabIndex="2" LostFocus="NameLike_LostFocus" KeyUp="NameLike_KeyUp" Style="{DynamicResource PaddedTextBox}" CharacterCasing="Upper" GotFocus="NameLike_GotFocus"/>
+                <ListView x:Name="PossibleNames" HorizontalAlignment="Left" Height="90" Margin="100,75,15,45" VerticalAlignment="Bottom" Width="140" Visibility="Hidden" 
+                              SelectionChanged="PossibleNames_SelectionChanged" DisplayMemberPath="StaffName" VerticalContentAlignment="Bottom"/>
+                                
+                <Label x:Name="RoleLabel" Content="Role" HorizontalAlignment="Center" Height="30" Margin="15,45,175,15" VerticalAlignment="Bottom" Width="Auto" FontWeight="Bold"/>
+                <ComboBox x:Name="RoleCombo" HorizontalAlignment="Center" Height="30" Margin="50,45,15,15" VerticalAlignment="Bottom" Width="150" SelectionChanged="RoleCombo_SelectionChanged"
                           DisplayMemberPath="RoleDescription"/>
+
+                <GroupBox x:Name="TimeGroup"  HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Bottom" Width="190" Padding="0">
+                    <DockPanel FlowDirection="LeftToRight" HorizontalAlignment="Right" LastChildFill="False">
+                        <RadioButton x:Name="AllRadio" Content="All" Height="30" Width="Auto" FontWeight="Bold" Padding="5" HorizontalAlignment="Right"
+                                 VerticalContentAlignment="Center" Checked="AllRadio_Checked"/>
+                        <RadioButton x:Name="FutureRadio" Content="Future" Height="30" Width="Auto" FontWeight="Bold" Padding="5" HorizontalAlignment="Right"
+                                 VerticalContentAlignment="Center" Checked="FutureRadio_Checked"/>
+                        <RadioButton x:Name="CurrentRadio" Content="Current" Height="30" Width="Auto" FontWeight="Bold" Padding="5" HorizontalAlignment="Right"
+                                 VerticalContentAlignment="Center" Checked="CurrentRadio_Checked"/>
+                    </DockPanel>
+                </GroupBox>
 
             </Grid>
         </Border>
@@ -82,11 +113,18 @@
                         <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Cancel" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
-                        FontWeight="Bold" Click="CommitButton_Click" BorderBrush="{DynamicResource PtBrushProject3}">
-                    <StackPanel x:Name="CommitPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Frame x:Name="CommitImage" Content="{StaticResource CommitIcon}"/>
-                        <TextBlock x:Name="CommitButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Commit" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                <Button x:Name="AmendButton" HorizontalAlignment="Right" Height="30" Margin="15,15,140,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
+                        FontWeight="Bold" Click="AmendButton_Click" IsEnabled="False" BorderBrush="{DynamicResource PtBrushStaff3}">
+                    <StackPanel x:Name="AmendPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                        <Frame x:Name="AmendImage" Content="{StaticResource AmendIcon}" />
+                        <TextBlock x:Name="AmendButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Amend" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="AddButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" 
+                		FontWeight="Bold" Click="AddButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{DynamicResource PtBrushStaff3}">
+                    <StackPanel x:Name="AddPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                        <Frame x:Name="AddImage" Content="{StaticResource PlusIcon}" />
+                        <TextBlock x:Name="AddButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Add Staff" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
             </Grid>
