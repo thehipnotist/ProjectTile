@@ -69,7 +69,7 @@ namespace ProjectTile
         public static ProjectStatusFilter DefaultStatusFilter = ProjectStatusFilter.Current;
         public static ProjectRoles DefaultProjectRole = AllRoles;
         public static ProjectSummaryRecord DefaultProjectSummary = AllProjects;
-        public static TeamTimeFilter DefaultTeamFilter = TeamTimeFilter.Future;
+        public static TeamTimeFilter DefaultTeamTimeFilter = TeamTimeFilter.Future;
 
         // Selected records affecting multiple pages
         public static Clients SelectedClient = null;
@@ -81,7 +81,7 @@ namespace ProjectTile
 
         public static ProjectStatusFilter SelectedStatusFilter = DefaultStatusFilter;
         public static ProjectRoles SelectedProjectRole = DefaultProjectRole;
-        public static TeamTimeFilter SelectedTeamFilter = DefaultTeamFilter;
+        public static TeamTimeFilter SelectedTeamTimeFilter = DefaultTeamTimeFilter;
 
         // Page references
         public static string TilesPageName = "TilesPage";
@@ -115,7 +115,7 @@ namespace ProjectTile
             SelectedStatusFilter = DefaultStatusFilter;
             SelectedProjectSummary = DefaultProjectSummary;
             SelectedProjectRole = DefaultProjectRole;
-            SelectedTeamFilter = DefaultTeamFilter;
+            SelectedTeamTimeFilter = DefaultTeamTimeFilter;
             ProjectSourcePage = TilesPageName;
             ProjectSourceMode = PageFunctions.None;
         }

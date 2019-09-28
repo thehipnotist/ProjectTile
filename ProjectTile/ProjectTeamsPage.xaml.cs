@@ -30,6 +30,8 @@ namespace ProjectTile
         // ------------ Current variables ----------- // 
 
         string nameLike = "";
+        bool exactName = false;
+        TeamSummaryRecord selectedTeamRecord = null;
 
         // ------------- Current records ------------ //
 
@@ -52,6 +54,7 @@ namespace ProjectTile
             InitializeComponent();
             Style = (Style)FindResource(typeof(Page));
             KeepAlive = false;
+            AddButton.Margin = ProjectButton.Margin;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -86,10 +89,11 @@ namespace ProjectTile
             {
                 ProjectSummaryRecord currentProjectSummary = (Globals.SelectedProjectSummary != null) ? Globals.SelectedProjectSummary : null;
                 Globals.ProjectStatusFilter statusFilter = Globals.SelectedStatusFilter;
-                ProjectRoles projectRole = Globals.SelectedProjectRole;
-                Globals.TeamTimeFilter timeFilter = Globals.SelectedTeamFilter;
+                //TODO: Adjust status filter if project isn't in it
+                string projectRoleCode = Globals.SelectedProjectRole.RoleCode;
+                Globals.TeamTimeFilter timeFilter = Globals.SelectedTeamTimeFilter;
 
-                bool success = ProjectFunctions.SetTeamsGridList(statusFilter, projectRole, timeFilter, currentProjectSummary.ProjectID, nameLike);
+                bool success = ProjectFunctions.SetTeamsGridList(statusFilter, projectRoleCode, timeFilter, currentProjectSummary.ProjectID, nameLike, exactName);
                 if (success)
                 {
                     TeamDataGrid.ItemsSource = ProjectFunctions.TeamsGridList;
@@ -118,12 +122,10 @@ namespace ProjectTile
             try
             {
                 ProjectRoles currentRecord = (Globals.SelectedProjectRole != null) ? Globals.SelectedProjectRole : Globals.DefaultProjectRole;
-                ProjectFunctions.SetRolesFilterList();
+                ProjectFunctions.SetRolesFilterList(nameLike, exactName);
                 RoleCombo.ItemsSource = ProjectFunctions.RolesFilterList;
-                if (ProjectFunctions.RolesFilterList.Exists(rfl => rfl.RoleCode == currentRecord.RoleCode))
-                {
-                    RoleCombo.SelectedItem = ProjectFunctions.RolesFilterList.First(rfl => rfl.RoleCode == currentRecord.RoleCode);
-                }
+                if (!ProjectFunctions.RolesFilterList.Exists(rfl => rfl.RoleCode == currentRecord.RoleCode)) { currentRecord = Globals.AllRoles; }
+                RoleCombo.SelectedItem = ProjectFunctions.RolesFilterList.First(rfl => rfl.RoleCode == currentRecord.RoleCode);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating project roles drop-down list", generalException); }
         }
@@ -143,12 +145,9 @@ namespace ProjectTile
 
         private void refreshNamesList()
         {
+            exactName = false;
             string nameLike = NameLike.Text;
-            if (nameLike == "")
-            {
-                PossibleNames.Visibility = Visibility.Hidden;
-                //AmendButton.Visibility = Visibility.Hidden;
-            }
+            if (nameLike == "") { PossibleNames.Visibility = Visibility.Hidden; }
             else
             {
                 PossibleNames.Visibility = Visibility.Visible;
@@ -161,20 +160,21 @@ namespace ProjectTile
         {
             StaffSummaryRecord selectedStaff = (StaffSummaryRecord)PossibleNames.SelectedItem;
             NameLike.Text = selectedStaff.StaffName;
+            exactName = true;
             nameFilter();
-            //checkForSingleRecord(); // In case the selection doesn't change automatically
         }
 
         private void nameFilter()
         {
             PossibleNames.Visibility = Visibility.Hidden;
             nameLike = NameLike.Text;
+            refreshProjectRoleCombo();
             refreshTeamDataGrid();    
         }
 
         private void setTeamTimeRadio()
         {
-            switch (Globals.SelectedTeamFilter)
+            switch (Globals.SelectedTeamTimeFilter)
             {
                 case Globals.TeamTimeFilter.All: AllRadio.IsChecked = true; break;
                 case Globals.TeamTimeFilter.Future: FutureRadio.IsChecked = true; break;
@@ -183,16 +183,16 @@ namespace ProjectTile
             }
         }
 
-        //private void teamTimeChanged(string option)
-        //{
-        //    Globals.SelectedTeamFilter = (Globals.TeamTimeFilter)Enum.Parse(typeof(Globals.TeamTimeFilter), option);
-        //    refreshTeamMemberGrid();
-        //}
-
         private void teamTimeChanged(Globals.TeamTimeFilter option)
         {
-            Globals.SelectedTeamFilter = option;
+            Globals.SelectedTeamTimeFilter = option;
             refreshTeamDataGrid();
+        }
+
+        private void toggleProjectMode(bool projectSelected)
+        {
+            AddButton.Visibility = AmendButton.Visibility = projectSelected ? Visibility.Visible : Visibility.Hidden;
+            ProjectButton.Visibility = (!projectSelected) ? Visibility.Visible : Visibility.Hidden;
         }
 
         // -------------- Data updates -------------- // 
@@ -237,14 +237,28 @@ namespace ProjectTile
 
         private void RoleCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
-            refreshTeamDataGrid();
+            if (RoleCombo.SelectedItem == null) { } // Do nothing - won't be for long             
+            else
+            {
+                Globals.SelectedProjectRole = (ProjectRoles)RoleCombo.SelectedItem;
+                refreshTeamDataGrid();
+            }
         }
 
         private void ProjectCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
-            refreshTeamDataGrid();
+            if (ProjectCombo.SelectedItem == null) { } // Do nothing - won't be for long             
+            else
+            {
+                ProjectSummaryRecord selectedProject = (ProjectSummaryRecord)ProjectCombo.SelectedItem;
+                if (selectedProject == Globals.SearchProjects) { } //TODO: write search function
+                else
+                {
+                    Globals.SelectedProjectSummary = selectedProject;
+                    refreshTeamDataGrid();
+                    toggleProjectMode(selectedProject != Globals.AllProjects);
+                }
+            }
         }
 
         private void NameLike_LostFocus(object sender, RoutedEventArgs e)
@@ -295,6 +309,29 @@ namespace ProjectTile
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             ProjectFunctions.ReturnToTilesPage();
+        }
+
+        private void ProjectButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (selectedTeamRecord != null) // Just in case
+            {                
+                ProjectCombo.SelectedItem = ProjectFunctions.ProjectFilterList.First(pfl => pfl.ProjectCode == selectedTeamRecord.Project.ProjectCode);
+            }
+        }
+
+        private void TeamDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TeamDataGrid.SelectedItem == null)
+            {
+                selectedTeamRecord = null;
+                AmendButton.IsEnabled = false;
+            }
+            else
+            {
+                selectedTeamRecord = (TeamSummaryRecord)TeamDataGrid.SelectedItem;
+                if (Globals.SelectedProjectSummary == null || Globals.SelectedProjectSummary == Globals.AllProjects) { ProjectButton.IsEnabled = true; }
+                AmendButton.IsEnabled = true;
+            }
         }
 
     } // class

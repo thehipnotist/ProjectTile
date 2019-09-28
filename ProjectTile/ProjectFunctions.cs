@@ -501,11 +501,41 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error listing project roles", generalException); }	
         }
 
-        public static void SetRolesFilterList()
+        public static bool HasEverHadRole(string projectRoleCode, string nameLike, bool exact)
         {
-            SetFullRolesList();
-            RolesFilterList = FullRolesList;
-            RolesFilterList.Add(AllRoles);
+            try
+            {
+                nameLike = nameLike.ToUpper();
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    ProjectTeams firstResult = (from pt in existingPtDb.ProjectTeams
+                                                join s in existingPtDb.Staff on pt.StaffID equals s.ID
+                                                where pt.ProjectRoleCode == projectRoleCode 
+                                                    && (nameLike == "" 
+                                                        || (exact && (s.FirstName + " " + s.Surname).ToUpper() == nameLike) 
+                                                        || (!exact && (s.FirstName + " " + s.Surname).ToUpper().Contains(nameLike)))
+                                                select pt
+                                                ).FirstOrDefault();
+                    return (firstResult != null);
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error checking project role history for the name filter", generalException);
+                return false;
+            }	
+        }
+        
+        public static void SetRolesFilterList(string nameLike = "", bool exactName = false)
+        {
+            try
+            {
+                SetFullRolesList();
+                RolesFilterList = FullRolesList.Where(frl => nameLike == "" || HasEverHadRole(frl.RoleCode, nameLike, exactName)).ToList();
+                RolesFilterList.Add(AllRoles);
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error setting list of possible roles", generalException); }	
         }
 
         public static void SetFullTeamsList()
@@ -550,14 +580,19 @@ namespace ProjectTile
             return IsInTimeFilter(TeamTimeFilter.Current, teamMembership);
         }
 
-        public static bool SetTeamsGridList(ProjectStatusFilter inStatus, ProjectRoles teamRole, TeamTimeFilter timeFilter, int projectID = 0, string nameContains = "")
+        public static bool SetTeamsGridList(ProjectStatusFilter inStatus, string teamRoleCode, TeamTimeFilter timeFilter, int projectID = 0, string nameContains = "", bool exact = false)
         {
             try
             {
+                nameContains = nameContains.ToUpper();
                 SetFullTeamsList();
-                TeamsGridList = FullTeamsList.Where(ftl => (IsInFilter(inStatus, ftl.ProjectStage) || (projectID != 0 && ftl.Project.ID == projectID ))
-                                                && (nameContains == "" || ftl.StaffName.Contains(nameContains))
-                                                && (teamRole == AllRoles || ftl.ProjectRole == teamRole)
+
+//                MessageFunctions.InvalidMessage(inStatus.ToString() + ", " + teamRoleCode + ", " + timeFilter.ToString() + ", " + projectID.ToString() + ", " + nameContains + ", " + exact.ToString(), 
+//                    "Testing");
+
+                TeamsGridList = FullTeamsList.Where(ftl => ((projectID == 0 && IsInFilter(inStatus, ftl.ProjectStage)) || (projectID != 0 && ftl.Project.ID == projectID ))
+                                                && (nameContains == "" || (exact && ftl.StaffName.ToUpper() == nameContains) || (!exact && ftl.StaffName.ToUpper().Contains(nameContains)))
+                                                && (teamRoleCode == AllCodes || ftl.ProjectRole.RoleCode == teamRoleCode)
                                                 && (timeFilter == TeamTimeFilter.All || IsInTimeFilter(timeFilter, ftl))
                                                 ).ToList();
                 return true;
