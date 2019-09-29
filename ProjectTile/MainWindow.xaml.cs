@@ -20,6 +20,7 @@ namespace ProjectTile
             InitializeComponent();
             Style = (Style)FindResource(typeof(Window));
             ToggleMainMenus(false);
+            ToggleSideButtons(false);
         }
 
         private void Main_Loaded(object sender, RoutedEventArgs e)
@@ -92,6 +93,18 @@ namespace ProjectTile
             else
             {
                 MainMenu.Visibility = LoginMenu.Visibility = Visibility.Hidden;
+            }
+        }
+
+        public void ToggleSideButtons(bool Show)
+        {
+            if (Show)
+            {
+                ProjectButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ProjectButton.Visibility = Visibility.Hidden;
             }
         }
 
@@ -298,6 +311,11 @@ namespace ProjectTile
         private void ProjectProduct_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void ProjectButton_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowProjectTeamsPage(pageMode: "", selectedStaffID: Globals.CurrentStaffID);
         }
 
 

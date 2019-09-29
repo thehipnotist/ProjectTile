@@ -1641,7 +1641,7 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error handling client selection", generalException); }	
         }
 
-        public static void BackToProjct()
+        public static void BackToProject()
         {
             CancelProjectClientSelection();
         }

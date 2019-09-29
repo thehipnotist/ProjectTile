@@ -30,7 +30,7 @@ namespace ProjectTile
         // Current variables //     
 
         // Current records //
-
+        ProjectSummaryRecord selectedProject = Globals.SelectedProjectSummary ?? null;
 
         // ---------------------- //
         // -- Page Management --- //
@@ -62,7 +62,7 @@ namespace ProjectTile
 
             if (pageMode == PageFunctions.View) 
             { 
-                AddButton.Visibility = Visibility.Hidden;
+                AddButton.Visibility = CommitButton.Visibility = Visibility.Hidden;
                 AmendImage.SetResourceReference(Frame.ContentProperty, "ViewIcon2");
             }
             else if (pageMode == PageFunctions.Amend)
@@ -70,6 +70,15 @@ namespace ProjectTile
                 PageHeader.Content = "Amend or Manage Projects";
                 Instructions.Content = "Use filters to restrict results and column headers to sort them, then choose the required option.";
                 HeaderImage2.SetResourceReference(Frame.ContentProperty, "AmendIcon2");
+                CommitButton.Visibility = Visibility.Hidden;
+            }
+            else if (pageMode == PageFunctions.Lookup)
+            {
+                PageHeader.Content = "Select Project";
+                Instructions.Content = "Use filters to restrict results and column headers to sort them, then choose the desired project.";
+                HeaderImage2.SetResourceReference(Frame.ContentProperty, "SearchIcon2");
+                AddButton.Visibility = AmendButton.Visibility = BackButton.Visibility = MoreButton.Visibility =  Visibility.Hidden;
+                CommitButton.Margin = AmendButton.Margin;
             }
 
             try
@@ -98,7 +107,7 @@ namespace ProjectTile
         {
             try
             {
-                ProjectSummaryRecord currentRecord = (Globals.SelectedProjectSummary != null && Globals.SelectedProjectSummary.ProjectID > 0 ) ? Globals.SelectedProjectSummary : null;
+                ProjectSummaryRecord currentRecord = (selectedProject != null && selectedProject.ProjectID > 0 ) ? selectedProject : null;
                 int clientID = (Globals.SelectedClientSummary != null) ? ProjectFunctions.SelectedClientSummary.ID : 0;
                 int managerID = (Globals.SelectedPMSummary != null) ? ProjectFunctions.SelectedPMSummary.ID : 0;
                 Globals.ProjectStatusFilter statusFilter = Globals.SelectedStatusFilter;
@@ -144,7 +153,7 @@ namespace ProjectTile
         {
             try
             {                
-                ProjectSummaryRecord currentRecord = (Globals.SelectedProjectSummary != null) ? Globals.SelectedProjectSummary : null;
+                ProjectSummaryRecord currentRecord = (selectedProject != null) ? selectedProject : null;
                 int clientID = (Globals.SelectedClientSummary != null)? ProjectFunctions.SelectedClientSummary.ID : 0;
                 int managerID = (Globals.SelectedPMSummary != null) ? ProjectFunctions.SelectedPMSummary.ID : 0;
                 Globals.ProjectStatusFilter statusFilter = Globals.SelectedStatusFilter;               
@@ -230,11 +239,12 @@ namespace ProjectTile
 
         private void closePage(bool goBack)
         {
-            if (goBack)
+            if (pageMode == PageFunctions.Lookup) { ProjectFunctions.CancelTeamProjectSelection(); }  
+            else if (goBack)
             {
                 if (Globals.ProjectSourcePage == "ClientPage") { ProjectFunctions.ReturnToClientPage(pageMode); }
                 else { ProjectFunctions.ReturnToTilesPage(); }
-            }
+            }                       
             else { ProjectFunctions.ReturnToTilesPage(); }
         }
 
@@ -252,14 +262,15 @@ namespace ProjectTile
             {
                 if (ProjectDataGrid.SelectedItem == null)
                 {
-                    Globals.SelectedProjectSummary = null;
+                    selectedProject = null;
                     toggleProjectButtons(false);
                 }
                 else
                 {
-                    Globals.SelectedProjectSummary = (ProjectSummaryRecord)ProjectDataGrid.SelectedItem;
+                    selectedProject = (ProjectSummaryRecord)ProjectDataGrid.SelectedItem;
                     toggleProjectButtons(true);
                 }
+                if (pageMode != PageFunctions.Lookup) { Globals.SelectedProjectSummary = selectedProject; } // Otherwise don't set this as may cancel selection later
             }
             catch (Exception generalException) { MessageFunctions.Error("Error processing project selection", generalException); }	
         }
@@ -343,12 +354,17 @@ namespace ProjectTile
 
         private void ContactMenu_Click(object sender, RoutedEventArgs e)
         {
-
+            //TODO: Add this once the page is built
         }
 
         private void ProductMenu_Click(object sender, RoutedEventArgs e)
         {
+            //TODO: Add this once the page is built
+        }
 
+        private void CommitButton_Click(object sender, RoutedEventArgs e)
+        {
+            ProjectFunctions.SelectTeamProject(selectedProject);
         }
 
 

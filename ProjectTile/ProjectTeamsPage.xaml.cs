@@ -26,6 +26,8 @@ namespace ProjectTile
         // --------- Global/page parameters --------- // 
 
         string pageMode;
+        string staffIDString;
+        int staffID;
 
         // ------------ Current variables ----------- // 
 
@@ -62,6 +64,7 @@ namespace ProjectTile
             try
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
+                staffIDString = PageFunctions.pageParameter(this, "StaffID");
             }
             catch (Exception generalException)
             {
@@ -73,6 +76,8 @@ namespace ProjectTile
             refreshStatusCombo();
             refreshProjectCombo();
             setTeamTimeRadio();
+            Int32.TryParse(staffIDString, out staffID);
+            if (staffID > 0) { chooseStaffName(staffID); }
         }
 
 
@@ -87,9 +92,9 @@ namespace ProjectTile
         {
             try
             {
+                TeamSummaryRecord currentRecord = selectedTeamRecord ?? null;
                 ProjectSummaryRecord currentProjectSummary = (Globals.SelectedProjectSummary != null) ? Globals.SelectedProjectSummary : null;
                 Globals.ProjectStatusFilter statusFilter = Globals.SelectedStatusFilter;
-                //TODO: Adjust status filter if project isn't in it
                 string projectRoleCode = Globals.SelectedProjectRole.RoleCode;
                 Globals.TeamTimeFilter timeFilter = Globals.SelectedTeamTimeFilter;
 
@@ -97,9 +102,14 @@ namespace ProjectTile
                 if (success)
                 {
                     TeamDataGrid.ItemsSource = ProjectFunctions.TeamsGridList;
+                    if (currentRecord != null && ProjectFunctions.TeamsGridList.Exists(tgl => tgl.ID == currentRecord.ID)) 
+                    {
+                        TeamDataGrid.SelectedItem = ProjectFunctions.TeamsGridList.First(tgl => tgl.ID == currentRecord.ID); 
+                    }
+                    else if (ProjectFunctions.TeamsGridList.Count == 1) { TeamDataGrid.SelectedItem = ProjectFunctions.TeamsGridList.ElementAt(0); }
                 }
             }
-            catch (Exception generalException) { MessageFunctions.Error("Error populating contact grid data", generalException); }
+            catch (Exception generalException) { MessageFunctions.Error("Error populating project team grid data", generalException); }
         }
         
         private void refreshProjectCombo()
@@ -156,9 +166,9 @@ namespace ProjectTile
             }
         }
 
-        private void chooseStaffName()
+        private void chooseStaffName(int staffID = 0)
         {
-            StaffSummaryRecord selectedStaff = (StaffSummaryRecord)PossibleNames.SelectedItem;
+           StaffSummaryRecord selectedStaff = (staffID != 0)? StaffFunctions.GetStaffSummary(staffID) : (StaffSummaryRecord)PossibleNames.SelectedItem; 
             NameLike.Text = selectedStaff.StaffName;
             exactName = true;
             nameFilter();
@@ -169,6 +179,7 @@ namespace ProjectTile
             PossibleNames.Visibility = Visibility.Hidden;
             nameLike = NameLike.Text;
             refreshProjectRoleCombo();
+            toggleStaffNameColumn();
             refreshTeamDataGrid();    
         }
 
@@ -193,6 +204,33 @@ namespace ProjectTile
         {
             AddButton.Visibility = AmendButton.Visibility = projectSelected ? Visibility.Visible : Visibility.Hidden;
             ProjectButton.Visibility = (!projectSelected) ? Visibility.Visible : Visibility.Hidden;
+            toggleSearchButton(projectSelected);
+            toggleProjectColumns(projectSelected);
+        }
+
+        private void toggleSearchButton(bool projectSelected)
+        {
+            SearchButton.Visibility = (!projectSelected) ? Visibility.Visible : Visibility.Hidden;
+            double changeWidth = projectSelected? 0 : (SearchButton.Width + 15);
+            ProjectCombo.Width = ProjectCombo.MaxWidth - changeWidth;
+            Thickness projectMargin = ProjectCombo.Margin;
+            projectMargin.Right = 15 + changeWidth;
+            ProjectCombo.Margin = projectMargin;
+        }
+
+        private void toggleProjectColumns(bool projectSelected)
+        {
+            ProjectCodeColumn.Visibility = ProjectNameColumn.Visibility = projectSelected? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private void toggleStaffNameColumn()
+        {
+            StaffNameColumn.Visibility = (exactName && nameLike != "") ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private void toggleRoleColumn()
+        {
+            RoleDescriptionColumn.Visibility = (Globals.SelectedProjectRole != null && Globals.SelectedProjectRole != Globals.AllRoles) ? Visibility.Collapsed : Visibility.Visible;
         }
 
         // -------------- Data updates -------------- // 
@@ -205,7 +243,42 @@ namespace ProjectTile
 
         // ---------- Links to other pages ---------- //		
 
+        public void OpenProjectLookup()
+        {
+            try
+            {
+                NormalGrid.Visibility = Visibility.Hidden;
+                LookupFrame.Visibility = Visibility.Visible;
+                LookupFrame.Navigate(new Uri("ProjectPage.xaml?Mode=Lookup", UriKind.RelativeOrAbsolute));
+                ProjectFunctions.SelectProjectForTeam += SelectProjectProject;
+                ProjectFunctions.CancelTeamProjectSelection += CancelProjectLookup;
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error setting up client selection", generalException); }
+        }
 
+        public void CloseProjectLookup()
+        {
+            LookupFrame.Content = null;
+            LookupFrame.Visibility = Visibility.Hidden;
+            NormalGrid.Visibility = Visibility.Visible;
+        }
+
+        public void SelectProjectProject()
+        {
+            try
+            {
+                CloseProjectLookup();
+                Globals.SelectedProjectSummary = ProjectFunctions.SelectedTeamProject;
+                refreshProjectCombo();
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error processing client selection", generalException); }
+        }
+
+        public void CancelProjectLookup()
+        {
+            CloseProjectLookup();
+            ProjectCombo.SelectedItem = ProjectFunctions.ProjectFilterList.First(pfl => pfl.ProjectCode == Globals.AllProjects.ProjectCode);
+        }
 
         // ---------------------------------------------------------- //
         // -------------------- Event Management -------------------- //
@@ -241,6 +314,7 @@ namespace ProjectTile
             else
             {
                 Globals.SelectedProjectRole = (ProjectRoles)RoleCombo.SelectedItem;
+                toggleRoleColumn();
                 refreshTeamDataGrid();
             }
         }
@@ -251,12 +325,13 @@ namespace ProjectTile
             else
             {
                 ProjectSummaryRecord selectedProject = (ProjectSummaryRecord)ProjectCombo.SelectedItem;
-                if (selectedProject == Globals.SearchProjects) { } //TODO: write search function
+                if (selectedProject == Globals.SearchProjects) { OpenProjectLookup(); }
                 else
                 {
                     Globals.SelectedProjectSummary = selectedProject;
                     refreshTeamDataGrid();
                     toggleProjectMode(selectedProject != Globals.AllProjects);
+                    //TODO: Adjust status filter if project isn't in it - works OK for now, as the filter is set globally...
                 }
             }
         }
@@ -307,7 +382,7 @@ namespace ProjectTile
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
+        {            
             ProjectFunctions.ReturnToTilesPage();
         }
 
@@ -316,6 +391,8 @@ namespace ProjectTile
             if (selectedTeamRecord != null) // Just in case
             {                
                 ProjectCombo.SelectedItem = ProjectFunctions.ProjectFilterList.First(pfl => pfl.ProjectCode == selectedTeamRecord.Project.ProjectCode);
+                NameLike.Text = ""; // Always show all team members for the project at this point
+                nameFilter(); // Implement the above
             }
         }
 
@@ -332,6 +409,11 @@ namespace ProjectTile
                 if (Globals.SelectedProjectSummary == null || Globals.SelectedProjectSummary == Globals.AllProjects) { ProjectButton.IsEnabled = true; }
                 AmendButton.IsEnabled = true;
             }
+        }
+
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenProjectLookup();
         }
 
     } // class

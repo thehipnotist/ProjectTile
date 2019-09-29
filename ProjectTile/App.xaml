@@ -12,17 +12,38 @@
         <Color x:Key="PtColorHeaderBlue" R="149" G="175" B="220" A="255"/>
         <SolidColorBrush x:Key="PtBrushHeaderBlue" Color="{StaticResource PtColorHeaderBlue}"/>
 
-        <Color x:Key="PtColorFrameBlue" R="193" G="217" B="251" A="255"/>
+        <Color x:Key="PtColorFrameBlue" R="193" G="217" B="251" A="255"/>        
         <SolidColorBrush x:Key="PtBrushFrameBlue" Color="{StaticResource PtColorFrameBlue}"/>
 
         <Color x:Key="PtColorBackgroundBlue" R="246" G="249" B="255" A="255"/>
         <SolidColorBrush x:Key="PtBrushBackgroundBlue" Color="{StaticResource PtColorBackgroundBlue}"/>
 
+        <Color x:Key="PtColorFontGrey" R="30" G="30" B="30" A="255"/>
+        <SolidColorBrush x:Key="PtBrushFontGrey" Color="{StaticResource PtColorFontGrey}"/>        
+        
         <Color x:Key="PtColorBorderGrey" R="230" G="230" B="230" A="100"/>
         <SolidColorBrush x:Key="PtBrushBorderGrey" Color="{StaticResource PtColorBorderGrey}"/>
 
         <Color x:Key="PtColorLightGrey" R="240" G="240" B="240" A="150"/>
         <SolidColorBrush x:Key="PtBrushLightGrey" Color="{StaticResource PtColorLightGrey}"/>
+
+        <RadialGradientBrush x:Key="PtGradientButton">
+            <RadialGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="{StaticResource PtColorFrameBlue}" Offset="0"/>
+                    <GradientStop Color="{StaticResource PtColorMenuBlue}" Offset="1"/>
+                </GradientStopCollection>
+            </RadialGradientBrush.GradientStops>
+        </RadialGradientBrush>
+
+        <RadialGradientBrush x:Key="PtGradientMenu">
+            <RadialGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="{StaticResource PtColorFrameBlue}" Offset="0"/>
+                    <GradientStop Color="{StaticResource PtColorMenuBlue}" Offset="1"/>
+                </GradientStopCollection>
+            </RadialGradientBrush.GradientStops>
+        </RadialGradientBrush>
 
         <!-- Greens -->
         <Color x:Key="PtColorEntity3" G="200" A="255"/>
@@ -264,9 +285,11 @@
         <Image x:Key="ProductIcon2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="Setup_Install.png"/>
         <Image x:Key="ProductIcon3" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="Setup_Install.png"/>        
         <Image x:Key="ProjectIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="book_notebook.png"/>
-        <Image x:Key="ProjectIcon2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="book_notebook.png"/> <!-- For projects, in case Clients is opened -->
+        <Image x:Key="ProjectIcon2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="book_notebook.png"/>
+        <Image x:Key="ProjectIcon3" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="book_notebook.png"/>
         <Image x:Key="RightIcon" HorizontalAlignment="Right" Height="20" VerticalAlignment="Top" Width="20" Source="112_RightArrowShort_Blue_24x24_72.png"/>
         <Image x:Key="SearchIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="base_binoculars_32.png"/>
+        <Image x:Key="SearchIcon2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="base_binoculars_32.png"/>
         <Image x:Key="StaffIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="Users.png"/>
         <Image x:Key="StaffIcon2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="Users.png"/> <!-- Required for Staff Entities, which uses this icon twice -->
         <Image x:Key="StarIcon" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="FavoriteStar_FrontFacing_24x24_72.png"/>        
@@ -296,7 +319,7 @@
             </Setter>
             <Setter Property="Background" Value="#FFDDDDDD"/>
             <Setter Property="BorderBrush" Value="#FF707070"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PtBrushFontGrey}"/>
             <Setter Property="BorderThickness" Value="2"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -304,7 +327,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border x:Name="border" CornerRadius="5" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{StaticResource PtBrushHeaderBlue}" SnapsToDevicePixels="True">
+                        <Border x:Name="border" CornerRadius="5" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{StaticResource PtGradientButton}" SnapsToDevicePixels="True">
                             <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" 
         						Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                         </Border>

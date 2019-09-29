@@ -52,6 +52,7 @@ namespace ProjectTile
                 {
                     string mainFrameSource = ThisPageName();
                     string newPageName = newPageSource.Replace(".xaml", "");
+                    winMain.ToggleSideButtons(false);
 
                     if (mainFrameSource != TilesPageName && mainFrameSource == newPageName)
                     {
@@ -66,7 +67,11 @@ namespace ProjectTile
             }
             else
             {
-                try { navigate(newPageSource); }
+                try 
+                { 
+                    navigate(newPageSource);
+                    winMain.ToggleSideButtons(true);
+                }
                 catch (Exception generalException) { MessageFunctions.Error("Error changing page", generalException); }
             }
         }
@@ -171,7 +176,7 @@ namespace ProjectTile
             ChangePage("ProjectDetailsPage.xaml?Mode=" + pageMode);
         }
 
-        public static void ShowProjectTeamsPage(string pageMode = "")
+        public static void ShowProjectTeamsPage(string pageMode = "", int selectedStaffID = 0)
         {
             if (pageMode == "")
             {
@@ -179,7 +184,7 @@ namespace ProjectTile
                 else { pageMode = MyPermissions.Allow("EditProjectTeams") ? Amend : View; }
             }
 
-            ChangePage("ProjectTeamsPage.xaml?Mode=" + pageMode);
+            ChangePage("ProjectTeamsPage.xaml?Mode=" + pageMode + ",StaffID=" + selectedStaffID.ToString());
         }
 
 

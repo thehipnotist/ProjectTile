@@ -15,6 +15,11 @@ namespace ProjectTile
         // -------------------- Global Variables -------------------- //
         // ---------------------------------------------------------- //
 
+        public static ProjectSummaryRecord SelectedTeamProject = null;
+        public delegate void ReturnToTeamsDelegate();
+        public static ReturnToTeamsDelegate SelectProjectForTeam;
+        public static ReturnToTeamsDelegate CancelTeamProjectSelection;
+
         // ------------------ Lists ----------------- //
 
         public static List<ProjectSummaryRecord> FullProjectList;
@@ -55,6 +60,21 @@ namespace ProjectTile
         public static void ReturnToProjectPage()
         {
             PageFunctions.ShowProjectPage(ProjectSourceMode, ProjectSourcePage);
+        }
+
+        public static void SelectTeamProject(ProjectSummaryRecord selectedRecord)
+        {
+            try
+            {
+                SelectedTeamProject = selectedRecord;
+                SelectProjectForTeam();
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error handling client selection", generalException); }
+        }
+
+        public static void BackToTeam()
+        {
+            CancelTeamProjectSelection();
         }
 
         // ---------------------------------------------------------- //

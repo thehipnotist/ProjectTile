@@ -9,13 +9,15 @@
             <ColumnDefinition x:Name="LeftColumn" Width="710*"/>
             <ColumnDefinition Width="145"/>
         </Grid.ColumnDefinitions>
-        <TextBlock x:Name="LeftBanner" Background="{StaticResource PtBrushMenuBlue}" HorizontalAlignment="Left" Height="30" Margin="0,0,0,0" VerticalAlignment="Top" MinWidth="710" TextAlignment="Left" 
+
+        <TextBlock x:Name="Banner" Background="{StaticResource PtGradientMenu}" HorizontalAlignment="Left" Height="30" Margin="0,0,0,0" VerticalAlignment="Top" MinWidth="710" TextAlignment="Center" 
                    Padding="5" Foreground="White" FontStretch="UltraExpanded" FontSize="14" MinHeight="30" Width="{Binding ElementName=Main, Path=ActualWidth}" 
-                   Grid.ColumnSpan="2"/>
+                   Text="- ProjectTile -" Grid.ColumnSpan="2"/>
+
         <Label x:Name="PageHeader" HorizontalAlignment="Right" Height="30" VerticalAlignment="Top" MinWidth="835" Width="{Binding ElementName=Main, Path=ActualWidth}" FontWeight="Bold" 
                Background="{StaticResource PtBrushHeaderBlue}" Margin="0,35,0,0" Grid.ColumnSpan="2"/>
 
-        <Menu x:Name="MainMenu" Height="20" VerticalAlignment="Top" Background="{StaticResource PtBrushMenuBlue}" Visibility="Visible" VerticalContentAlignment="Center" Margin="5,5,0,0" 
+        <Menu x:Name="MainMenu" Height="20" VerticalAlignment="Top" Background="{x:Null}" Visibility="Visible" VerticalContentAlignment="Center" Margin="5,5,0,0" 
               FontFamily="Yu Gothic" Foreground="White">
             <MenuItem x:Name="EntityMenu" Header="_Entities" FontWeight="Bold" ToolTip="{StaticResource EntitiesTip}" BorderBrush="{x:Null}" 
                       Padding="6,0,6,0" HorizontalContentAlignment="Center" Background="{StaticResource PtBrushBackgroundBlue}" Foreground="{StaticResource PtBrushEntity3}" >
@@ -56,7 +58,7 @@
             </MenuItem>
         </Menu>            
 
-        <Menu x:Name="RightMenu" Height="20" HorizontalAlignment="Right" VerticalAlignment="Top" Background="{StaticResource PtBrushMenuBlue}" Visibility="Visible" VerticalContentAlignment="Center" 
+        <Menu x:Name="RightMenu" Height="20" HorizontalAlignment="Right" VerticalAlignment="Top" Background="{x:Null}" Visibility="Visible" VerticalContentAlignment="Center" 
               Margin="0,5,5,0" FontFamily="Yu Gothic" Foreground="White" Grid.ColumnSpan="2">
             <MenuItem x:Name="LoginMenu" Header="_Login" FontWeight="Bold" ToolTip="{StaticResource LoginTip}" BorderBrush="{x:Null}"
                       Padding="6,0,6,0" HorizontalContentAlignment="Center" Background ="{StaticResource PtBrushBackgroundBlue}" Foreground="{StaticResource PtBrushLogin3}" HorizontalAlignment="Left">
@@ -75,11 +77,16 @@
         <TextBlock x:Name="DetailsBlock" HorizontalAlignment="Right" Height="{Binding ActualHeight, ElementName=Main}" Margin="0,65,4,-96" TextWrapping="Wrap" VerticalAlignment="Top" Width="145" 
                    Background="{StaticResource PtBrushHeaderBlue}" TextAlignment="Right" Padding="8,5,8,5" Foreground="White" MinWidth="145" MinHeight="500" 
                    MaxWidth="145" Grid.Column="1" Focusable="True" />
+        <Button x:Name="ProjectButton" HorizontalAlignment="Center" Height="30" Margin="15,15,15,15" VerticalAlignment="Bottom" Width="110" 
+            FontWeight="Bold" IsEnabled="True" Click="ProjectButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{StaticResource PtBrushProject3}"
+            Grid.Column="1" Background="{StaticResource PtBrushProject1}" OverridesDefaultStyle="True">
+            <StackPanel x:Name="ProjectPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                <Frame x:Name="ProjectImage" Content="{StaticResource ProjectIcon3}" />
+                <TextBlock x:Name="ProjectButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="My Projects" Margin="5,0,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Button>
         <Frame x:Name="MainFrame" Content="Frame" Height="541" Margin="0,30,0,0" Width="840" NavigationUIVisibility="Hidden" BorderThickness="5" BorderBrush="{StaticResource PtBrushFrameBlue}" 
                Grid.ColumnSpan="2" MinWidth="840" MinHeight="541" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-
-        <TextBlock x:Name="CentreBanner" Background="{StaticResource PtBrushMenuBlue}" HorizontalAlignment="Center" Height="30" VerticalAlignment="Top" Width="145" TextAlignment="Center" Padding="5" 
-                   Foreground="White" FontStretch="UltraExpanded" FontSize="14" Text="- ProjectTile -" Grid.ColumnSpan="2" Margin="0,0,0,0"/>
 
     </Grid>
 </Window>
