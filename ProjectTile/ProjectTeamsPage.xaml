@@ -31,7 +31,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="{Binding ElementName=MiddleRow, Path=ActualHeight}" MinHeight="400"/>
                     </Grid.RowDefinitions>
-                    <Label x:Name="Instructions" Content="Instructions." HorizontalAlignment="Left" Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+                    <Label x:Name="Instructions" Content="Set at runtime" HorizontalAlignment="Left" Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
 
                     <Label x:Name="StatusLabel" Content="Project Status" HorizontalAlignment="Left" Height="30" Margin="15,45,145,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
                     <ComboBox x:Name="StatusCombo" HorizontalAlignment="Left" Height="30" Margin="115,45,15,0" VerticalAlignment="Top" Width="90" SelectionChanged="StatusCombo_SelectionChanged">
@@ -64,15 +64,15 @@
                             </Style>
                         </ComboBox.Resources>
                     </ComboBox>
-                    <Button x:Name="SearchButton" HorizontalAlignment="Right" Height="30" Margin="15,45,15,0" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
-                            FontWeight="Bold" Click="SearchButton_Click" ToolTip="Return to staff list without saving" BorderBrush="{DynamicResource PtBrushProject3}">
-                        <StackPanel x:Name="SearchPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                    <Button x:Name="ProjectSearchButton" HorizontalAlignment="Right" Height="30" Margin="15,45,15,0" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
+                            FontWeight="Bold" Click="ProjectSearch_Click" ToolTip="Find a project in the main list" BorderBrush="{DynamicResource PtBrushProject3}">
+                        <StackPanel HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                             <Image x:Name="SearchImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource SearchIcon}"/>
                             <TextBlock x:Name="SearchButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Search" Margin="5,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
-                    <DataGrid x:Name="TeamDataGrid" MinHeight="250" Margin="15,90,15,60" Width="625" MinWidth="625" AutoGenerateColumns="False" IsReadOnly="True" 
+                    <DataGrid x:Name="TeamDataGrid" MinHeight="250" Margin="15,90,15,60" Width="400" MinWidth="400" MaxWidth="625" AutoGenerateColumns="False" IsReadOnly="True" 
                           BorderBrush="{StaticResource PtBrushProject3}" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionMode="Single"
                           SelectionChanged="TeamDataGrid_SelectionChanged">
                         <DataGrid.Columns>
@@ -86,14 +86,31 @@
                         </DataGrid.Columns>
                     </DataGrid>
 
+                    <Grid x:Name="AmendmentGrid" Margin="15,90,15,0" HorizontalAlignment="Right" Width="215" Height="250" VerticalAlignment="Top">
+                        <Border HorizontalAlignment="Right" VerticalAlignment="Top" CornerRadius="3" BorderThickness="1" BorderBrush="{DynamicResource PtBrushStaff3}">
+                            <Grid Width="210" Height="115">
+                                <Label x:Name="StaffLabel" Content="Staff Name (Select or Search)" HorizontalAlignment="Right" Height="30" Margin="0,5,15,0" VerticalAlignment="Top" Width="Auto" 
+                                   FontWeight="Bold" HorizontalContentAlignment="Right"/>
+                                <ComboBox x:Name="StaffCombo" HorizontalAlignment="Right" Height="30" Margin="0,35,15,15" VerticalAlignment="Top" Width="180" DisplayMemberPath="StaffName"/>                                
+                                <Button x:Name="SearchStaffButton" HorizontalAlignment="Right" Height="30" Margin="15,75,15,0" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
+                                        FontWeight="Bold" Click="StaffSearch_Click" ToolTip="Find a staff member in the main list" BorderBrush="{DynamicResource PtBrushStaff3}">
+                                    <StackPanel HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                                        <Image x:Name="SearchImage2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource SearchIcon}"/>
+                                        <TextBlock x:Name="SearchStaffText" TextAlignment="Left" TextWrapping="Wrap" Text="Search" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
                     <Label x:Name="NameLikeLabel" Content="Name" HorizontalAlignment="Left" Height="30" Margin="15,45,155,15" VerticalAlignment="Bottom" Width="Auto" FontWeight="Bold"/>
                     <TextBox x:Name="NameLike" HorizontalAlignment="Left" Height="30" Margin="65,45,15,15" VerticalAlignment="Bottom" Width="140" ToolTip="Type part of a name and choose from the selection" 
                           TabIndex="2" LostFocus="NameLike_LostFocus" KeyUp="NameLike_KeyUp" Style="{DynamicResource PaddedTextBox}" CharacterCasing="Upper" GotFocus="NameLike_GotFocus"/>
                     <ListView x:Name="PossibleNames" HorizontalAlignment="Left" Height="90" Margin="100,75,15,45" VerticalAlignment="Bottom" Width="140" Visibility="Hidden" 
                               SelectionChanged="PossibleNames_SelectionChanged" DisplayMemberPath="StaffName" VerticalContentAlignment="Bottom"/>
 
-                    <Label x:Name="RoleLabel" Content="Role" HorizontalAlignment="Center" Height="30" Margin="15,45,175,15" VerticalAlignment="Bottom" Width="Auto" FontWeight="Bold"/>
-                    <ComboBox x:Name="RoleCombo" HorizontalAlignment="Center" Height="30" Margin="50,45,15,15" VerticalAlignment="Bottom" Width="150" SelectionChanged="RoleCombo_SelectionChanged"
+                    <Label x:Name="MainRoleLabel" Content="Role" HorizontalAlignment="Center" Height="30" Margin="15,45,175,15" VerticalAlignment="Bottom" Width="Auto" FontWeight="Bold"/>
+                    <ComboBox x:Name="MainRoleCombo" HorizontalAlignment="Center" Height="30" Margin="50,45,15,15" VerticalAlignment="Bottom" Width="150" SelectionChanged="MainRoleCombo_SelectionChanged"
                           DisplayMemberPath="RoleDescription"/>
 
                     <GroupBox x:Name="TimeGroup"  HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Bottom" Width="190" Padding="0">
@@ -122,25 +139,33 @@
                             <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Cancel" Margin="5,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
-                    <Button x:Name="AmendButton" HorizontalAlignment="Right" Height="30" Margin="15,15,140,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
+                    <Button x:Name="AmendButton" HorizontalAlignment="Right" Height="30" Margin="15,15,265,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" Click="AmendButton_Click" IsEnabled="False" BorderBrush="{DynamicResource PtBrushStaff3}">
                         <StackPanel x:Name="AmendPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                             <Image x:Name="AmendImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource AmendIcon}"/>
                             <TextBlock x:Name="AmendButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Amend" Margin="5,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
-                    <Button x:Name="AddButton" HorizontalAlignment="Right" Height="30" Margin="15,15,30,15" VerticalAlignment="Top" Width="110" 
+                    <Button x:Name="AddButton" HorizontalAlignment="Right" Height="30" Margin="15,15,140,15" VerticalAlignment="Top" Width="110" 
                 		FontWeight="Bold" Click="AddButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{DynamicResource PtBrushStaff3}">
                         <StackPanel x:Name="AddPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                             <Image x:Name="PlusImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource PlusIcon}"/>
                             <TextBlock x:Name="AddButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Add Staff" Margin="5,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
-                    <Button x:Name="ProjectButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Bottom" Width="110" 
-                		FontWeight="Bold" IsEnabled="False" Click="ProjectButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{StaticResource PtBrushProject3}">
+                    <Button x:Name="ProjectButton" HorizontalAlignment="Right" Height="30" Margin="15,15,30,15" VerticalAlignment="Bottom" Width="110" 
+                		FontWeight="Bold" IsEnabled="False" Click="ProjectButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{StaticResource PtBrushProject3}"
+                        ToolTip="Select the Project to allow amending or adding team members">
                         <StackPanel x:Name="ProjectPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                             <Image x:Name="ProjectImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource ProjectIcon}"/>
                             <TextBlock x:Name="ProjectButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Select" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
+                        FontWeight="Bold" ToolTip="Apply any changes" Click="CommitButton_Click" BorderBrush="{DynamicResource PtBrushProject3}">
+                        <StackPanel x:Name="CommitPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                            <Image x:Name="CommitImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource CommitIcon}"/>
+                            <TextBlock x:Name="CommitButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Save" Margin="5,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
                 </Grid>
