@@ -69,7 +69,7 @@ namespace ProjectTile
             else if (pageMode == PageFunctions.Amend)
             {
                 PageHeader.Content = "Amend Staff Details";
-                HeaderImage2.SetResourceReference(Frame.ContentProperty, "AmendIcon2");
+                HeaderImage2.SetResourceReference(Image.SourceProperty, "AmendIcon");
                 Instructions.Content = "Choose a staff member and then click the 'Amend' button to change their details.";
                 StaffDataGrid.SelectionMode = DataGridSelectionMode.Single;
                 DisableButton.Visibility = Globals.MyPermissions.Allow("ActivateStaff") ? Visibility.Visible : Visibility.Hidden;

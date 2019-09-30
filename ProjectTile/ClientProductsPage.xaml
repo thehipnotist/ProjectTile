@@ -19,8 +19,8 @@
             <RowDefinition Height="90" MinHeight="90" MaxHeight="90"/>
         </Grid.RowDefinitions>
 
-        <Frame x:Name="HeaderImage" Content="{StaticResource ClientIcon2}" Grid.Row="0" Grid.Column="1" Margin="0,5,0,0"  VerticalAlignment="Top" Width="20" HorizontalAlignment="Left" Height="20"/>
-        <Frame x:Name="HeaderImage2" Content="{StaticResource ProductIcon2}" Grid.Row="0" Grid.Column="1" Margin="25,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
+        <Image x:Name="HeaderImage" Source="{DynamicResource ClientIcon}" Grid.Row="0" Grid.Column="1" Margin="0,5,0,0"  VerticalAlignment="Top" Width="20" HorizontalAlignment="Left" Height="20"/>
+        <Image x:Name="HeaderImage2" Source="{DynamicResource ProductIcon}" Grid.Row="0" Grid.Column="1" Margin="25,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
         <Label x:Name="PageHeader" Content="Products for each Client" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="605" FontWeight="Bold" Background="{x:Null}" 
                Margin="50,0,0,0" Foreground="White" Grid.Column="1"/>
 
@@ -43,8 +43,9 @@
                 <Button x:Name="DisableButton" HorizontalAlignment="Right" Height="30" Margin="15,45,160,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" IsEnabled="False" Click="DisableButton_Click">
                     <StackPanel x:Name="DisablePanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Frame x:Name="EnableImage" Content="{StaticResource EnableIcon}"  Visibility="Collapsed"/>
-                        <Frame x:Name="DisableImage" Content="{StaticResource DisableIcon}"  Margin="0,0,5,0"/>
+                        <Image x:Name="EnableImage" HorizontalAlignment="Left" Height="30" VerticalAlignment="Center" Width="25" Source="{DynamicResource EnableIcon}" 
+                               Stretch="UniformToFill" Visibility="Collapsed"/>
+                        <Image x:Name="DisableImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="25" Source="{DynamicResource DisableIcon}"/>
                         <TextBlock x:Name="DisableButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Disable" Margin="0,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
@@ -94,8 +95,8 @@
                 <Button x:Name="AddButton" HorizontalAlignment="Center" Height="45" Margin="300,150,300,0" VerticalAlignment="Top" Width="55" Style="{StaticResource RoundedButton}"  
                 	FontWeight="Bold" IsEnabled="False" Click="AddButton_Click">
                     <Grid x:Name="AddPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Width="50">
-                        <Frame x:Name="PlusImage" Content="{StaticResource PlusIcon}" Margin="3,0,15,15"/>
-                        <Frame x:Name="RightImage" Content="{StaticResource RightIcon}" Margin="15,1,3,15"/>
+                        <Image x:Name="PlusImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource PlusIcon}" Margin="3,0,15,15"/>
+                        <Image x:Name="RightImage" HorizontalAlignment="Right" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource RightIcon}" Margin="15,1,3,15"/>
                         <TextBlock x:Name="AddButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Add" Margin="0,0,0,0" VerticalAlignment="Bottom"/>
                     </Grid>
                 </Button>
@@ -103,8 +104,8 @@
                 <Button x:Name="RemoveButton" HorizontalAlignment="Center" Height="45" Margin="15,15,15,40" VerticalAlignment="Bottom" Width="55" Style="{StaticResource RoundedButton}"  
                 	FontWeight="Bold" IsEnabled="False" Click="RemoveButton_Click">
                     <Grid x:Name="RemovePanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Width="50">
-                        <Frame x:Name="LeftImage" Content="{StaticResource LeftIcon}" Margin="3,0,15,15"/>
-                        <Frame x:Name="SubtractImage" Content="{StaticResource SubtractIcon}" Margin="15,0,3,15"/>
+                        <Image x:Name="LeftImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource LeftIcon}" Margin="3,0,15,15"/>
+                        <Image x:Name="SubtractImage" HorizontalAlignment="Right" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource SubtractIcon}" Margin="15,1,3,15"/>
                         <TextBlock x:Name="RemoveButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Remove" Margin="0,0,0,0" VerticalAlignment="Bottom"/>
                     </Grid>
                 </Button>
@@ -173,14 +174,14 @@
 
                 <Button x:Name="CancelButton" HorizontalAlignment="Left" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="100" Style="{StaticResource RoundedButton}" FontWeight="Bold" Click="CancelButton_Click">
                     <StackPanel x:Name="CancelPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Frame x:Name="CancelImage" Content="{StaticResource CancelIcon}"/>
+                        <Image x:Name="CancelImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource CancelIcon}"/>
                         <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Close" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button x:Name="BackButton" HorizontalAlignment="Left" Height="30" Margin="130,15,15,15" VerticalAlignment="Top" Width="100" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" Click="BackButton_Click" ToolTip="Return to client list without saving">
                     <StackPanel x:Name="BackPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Frame x:Name="BackImage" Content="{StaticResource BackIcon}"/>
+                        <Image x:Name="BackImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource BackIcon}"/>
                         <TextBlock x:Name="BackButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Back" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
@@ -188,21 +189,21 @@
                 <Button x:Name="ProductButton" HorizontalAlignment="Center" Height="30" Margin="0,15,15,0" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" ToolTip="Products the selected client has purchased" IsEnabled="False" Click="ProductButton_Click" BorderBrush="{DynamicResource PtBrushProduct3}">
                     <StackPanel x:Name="ProductPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Frame x:Name="ProductImage" Content="{StaticResource ProductIcon}"/>
+                        <Image x:Name="ProductImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource ProductIcon}"/>
                         <TextBlock x:Name="ProductButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Products" Margin="5,0,5,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button x:Name="ClientButton" HorizontalAlignment="Center" Height="30" Margin="230,15,0,0" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" ToolTip="Clients with the selected product" IsEnabled="False" Click="ClientButton_Click" BorderBrush="{DynamicResource PtBrushClient3}">
                     <StackPanel x:Name="ClientPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Frame x:Name="ClientImage" Content="{StaticResource ClientIcon}"/>
+                        <Image x:Name="ClientImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource ClientIcon}"/>
                         <TextBlock x:Name="ClientButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Clients" Margin="5,0,5,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" IsEnabled="False" Click="CommitButton_Click" BorderBrush="{DynamicResource PtBrushClient3}">
                     <StackPanel x:Name="CommitPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Frame x:Name="CommitImage" Content="{StaticResource CommitIcon}"/>
+                        <Image x:Name="CommitImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource CommitIcon}"/>
                         <TextBlock x:Name="CommitButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Save" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>

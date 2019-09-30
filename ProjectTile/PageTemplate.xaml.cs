@@ -67,7 +67,7 @@ namespace ProjectTile
 
             if (pageMode == PageFunctions.Amend) 
             {
-                HeaderImage2.SetResourceReference(Frame.ContentProperty, "AmendIcon");
+                HeaderImage2.SetResourceReference(Image.SourceProperty, "AmendIcon");
             }
         }
 

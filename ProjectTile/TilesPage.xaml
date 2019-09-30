@@ -19,8 +19,8 @@
             <RowDefinition Height="15" MinHeight="15" MaxHeight="15"/>
         </Grid.RowDefinitions>
 
-        <Frame x:Name="HeaderImage" Content="{DynamicResource TilesIcon}" Grid.Row="0" Grid.Column="1" Margin="0,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
-        <Frame x:Name="HeaderImage2" Content="{StaticResource MapIcon}" Grid.Row="0" Grid.Column="1" Margin="25,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
+        <Image x:Name="HeaderImage" Source="{DynamicResource TilesIcon}" Grid.Row="0" Grid.Column="1" Margin="0,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
+        <Image x:Name="HeaderImage2" Source="{DynamicResource MapIcon}" Grid.Row="0" Grid.Column="1" Margin="25,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
         <Label x:Name="PageHeader" Content="Main Menu" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="605" FontWeight="Bold" Background="{x:Null}" Foreground="White" 
                Grid.Column="1" Margin="50,0,0,0"/>
         
@@ -40,7 +40,7 @@
                 <Label x:Name="Instructions" Content="Hover over a main 'tile' to 'expand' it temporarily. Click on it to keep it expanded (click elsewhere to cancel)." 
                        HorizontalAlignment="Left" Margin="0,40,0,0" VerticalAlignment="Top" Width="630" Height="30" Grid.Column="1" Grid.ColumnSpan="2"/>
                 <Label x:Name="Welcome" Content="Welcome to ProjectTile." HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" MinHeight="475" MinWidth="655" 
-                       MouseDown="mouseOffButtons" Padding="20" Height="{Binding ElementName=MiddleRow, Path=ActualHeight}" Width="{Binding ElementName=CentreColumn, Path=ActualWidth}" Grid.ColumnSpan="3"  />
+                       MouseDown="mouseOffButtons" Padding="20" Height="{Binding ElementName=MiddleRow, Path=ActualHeight}" Width="{Binding ElementName=CentreColumn, Path=ActualWidth}" Grid.ColumnSpan="3" />
 
                 <!-- Note that the main tiles must go behind the others, otherwise they cause MouseLeave events in the other buttons -->
                 <Button x:Name="EntityButton" HorizontalAlignment="Left" Height="120" Margin="0,90,0,0" VerticalAlignment="Top" Width="120" FontWeight="Bold" Background="{DynamicResource PtBrushEntity2}" 
@@ -48,9 +48,9 @@
                         Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" 
                            Style="{DynamicResource TileLabelStyle}" Background="{DynamicResource PtGradientEntity2}">
-                        <Grid>
-                            <Frame x:Name="EntitiesImage" Content="{DynamicResource EntitiesIcon}" Margin="0,0,75,75"/>
-                            <TextBlock x:Name="EntityText" TextAlignment="Center" TextWrapping="Wrap" Text="Entities" Foreground="White" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource EntitiesIcon}" Height="23" Width="23" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="2,2,0,0"/>
+                            <TextBlock x:Name="EntityText" TextAlignment="Center" TextWrapping="Wrap" Text="Entities" Foreground="White" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -59,9 +59,9 @@
                         Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center"
                            Style="{DynamicResource TileLabelStyle2}" Background="{DynamicResource PtGradientStaff2}">
-                        <Grid>
-                            <Frame x:Name="StaffImage" Content="{DynamicResource StaffIcon}" Margin="0,0,75,75"/>
-                            <TextBlock Name="StaffText" TextAlignment="Center" TextWrapping="Wrap" Text="Staff" Foreground="White" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource StaffIcon}" Height="20" Width="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="2,2,0,0"/>
+                            <TextBlock Name="StaffText" TextAlignment="Center" TextWrapping="Wrap" Text="Staff" Foreground="White" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -70,9 +70,9 @@
                         Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center"
                            Style="{DynamicResource TileLabelStyle}" Background="{DynamicResource PtGradientProduct2}">
-                        <Grid>
-                            <Frame x:Name="ProductImage" Content="{DynamicResource ProductIcon}" Margin="0,0,75,75"/>
-                            <TextBlock x:Name="ProductText" TextAlignment="Center" TextWrapping="Wrap" Text="Products" Foreground="White" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource ProductIcon}" Height="20" Width="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="2,2,0,0"/>
+                            <TextBlock x:Name="ProductText" TextAlignment="Center" TextWrapping="Wrap" Text="Products" Foreground="White" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>                
@@ -81,9 +81,9 @@
                         Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center"
                            Style="{DynamicResource TileLabelStyle}" Background="{DynamicResource PtGradientLogin2}">
-                        <Grid>
-                            <Frame x:Name="LoginImage" Content="{DynamicResource LoginIcon}" Margin="0,0,75,75"/>
-                            <TextBlock x:Name="LoginText" TextAlignment="Center" TextWrapping="Wrap" Text="Login" Foreground="White" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource LoginIcon}" Height="20" Width="20" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                            <TextBlock x:Name="LoginText" TextAlignment="Center" TextWrapping="Wrap" Text="Login" Foreground="White" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>                
@@ -92,9 +92,9 @@
                         Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center"
                            Style="{DynamicResource TileLabelStyle}" Background="{DynamicResource PtGradientClient2}">
-                        <Grid>
-                            <Frame x:Name="ClientImage" Content="{DynamicResource ClientIcon}" Margin="0,0,75,75"/>
-                            <TextBlock x:Name="ClientText" TextAlignment="Center" TextWrapping="Wrap" Text="Clients" Foreground="White" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource ClientIcon}" Height="20" Width="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="2,2,0,0"/>
+                            <TextBlock x:Name="ClientText" TextAlignment="Center" TextWrapping="Wrap" Text="Clients" Foreground="White" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -103,9 +103,9 @@
                         Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center"
                            Style="{DynamicResource TileLabelStyle}" Background="{DynamicResource PtGradientProject2}">
-                        <Grid>
-                            <Frame x:Name="ProjectImage" Content="{DynamicResource ProjectIcon}" Margin="0,0,75,75"/>
-                            <TextBlock x:Name="ProjectText" TextAlignment="Center" TextWrapping="Wrap" Text="Projects" Foreground="White" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource ProjectIcon}" Height="20" Width="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="2,2,0,0"/>
+                            <TextBlock x:Name="ProjectText" TextAlignment="Center" TextWrapping="Wrap" Text="Projects" Foreground="White" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -114,9 +114,9 @@
                         VerticalAlignment="Top" MouseLeave="buttonMouseOut" Visibility="Hidden" Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientEntity1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle2}">
-                        <Grid>
-                            <Frame Content="{DynamicResource AddIcon}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Create New Entity" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource AddIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Create New Entity" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -124,9 +124,9 @@
                         HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden" Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientEntity1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle2}">
-                        <Grid>
-                            <Frame Content="{DynamicResource AmendIcon}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Amend Existing Entity" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource AmendIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Amend Existing Entity" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>                        
                     </Label>
                 </Button>
@@ -134,9 +134,9 @@
                         MouseLeave="buttonMouseOut" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden" Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientEntity1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle2}">
-                        <Grid>
-                            <Frame Content="{DynamicResource ChangeEntityIcon}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Change Current Entity" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource ChangeEntityIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Change Current Entity" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -144,9 +144,9 @@
                         MouseLeave="buttonMouseOut" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden" Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientEntity1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle2}">
-                        <Grid>
-                            <Frame Content="{DynamicResource PinIcon}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Change Default Entity" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource PinIcon}" Height="20" Width="25" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2" Stretch="UniformToFill"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Change Default Entity" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -155,9 +155,9 @@
                         VerticalAlignment="Top" Visibility="Hidden" Click="StaffButton_View_Click" Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientStaff1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle2}">
-                        <Grid>
-                            <Frame Content="{DynamicResource ViewIcon}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="View Staff Details" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource ViewIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="View Staff Details" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -165,9 +165,9 @@
                         VerticalAlignment="Top" Click="StaffButton_New_Click" Visibility="Hidden" Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientStaff1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle2}">
-                        <Grid>
-                            <Frame Content="{DynamicResource AddIcon2}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Create New Staff Member" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource AddIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Create New Staff Member" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>                        
                     </Label>
                 </Button>
@@ -175,9 +175,9 @@
                         VerticalAlignment="Top" Click="StaffButton_Amend_Click" Visibility="Hidden" Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientStaff1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle2}">
-                        <Grid>
-                            <Frame Content="{DynamicResource AmendIcon2}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Amend Staff Details" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource AmendIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Amend Staff Details" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>                        
                     </Label>
                 </Button>
@@ -185,9 +185,9 @@
                         VerticalAlignment="Top" Visibility="Hidden" Click="StaffButton_Entities_Click" Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientStaff1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle2}">
-                        <Grid>
-                            <Frame Content="{DynamicResource EntitiesIcon2}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Staff Entity Links" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource EntitiesIcon}" Height="23" Width="23" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Staff Entity Links" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>                        
                     </Label>
                 </Button>
@@ -196,9 +196,9 @@
                         VerticalAlignment="Top" Visibility="Hidden" Click="ProductButton_View_Click" Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientProduct1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
-                        <Grid>
-                            <Frame Content="{DynamicResource ViewIcon2}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="View Products" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource ViewIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="View Products" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -206,9 +206,9 @@
                         VerticalAlignment="Top" Visibility="Hidden" Click="ProductButton_New_Click" Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientProduct1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
-                        <Grid>
-                            <Frame Content="{DynamicResource AddIcon3}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Create New Product" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource AddIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Create New Product" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -216,9 +216,9 @@
                         VerticalAlignment="Top" Visibility="Hidden" Click="ProductButton_Amend_Click" Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientProduct1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
-                        <Grid>
-                            <Frame Content="{DynamicResource AmendIcon3}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Amend or Manage Products" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource AmendIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Amend or Manage Products" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -227,9 +227,9 @@
                         MouseLeave="buttonMouseOut" Click="LoginButton_Login_Click" Visibility="Hidden" Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientLogin1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle2}">
-                        <Grid>
-                            <Frame Content="{DynamicResource ChangeLoginIcon}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Change Login" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource ChangeLoginIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Change Login" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -237,9 +237,9 @@
                         MouseLeave="buttonMouseOut" Click="LoginButton_Password_Click" Visibility="Hidden" Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientLogin1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle2}">
-                        <Grid>
-                            <Frame Content="{DynamicResource PasswordIcon}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Change Password" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource PasswordIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Change Password" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -247,9 +247,9 @@
                         MouseLeave="buttonMouseOut" Click="LoginButton_Exit_Click" Visibility="Hidden" Grid.Column="2" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientLogin1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle2}">
-                        <Grid>
-                            <Frame Content="{DynamicResource ExitIcon}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Exit ProjectTile" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource ExitIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Exit ProjectTile" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>                
@@ -258,9 +258,9 @@
                         VerticalAlignment="Top" Grid.Column="2" Click="ClientButton_View_Click" Visibility="Hidden" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientClient1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
-                        <Grid>
-                            <Frame Content="{DynamicResource ViewIcon3}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="View Clients" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource ViewIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="View Clients" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -268,9 +268,9 @@
                         VerticalAlignment="Top" Grid.Column="2" Visibility="Hidden" Click="ClientButton_New_Click" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientClient1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
-                        <Grid>
-                            <Frame Content="{DynamicResource AddIcon4}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Create New Client" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource AddIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Create New Client" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -278,9 +278,9 @@
                         VerticalAlignment="Top" Grid.Column="2" Visibility="Hidden" Click="ClientButton_Amend_Click" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientClient1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
-                        <Grid>
-                            <Frame Content="{DynamicResource AmendIcon4}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Amend or Manage Clients" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource AmendIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Amend or Manage Clients" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -288,9 +288,9 @@
                         VerticalAlignment="Top" Grid.Column="2" Visibility="Hidden" Click="ClientButton_Contact_Click" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientClient1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
-                        <Grid>
-                            <Frame Content="{DynamicResource ContactIcon}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Client Contacts" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource ContactIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Client Contacts" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -298,9 +298,9 @@
                         VerticalAlignment="Top" Grid.Column="2" Visibility="Hidden" Click="ClientButton_Product_Click" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientClient1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
-                        <Grid>
-                            <Frame Content="{DynamicResource ProductIcon2}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Client Products" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource ProductIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Client Products" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -309,9 +309,9 @@
                         VerticalAlignment="Top" Grid.Column="2" Click="ProjectButton_View_Click" Visibility="Hidden" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientProject1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
-                        <Grid>
-                            <Frame Content="{DynamicResource ViewIcon4}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="View Projects" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource ViewIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="View Projects" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -319,9 +319,9 @@
                         VerticalAlignment="Top" Grid.Column="2" Visibility="Hidden" Click="ProjectButton_New_Click" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientProject1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
-                        <Grid>
-                            <Frame Content="{DynamicResource AddIcon5}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Create New Project" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource AddIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Create New Project" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -329,9 +329,9 @@
                         VerticalAlignment="Top" Grid.Column="2" Visibility="Hidden" Click="ProjectButton_Amend_Click" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientProject1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
-                        <Grid>
-                            <Frame Content="{DynamicResource AmendIcon5}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Amend or Manage Projects" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource AmendIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Amend or Manage Projects" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -339,9 +339,9 @@
                         VerticalAlignment="Top" Grid.Column="2" Visibility="Hidden" Click="ProjectButton_Staff_Click" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientProject1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
-                        <Grid>
-                            <Frame Content="{DynamicResource StaffIcon2}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Project Teams (Staff)" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource StaffIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Project Teams (Staff)" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>                        
                     </Label>
                 </Button>                
@@ -349,9 +349,9 @@
                         VerticalAlignment="Top" Grid.Column="2" Visibility="Hidden" Click="ProjectButton_Contact_Click" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientProject1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
-                        <Grid>
-                            <Frame Content="{DynamicResource ContactIcon2}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Project Contacts" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource ContactIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Project Contacts" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>
@@ -359,9 +359,9 @@
                         VerticalAlignment="Top" Grid.Column="2" Visibility="Hidden" Click="ProjectButton_Product_Click" Style="{DynamicResource TileStyle}">
                     <Label VerticalContentAlignment="Center" Background="{DynamicResource PtGradientProject1}" Height="110" Width="110" HorizontalAlignment="Center" VerticalAlignment="Center" 
                            HorizontalContentAlignment="Center" Style="{DynamicResource TileLabelStyle}">
-                        <Grid>
-                            <Frame Content="{DynamicResource ProductIcon3}" Margin="75,75,0,0"/>
-                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Project Products" VerticalAlignment="Center"/>
+                        <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="{DynamicResource ProductIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                            <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Project Products" VerticalAlignment="Center" Margin="2,0,2,0"/>
                         </Grid>
                     </Label>
                 </Button>

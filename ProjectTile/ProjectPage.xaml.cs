@@ -63,20 +63,20 @@ namespace ProjectTile
             if (pageMode == PageFunctions.View) 
             { 
                 AddButton.Visibility = CommitButton.Visibility = Visibility.Hidden;
-                AmendImage.SetResourceReference(Frame.ContentProperty, "ViewIcon2");
+                AmendImage.SetResourceReference(Image.SourceProperty, "ViewIcon");
             }
             else if (pageMode == PageFunctions.Amend)
             {
                 PageHeader.Content = "Amend or Manage Projects";
                 Instructions.Content = "Use filters to restrict results and column headers to sort them, then choose the required option.";
-                HeaderImage2.SetResourceReference(Frame.ContentProperty, "AmendIcon2");
+                HeaderImage2.SetResourceReference(Image.SourceProperty, "AmendIcon");
                 CommitButton.Visibility = Visibility.Hidden;
             }
             else if (pageMode == PageFunctions.Lookup)
             {
                 PageHeader.Content = "Select Project";
                 Instructions.Content = "Use filters to restrict results and column headers to sort them, then choose the desired project.";
-                HeaderImage2.SetResourceReference(Frame.ContentProperty, "SearchIcon2");
+                HeaderImage2.SetResourceReference(Image.SourceProperty, "SearchIcon");
                 AddButton.Visibility = AmendButton.Visibility = BackButton.Visibility = MoreButton.Visibility =  Visibility.Hidden;
                 CommitButton.Margin = AmendButton.Margin;
             }

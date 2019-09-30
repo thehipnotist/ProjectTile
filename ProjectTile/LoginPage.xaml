@@ -19,8 +19,8 @@
             <RowDefinition Height="90" MinHeight="90" MaxHeight="90"/>
         </Grid.RowDefinitions>
 
-        <Frame x:Name="HeaderImage" Content="{StaticResource LoginIcon}" Grid.Row="0" Grid.Column="1" Margin="0,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
-        <Frame x:Name="HeaderImage2" Content="{StaticResource ChangeLoginIcon}" Grid.Row="0" Grid.Column="1" Margin="25,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
+        <Image x:Name="HeaderImage" Source="{DynamicResource LoginIcon}" Grid.Row="0" Grid.Column="1" Margin="0,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
+        <Image x:Name="HeaderImage2" Source="{DynamicResource ChangeLoginIcon}" Grid.Row="0" Grid.Column="1" Margin="25,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
         <Label x:Name="PageHeader" Content ="Please Log In" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="605" FontWeight="Bold" Background="{x:Null}" Foreground="White" 
                Margin="50,0,0,0" Grid.Column="1"/>
         <Label x:Name="RightHeader" Content ="Welcome!" HorizontalAlignment="Right" Height="30" VerticalAlignment="Top" Width="145" FontWeight="Bold" Background="{x:Null}" Foreground="White" 
@@ -38,7 +38,7 @@
 
                 <Label x:Name="UserIDLabel" Content="UserID" HorizontalAlignment="Left" Height="30" Margin="15,75,0,0" VerticalAlignment="Top" Width="90" FontWeight="Bold"/>
                 <TextBox x:Name="UserID" HorizontalAlignment="Left" Height="30" Margin="105,75,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" TabIndex="1" 
-                     ToolTip="Enter your User ID here" Text="pjadmin" Style="{DynamicResource PaddedTextBox}" />
+                     ToolTip="Enter your User ID here" Text="pjadmin" Style="{DynamicResource PaddedTextBox}"/>
                 <Label x:Name="PasswordLabel" Content="Password" HorizontalAlignment="Left" Height="30" Margin="15,120,0,0" VerticalAlignment="Top" Width="90" FontWeight="Bold"/>
                 <PasswordBox x:Name="Password" HorizontalAlignment="Left" Height="30" Margin="105,120,0,0" VerticalAlignment="Top" Width="180" ToolTip="Enter your password here" 
                          PasswordChanged="Password_Changed" TabIndex="2" KeyUp="Password_KeyUp" Password="pja" GotFocus="Password_GotFocus" Style="{DynamicResource PaddedPassword}"/>
@@ -64,14 +64,14 @@
                 <Button x:Name="CancelButton" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="100" Style="{StaticResource RoundedButton}" FontWeight="Bold" 
                         Margin="15,15,15,15" Click="CancelButton_Click">
                     <StackPanel x:Name="CancelPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Frame x:Name="CancelImage" Content="{StaticResource CancelIcon}"/>
+                        <Image x:Name="CancelImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource CancelIcon}"/>
                         <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Cancel" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button x:Name="LogInButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Click="LogInButton_Click" TabIndex="3" 
                         ToolTip="Click to log in" FontWeight="Bold" Style="{StaticResource RoundedButton}" BorderBrush="{DynamicResource PtBrushLogin3}">
                     <StackPanel x:Name="CommitPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Frame x:Name="CommitImage" Content="{StaticResource CommitIcon}"/>
+                        <Image x:Name="CommitImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource CommitIcon}"/>
                         <TextBlock x:Name="CommitButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Log In" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
@@ -103,7 +103,7 @@
                                 Storyboard.TargetProperty="Angle"
                                 From="0.0" To="365.0" Duration="0:0:1"
                                 RepeatBehavior="Forever"
-                            />
+                           />
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>

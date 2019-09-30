@@ -19,8 +19,8 @@
             <RowDefinition Height="90" MinHeight="90" MaxHeight="90"/>
         </Grid.RowDefinitions>
 
-        <Frame x:Name="HeaderImage" Content="{StaticResource StaffIcon2}" Grid.Row="0" Grid.Column="1" Margin="0,5,0,0"  VerticalAlignment="Top" Width="20" HorizontalAlignment="Left" Height="20"/>
-        <Frame x:Name="HeaderImage2" Content="{StaticResource EntitiesIcon2}" Grid.Row="0" Grid.Column="1" Margin="25,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
+        <Image x:Name="HeaderImage" Source="{DynamicResource StaffIcon}" Grid.Row="0" Grid.Column="1" Margin="0,5,0,0"  VerticalAlignment="Top" Width="20" HorizontalAlignment="Left" Height="20"/>
+        <Image x:Name="HeaderImage2" Source="{DynamicResource EntitiesIcon}" Grid.Row="0" Grid.Column="1" Margin="23,3,0,0" VerticalAlignment="Top" Width="23" Height="23" HorizontalAlignment="Left"/>
         <Label x:Name="PageHeader" Content="Staff Members in each Entity" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="605" FontWeight="Bold" Background="{x:Null}" 
                Margin="50,0,0,0" Foreground="White" Grid.Column="1"/>        
         
@@ -81,24 +81,25 @@
                 <Button x:Name="AddButton" HorizontalAlignment="Center" Height="45" Margin="300,150,300,0" VerticalAlignment="Top" Width="55" Style="{StaticResource RoundedButton}"  
                 	FontWeight="Bold" IsEnabled="False" Click="AddButton_Click">
                     <Grid x:Name="AddPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Width="50">
-                        <Frame x:Name="PlusImage" Content="{StaticResource PlusIcon}" Margin="3,0,15,15"/>
-                        <Frame x:Name="RightImage" Content="{StaticResource RightIcon}" Margin="15,1,3,15"/>
+                        <Image x:Name="PlusImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource PlusIcon}" Margin="3,0,15,15"/>
+                        <Image x:Name="RightImage" HorizontalAlignment="Right" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource RightIcon}" Margin="15,1,3,15"/>
                         <TextBlock x:Name="AddButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Add" Margin="0,0,0,0" VerticalAlignment="Bottom"/>
                     </Grid>
                 </Button>
                 <Button x:Name="DefaultButton" HorizontalAlignment="Center" Height="45" Margin="300,110,300,0" VerticalAlignment="Center" Width="55" Style="{StaticResource RoundedButton}"  
                 	FontWeight="Bold" IsEnabled="False" Click="DefaultButton_Click">
                     <Grid x:Name="DefaultPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Width="50">
-                        <Frame x:Name="PinImage" Content="{StaticResource PinIcon}" Margin="3,0,15,15"/>
-                        <Frame x:Name="UpImage" Content="{StaticResource UpIcon}" Margin="15,0,3,15"/>
+                        <Image x:Name="PinImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="25" Source="{DynamicResource PinIcon}" Margin="3,0,15,15"
+                               Stretch="UniformToFill"/>
+                        <Image x:Name="UpImage" HorizontalAlignment="Right" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource UpIcon}" Margin="15,0,3,15"/>
                         <TextBlock x:Name="DefaultButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Default" Margin="0,0,0,0" VerticalAlignment="Bottom"/>
                     </Grid>
                 </Button>
                 <Button x:Name="RemoveButton" HorizontalAlignment="Center" Height="45" Margin="15,15,15,40" VerticalAlignment="Bottom" Width="55" Style="{StaticResource RoundedButton}"  
                 	FontWeight="Bold" IsEnabled="False" Click="RemoveButton_Click">
                     <Grid x:Name="RemovePanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Width="50">
-                        <Frame x:Name="LeftImage" Content="{StaticResource LeftIcon}" Margin="3,0,15,15"/>
-                        <Frame x:Name="SubtractImage" Content="{StaticResource SubtractIcon}" Margin="15,0,3,15"/>
+                        <Image x:Name="LeftImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource LeftIcon}" Margin="3,0,15,15"/>
+                        <Image x:Name="SubtractImage" HorizontalAlignment="Right" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource SubtractIcon}" Margin="15,1,3,15"/>
                         <TextBlock x:Name="RemoveButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Remove" Margin="0,0,0,0" VerticalAlignment="Bottom"/>
                     </Grid>
                 </Button>
@@ -148,35 +149,35 @@
                
                 <Button x:Name="CancelButton" HorizontalAlignment="Left" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="100" Style="{StaticResource RoundedButton}" FontWeight="Bold" Click="CancelButton_Click">
                     <StackPanel x:Name="CancelPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Frame x:Name="CancelImage" Content="{StaticResource CancelIcon}"/>
+                        <Image x:Name="CancelImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource CancelIcon}"/>
                         <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Close" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button x:Name="BackButton" HorizontalAlignment="Left" Height="30" Margin="130,15,15,15" VerticalAlignment="Top" Width="100" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" Click="BackButton_Click" ToolTip="Return to staff list without saving">
                     <StackPanel x:Name="BackPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Frame x:Name="BackImage" Content="{StaticResource BackIcon}"/>
+                        <Image x:Name="BackImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource BackIcon}"/>
                         <TextBlock x:Name="BackButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Back" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button x:Name="EntitiesButton" HorizontalAlignment="Center" Height="30" Margin="0,15,15,0" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" ToolTip="Entities that the selected user can access" IsEnabled="False" Click="EntitiesButton_Click"  BorderBrush="{DynamicResource PtBrushEntity3}">
                     <StackPanel x:Name="EntitiesPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Frame x:Name="EntitiesImage" Content="{StaticResource EntitiesIcon}"/>
-                        <TextBlock x:Name="EntitiesButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Entities" Margin="5,0,5,0" VerticalAlignment="Center"/>
+                        <Image x:Name="EntitiesImage" HorizontalAlignment="Left" Height="23" VerticalAlignment="Center" Width="23" Source="{DynamicResource EntitiesIcon}"  Stretch="UniformToFill"/>
+                        <TextBlock x:Name="EntitiesButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Entities" Margin="3,0,5,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>                  
                 <Button x:Name="StaffButton" HorizontalAlignment="Center" Height="30" Margin="230,15,0,0" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" ToolTip="Staff that the selected user can access" IsEnabled="False" Click="StaffButton_Click" BorderBrush="{DynamicResource PtBrushStaff3}">
                     <StackPanel x:Name="StaffPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">                       
-                        <Frame x:Name="StaffImage" Content="{StaticResource StaffIcon}"/>                   
+                        <Image x:Name="StaffImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource StaffIcon}"/>                   
                         <TextBlock x:Name="StaffButtonText" TextAlignment="Center" TextWrapping="Wrap" Text="Staff" Margin="5,0,5,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" IsEnabled="False" Click="CommitButton_Click" BorderBrush="{DynamicResource PtBrushStaff3}">
                     <StackPanel x:Name="CommitPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Frame x:Name="CommitImage" Content="{StaticResource CommitIcon}"/>
+                        <Image x:Name="CommitImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource CommitIcon}"/>
                         <TextBlock x:Name="CommitButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Save" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>

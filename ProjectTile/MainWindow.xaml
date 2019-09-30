@@ -76,12 +76,12 @@
 
         <TextBlock x:Name="DetailsBlock" HorizontalAlignment="Right" Height="{Binding ActualHeight, ElementName=Main}" Margin="0,65,4,-96" TextWrapping="Wrap" VerticalAlignment="Top" Width="145" 
                    Background="{StaticResource PtBrushHeaderBlue}" TextAlignment="Right" Padding="8,5,8,5" Foreground="White" MinWidth="145" MinHeight="500" 
-                   MaxWidth="145" Grid.Column="1" Focusable="True" />
+                   MaxWidth="145" Grid.Column="1" Focusable="True"/>
         <Button x:Name="ProjectButton" HorizontalAlignment="Center" Height="30" Margin="15,15,15,15" VerticalAlignment="Bottom" Width="110" 
             FontWeight="Bold" IsEnabled="True" Click="ProjectButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{StaticResource PtBrushProject3}"
             Grid.Column="1" Background="{StaticResource PtBrushProject1}" OverridesDefaultStyle="True">
             <StackPanel x:Name="ProjectPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                <Frame x:Name="ProjectImage" Content="{StaticResource ProjectIcon3}" />
+                <Image x:Name="ProjectImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource ProjectIcon}"/>
                 <TextBlock x:Name="ProjectButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="My Projects" Margin="5,0,0,0" VerticalAlignment="Center"/>
             </StackPanel>
         </Button>

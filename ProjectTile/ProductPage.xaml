@@ -18,10 +18,10 @@
             <RowDefinition x:Name="MiddleRow" Height="400*" MinHeight="400"/>
             <RowDefinition Height="90" MinHeight="90" MaxHeight="90"/>
         </Grid.RowDefinitions>
-        <Frame x:Name="HeaderImage" Content="{StaticResource ProductIcon}" Grid.Row="0" Grid.Column="1" Margin="0,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
-        <Frame x:Name="HeaderImage2" Content="{StaticResource ViewIcon}" Grid.Row="0" Grid.Column="1" Margin="25,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
+        <Image x:Name="HeaderImage" Source="{DynamicResource ProductIcon}" Grid.Row="0" Grid.Column="1" Margin="0,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
+        <Image x:Name="HeaderImage2" Source="{DynamicResource ViewIcon}" Grid.Row="0" Grid.Column="1" Margin="25,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
         <Label x:Name="PageHeader" Content="View Products" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="605" FontWeight="Bold" Background="{x:Null}" Margin="50,0,0,0" 
-               Foreground="White" Grid.Row="0" Grid.Column="1" />
+               Foreground="White" Grid.Row="0" Grid.Column="1"/>
 
         <Border MinHeight="400" MinWidth="655" Height="Auto" Width="Auto" Margin="0,0,0,0" BorderBrush="{StaticResource PtBrushProduct3}" Style="{DynamicResource SectionBorder}" Grid.Row="1" 
                 Grid.Column="1">
@@ -72,14 +72,14 @@
                 <Button x:Name="CancelButton" HorizontalAlignment="Left" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="100" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" Click="CancelButton_Click">
                     <StackPanel x:Name="CancelPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Frame x:Name="CancelImage" Content="{StaticResource CancelIcon}"/>
+                        <Image x:Name="CancelImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource CancelIcon}"/>
                         <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Close" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button x:Name="AmendButton" HorizontalAlignment="Center" Height="30" Margin="15,15,137.5,15" VerticalAlignment="Bottom" Width="110" 
                             FontWeight="Bold" Style="{StaticResource RoundedButton}" IsEnabled="False" Click="AmendButton_Click" BorderBrush="{DynamicResource PtBrushProduct3}">
                     <StackPanel x:Name="AmendPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Frame x:Name="AmendImage" Content="{StaticResource AmendIcon}"/>
+                        <Image x:Name="AmendImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource AmendIcon}"/>
                         <Frame x:Name="BackImage" Content="{StaticResource BackIcon}" Visibility="Collapsed"/>
                         <TextBlock x:Name="AmendButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Amend" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
@@ -87,7 +87,7 @@
                 <Button x:Name="AddButton" HorizontalAlignment="Center" Height="30" Margin="137.5,15,15,15" VerticalAlignment="Bottom" Width="110" 
                             FontWeight="Bold" Style="{StaticResource RoundedButton}" IsEnabled="True" Click="AddButton_Click" BorderBrush="{DynamicResource PtBrushProduct3}">
                     <StackPanel x:Name="AddPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Frame x:Name="AddImage" Content="{StaticResource AddIcon}"/>
+                        <Image x:Name="AddImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource AddIcon}"/>
                         <Frame x:Name="BackImage2" Content="{StaticResource BackIcon}" Visibility="Collapsed"/>
                         <TextBlock x:Name="AddButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="New Product" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
@@ -95,7 +95,7 @@
                 <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" Click="CommitButton_Click" BorderBrush="{DynamicResource PtBrushProduct3}">
                     <StackPanel x:Name="CommitPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Frame x:Name="CommitImage" Content="{StaticResource CommitIcon}"/>
+                        <Image x:Name="CommitImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource CommitIcon}"/>
                         <TextBlock x:Name="CommitButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Save" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
