@@ -679,6 +679,30 @@ namespace ProjectTile
             }	
         }
 
+        public static ProjectTeams GetSuccessor(TeamSummaryRecord currentRecord)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return existingPtDb.ProjectTeams
+                        .Where(pt => pt.ID != currentRecord.ID
+                            && pt.ProjectID == currentRecord.Project.ID
+                            && pt.ProjectRoleCode == currentRecord.RoleCode
+                            && (pt.FromDate == null || pt.FromDate >= currentRecord.EffectiveTo))
+                        .OrderBy(pt => pt.FromDate ?? StartOfTime)
+                        .OrderBy(pt => pt.ToDate ?? InfiniteDate)
+                        .FirstOrDefault();
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving successor information", generalException);
+                return null;
+            }
+        }
+
         // Clients
         public static void SetFullClientList()
         {
@@ -1131,17 +1155,64 @@ namespace ProjectTile
         }
 
         // Project Teams (updates)
-        public static bool SaveProjectTeam(TeamSummaryRecord currentVersion, TeamSummaryRecord savedVersion)
+        
+        public static bool SaveProjectTeamChanges(TeamSummaryRecord currentVersion, TeamSummaryRecord savedVersion)
         {
             if (!currentVersion.ValidateTeamRecord(savedVersion)) { return false; }
 
-            // To do: process saving
-            
-            
-            MessageFunctions.InvalidMessage("Not yet implemented.", "To do");
-            return false;
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    ProjectTeams thisTeam = existingPtDb.ProjectTeams.Where(pt => pt.ID == savedVersion.ID).FirstOrDefault();
+                    if (thisTeam == null)
+                    {
+                        MessageFunctions.Error("Error saving changes to project team member details: no matching record found.", null);
+                        return false;
+                    }
+                    currentVersion.ConvertToProjectTeam(ref thisTeam);
+
+                    // TODO: update other affected records (predecessors and successors) - need shared functions to determine what's required
+
+                    existingPtDb.SaveChanges();
+                    MessageFunctions.SuccessMessage("Your changes have been saved successfully.", "Team Membership Amended");
+                    return true;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error saving changes to project team member details", generalException);
+                return false;
+            }	
         }
 
+        public static bool SaveNewProjectTeam(TeamSummaryRecord newRecord)
+        {
+            if (!newRecord.ValidateTeamRecord(null)) { return false; }
+            ProjectTeams thisTeam = new ProjectTeams();
+            newRecord.ConvertToProjectTeam(ref thisTeam);
+
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    existingPtDb.ProjectTeams.Add(thisTeam);
+
+                    // TODO: update other affected records (predecessors and successors) - need shared functions to determine what's required
+
+                    existingPtDb.SaveChanges();
+                    MessageFunctions.SuccessMessage("New project team member added successfully.", "Team Member Added");
+                    return true;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error creating new project team member", generalException);
+                return false;
+            }
+        }
 
     } // class
 } // namespace

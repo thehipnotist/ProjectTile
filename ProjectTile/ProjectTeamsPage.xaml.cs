@@ -418,8 +418,6 @@ namespace ProjectTile
 
         // -------- Control-specific events --------- // 
 
-
-
         private void StatusCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
@@ -547,8 +545,21 @@ namespace ProjectTile
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
-            bool success = ProjectFunctions.SaveProjectTeam(editTeamRecord, selectedTeamRecord);
-            if (success) { toggleEditMode(false); }
+            bool success = false;
+            
+            if (editTeamRecord.ID > 0)
+            {
+                TeamSummaryRecord previousVersion = selectedTeamRecord;
+                success = ProjectFunctions.SaveProjectTeamChanges(editTeamRecord, previousVersion);
+            }
+            else { success = ProjectFunctions.SaveNewProjectTeam(editTeamRecord); }
+
+            if (success) 
+            { 
+                toggleEditMode(false);
+                refreshTeamDataGrid();
+                // TODO: Get the ID back if it's a new team member, and set the selectedTeamRecord to that
+            }
         }
 
         private void StaffSearch_Click(object sender, RoutedEventArgs e)

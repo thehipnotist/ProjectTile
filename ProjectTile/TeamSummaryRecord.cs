@@ -63,15 +63,26 @@ namespace ProjectTile
             }
         }
 
+        public ProjectTeams Predecessor()
+        {
+            return ProjectFunctions.GetPredecessor(this) ?? null;
+        }
+
+        public ProjectTeams Successor()
+        {
+            return ProjectFunctions.GetSuccessor(this) ?? null;
+        }
+
+        //public ProjectTeams 
+
         public DateTime? SuggestedStart()
         {
             try
             {
-                ProjectTeams predecessor = ProjectFunctions.GetPredecessor(this) ?? null;
-                if (predecessor == null) { return (DateTime)Project.StartDate; }
-                else if (predecessor.ToDate != null)
+                if (Predecessor() == null) { return (DateTime)Project.StartDate; }
+                else if (Predecessor().ToDate != null)
                 {
-                    DateTime toDate = (DateTime)predecessor.ToDate;
+                    DateTime toDate = (DateTime)Predecessor().ToDate;
                     return toDate.AddDays(1);
                 }
                 else { return Today; }
@@ -117,6 +128,8 @@ namespace ProjectTile
                 return false;
             }
 
+
+
             // Query: 
             //  Duplication of 'one only' roles - need to set this, ideally in the database
             //  Silly dates - before project start, after project end, or ones that just don't fit
@@ -128,7 +141,24 @@ namespace ProjectTile
             return true;
         }
 
-
+        public bool ConvertToProjectTeam(ref ProjectTeams saveTeam)
+        {
+            try
+            {
+                saveTeam.ProjectID = Project.ID;
+                saveTeam.StaffID = StaffID;
+                saveTeam.ProjectRoleCode = RoleCode;
+                saveTeam.FromDate = FromDate;
+                saveTeam.ToDate = ToDate;
+                
+                return true;
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error converting summary to project team record", generalException);
+                return false;
+            }	            
+        }
 
     } // class
 } // namespace
