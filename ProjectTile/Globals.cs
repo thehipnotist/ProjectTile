@@ -6,16 +6,16 @@ namespace ProjectTile
     public class Globals
     {                   
         // Current login and security details
-        public static Staff CurrentUser;
-        public static int CurrentStaffID;
-        public static string CurrentStaffName = "";
-        public static string CurrentUserID;
+        public static Staff MyStaffRecord;
+        public static int MyStaffID;
+        public static string MayName = "";
+        public static string MyUserID;
         
         public static int CurrentEntityID;
         public static string CurrentEntityName = "";
         public static Entities CurrentEntity;
-        public static int DefaultEntityID;
-        public static string DefaultEntityName = "";
+        public static int MyDefaultEntityID;
+        public static string MyDefaultEntityName = "";
 
         public static TableSecurity MyPermissions;
 
@@ -36,7 +36,7 @@ namespace ProjectTile
         public static ProjectSummaryRecord AllProjects = new ProjectSummaryRecord { ProjectID = 0, ProjectCode = AllRecords, ProjectName = AllRecords };
         public static ClientSummaryRecord AnyClient = new ClientSummaryRecord { ID = 0, ClientCode = "ANY", ClientName = AnyRecord, EntityID = CurrentEntityID, ActiveClient = false };
         public static ClientSummaryRecord NoClient = new ClientSummaryRecord { ID = NoID, ClientCode = "NONE", ClientName = NoRecord, EntityID = CurrentEntityID, ActiveClient = true };
-        public static StaffSummaryRecord AllPMs = new StaffSummaryRecord { ID = 0, StaffName = AllRecords, ActiveUser = false };
+        public static StaffSummaryRecord AllPMs = new StaffSummaryRecord { ID = 0, FirstName = AllRecords, Surname = "", Active = false };
         public static ProjectRoles AllRoles = new ProjectRoles { RoleCode = AllCodes, RoleDescription = AllRecords };
 
         // Standard universal strings

@@ -119,7 +119,7 @@ namespace ProjectTile
         {
             try
             {
-                EntityList.ItemsSource = EntityFunctions.EntityList(Globals.CurrentStaffID, true);
+                EntityList.ItemsSource = EntityFunctions.EntityList(Globals.MyStaffID, true);
                 EntityList.SelectedItem = Globals.AllRecords;
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating Entity filter list", generalException); }

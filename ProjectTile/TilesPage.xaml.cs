@@ -66,7 +66,7 @@ namespace ProjectTile
                     Instructions.Visibility = Visibility.Visible;
                 }
             }
-            string staffName = (Globals.CurrentUserID == "pjadmin") ? Globals.CurrentStaffName : Globals.CurrentUser.FirstName;
+            string staffName = (Globals.MyUserID == "pjadmin") ? Globals.MayName : Globals.MyStaffRecord.FirstName;
             Welcome.Content = String.Format("Welcome to ProjectTile, {0}. You are logged into Entity {1}{2}.", staffName, Globals.CurrentEntityName, demoCo);
         }
 

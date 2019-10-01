@@ -59,7 +59,7 @@ namespace ProjectTile
                     ExceptionType = errorType,
                     TargetSite = targetSite,
                     LoggedAt = DateTime.Now,
-                    LoggedBy = CurrentUserID,
+                    LoggedBy = MyUserID,
                     InnerException = innerException
                 };
 

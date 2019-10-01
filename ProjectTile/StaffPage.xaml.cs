@@ -236,7 +236,7 @@ namespace ProjectTile
                     selectedStaffID = (selectedRecord == null)? 0 : selectedRecord.ID;
                     pushSelection();
                     AmendButton.IsEnabled = true;
-                    toggleActiveButton(selectedRecord.ActiveUser);
+                    toggleActiveButton(selectedRecord.Active);
                     EntitiesButton.IsEnabled = true;
                 }
                 else // No record selected, e.g. because filter changed
@@ -301,8 +301,7 @@ namespace ProjectTile
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
-            Staff selectedPerson = StaffFunctions.GetStaffMember(selectedRecord.ID);
-            StaffFunctions.SelectTeamStaff(selectedPerson);
+            StaffFunctions.SelectTeamStaff(selectedRecord);
         }
 
     } // class

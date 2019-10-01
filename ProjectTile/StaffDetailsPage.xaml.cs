@@ -42,7 +42,7 @@ namespace ProjectTile
             FirstName.Focus();
             CapsLockLabel.Visibility = Visibility.Hidden;
             refreshRoleList();
-            EntityCombo.ItemsSource = EntityFunctions.EntityList(Globals.CurrentStaffID, false);
+            EntityCombo.ItemsSource = EntityFunctions.EntityList(Globals.MyStaffID, false);
             toggleConfirm(false);
             if (!Globals.MyPermissions.Allow("ActivateStaff"))
             {

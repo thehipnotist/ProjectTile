@@ -48,8 +48,8 @@
                         <DataGridTextColumn x:Name="RoleColumn" Binding="{Binding RoleDescription}" ClipboardContentBinding="{x:Null}" Header="Role"/>
                         <DataGridTextColumn x:Name="StartDateColumn" Binding="{Binding StartDate, StringFormat=dd/MM/yyyy}" ClipboardContentBinding="{x:Null}" Header="Start Date"/>
                         <DataGridTextColumn x:Name="LeaveDateColumn" Binding="{Binding LeaveDate, StringFormat=dd/MM/yyyy}" ClipboardContentBinding="{x:Null}" Header="Leave Date"/>
-                        <DataGridCheckBoxColumn x:Name="ActiveUserColumn" Binding="{Binding ActiveUser, Mode=OneWay}" ClipboardContentBinding="{x:Null}" Header="Active" IsReadOnly="True"/>
-                        <DataGridTextColumn x:Name="DefaultEntityColumn" Binding="{Binding DefaultEntity}" ClipboardContentBinding="{x:Null}" Header="Default Entity" Width="*"/>
+                        <DataGridCheckBoxColumn x:Name="ActiveUserColumn" Binding="{Binding Active, Mode=OneWay}" ClipboardContentBinding="{x:Null}" Header="Active" IsReadOnly="True"/>
+                        <DataGridTextColumn x:Name="DefaultEntityColumn" Binding="{Binding DefaultEntityName}" ClipboardContentBinding="{x:Null}" Header="Default Entity" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
 

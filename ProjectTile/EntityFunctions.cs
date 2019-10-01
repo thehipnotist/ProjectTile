@@ -233,7 +233,7 @@ namespace ProjectTile
 
                         try
                         {
-                            Staff currentUser = CurrentUser;
+                            Staff currentUser = MyStaffRecord;
                             AllowEntity(newEntityID, currentUser.ID);
                         }
                         catch (Exception generalException)
@@ -328,7 +328,7 @@ namespace ProjectTile
 
                             MessageFunctions.SuccessMessage("Entity '" + originalName + "' has been amended" + nameChange + ".", "Entity Amended");
                             if (changeDbEntity.ID == CurrentEntityID) { UpdateCurrentEntity(ref changeDbEntity); }
-                            if (changeDbEntity.ID == DefaultEntityID) { UpdateMyDefaultEntity(ref changeDbEntity); }
+                            if (changeDbEntity.ID == MyDefaultEntityID) { UpdateMyDefaultEntity(ref changeDbEntity); }
                             PageFunctions.ShowTilesPage();
                         }
                         catch (Exception generalException)
@@ -361,13 +361,13 @@ namespace ProjectTile
             {
                 try
                 {
-                    if (staffID == 0) { staffID = CurrentStaffID; }
+                    if (staffID == 0) { staffID = MyStaffID; }
 
                     Staff thisUser = existingPtDb.Staff.Find(staffID);                    
                     thisUser.DefaultEntity = selectedEntity.ID;
                     
                     existingPtDb.SaveChanges();
-                    if (staffID == CurrentStaffID) { UpdateMyDefaultEntity(ref selectedEntity); }
+                    if (staffID == MyStaffID) { UpdateMyDefaultEntity(ref selectedEntity); }
 
                 }
                 catch (SqlException sqlException)
@@ -405,8 +405,8 @@ namespace ProjectTile
         public static void UpdateMyDefaultEntity(ref Entities targetEntity)
         {
             Entities defaultEntity = targetEntity;
-            DefaultEntityID = targetEntity.ID;
-            DefaultEntityName = targetEntity.EntityName;
+            MyDefaultEntityID = targetEntity.ID;
+            MyDefaultEntityName = targetEntity.EntityName;
             winMain.UpdateDetailsBlock();
         }
 

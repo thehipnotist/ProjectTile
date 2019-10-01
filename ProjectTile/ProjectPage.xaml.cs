@@ -86,7 +86,7 @@ namespace ProjectTile
                 if (Globals.ProjectSourcePage == "ProjectPage") { BackButton.Visibility = Visibility.Hidden; }
                 refreshClientCombo();
                 refreshPMsCombo();
-                if (ProjectFunctions.PMFilterList.Exists(ssr => ssr.ID == Globals.CurrentStaffID)) { PMsCombo.SelectedItem = ProjectFunctions.PMFilterList.First(ssr => ssr.ID == Globals.CurrentStaffID); }
+                if (ProjectFunctions.PMFilterList.Exists(ssr => ssr.ID == Globals.MyStaffID)) { PMsCombo.SelectedItem = ProjectFunctions.PMFilterList.First(ssr => ssr.ID == Globals.MyStaffID); }
                 refreshStatusCombo();
                 toggleMoreButton();
             }

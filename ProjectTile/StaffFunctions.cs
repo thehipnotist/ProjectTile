@@ -13,7 +13,7 @@ namespace ProjectTile
         // ---------------------------------------------------------- //
         
         public static int newDefaultID = 0;
-        public static Staff SelectedTeamStaff = null;
+        public static StaffSummaryRecord SelectedTeamStaff = null;
         public delegate void ReturnToTeamsDelegate();
         public static ReturnToTeamsDelegate SelectStaffForTeam;
         public static ReturnToTeamsDelegate CancelTeamStaffSelection;
@@ -34,7 +34,7 @@ namespace ProjectTile
 
         // --------------- Navigation --------------- // 	
 
-        public static void SelectTeamStaff(Staff selectedRecord)
+        public static void SelectTeamStaff(StaffSummaryRecord selectedRecord)
         {
             try
             {
@@ -59,12 +59,12 @@ namespace ProjectTile
                 try
                 {
                     // Only get Entities that the current user can access; if entity is specified, check it is valid and replace the array with its ID
-                    int[] myAllowedEntities = EntityFunctions.AllowedEntityIDs(CurrentStaffID);
+                    int[] myAllowedEntities = EntityFunctions.AllowedEntityIDs(MyStaffID);
                     if (entityID > 0)
                     {
                         if (!myAllowedEntities.Contains(entityID))
                         {
-                            MessageFunctions.Error("Error retrieving staff grid data: the specified Entity is not allowed for this user.", null);
+                            MessageFunctions.Error("Error retrieving staff grid data: you do not have access to the specified Entity.", null);
                             return null; 
                         }
                         else { myAllowedEntities = new int[] {entityID}; }
@@ -74,7 +74,6 @@ namespace ProjectTile
                     List<StaffSummaryRecord> gridList = (from s in existingPtDb.Staff
                                join sr in existingPtDb.StaffRoles on s.RoleCode equals sr.RoleCode
                                join se in existingPtDb.StaffEntities on s.ID equals se.StaffID
-                               join de in existingPtDb.Entities on s.DefaultEntity equals de.ID
                                where (!activeOnly || s.Active)
                                     && (nameContains == "" || (s.FirstName + " " + s.Surname).Contains(nameContains))
                                     && (myAllowedEntities.Contains((int) se.EntityID))
@@ -83,14 +82,15 @@ namespace ProjectTile
                                select (new StaffSummaryRecord()
                                {
                                    ID = (int)s.ID,
-                                   UserID = s.UserID,
-                                   StaffName = s.FirstName + " " + s.Surname,
+                                   EmployeeID = s.EmployeeID,
+                                   FirstName = s.FirstName,
+                                   Surname = s.Surname,
                                    RoleCode = s.RoleCode,
-                                   RoleDescription = sr.RoleDescription,
                                    StartDate = (DateTime?)DbFunctions.TruncateTime(s.StartDate),
                                    LeaveDate = (DateTime?)DbFunctions.TruncateTime(s.LeaveDate),
-                                   ActiveUser = (bool)s.Active,
-                                   DefaultEntity = de.EntityName
+                                   UserID = s.UserID,
+                                   Active = (bool)s.Active,
+                                   DefaultEntity = (int) s.DefaultEntity
                                } )
                                ).Distinct().ToList();
 
@@ -112,7 +112,7 @@ namespace ProjectTile
                 try
                 { 
                     // Only get Entities that the current user can access; if entity is specified, check it is valid and replace the array with its ID
-                    int[] myAllowedEntities = EntityFunctions.AllowedEntityIDs(CurrentStaffID);
+                    int[] myAllowedEntities = EntityFunctions.AllowedEntityIDs(MyStaffID);
                     if (entityID > 0)
                     {
                         if (!myAllowedEntities.Contains(entityID))
@@ -237,7 +237,7 @@ namespace ProjectTile
                     string errorMessage = "";
 
                     if (SelectedStaffMember == null) { return null; }
-                    else if (CurrentStaffID == staffID)
+                    else if (MyStaffID == staffID)
                     {
                         errorMessage = "You cannot amend your own user account.|Changes Prohibited";
                     }
@@ -307,7 +307,7 @@ namespace ProjectTile
             {
                 MessageFunctions.InvalidMessage("Please select a staff member in the list above.", "No Record Selected");
             }
-            else if (CurrentStaffID == staffID)
+            else if (MyStaffID == staffID)
             {
                 MessageFunctions.InvalidMessage("You cannot amend your own user account.", "Changes Prohibited");
             }            
@@ -385,6 +385,7 @@ namespace ProjectTile
                                 existingPtDb.Staff.Add(newStaff);
                                 existingPtDb.SaveChanges();
                                 staffID = newStaff.ID;
+                                EntityFunctions.AllowEntity(defaultEntityID, staffID);
                             }
                             catch (Exception generalException)
                             {
@@ -657,7 +658,7 @@ namespace ProjectTile
             {
                 try
                 {
-                    var myAllowedEntities = EntityFunctions.AllowedEntityIDs(CurrentStaffID);                    
+                    var myAllowedEntities = EntityFunctions.AllowedEntityIDs(MyStaffID);                    
                     return (from se in existingPtDb.StaffEntities
                             where se.StaffID == staffID && myAllowedEntities.Contains((int) se.EntityID)
                             select (int)se.EntityID
@@ -994,7 +995,7 @@ namespace ProjectTile
                     foreach (var staffRecord in defaultsToSet)
                     {
                         staffRecord.DefaultEntity = entityID;
-                        if (staffRecord.ID == CurrentStaffID) { myDefaultChanged = true; }
+                        if (staffRecord.ID == MyStaffID) { myDefaultChanged = true; }
                     }
                 }
                 catch (Exception generalException)
@@ -1058,7 +1059,7 @@ namespace ProjectTile
 
                 existingPtDb.SaveChanges();
 
-                if (staffID == CurrentStaffID && newDefaultID > 0)
+                if (staffID == MyStaffID && newDefaultID > 0)
                 {
                     Entities newDefault = existingPtDb.Entities.Find(newDefaultID);
                     EntityFunctions.UpdateMyDefaultEntity(ref newDefault);

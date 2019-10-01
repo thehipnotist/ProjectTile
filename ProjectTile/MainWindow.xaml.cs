@@ -118,11 +118,11 @@ namespace ProjectTile
             try
             {
                 DetailsBlock.Text =
-                    "UserID: " + Globals.CurrentUserID + "\n"
-                    + "Name: " + Globals.CurrentStaffName + "\n"
+                    "UserID: " + Globals.MyUserID + "\n"
+                    + "Name: " + Globals.MayName + "\n"
                     + "\n"
                     + "Entity: " + Globals.CurrentEntityName + "\n"
-                    + "Default: " + Globals.DefaultEntityName;
+                    + "Default: " + Globals.MyDefaultEntityName;
             }
             catch (Exception generalException)
             {
@@ -315,7 +315,7 @@ namespace ProjectTile
 
         private void ProjectButton_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowProjectTeamsPage(pageMode: "", selectedStaffID: Globals.CurrentStaffID);
+            PageFunctions.ShowProjectTeamsPage(pageMode: "", selectedStaffID: Globals.MyStaffID);
         }
 
 

@@ -192,7 +192,7 @@ namespace ProjectTile
                 StaffSummaryRecord manager = SelectedPMSummary;
                 ClientSummaryRecord client = SelectedClientSummary;
 
-                bool useManager = (manager.ID != 0 && manager.ActiveUser);
+                bool useManager = (manager.ID != 0 && manager.Active);
                 bool useClient = (client.ID != 0 && client.ActiveClient);
                 if (useManager)
                 {
@@ -346,23 +346,22 @@ namespace ProjectTile
                 {
                     managersList =
                         (from s in existingPtDb.Staff
-                         join sr in existingPtDb.StaffRoles on s.RoleCode equals sr.RoleCode
                          join se in existingPtDb.StaffEntities on s.ID equals se.StaffID
-                         join de in existingPtDb.Entities on s.DefaultEntity equals de.ID
                          where se.EntityID == CurrentEntityID 
                             && (s.RoleCode == ProjectManagerCode || currentManagers.Contains(s.ID)) 
                          orderby new { s.FirstName, s.Surname, s.UserID }
                          select new StaffSummaryRecord
                          {
                              ID = (int)s.ID,
-                             UserID = s.UserID,
-                             StaffName = s.FirstName + " " + s.Surname,
+                             EmployeeID = s.EmployeeID,
+                             FirstName = s.FirstName,
+                             Surname = s.Surname,
                              RoleCode = s.RoleCode,
-                             RoleDescription = sr.RoleDescription,
                              StartDate = (DateTime?)DbFunctions.TruncateTime(s.StartDate),
                              LeaveDate = (DateTime?)DbFunctions.TruncateTime(s.LeaveDate),
-                             ActiveUser = (bool)s.Active,
-                             DefaultEntity = de.EntityName
+                             UserID = s.UserID,
+                             Active = (bool)s.Active,
+                             DefaultEntity = (int)s.DefaultEntity
                          }
                          ).Distinct().ToList();
                 }
@@ -395,7 +394,7 @@ namespace ProjectTile
                 else
                 {
                     SetFullPMsList();
-                    managerList = FullPMsList.Where(fpl => fpl.ActiveUser || fpl.ID == currentManagerID).ToList();
+                    managerList = FullPMsList.Where(fpl => fpl.Active || fpl.ID == currentManagerID).ToList();
                 }
                 if (currentManagerID > 0  && !managerList.Exists(pol => pol.ID == currentManagerID))
                 {                    
@@ -573,7 +572,19 @@ namespace ProjectTile
                                      {
                                          ID = pt.ID,
                                          Project = pj,
-                                         StaffMember = s,
+                                         StaffMember = new StaffSummaryRecord
+                                             {
+                                                 ID = (int)s.ID,
+                                                 EmployeeID = s.EmployeeID,
+                                                 FirstName = s.FirstName,
+                                                 Surname = s.Surname,
+                                                 RoleCode = s.RoleCode,
+                                                 StartDate = (DateTime?)DbFunctions.TruncateTime(s.StartDate),
+                                                 LeaveDate = (DateTime?)DbFunctions.TruncateTime(s.LeaveDate),
+                                                 UserID = s.UserID,
+                                                 Active = (bool)s.Active,
+                                                 DefaultEntity = (int)s.DefaultEntity
+                                             },
                                          ProjectRole = pr,
                                          FromDate = pt.FromDate,
                                          ToDate = pt.ToDate
@@ -581,7 +592,7 @@ namespace ProjectTile
                                      ).ToList();
                 }
             }
-            catch (Exception generalException) { MessageFunctions.Error("Error retrieving full list of project team members", generalException); }	
+            catch (Exception generalException) { MessageFunctions.Error("Error retrieving full list of project team members", generalException); }
         }
 
         public static bool IsInTimeFilter(TeamTimeFilter timeFilter, TeamSummaryRecord teamMembership)
@@ -606,15 +617,18 @@ namespace ProjectTile
             {
                 nameContains = nameContains.ToUpper();
                 SetFullTeamsList();
-
-//                MessageFunctions.InvalidMessage(inStatus.ToString() + ", " + teamRoleCode + ", " + timeFilter.ToString() + ", " + projectID.ToString() + ", " + nameContains + ", " + exact.ToString(), 
-//                    "Testing");
-
-                TeamsGridList = FullTeamsList.Where(ftl => ((projectID == 0 && IsInFilter(inStatus, ftl.ProjectStage)) || (projectID != 0 && ftl.Project.ID == projectID ))
-                                                && (nameContains == "" || (exact && ftl.StaffName.ToUpper() == nameContains) || (!exact && ftl.StaffName.ToUpper().Contains(nameContains)))
-                                                && (teamRoleCode == AllCodes || ftl.ProjectRole.RoleCode == teamRoleCode)
-                                                && (timeFilter == TeamTimeFilter.All || IsInTimeFilter(timeFilter, ftl))
+                TeamsGridList = FullTeamsList.Where(ftl => ((projectID == 0 && IsInFilter(inStatus, ftl.ProjectStage)) 
+                                                    || (projectID != 0 && ftl.Project.ID == projectID ))
+                                                && (nameContains == "" 
+                                                    || (exact && ftl.StaffMember.StaffName.ToUpper() == nameContains) 
+                                                    || (!exact && ftl.StaffMember.StaffName.ToUpper().Contains(nameContains)))
+                                                && (teamRoleCode == AllCodes 
+                                                    || ftl.ProjectRole.RoleCode == teamRoleCode)
+                                                && (timeFilter == TeamTimeFilter.All 
+                                                    || IsInTimeFilter(timeFilter, ftl))
                                                 ).ToList();
+
+                if (projectID > 0) { TeamsGridList = TeamsGridList.OrderBy(tgl => RolePosition(tgl.ProjectRole.RoleCode)).ToList(); }
                 return true;
             }
             catch (Exception generalException) 
@@ -769,7 +783,7 @@ namespace ProjectTile
                         errorDetails = ". Please select a Project Manager from the drop-down list. Try the 'Any' option if the required record is not listed, "
                             + "otherwise check that their account is active.|No Project Manager Selected";
                     }
-                    else if (!summary.ProjectManager.ActiveUser)
+                    else if (!summary.ProjectManager.Active)
                     { errorDetails = ", as the selected Project Manager is not an active user. Ask an administrator for help if required." + "|Inactive Project Manager"; }
                     else if (summary.Stage == null)
                     { errorDetails = ". Please select a project stage from the drop-down list.|No Stage Selected"; }

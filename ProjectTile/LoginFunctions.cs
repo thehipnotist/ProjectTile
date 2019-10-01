@@ -100,11 +100,11 @@ namespace ProjectTile
                             foreach (int entry in auditEntryIDs)
                             {                                
                                 AuditEntries lastAuditEntry = defaultPtDb.AuditEntries.Find(entry);
-                                lastAuditEntry.UserName = DbUserPrefix + CurrentUserID;
+                                lastAuditEntry.UserName = DbUserPrefix + MyUserID;
                                 defaultPtDb.SaveChanges();
                             }
 
-                            if (staffID == CurrentStaffID)
+                            if (staffID == MyStaffID)
                             {
                                 string databaseLogin = DbUserPrefix + userID;
                                 ProjectTileSqlDatabase userPtDb = SqlServerConnection.UserPtDbConnection(databaseLogin, newPassword); // Log in again so that future database calls have the new password
@@ -197,15 +197,15 @@ namespace ProjectTile
 
         public static void LogIn(Staff thisUser, Entities thisEntity)
         {
-            CurrentUser = thisUser;
-            CurrentStaffName = thisUser.FirstName + " " + thisUser.Surname;
-            CurrentStaffID = thisUser.ID;
-            CurrentUserID = thisUser.UserID;
+            MyStaffRecord = thisUser;
+            MayName = thisUser.FirstName + " " + thisUser.Surname;
+            MyStaffID = thisUser.ID;
+            MyUserID = thisUser.UserID;
 
             EntityFunctions.UpdateCurrentEntity(ref thisEntity);
             EntityFunctions.UpdateMyDefaultEntity(ref thisEntity);
 
-            MyPermissions = new TableSecurity(CurrentUser);
+            MyPermissions = new TableSecurity(MyStaffRecord);
         }
 
         public static void CompleteLogIn()

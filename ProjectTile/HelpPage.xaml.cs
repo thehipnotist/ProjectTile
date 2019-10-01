@@ -127,7 +127,7 @@ namespace ProjectTile
         // Control-specific events //
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            if (Globals.CurrentStaffID > 0) { PageFunctions.ShowTilesPage(); }
+            if (Globals.MyStaffID > 0) { PageFunctions.ShowTilesPage(); }
             else { PageFunctions.ShowLoginPage(PageFunctions.LogIn); }
         }
 

@@ -43,7 +43,7 @@ namespace ProjectTile
         // ------------------ Lists ----------------- //
         
         List<StaffSummaryRecord> staffDropList;
-        List<Staff> staffComboList;
+        List<StaffSummaryRecord> staffComboList;
 
 
         // ---------------------------------------------------------- //
@@ -168,7 +168,7 @@ namespace ProjectTile
 
         private void refreshStaffCombo()
         {
-            staffComboList = StaffFunctions.GetStaffComboData(activeOnly: true, entityID: Globals.CurrentEntityID);
+            staffComboList = StaffFunctions.GetStaffGridData(activeOnly: false, nameContains: "", roleDescription: "", entityID: Globals.CurrentEntityID);
             StaffCombo.ItemsSource = staffComboList;
         }
 
@@ -296,11 +296,11 @@ namespace ProjectTile
                 {
                     MessageFunctions.Error("Error setting up amendment: no project team member record selected.", null);
                     return;
-                }     
-                
+                }                     
                 toggleEditMode(true);
                 refreshStaffCombo();
                 refreshEditRoleCombo();
+
                 if (amendExisting)
                 {
                     editTeamRecord = selectedTeamRecord;
@@ -319,7 +319,7 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error setting up amendment", generalException); }	
         }
 
-        private void selectStaffMember(Staff staffMember)
+        private void selectStaffMember(StaffSummaryRecord staffMember)
         {
             if (!staffComboList.Exists(scl => scl.ID == staffMember.ID)) { staffComboList.Add(staffMember); }
             StaffCombo.SelectedItem = staffComboList.FirstOrDefault(scl => scl.ID == staffMember.ID);
@@ -546,6 +546,11 @@ namespace ProjectTile
         private void StaffSearch_Click(object sender, RoutedEventArgs e)
         {
             OpenStaffLookup();
+        }
+
+        private void EditRoleCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (FromDate.SelectedDate == null) { } //TODO: check for an existing record for that role, and based on that, suggest either the project start date or today's date?
         }
 
     } // class

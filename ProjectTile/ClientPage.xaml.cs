@@ -338,7 +338,7 @@ namespace ProjectTile
         {
             try
             {
-                List<Entities> entityList = EntityFunctions.AllowedEntities(Globals.CurrentStaffID);
+                List<Entities> entityList = EntityFunctions.AllowedEntities(Globals.MyStaffID);
                 EntityCombo.ItemsSource = entityList;
                 int currentIndex = entityList.FindIndex(el => el.ID == Globals.CurrentEntity.ID);
                 EntityCombo.SelectedValue = entityList.ElementAt(currentIndex);

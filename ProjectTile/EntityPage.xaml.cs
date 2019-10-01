@@ -48,7 +48,7 @@ namespace ProjectTile
                     PageFunctions.ShowTilesPage();    
                 }
 
-                EntityList.ItemsSource = EntityFunctions.EntityList(Globals.CurrentStaffID, false);
+                EntityList.ItemsSource = EntityFunctions.EntityList(Globals.MyStaffID, false);
 
                 if (pageMode == PageFunctions.Switch)
                 {
@@ -165,7 +165,7 @@ namespace ProjectTile
                 }
                 else if (pageMode == PageFunctions.Switch)
                 {
-                    if (selectedEntityID != Globals.DefaultEntityID)
+                    if (selectedEntityID != Globals.MyDefaultEntityID)
                     {
                         MakeDefault_CheckBox.IsEnabled = true;
                     }
