@@ -304,10 +304,9 @@ namespace ProjectTile
                 if (amendExisting)
                 {
                     editTeamRecord = selectedTeamRecord;
-                    selectStaffMember(editTeamRecord.StaffMember);
-                    EditRoleCombo.SelectedItem = ProjectFunctions.FullRolesList.First(rfl => rfl.RoleCode == editTeamRecord.ProjectRole.RoleCode);
-                    //TODO: set up other controls once added
-                    Instructions.Content = "Amend the details as required and then click 'Save' to commit them.";
+                    selectStaffMember(editTeamRecord.StaffMember); // The binding does not set this as it is in a combo box with a different item source
+                    selectProjectRole(editTeamRecord.RoleCode); // ... or this
+                    Instructions.Content = "Amend the details as required and then click 'Save' to commit them.";                    
                 }
                 else
                 {
@@ -323,6 +322,11 @@ namespace ProjectTile
         {
             if (!staffComboList.Exists(scl => scl.ID == staffMember.ID)) { staffComboList.Add(staffMember); }
             StaffCombo.SelectedItem = staffComboList.FirstOrDefault(scl => scl.ID == staffMember.ID);
+        }
+
+        private void selectProjectRole(string roleCode)
+        {
+            EditRoleCombo.SelectedItem = ProjectFunctions.FullRolesList.First(rfl => rfl.RoleCode == roleCode);
         }
 
         // ---------- Links to other pages ---------- //		
@@ -539,7 +543,7 @@ namespace ProjectTile
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: Save changes
+            //TODO: Validate and save changes
             toggleEditMode(false);
         }
 
@@ -551,6 +555,15 @@ namespace ProjectTile
         private void EditRoleCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (FromDate.SelectedDate == null) { } //TODO: check for an existing record for that role, and based on that, suggest either the project start date or today's date?
+        }
+
+        private void StaffCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (EditRoleCombo.SelectedItem == null) 
+            {
+                string suggestedRole = editTeamRecord.DefaultRole();
+                if (suggestedRole != "") { selectProjectRole(suggestedRole); }
+            } 
         }
 
     } // class

@@ -863,7 +863,8 @@ namespace ProjectTile
                         { queryDetails = queryDetails + "\n" + "The project type also indicates a brand new installation for a new client, but this client already has one or more Live products."; }
                     }
 
-                    // Query if jumping a number of steps
+                    // TODO: Check for essential team members - must have a sponsor before initiation, and a senior consultant before starting
+                    // TODO: Check for essential client team members - as above with sponsor, must also have at least a PM before starting
 
                     string isCorrect = " Is this correct?";
                     if (queryDetails != "")
@@ -1087,6 +1088,10 @@ namespace ProjectTile
                 return false;
             }		            
         }
+
+        // Project Teams (updates)
+
+
 
     } // class
 } // namespace

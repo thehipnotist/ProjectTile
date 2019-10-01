@@ -92,7 +92,7 @@
                                 <Label x:Name="StaffLabel" Content="Staff Name (Select or Search)" HorizontalAlignment="Right" Height="30" Margin="0,5,15,0" VerticalAlignment="Top" Width="Auto" 
                                    FontWeight="Bold" HorizontalContentAlignment="Right"/>
                                 <ComboBox x:Name="StaffCombo" HorizontalAlignment="Right" Height="30" Margin="0,35,15,15" VerticalAlignment="Top" Width="180" DisplayMemberPath="StaffName"
-                                          SelectedItem="{Binding Path=StaffMember, Mode=TwoWay}"/>
+                                          SelectedItem="{Binding Path=StaffMember, Mode=TwoWay}" SelectionChanged="StaffCombo_SelectionChanged"/>
                                 <Button x:Name="SearchStaffButton" HorizontalAlignment="Right" Height="30" Margin="15,75,15,0" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
                                         FontWeight="Bold" Click="StaffSearch_Click" ToolTip="Find a staff member in the main list" BorderBrush="{DynamicResource PtBrushStaff3}">
                                     <StackPanel HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">

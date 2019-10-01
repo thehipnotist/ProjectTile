@@ -37,10 +37,11 @@ namespace ProjectTile
         public static ClientSummaryRecord AnyClient = new ClientSummaryRecord { ID = 0, ClientCode = "ANY", ClientName = AnyRecord, EntityID = CurrentEntityID, ActiveClient = false };
         public static ClientSummaryRecord NoClient = new ClientSummaryRecord { ID = NoID, ClientCode = "NONE", ClientName = NoRecord, EntityID = CurrentEntityID, ActiveClient = true };
         public static StaffSummaryRecord AllPMs = new StaffSummaryRecord { ID = 0, FirstName = AllRecords, Surname = "", Active = false };
-        public static ProjectRoles AllRoles = new ProjectRoles { RoleCode = AllCodes, RoleDescription = AllRecords };
+        public static ProjectRoles AllRoles = new ProjectRoles { RoleCode = AllCodes, RoleDescription = AllRecords };        
 
         // Standard universal strings
         public const string AccountManagerCode = "AM";
+        public const string TechnicalManagerCode = "TM";
         public const string ProjectSponsorCode = "PS";
         public const string ProjectManagerCode = "PM";
         public const string SeniorConsultantCode = "SC";
@@ -99,6 +100,7 @@ namespace ProjectTile
         public static DateTime Today = DateTime.Today;
         public static DateTime Yesterday = Today.AddDays(-1);
         public static DateTime OneMonthAgo = Today.AddMonths(-1);
+        public static DateTime InfiniteDate = Today.AddYears(999);
 
         // Shared methods
         public static void ResetClientParameters()

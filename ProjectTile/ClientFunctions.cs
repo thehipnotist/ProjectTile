@@ -94,6 +94,24 @@ namespace ProjectTile
             }
         }   
         
+        public static int GetAccountManagerID(int clientID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    int? managerID = existingPtDb.Clients.Where(c => c.ID == clientID).Select(c => c.AccountManagerID).FirstOrDefault();
+                    return managerID ?? 0;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving Account Manager for client " + clientID.ToString(), generalException);
+                return 0;
+            }
+        }
+
         public static List<ClientSummaryRecord> ClientGridList(bool activeOnly, string nameContains, int managerID, int entityID)
         {
             try
