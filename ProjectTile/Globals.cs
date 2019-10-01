@@ -42,11 +42,12 @@ namespace ProjectTile
         // Standard universal strings
         public const string AccountManagerCode = "AM";
         public const string TechnicalManagerCode = "TM";
-        public const string ProjectSponsorCode = "PS";
+        public const string SponsorCode = "PS";
         public const string ProjectManagerCode = "PM";
         public const string SeniorConsultantCode = "SC";
         public const string TechnicalLeadCode = "TL";
-        public static string[] ProjectRoleHeirarchy = { ProjectSponsorCode, ProjectManagerCode, SeniorConsultantCode, TechnicalLeadCode, "AC", "TC", "IC", "OT" }; 
+        public static string[] ProjectRoleHeirarchy = { SponsorCode, ProjectManagerCode, SeniorConsultantCode, TechnicalLeadCode, "AC", "TC", "IC", "OT" };
+        public static string[] KeyRoles = { SponsorCode, ProjectManagerCode, SeniorConsultantCode, TechnicalLeadCode };
 
         public const string InternalProjectCode = "IP";
         public const string NewSiteCode = "NS";
@@ -100,6 +101,7 @@ namespace ProjectTile
         public static DateTime Today = DateTime.Today;
         public static DateTime Yesterday = Today.AddDays(-1);
         public static DateTime OneMonthAgo = Today.AddMonths(-1);
+        public static DateTime StartOfTime = Today.AddYears(-999);
         public static DateTime InfiniteDate = Today.AddYears(999);
 
         // Shared methods

@@ -16,10 +16,9 @@ namespace ProjectTile
             get { return ProjectFunctions.GetStageByCode(Project.StageCode); }
         }
 
-        public DateTime? EffectiveFrom // This is two-way to allow bindings
+        public DateTime? EffectiveFrom
         {
             get { return FromDate ?? Project.StartDate; }
-            set { ToDate = value; }
         }
 
         public DateTime EffectiveTo // Used for easy comparison
@@ -56,12 +55,45 @@ namespace ProjectTile
             get { return (StaffMember == null) ? "" : StaffMember.RoleCode;  }
         }
 
+        public bool HasKeyRole
+        {
+            get
+            {
+                return (Array.IndexOf(Globals.KeyRoles, RoleCode) >= 0);
+            }
+        }
+
+        public DateTime? SuggestedStart()
+        {
+            try
+            {
+                ProjectTeams predecessor = ProjectFunctions.GetPredecessor(this) ?? null;
+                if (predecessor == null) { return (DateTime)Project.StartDate; }
+                else if (predecessor.ToDate != null)
+                {
+                    DateTime toDate = (DateTime)predecessor.ToDate;
+                    return toDate.AddDays(1);
+                }
+                else { return Today; }
+            }
+            catch (Exception generalException) 
+            { 
+                MessageFunctions.Error("Error suggesting start date", generalException);
+                return Today;
+            }
+        }
+
         public string DefaultRole()
         {
-            if (StaffRoleCode == AccountManagerCode && StaffID == ClientFunctions.GetAccountManagerID(ClientID)) { return ProjectSponsorCode; }
+            if (StaffRoleCode == AccountManagerCode && StaffID == ClientFunctions.GetAccountManagerID(ClientID)) { return SponsorCode; }
             else if (StaffRoleCode == TechnicalManagerCode) { return TechnicalLeadCode; }
             else if (ProjectFunctions.GetRole(StaffRoleCode) != null) { return StaffRoleCode; }
             else { return ""; }
+        }
+
+        public TeamSummaryRecord ShallowCopy()
+        {
+            return (TeamSummaryRecord) this.MemberwiseClone();
         }
 
         public bool ValidateTeamRecord(TeamSummaryRecord savedVersion)
@@ -72,25 +104,28 @@ namespace ProjectTile
             bool nameChanged = (savedVersion.StaffID != StaffID);
             bool roleChanged = (savedVersion.RoleCode != RoleCode);
 
-            if (FromDate == null) { errorMessage = "Please enter a date from which this user was part of the team."; }
-            else if (EffectiveTo < FromDate) { errorMessage = "The 'To' date cannot be after the 'From' date."; }
-            else if (StaffMember == null) { errorMessage = "Please choose a staff member from the list, or use the 'Search' function."; }
-            else if (ProjectRole == null) { errorMessage = "Please select a project role for the staff member"; }
-            else if (savedVersion.IsHistoric && (nameChanged || roleChanged)) { errorMessage = "Past team members cannot be amended, except to change their dates."; }
-            else if (!StaffMember.Active && FromDate <= Today && EffectiveTo > Today) { errorMessage = "The selected staff member is inactive, so cannot be part of the current project team."; }
+            if (StaffMember == null) { errorMessage = "Please choose a staff member from the list, or use the 'Search' function.|No Staff Member"; }
+            else if (ProjectRole == null) { errorMessage = "Please select a project role for the staff member.|No Role Selected"; }            
+            else if (FromDate == null) { errorMessage = "Please enter a date from which this user is (or was) part of the team.|No Start Date"; }
+            else if (EffectiveTo < FromDate) { errorMessage = "The 'To' date cannot be after the 'From' date.|Invalid Dates"; }
+            else if (savedVersion.IsHistoric && (nameChanged || roleChanged)) { errorMessage = "Past team members cannot be amended, except to change their dates.|Historic Record"; }
+            else if (!StaffMember.Active && FromDate <= Today && EffectiveTo > Today) { errorMessage = "The selected staff member is inactive, so cannot be part of the current project team.|Inactive User"; }
             
-            // Prevent: 
-            //  Changes that leave gaps in essential roles
+            if (errorMessage != "")
+            {
+                MessageFunctions.SplitInvalid(errorMessage);
+                return false;
+            }
 
             // Query: 
             //  Duplication of 'one only' roles - need to set this, ideally in the database
             //  Silly dates - before project start, after project end, or ones that just don't fit
-            //  Gaps in essential roles
+            //  Gaps in essential roles - will need to update the other records
             //  Re-use of the same project team member
             //  Changes some time after the start date
             //  Project roles that don't seem to fit the user's role
 
-            return false;
+            return true;
         }
 
 

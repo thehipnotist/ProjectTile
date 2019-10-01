@@ -108,7 +108,7 @@
                                   SelectedItem="{Binding Path=ProjectRole, Mode=TwoWay}" SelectionChanged="EditRoleCombo_SelectionChanged"/>
                         <Label x:Name="FromDateLabel" Content="From" HorizontalAlignment="Right" Height="30" Margin="15,175,165,15" VerticalAlignment="Top" Width="40" FontWeight="Bold"/>
                         <DatePicker x:Name="FromDate" HorizontalAlignment="Right" Height="30" Margin="0,175,0,0" VerticalAlignment="Top" Width="165" SelectedDateFormat="Short" Background="White"
-                                Padding="5" SelectedDate="{Binding Path=EffectiveFrom, Mode=TwoWay}"/>
+                                Padding="5" SelectedDate="{Binding Path=FromDate, Mode=TwoWay}"/>
                         <Label x:Name="ToDateLabel" Content="To" HorizontalAlignment="Right" Height="30" Margin="15,220,165,0" VerticalAlignment="Top" Width="40" FontWeight="Bold"/>
                         <DatePicker x:Name="ToDate" HorizontalAlignment="Right" Height="30" Margin="0,220,0,0" VerticalAlignment="Top" Width="165" SelectedDateFormat="Short" Background="White"
                                 Padding="5"  SelectedDate="{Binding Path=ToDate, Mode=TwoWay}"/>                        

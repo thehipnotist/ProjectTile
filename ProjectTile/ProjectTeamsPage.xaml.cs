@@ -80,6 +80,7 @@ namespace ProjectTile
             Int32.TryParse(staffIDString, out staffID);
             if (staffID > 0) { chooseStaffName(staffID); }
             toggleEditMode(false);
+            this.DataContext = editTeamRecord;
         }
 
         // ---------------------------------------------------------- //
@@ -300,20 +301,23 @@ namespace ProjectTile
                 toggleEditMode(true);
                 refreshStaffCombo();
                 refreshEditRoleCombo();
-
+                
                 if (amendExisting)
                 {
-                    editTeamRecord = selectedTeamRecord;
-                    selectStaffMember(editTeamRecord.StaffMember); // The binding does not set this as it is in a combo box with a different item source
-                    selectProjectRole(editTeamRecord.RoleCode); // ... or this
+                    editTeamRecord = selectedTeamRecord.ShallowCopy();
+                    this.DataContext = editTeamRecord;
+                    selectProjectRole(editTeamRecord.RoleCode); // The binding does not set this as it is in a combo box with a different item source 
+                    selectStaffMember(editTeamRecord.StaffMember); // ... or this, but do this second so that it only sets a role code if none has been set
+                    //FromDate.SelectedDate = editTeamRecord.EffectiveFrom; // The binding is on FromDate, not EffectiveFrom, to apply custom logic on new records
                     Instructions.Content = "Amend the details as required and then click 'Save' to commit them.";                    
                 }
                 else
                 {
                     editTeamRecord = new TeamSummaryRecord();
+                    this.DataContext = editTeamRecord;
+                    editTeamRecord.Project = ProjectFunctions.GetProject(Globals.SelectedProjectSummary.ProjectID);
                     Instructions.Content = "Insert the details as required and then click 'Save' to commit them.";
                 }
-                this.DataContext = editTeamRecord;
             }
             catch (Exception generalException) { MessageFunctions.Error("Error setting up amendment", generalException); }	
         }
@@ -543,8 +547,8 @@ namespace ProjectTile
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: Validate and save changes
-            toggleEditMode(false);
+            bool success = ProjectFunctions.SaveProjectTeam(editTeamRecord, selectedTeamRecord);
+            if (success) { toggleEditMode(false); }
         }
 
         private void StaffSearch_Click(object sender, RoutedEventArgs e)
@@ -554,16 +558,28 @@ namespace ProjectTile
 
         private void EditRoleCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (FromDate.SelectedDate == null) { } //TODO: check for an existing record for that role, and based on that, suggest either the project start date or today's date?
+            try
+            {
+                if (FromDate.SelectedDate == null)
+                {
+                    if (editTeamRecord.HasKeyRole) { FromDate.SelectedDate = editTeamRecord.SuggestedStart(); }
+                    else { FromDate.SelectedDate = Globals.Today; }
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error processing role selection", generalException); }
         }
 
         private void StaffCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (EditRoleCombo.SelectedItem == null) 
+            try
             {
-                string suggestedRole = editTeamRecord.DefaultRole();
-                if (suggestedRole != "") { selectProjectRole(suggestedRole); }
-            } 
+                if (EditRoleCombo.SelectedItem == null)
+                {
+                    string suggestedRole = editTeamRecord.DefaultRole();
+                    if (suggestedRole != "") { selectProjectRole(suggestedRole); }
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error processing staff selection", generalException); }
         }
 
     } // class

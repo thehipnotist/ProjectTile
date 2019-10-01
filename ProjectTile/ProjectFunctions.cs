@@ -218,6 +218,23 @@ namespace ProjectTile
             }		
         }
 
+        public static Projects GetProject(int projectID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return existingPtDb.Projects.Find(projectID);
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving project with ID " + projectID.ToString(), generalException);
+                return null;
+            }	            
+        }
+
         // Stages and statuses
         public static string StatusFilterName(string asString) // Overloaded - string input version
         {
@@ -636,6 +653,30 @@ namespace ProjectTile
                 MessageFunctions.Error("Error retrieving project team members to display", generalException);
                 return false;
             }
+        }
+
+        public static ProjectTeams GetPredecessor(TeamSummaryRecord currentRecord)
+        {
+            try
+            {                
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return existingPtDb.ProjectTeams
+                        .Where(pt => pt.ID != currentRecord.ID
+                            && pt.ProjectID == currentRecord.Project.ID
+                            && pt.ProjectRoleCode == currentRecord.RoleCode
+                            && (pt.FromDate == null || pt.FromDate <= currentRecord.EffectiveFrom))
+                        .OrderByDescending(pt => pt.ToDate ?? InfiniteDate)
+                        .OrderByDescending(pt => pt.FromDate ?? StartOfTime)
+                        .FirstOrDefault();
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving predecessor information", generalException);
+                return null;
+            }	
         }
 
         // Clients
@@ -1090,7 +1131,16 @@ namespace ProjectTile
         }
 
         // Project Teams (updates)
+        public static bool SaveProjectTeam(TeamSummaryRecord currentVersion, TeamSummaryRecord savedVersion)
+        {
+            if (!currentVersion.ValidateTeamRecord(savedVersion)) { return false; }
 
+            // To do: process saving
+            
+            
+            MessageFunctions.InvalidMessage("Not yet implemented.", "To do");
+            return false;
+        }
 
 
     } // class
