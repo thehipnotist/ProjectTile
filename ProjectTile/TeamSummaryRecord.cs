@@ -21,9 +21,10 @@ namespace ProjectTile
             get { return StaffMember.FirstName + " " + StaffMember.Surname; }
         }
 
-        public DateTime? EffectiveFrom
+        public DateTime? EffectiveFrom // This is two-way to allow bindings
         {
             get { return FromDate ?? Project.StartDate; }
+            set { ToDate = value; }
         }
 
 

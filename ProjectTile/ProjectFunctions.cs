@@ -69,7 +69,7 @@ namespace ProjectTile
                 SelectedTeamProject = selectedRecord;
                 SelectProjectForTeam();
             }
-            catch (Exception generalException) { MessageFunctions.Error("Error handling client selection", generalException); }
+            catch (Exception generalException) { MessageFunctions.Error("Error handling project selection", generalException); }
         }
 
         public static void BackToTeam()

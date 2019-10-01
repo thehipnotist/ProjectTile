@@ -8,10 +8,17 @@ namespace ProjectTile
 {
     public class StaffFunctions : Globals
     {
-        private static MainWindow winMain = (MainWindow)App.Current.MainWindow;        
+        // ---------------------------------------------------------- //
+        // -------------------- Global Variables -------------------- //
+        // ---------------------------------------------------------- //
         
-        //public static IEnumerable<StaffSummaryRecord> StaffSummary;
         public static int newDefaultID = 0;
+        public static Staff SelectedTeamStaff = null;
+        public delegate void ReturnToTeamsDelegate();
+        public static ReturnToTeamsDelegate SelectStaffForTeam;
+        public static ReturnToTeamsDelegate CancelTeamStaffSelection;
+
+        // ------------------ Lists ----------------- //
 
         public static List<StaffSummarySmall> StaffForEntity; // Initiated later
         public static List<StaffSummarySmall> StaffNotForEntity; // Initiated later
@@ -24,7 +31,24 @@ namespace ProjectTile
         public static List<int> EntityIDsToAdd = new List<int>();
         public static List<int> EntityIDsToRemove = new List<int>();
         public static List<int> EntityDefaultsToSet = new List<int>();
- 
+
+        // --------------- Navigation --------------- // 	
+
+        public static void SelectTeamStaff(Staff selectedRecord)
+        {
+            try
+            {
+                SelectedTeamStaff = selectedRecord;
+                SelectStaffForTeam();
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error handling staff member selection", generalException); }
+        }
+
+        public static void BackToTeam()
+        {
+            CancelTeamStaffSelection();
+        }
+
         // Get staff data
         
         public static List<StaffSummaryRecord> GetStaffGridData(bool activeOnly, string nameContains, string roleDescription, int entityID)
@@ -34,10 +58,8 @@ namespace ProjectTile
             {
                 try
                 {
-                    var gridList = new List<StaffSummaryRecord>();
-
                     // Only get Entities that the current user can access; if entity is specified, check it is valid and replace the array with its ID
-                    var myAllowedEntities = EntityFunctions.AllowedEntityIDs(CurrentStaffID);
+                    int[] myAllowedEntities = EntityFunctions.AllowedEntityIDs(CurrentStaffID);
                     if (entityID > 0)
                     {
                         if (!myAllowedEntities.Contains(entityID))
@@ -45,14 +67,11 @@ namespace ProjectTile
                             MessageFunctions.Error("Error retrieving staff grid data: the specified Entity is not allowed for this user.", null);
                             return null; 
                         }
-                        else
-                        {
-                            myAllowedEntities = new int[] {entityID}; 
-                        }
+                        else { myAllowedEntities = new int[] {entityID}; }
                     }
 
                     // Set the contents based on all of the filters
-                    gridList = (from s in existingPtDb.Staff
+                    List<StaffSummaryRecord> gridList = (from s in existingPtDb.Staff
                                join sr in existingPtDb.StaffRoles on s.RoleCode equals sr.RoleCode
                                join se in existingPtDb.StaffEntities on s.ID equals se.StaffID
                                join de in existingPtDb.Entities on s.DefaultEntity equals de.ID
@@ -81,6 +100,43 @@ namespace ProjectTile
                 { 
                     MessageFunctions.Error("Error retrieving staff grid data", generalException);
                     return null;                
+                }
+            }
+        }
+
+        public static List<Staff> GetStaffComboData(bool activeOnly, int entityID)
+        {
+            ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+            using (existingPtDb)
+            {
+                try
+                { 
+                    // Only get Entities that the current user can access; if entity is specified, check it is valid and replace the array with its ID
+                    int[] myAllowedEntities = EntityFunctions.AllowedEntityIDs(CurrentStaffID);
+                    if (entityID > 0)
+                    {
+                        if (!myAllowedEntities.Contains(entityID))
+                        {
+                            MessageFunctions.Error("Error retrieving staff grid data: the specified Entity is not allowed for this user.", null);
+                            return null;
+                        }
+                        else { myAllowedEntities = new int[] { entityID }; }
+                    }
+
+                    List<Staff> comboList = (from s in existingPtDb.Staff
+                                join se in existingPtDb.StaffEntities on s.ID equals se.StaffID
+                                where (!activeOnly || s.Active)                                     
+                                     && (myAllowedEntities.Contains((int)se.EntityID))
+                                orderby new { s.FirstName, s.Surname, s.UserID }
+                                select s
+                               ).Distinct().ToList();
+
+                    return comboList;
+                }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error retrieving staff drop-down list data", generalException);
+                    return null;
                 }
             }
         }

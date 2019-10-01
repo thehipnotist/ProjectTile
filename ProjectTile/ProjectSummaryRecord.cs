@@ -72,6 +72,11 @@ namespace ProjectTile
         {
             get { return stage.StageCode == CancelledStage; }
         }
+
+        public bool IsOld
+        {
+            get { return stage.ProjectStatus == ClosedStatus; }
+        }
     
         public bool IsInternal
         {

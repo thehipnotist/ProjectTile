@@ -43,7 +43,7 @@ namespace ProjectTile
         public const string AccountManagerCode = "AM";
         public const string ProjectSponsorCode = "PS";
         public const string ProjectManagerCode = "PM";
-        public const string SeniorConsultantCode = "SR";
+        public const string SeniorConsultantCode = "SC";
         public const string TechnicalLeadCode = "TL";
         public static string[] ProjectRoleHeirarchy = { ProjectSponsorCode, ProjectManagerCode, SeniorConsultantCode, TechnicalLeadCode, "AC", "TC", "IC", "OT" }; 
 

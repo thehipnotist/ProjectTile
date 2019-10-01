@@ -61,7 +61,7 @@ namespace ProjectTile
 
             if (pageMode == PageFunctions.View)
             {
-                CommitButton.Visibility = Visibility.Hidden;
+                AmendButton.Visibility = CommitButton.Visibility = Visibility.Hidden;
                 DisableButton.Visibility = Visibility.Hidden;
                 editEntities = false; // Override as it is a view-only screen
                 EntitiesButton.Visibility = (viewEntities) ? Visibility.Visible : Visibility.Hidden;
@@ -73,9 +73,19 @@ namespace ProjectTile
                 Instructions.Content = "Choose a staff member and then click the 'Amend' button to change their details.";
                 StaffDataGrid.SelectionMode = DataGridSelectionMode.Single;
                 DisableButton.Visibility = Globals.MyPermissions.Allow("ActivateStaff") ? Visibility.Visible : Visibility.Hidden;
-
+                CommitButton.Visibility = Visibility.Hidden;
                 EntitiesButton.Visibility = (viewEntities || editEntities) ? Visibility.Visible : Visibility.Hidden;
                 if (editEntities) { EntitiesButtonText.Text = "Entities"; }                
+            }
+            else if (pageMode == PageFunctions.Lookup)
+            {
+                CommitButton.Margin = AmendButton.Margin;
+                PageHeader.Content = "Select Staff Member";
+                HeaderImage2.SetResourceReference(Image.SourceProperty, "SearchIcon");
+                Instructions.Content = "Choose a staff member and then click the 'Select' button to return their details.";
+                StaffDataGrid.SelectionMode = DataGridSelectionMode.Single;
+                DisableButton.Visibility = AmendButton.Visibility = EntitiesButton.Visibility = Visibility.Hidden;
+                CancelButtonText.Text = "Cancel";
             }
         }
 
@@ -157,10 +167,19 @@ namespace ProjectTile
         {
             selectedRecord = null;
             // selectedStaffID = 0; // Don't clear this automatically, as the refresh tries to reuse it
-            Globals.SelectedStaffMember = null; // Ditto
-            CommitButton.IsEnabled = false;
+            pushSelection();
+            AmendButton.IsEnabled = false;
             toggleActiveButton(null);
             EntitiesButton.IsEnabled = false;
+        }
+
+        private void pushSelection()
+        {
+            try
+            {
+                if (pageMode != PageFunctions.Lookup) { Globals.SelectedStaffMember = (selectedRecord == null) ? null : StaffFunctions.GetStaffMember(selectedRecord.ID); }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error processing selection", generalException); }	
         }
 
         // ---------------------- //
@@ -178,10 +197,6 @@ namespace ProjectTile
         }        
 
         // Control events //
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            PageFunctions.ShowTilesPage();
-        }
 
         private void ActiveOnly_CheckBox_Checked(object sender, RoutedEventArgs e)
         {
@@ -218,10 +233,10 @@ namespace ProjectTile
                 if (StaffDataGrid.SelectedItem != null)
                 {
                     selectedRecord = (StaffSummaryRecord) StaffDataGrid.SelectedItem;
-                    selectedStaffID = selectedRecord.ID;
-                    Globals.SelectedStaffMember = StaffFunctions.GetStaffMember(selectedStaffID);
-                    CommitButton.IsEnabled = true;
-                    toggleActiveButton(Globals.SelectedStaffMember.Active);
+                    selectedStaffID = (selectedRecord == null)? 0 : selectedRecord.ID;
+                    pushSelection();
+                    AmendButton.IsEnabled = true;
+                    toggleActiveButton(selectedRecord.ActiveUser);
                     EntitiesButton.IsEnabled = true;
                 }
                 else // No record selected, e.g. because filter changed
@@ -250,7 +265,7 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error changing status", generalException); }
         }
 
-        private void CommitButton_Click(object sender, RoutedEventArgs e)
+        private void AmendButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -276,6 +291,18 @@ namespace ProjectTile
         {
             bool viewOnly = (!editEntities);
             PageFunctions.ShowStaffEntitiesPage(selectedStaffID, viewOnly, pageMode);
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (pageMode == PageFunctions.Lookup) { StaffFunctions.CancelTeamStaffSelection(); }
+            else { PageFunctions.ShowTilesPage(); }
+        }
+
+        private void CommitButton_Click(object sender, RoutedEventArgs e)
+        {
+            Staff selectedPerson = StaffFunctions.GetStaffMember(selectedRecord.ID);
+            StaffFunctions.SelectTeamStaff(selectedPerson);
         }
 
     } // class
