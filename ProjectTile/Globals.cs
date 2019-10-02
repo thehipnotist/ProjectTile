@@ -46,7 +46,12 @@ namespace ProjectTile
         public const string ProjectManagerCode = "PM";
         public const string SeniorConsultantCode = "SC";
         public const string TechnicalLeadCode = "TL";
-        public static string[] ProjectRoleHeirarchy = { SponsorCode, ProjectManagerCode, SeniorConsultantCode, TechnicalLeadCode, "AC", "TC", "IC", "OT" };
+        public const string OtherRoleCode = "OT";
+        public const string IntegrationConsultCode = "IC";
+        public const string ApplicationConsultCode = "AC";
+        public const string TechnicalConsultCode = "TC";
+        public static string[] ProjectRoleHeirarchy = { SponsorCode, ProjectManagerCode, SeniorConsultantCode, TechnicalLeadCode, ApplicationConsultCode, TechnicalConsultCode, 
+                                                          IntegrationConsultCode, OtherRoleCode };
         public static string[] KeyRoles = { SponsorCode, ProjectManagerCode, SeniorConsultantCode, TechnicalLeadCode };
 
         public const string InternalProjectCode = "IP";

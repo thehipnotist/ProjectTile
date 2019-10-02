@@ -84,6 +84,27 @@
                             <DataGridTextColumn x:Name="FromDateColumn" Binding="{Binding EffectiveFrom, StringFormat=dd/MM/yyyy, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="From Date"/>
                             <DataGridTextColumn x:Name="ToDateColumn" Binding="{Binding ToDate, StringFormat=dd/MM/yyyy, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="To Date"/>
                         </DataGrid.Columns>
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=Project.ProjectStatus}"  Value="Closed">
+                                        <Setter Property="Foreground" Value="DarkGray"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=Project.ProjectStatus}"  Value="Not Started">
+                                        <Setter Property="Foreground" Value="LightBlue"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=Project.ProjectStatus}"  Value="Live">
+                                        <Setter Property="Foreground" Value="Green"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=IsHistoric}"  Value="True">
+                                        <Setter Property="Foreground" Value="Gray"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=IsFuture}"  Value="True">
+                                        <Setter Property="Foreground" Value="Blue"/>
+                                    </DataTrigger>                                    
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.Resources>
                     </DataGrid>
 
                     <Grid x:Name="AmendmentGrid" Margin="15,90,15,0" HorizontalAlignment="Right" Width="215" Height="260" VerticalAlignment="Top">
@@ -127,9 +148,9 @@
                     <GroupBox x:Name="TimeGroup"  HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Bottom" Width="190" Padding="0">
                         <DockPanel FlowDirection="LeftToRight" HorizontalAlignment="Right" LastChildFill="False">
                             <RadioButton x:Name="AllRadio" Content="All" Height="30" Width="Auto" FontWeight="Bold" Padding="5" HorizontalAlignment="Right"
-                                 VerticalContentAlignment="Center" Checked="AllRadio_Checked"/>
+                                 VerticalContentAlignment="Center" Checked="AllRadio_Checked" Foreground="Gray"/>
                             <RadioButton x:Name="FutureRadio" Content="Future" Height="30" Width="Auto" FontWeight="Bold" Padding="5" HorizontalAlignment="Right"
-                                 VerticalContentAlignment="Center" Checked="FutureRadio_Checked"/>
+                                 VerticalContentAlignment="Center" Checked="FutureRadio_Checked" Foreground="Blue"/>
                             <RadioButton x:Name="CurrentRadio" Content="Current" Height="30" Width="Auto" FontWeight="Bold" Padding="5" HorizontalAlignment="Right"
                                  VerticalContentAlignment="Center" Checked="CurrentRadio_Checked"/>
                         </DockPanel>
@@ -150,6 +171,13 @@
                             <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Cancel" Margin="5,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
+                    <Button x:Name="BackButton" HorizontalAlignment="Left" Height="30" Margin="130,15,15,15" VerticalAlignment="Top" Width="100" Style="{StaticResource RoundedButton}" 
+                            FontWeight="Bold" Click="BackButton_Click" ToolTip="Return to projects list">
+                        <StackPanel x:Name="BackPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                            <Image x:Name="BackImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource BackIcon}"/>
+                            <TextBlock x:Name="BackButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Back" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>                    
                     <Button x:Name="AmendButton" HorizontalAlignment="Right" Height="30" Margin="15,15,265,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" Click="AmendButton_Click" IsEnabled="False" BorderBrush="{DynamicResource PtBrushStaff3}">
                         <StackPanel x:Name="AmendPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">

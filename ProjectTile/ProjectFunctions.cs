@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace ProjectTile
@@ -75,6 +76,13 @@ namespace ProjectTile
         public static void BackToTeam()
         {
             CancelTeamProjectSelection();
+        }
+
+        // --------------- Page setup --------------- //
+        
+        public static Visibility BackButtonVisibility()
+        {
+            return (ProjectSourcePage != Globals.TilesPageName)? Visibility.Visible : Visibility.Hidden;
         }
 
         // ---------------------------------------------------------- //
@@ -612,22 +620,6 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error retrieving full list of project team members", generalException); }
         }
 
-        public static bool IsInTimeFilter(TeamTimeFilter timeFilter, TeamSummaryRecord teamMembership)
-        {
-            DateTime? fromDate = teamMembership.FromDate;
-            DateTime? toDate = teamMembership.ToDate;
-            
-            if (timeFilter == TeamTimeFilter.All) { return true; }
-            else if (toDate != null && toDate < Today) { return false; }
-            else if (timeFilter == TeamTimeFilter.Current && fromDate != null && fromDate > Today) { return false; }
-            else { return true; };
-        }
-
-        public static bool IsCurrentRole(TeamSummaryRecord teamMembership)
-        {
-            return IsInTimeFilter(TeamTimeFilter.Current, teamMembership);
-        }
-
         public static bool SetTeamsGridList(ProjectStatusFilter inStatus, string teamRoleCode, TeamTimeFilter timeFilter, int projectID = 0, string nameContains = "", bool exact = false)
         {
             try
@@ -645,12 +637,78 @@ namespace ProjectTile
                                                     || IsInTimeFilter(timeFilter, ftl))
                                                 ).ToList();
 
-                if (projectID > 0) { TeamsGridList = TeamsGridList.OrderBy(tgl => RolePosition(tgl.ProjectRole.RoleCode)).ToList(); }
+                if (projectID > 0) { TeamsGridList = TeamsGridList.OrderBy(tgl => RolePosition(tgl.ProjectRole.RoleCode)).OrderBy(tgl => tgl.EffectiveFrom).ToList(); }
                 return true;
             }
             catch (Exception generalException) 
             { 
                 MessageFunctions.Error("Error retrieving project team members to display", generalException);
+                return false;
+            }
+        }
+
+        public static bool IsInTimeFilter(TeamTimeFilter timeFilter, TeamSummaryRecord teamMembership)
+        {
+            DateTime? fromDate = teamMembership.FromDate;
+            DateTime? toDate = teamMembership.ToDate;
+
+            if (timeFilter == TeamTimeFilter.All) { return true; }
+            else if (toDate != null && toDate < Today) { return false; }
+            else if (timeFilter == TeamTimeFilter.Current && fromDate != null && fromDate > Today) { return false; }
+            else { return true; };
+        }
+
+        public static bool IsCurrentRole(TeamSummaryRecord teamMembership)
+        {
+            return IsInTimeFilter(TeamTimeFilter.Current, teamMembership);
+        }
+
+        public static bool? HasDuplicateRecord(TeamSummaryRecord thisRecord, bool byRole)
+        {
+            try
+            {
+                SetFullTeamsList();
+                List<TeamSummaryRecord> otherInstances = FullTeamsList
+                    .Where(ftl => ftl.ID != thisRecord.ID
+                        && ftl.Project.ID == thisRecord.Project.ID
+                        && ((byRole && ftl.RoleCode == thisRecord.RoleCode) || (!byRole && ftl.StaffID == thisRecord.StaffID)))
+                    .ToList();
+
+                if (otherInstances.Count == 0) { return false; }
+                else
+                {
+                    foreach (TeamSummaryRecord thisInstance in otherInstances)
+                    {
+                        if (thisInstance.RoleCode == thisRecord.RoleCode) // Required if by staff member, as returns null if found (but only) with a different role
+                        {
+                            if (thisInstance.EffectiveFrom > thisRecord.EffectiveTo || thisInstance.EffectiveTo < thisRecord.EffectiveFrom) { } // No overlap                            
+                            else { return true; }
+                        }
+                    }
+                }
+                return null; // If haven't returned already, there is another instance but not a duplicate
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error checking for duplicate or overlapping records", generalException);
+                return null;
+            }
+        }
+
+        public static bool Subsumes(TeamSummaryRecord thisRecord)
+        {
+            try
+            {
+                SetFullTeamsList();
+                return FullTeamsList.Exists(ftl => ftl.ID != thisRecord.ID
+                        && ftl.Project.ID == thisRecord.Project.ID
+                        && ftl.RoleCode == thisRecord.RoleCode
+                        && ((ftl.FromDate != null && ftl.FromDate >= thisRecord.FromDate) || (ftl.FromDate == null && thisRecord.FromDate == null))
+                        && ((ftl.ToDate != null & ftl.ToDate <= thisRecord.ToDate) || (ftl.ToDate == null && thisRecord.ToDate == null)));
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error checking for concurrent records", generalException);
                 return false;
             }
         }
@@ -666,7 +724,7 @@ namespace ProjectTile
                         .Where(pt => pt.ID != currentRecord.ID
                             && pt.ProjectID == currentRecord.Project.ID
                             && pt.ProjectRoleCode == currentRecord.RoleCode
-                            && (pt.FromDate == null || pt.FromDate <= currentRecord.EffectiveFrom))
+                            && (pt.FromDate == null || pt.FromDate < currentRecord.EffectiveFrom))
                         .OrderByDescending(pt => pt.ToDate ?? InfiniteDate)
                         .OrderByDescending(pt => pt.FromDate ?? StartOfTime)
                         .FirstOrDefault();
@@ -690,7 +748,7 @@ namespace ProjectTile
                         .Where(pt => pt.ID != currentRecord.ID
                             && pt.ProjectID == currentRecord.Project.ID
                             && pt.ProjectRoleCode == currentRecord.RoleCode
-                            && (pt.FromDate == null || pt.FromDate >= currentRecord.EffectiveTo))
+                            && (pt.ToDate == null || pt.ToDate > currentRecord.EffectiveTo))
                         .OrderBy(pt => pt.FromDate ?? StartOfTime)
                         .OrderBy(pt => pt.ToDate ?? InfiniteDate)
                         .FirstOrDefault();
@@ -1156,6 +1214,69 @@ namespace ProjectTile
 
         // Project Teams (updates)
         
+        public static bool updateOtherInstances(TeamSummaryRecord newRecord)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {                    
+                    List<ProjectTeams> otherInstances = existingPtDb.ProjectTeams
+                        .Where(pt => pt.ID != newRecord.ID
+                            && pt.ProjectID == newRecord.Project.ID
+                            && pt.ProjectRoleCode == newRecord.RoleCode)
+                        .ToList();
+
+                    if (otherInstances.Count == 0) { return true; }
+                    else
+                    {
+                        DateTime dayBefore = newRecord.EffectiveFrom.AddDays(-1);
+                        DateTime dayAfter = newRecord.EffectiveTo;                    
+                    
+                        foreach (ProjectTeams current in otherInstances)
+                        {
+                            DateTime currentFrom = current.FromDate ?? StartOfTime;
+                            DateTime currentTo = current.ToDate ?? InfiniteDate;
+                        
+                            if ( currentFrom >= dayAfter || currentTo <= dayBefore) // No overlap - but may need to change to close the gap
+                            {
+                                if (current.ID == GetPredecessor(newRecord).ID && currentTo < dayBefore) { current.ToDate = dayBefore; }
+                                else if (current.ID == GetSuccessor(newRecord).ID && currentFrom > dayAfter) { current.FromDate = dayAfter; }
+                            }
+                            else if (newRecord.FromDate != null && newRecord.ToDate != null && currentFrom < dayBefore && currentTo > dayAfter) // Split encompassing record
+                            {
+                                ProjectTeams additional = new ProjectTeams
+                                {
+                                    ProjectID = current.ProjectID,
+                                    StaffID = current.StaffID,
+                                    ProjectRoleCode = current.ProjectRoleCode,
+                                    FromDate = dayAfter,
+                                    ToDate = current.ToDate
+                                };                                
+                                current.ToDate = dayBefore;
+                                existingPtDb.ProjectTeams.Add(additional);
+                            }
+                            else if (newRecord.FromDate != null && currentFrom <= dayBefore && currentTo > dayBefore && (current.ToDate == null || currentTo < dayAfter) ) 
+                                { current.ToDate = dayBefore; } // Curtail predecessor
+                            else if (newRecord.ToDate != null && (current.FromDate == null || currentFrom > dayBefore) && currentFrom < dayAfter && currentTo >= dayAfter) 
+                                { current.FromDate = dayAfter; } // Delay successor
+                            else if ((currentFrom > dayBefore || current.FromDate == null) && (currentTo < dayAfter || current.ToDate == null)) // Remove subsumed/replaced record
+                            {
+                                existingPtDb.ProjectTeams.Remove(current);
+                            }
+                        }
+                    }
+                    existingPtDb.SaveChanges();
+                    return true;
+                }
+            }
+            catch (Exception generalException) 
+            { 
+                MessageFunctions.Error("Error updating affected predecessors and/or successors", generalException);
+                return false;
+            }
+        }
+
         public static bool SaveProjectTeamChanges(TeamSummaryRecord currentVersion, TeamSummaryRecord savedVersion)
         {
             if (!currentVersion.ValidateTeamRecord(savedVersion)) { return false; }
@@ -1172,9 +1293,7 @@ namespace ProjectTile
                         return false;
                     }
                     currentVersion.ConvertToProjectTeam(ref thisTeam);
-
-                    // TODO: update other affected records (predecessors and successors) - need shared functions to determine what's required
-
+                    updateOtherInstances(currentVersion);
                     existingPtDb.SaveChanges();
                     MessageFunctions.SuccessMessage("Your changes have been saved successfully.", "Team Membership Amended");
                     return true;
@@ -1187,9 +1306,9 @@ namespace ProjectTile
             }	
         }
 
-        public static bool SaveNewProjectTeam(TeamSummaryRecord newRecord)
+        public static int SaveNewProjectTeam(TeamSummaryRecord newRecord)
         {
-            if (!newRecord.ValidateTeamRecord(null)) { return false; }
+            if (!newRecord.ValidateTeamRecord(null)) { return 0; }
             ProjectTeams thisTeam = new ProjectTeams();
             newRecord.ConvertToProjectTeam(ref thisTeam);
 
@@ -1199,18 +1318,16 @@ namespace ProjectTile
                 using (existingPtDb)
                 {
                     existingPtDb.ProjectTeams.Add(thisTeam);
-
-                    // TODO: update other affected records (predecessors and successors) - need shared functions to determine what's required
-
+                    updateOtherInstances(newRecord);
                     existingPtDb.SaveChanges();
                     MessageFunctions.SuccessMessage("New project team member added successfully.", "Team Member Added");
-                    return true;
+                    return thisTeam.ID;
                 }
             }
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error creating new project team member", generalException);
-                return false;
+                return 0;
             }
         }
 

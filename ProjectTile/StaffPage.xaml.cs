@@ -86,6 +86,7 @@ namespace ProjectTile
                 StaffDataGrid.SelectionMode = DataGridSelectionMode.Single;
                 DisableButton.Visibility = AmendButton.Visibility = EntitiesButton.Visibility = Visibility.Hidden;
                 CancelButtonText.Text = "Cancel";
+                ActiveOnly_CheckBox.IsChecked = true;
             }
         }
 
