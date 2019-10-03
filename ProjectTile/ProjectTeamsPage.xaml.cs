@@ -309,7 +309,7 @@ namespace ProjectTile
                 {
                     editTeamRecord = selectedTeamRecord.ShallowCopy();
                     this.DataContext = editTeamRecord;
-                    selectProjectRole(editTeamRecord.RoleCode); // The binding does not set this as it is in a combo box with a different item source 
+                    selectEditRole(editTeamRecord.RoleCode); // The binding does not set this as it is in a combo box with a different item source 
                     selectStaffMember(editTeamRecord.StaffMember); // ... or this, but do this second so that it only sets a role code if none has been set
                     //FromDate.SelectedDate = editTeamRecord.EffectiveFrom; // The binding is on FromDate, not EffectiveFrom, to apply custom logic on new records
                     Instructions.Content = "Amend the details as required and then click 'Save' to commit them.";                    
@@ -320,6 +320,7 @@ namespace ProjectTile
                     this.DataContext = editTeamRecord;
                     editTeamRecord.Project = ProjectFunctions.GetProject(Globals.SelectedProjectSummary.ProjectID);
                     Instructions.Content = "Insert the details as required and then click 'Save' to commit them.";
+                    if (Globals.SelectedProjectRole != null && Globals.SelectedProjectRole != Globals.AllRoles) { selectEditRole(Globals.SelectedProjectRole.RoleCode); }
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error setting up amendment", generalException); }	
@@ -347,7 +348,7 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error displaying selected staff member in the list", generalException); }	
         }
 
-        private void selectProjectRole(string roleCode)
+        private void selectEditRole(string roleCode)
         {
             try
             {
@@ -588,7 +589,7 @@ namespace ProjectTile
                 if (EditRoleCombo.SelectedItem == null)
                 {
                     string suggestedRole = editTeamRecord.SuggestedRole();
-                    if (suggestedRole != "") { selectProjectRole(suggestedRole); }
+                    if (suggestedRole != "") { selectEditRole(suggestedRole); }
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error processing staff selection", generalException); }

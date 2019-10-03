@@ -109,7 +109,8 @@ namespace ProjectTile
         {
             try
             {
-                List<StaffSummaryRecord> gridList = StaffFunctions.GetStaffGridData(activeOnly, nameContains, roleDescription, 0);
+                int entityFilterID = (pageMode == PageFunctions.Lookup) ? Globals.CurrentEntityID : 0;
+                List<StaffSummaryRecord> gridList = StaffFunctions.GetStaffGridData(activeOnly, nameContains, roleDescription, entityFilterID);
                 StaffDataGrid.ItemsSource = gridList;
  
                 if (selectedStaffID > 0)

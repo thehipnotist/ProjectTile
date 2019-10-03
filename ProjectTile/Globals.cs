@@ -18,6 +18,7 @@ namespace ProjectTile
         public static string MyDefaultEntityName = "";
 
         public static TableSecurity MyPermissions;
+        public const string DbUserPrefix = "ProT_";
 
         // Common enumerations
         public enum ClientProductStatus { Added = 1, New = 2, InProgress = 3, Live = 4, Updates = 5, Inactive = 6, Retired = 7 }
@@ -39,7 +40,7 @@ namespace ProjectTile
         public static StaffSummaryRecord AllPMs = new StaffSummaryRecord { ID = 0, FirstName = AllRecords, Surname = "", Active = false };
         public static ProjectRoles AllRoles = new ProjectRoles { RoleCode = AllCodes, RoleDescription = AllRecords };        
 
-        // Standard universal strings
+        // Project roles
         public const string AccountManagerCode = "AM";
         public const string TechnicalManagerCode = "TM";
         public const string SponsorCode = "PS";
@@ -52,15 +53,15 @@ namespace ProjectTile
         public const string TechnicalConsultCode = "TC";
         public static string[] ProjectRoleHeirarchy = { SponsorCode, ProjectManagerCode, SeniorConsultantCode, TechnicalLeadCode, ApplicationConsultCode, TechnicalConsultCode, 
                                                           IntegrationConsultCode, OtherRoleCode };
-        public static string[] KeyRoles = { SponsorCode, ProjectManagerCode, SeniorConsultantCode, TechnicalLeadCode };
+        public static string[] KeyInternalRoles = { SponsorCode, ProjectManagerCode, SeniorConsultantCode, TechnicalLeadCode };
+        public static string[] KeyClientRoles = { SponsorCode, ProjectManagerCode, TechnicalLeadCode };
 
+        // Project types
         public const string InternalProjectCode = "IP";
         public const string NewSiteCode = "NS";
         public const string TakeOnCode = "TS";
         public const string AddSystemCode = "AS";
-        public static string[] NewProductTypeCodes = { NewSiteCode, AddSystemCode };
-        
-        public const string DbUserPrefix = "ProT_";
+        public static string[] NewProductTypeCodes = { NewSiteCode, AddSystemCode };       
 
         // Project stage/status
         public const int StartStage = 1; // First stage of 'In Progress'

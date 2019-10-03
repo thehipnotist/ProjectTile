@@ -64,7 +64,7 @@ namespace ProjectTile
         {
             get
             {
-                return (Array.IndexOf(Globals.KeyRoles, RoleCode) >= 0);
+                return (Array.IndexOf(Globals.KeyInternalRoles, RoleCode) >= 0);
             }
         }
 

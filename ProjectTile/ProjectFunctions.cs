@@ -703,8 +703,9 @@ namespace ProjectTile
                 return FullTeamsList.Exists(ftl => ftl.ID != thisRecord.ID
                         && ftl.Project.ID == thisRecord.Project.ID
                         && ftl.RoleCode == thisRecord.RoleCode
-                        && ((ftl.FromDate != null && ftl.FromDate >= thisRecord.FromDate) || (ftl.FromDate == null && thisRecord.FromDate == null))
-                        && ((ftl.ToDate != null & ftl.ToDate <= thisRecord.ToDate) || (ftl.ToDate == null && thisRecord.ToDate == null)));
+                        && ((ftl.FromDate != null && ftl.FromDate >= thisRecord.EffectiveFrom) ||
+                            ((ftl.FromDate == null || ftl.FromDate == thisRecord.Project.StartDate) && thisRecord.EffectiveFrom == thisRecord.Project.StartDate))
+                        && ((ftl.ToDate != null && ftl.ToDate <= thisRecord.EffectiveTo) || (ftl.ToDate == null && thisRecord.ToDate == null)));
             }
             catch (Exception generalException)
             {
@@ -724,7 +725,7 @@ namespace ProjectTile
                         .Where(pt => pt.ID != currentRecord.ID
                             && pt.ProjectID == currentRecord.Project.ID
                             && pt.ProjectRoleCode == currentRecord.RoleCode
-                            && (pt.FromDate == null || pt.FromDate < currentRecord.EffectiveFrom))
+                            && (pt.FromDate == null || pt.FromDate == currentRecord.Project.StartDate || pt.FromDate < currentRecord.EffectiveFrom))
                         .OrderByDescending(pt => pt.ToDate ?? InfiniteDate)
                         .OrderByDescending(pt => pt.FromDate ?? StartOfTime)
                         .FirstOrDefault();
@@ -853,6 +854,23 @@ namespace ProjectTile
         {
             return (originalStage >= LiveStage && originalStage != CancelledStage && newStage < LiveStage);
         }
+
+        public static string MissingTeamMembers(List<string> currentTeam, bool clientTeam)
+        {
+            string result = "";
+            string[] keyRoles = clientTeam ? KeyClientRoles : KeyInternalRoles;
+            foreach (string role in keyRoles.Reverse())
+            {
+                if (!currentTeam.Contains(role))
+                {
+                    string description = GetRole(role).RoleDescription;
+                    if (result == "") { result = description; }
+                    else if (!result.Contains("and")) { result = description + " and " + result; }
+                    else { result = description + ", " + result; }
+                }
+            }
+            return result;
+        }
         
         public static bool ValidateProject(ProjectSummaryRecord summary, bool amendExisting, bool managerChanged)
         {
@@ -870,6 +888,11 @@ namespace ProjectTile
                 bool isUnderway = (summary.Stage != null && stage > StartStage && !summary.IsCancelled);
                 Projects existingProjectRecord = null;
                 ClientSummaryRecord client = summary.Client ?? null;
+                List<string> currentInternalRoles = null;
+                string missingInternalRoles = "";
+                List<string> currentClientRoles = null;
+                string missingClientRoles = "";
+                int projectID = summary.ProjectID;
 
                 try
                 {
@@ -920,23 +943,39 @@ namespace ProjectTile
                             using (existingPtDb)
                             {
                                 otherClientProjects = existingPtDb.Projects.Where(
-                                    p => p.ID != summary.ProjectID
+                                    p => p.ID != projectID
                                     && (p.ClientID == client.ID || (summary.IsInternal && (p.ClientID == null || p.ClientID <= 0)))
                                     ).ToList();
                                 liveClientProducts = existingPtDb.ClientProducts.Where(
                                     cp => cp.ClientID == client.ID && cp.Live == true).ToList();
                                 if (!summary.IsNew)
                                 {
-                                    existingProjectRecord = existingPtDb.Projects.Where(p => p.ID == summary.ProjectID).FirstOrDefault();
-                                    linkedProjectProducts = existingPtDb.ProjectProducts.Where(pp => pp.ProjectID == summary.ProjectID).ToList();
+                                    existingProjectRecord = existingPtDb.Projects.Where(p => p.ID == projectID).FirstOrDefault();
+                                    linkedProjectProducts = existingPtDb.ProjectProducts.Where(pp => pp.ProjectID == projectID).ToList();
+                                    currentInternalRoles = existingPtDb.ProjectTeams.Where(pt => pt.ProjectID == projectID 
+                                        && (pt.FromDate == null || pt.FromDate <= Today)
+                                        && (pt.ToDate == null || pt.ToDate >= Today)).Select(pt => pt.ProjectRoleCode).ToList();
+                                    currentClientRoles = existingPtDb.ClientTeams.Where(ct => ct.ProjectID == projectID
+                                        && (ct.FromDate == null || ct.FromDate <= Today)
+                                        && (ct.ToDate == null || ct.ToDate >= Today)).Select(ct => ct.ClientTeamRoleCode).ToList(); 
                                 }
                             }
+                            missingInternalRoles = MissingTeamMembers(currentInternalRoles, false);
+                            missingClientRoles = MissingTeamMembers(currentClientRoles, true);
                             if (otherClientProjects.Exists(p => p.ProjectName == summary.ProjectName))
                             { errorDetails = ", as another project exists for the same client with the same name. Please change the project name."; }
                             else if (otherClientProjects.Exists(p => p.ProjectSummary == summary.ProjectSummary))
                             { errorDetails = ", as another project exists for the same client with the same project summary. Please change the summary details."; }
-                            if (summary.IsInternal)
-                            { errorDetails = errorDetails.Replace("another project exists for the same client", "another internal project exists"); }
+                            else if (isUnderway && missingInternalRoles != "")
+                            {
+                                errorDetails = ", as the project does not have a current (internal) " + missingInternalRoles + ". Key roles must be filled throughout the project. "
+                                + "Please keep the project in  'Initation' stage, then use 'Project Teams (Staff)' to complete the project team."; 
+                            }
+                            else if (isUnderway && missingClientRoles != "")
+                            {
+                                errorDetails = ", as the client's project team does not have a current " + missingClientRoles + ". Key roles must be filled throughout the project. "
+                                + "Please keep the project in 'Initation' stage until the required roles are set in 'Project (Client) Contacts'.";
+                            }
                         }
                         catch (Exception generalException)
                         {
@@ -947,6 +986,7 @@ namespace ProjectTile
 
                     if (errorDetails != "")
                     {
+                        if (summary.IsInternal) { errorDetails = errorDetails.Replace("another project exists for the same client", "another internal project exists"); }
                         if (amendExisting) { errorMessage = "Could not save changes" + errorDetails; }
                         else { errorMessage = "Could not save project" + errorDetails; }
                         MessageFunctions.SplitInvalid(errorMessage);
@@ -985,9 +1025,6 @@ namespace ProjectTile
                         else if (liveClientProducts.Count != 0 && (type == NewSiteCode))
                         { queryDetails = queryDetails + "\n" + "The project type also indicates a brand new installation for a new client, but this client already has one or more Live products."; }
                     }
-
-                    // TODO: Check for essential team members - must have a sponsor before initiation, and a senior consultant before starting
-                    // TODO: Check for essential client team members - as above with sponsor, must also have at least a PM before starting
 
                     string isCorrect = " Is this correct?";
                     if (queryDetails != "")
@@ -1218,6 +1255,9 @@ namespace ProjectTile
         {
             try
             {
+                int predecessorID = (GetPredecessor(newRecord) != null)? GetPredecessor(newRecord).ID : 0;
+                int successorID =  (GetSuccessor(newRecord) != null)? GetSuccessor(newRecord).ID : 0;
+                
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {                    
@@ -1231,19 +1271,19 @@ namespace ProjectTile
                     else
                     {
                         DateTime dayBefore = newRecord.EffectiveFrom.AddDays(-1);
-                        DateTime dayAfter = newRecord.EffectiveTo;                    
+                        DateTime dayAfter = newRecord.EffectiveTo.AddDays(1);                    
                     
                         foreach (ProjectTeams current in otherInstances)
                         {
                             DateTime currentFrom = current.FromDate ?? StartOfTime;
                             DateTime currentTo = current.ToDate ?? InfiniteDate;
-                        
-                            if ( currentFrom >= dayAfter || currentTo <= dayBefore) // No overlap - but may need to change to close the gap
+
+                            if (currentFrom >= dayAfter || currentTo <= dayBefore) // No overlap - but may need to change to close the gap
                             {
-                                if (current.ID == GetPredecessor(newRecord).ID && currentTo < dayBefore) { current.ToDate = dayBefore; }
-                                else if (current.ID == GetSuccessor(newRecord).ID && currentFrom > dayAfter) { current.FromDate = dayAfter; }
+                                if ( current.ID == predecessorID && currentTo < dayBefore) { current.ToDate = dayBefore; }
+                                else if (current.ID == successorID && currentFrom > dayAfter) { current.FromDate = dayAfter; }
                             }
-                            else if (newRecord.FromDate != null && newRecord.ToDate != null && currentFrom < dayBefore && currentTo > dayAfter) // Split encompassing record
+                            else if (newRecord.FromDate != null && newRecord.ToDate != null && currentFrom <= dayBefore && currentTo >= dayAfter) // Split encompassing record
                             {
                                 ProjectTeams additional = new ProjectTeams
                                 {
@@ -1252,14 +1292,14 @@ namespace ProjectTile
                                     ProjectRoleCode = current.ProjectRoleCode,
                                     FromDate = dayAfter,
                                     ToDate = current.ToDate
-                                };                                
+                                };
                                 current.ToDate = dayBefore;
                                 existingPtDb.ProjectTeams.Add(additional);
                             }
-                            else if (newRecord.FromDate != null && currentFrom <= dayBefore && currentTo > dayBefore && (current.ToDate == null || currentTo < dayAfter) ) 
-                                { current.ToDate = dayBefore; } // Curtail predecessor
-                            else if (newRecord.ToDate != null && (current.FromDate == null || currentFrom > dayBefore) && currentFrom < dayAfter && currentTo >= dayAfter) 
-                                { current.FromDate = dayAfter; } // Delay successor
+                            else if (newRecord.FromDate != null && currentFrom <= dayBefore && currentTo > dayBefore && (current.ToDate == null || currentTo < dayAfter))
+                            { current.ToDate = dayBefore; } // Curtail predecessor
+                            else if (newRecord.ToDate != null && (current.FromDate == null || currentFrom > dayBefore) && currentFrom < dayAfter && currentTo >= dayAfter)
+                            { current.FromDate = dayAfter; } // Delay successor
                             else if ((currentFrom > dayBefore || current.FromDate == null) && (currentTo < dayAfter || current.ToDate == null)) // Remove subsumed/replaced record
                             {
                                 existingPtDb.ProjectTeams.Remove(current);
