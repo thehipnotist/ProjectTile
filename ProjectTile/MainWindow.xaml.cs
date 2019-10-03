@@ -13,6 +13,10 @@ namespace ProjectTile
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        private CancellationTokenSource cancelMessageTokenSource = null;
+        
+        
         // ---------------------- //
         // -- Page Management --- //
         // ---------------------- //       
@@ -31,6 +35,7 @@ namespace ProjectTile
             try
             {
                 PageFunctions.ShowLoginPage(PageFunctions.LogIn);
+                MessageFunctions.SuccessMessage("Please enter your login credentials.", "Welcome to ProjectTile");
             }
             catch (Exception generalException) { MessageFunctions.Error("Error loading page", generalException); }
         }
@@ -176,6 +181,7 @@ namespace ProjectTile
             MainFrame.Width = Math.Max(frameTargetWidth, MainFrame.MinWidth);
             MainFrame.Height = Math.Max(frameTargetHeight, MainFrame.MinHeight);
             FullBorder.Height = Math.Max(borderTargetHeight, FullBorder.MinHeight);
+            FullBorder.Width = Math.Max(frameTargetWidth, FullBorder.MinWidth);
         }
 
         private void ChangeEntity_Click(object sender, RoutedEventArgs e)
@@ -325,11 +331,16 @@ namespace ProjectTile
 
         public void DisplayMessage(string message, string caption, int seconds)
         {
+            if (cancelMessageTokenSource != null) { cancelMessageTokenSource.Cancel(); } // Stop any existing 'wait' that will result in the new message being cleared early
+            
+            cancelMessageTokenSource = new CancellationTokenSource();
+            CancellationToken cancelMessageToken = cancelMessageTokenSource.Token;
+            
             Action act1 = new Action(() => { ShowMessage(message, caption); });
-            Action act3 = new Action(() => { HideMessage(); });
+            Action act3 = new Action(() => { EndMessage(cancelMessageToken); });
 
             Task task1 = Task.Factory.StartNew(() => { this.Dispatcher.BeginInvoke(act1, DispatcherPriority.Send); });
-            Task task2 = task1.ContinueWith((async) => { Thread.Sleep(seconds * 1000); }, TaskContinuationOptions.OnlyOnRanToCompletion);
+            Task task2 = task1.ContinueWith((async) => { Wait(seconds); }, TaskContinuationOptions.OnlyOnRanToCompletion);
             Task task3 = task2.ContinueWith((antecedent) => this.Dispatcher.BeginInvoke(act3, DispatcherPriority.Background), TaskContinuationOptions.OnlyOnRanToCompletion);
         }
 
@@ -337,11 +348,23 @@ namespace ProjectTile
         {
             CaptionBlock.Text = caption;
             ContentBlock.Text = message;
+            InfoIcon.Visibility = CaptionBlock.Visibility = ContentBlock.Visibility = Visibility.Visible;
         }
 
-        private void HideMessage()
+        private void Wait(int seconds)
         {
-            CaptionBlock.Text =  ContentBlock.Text = "";
+            Thread.Sleep(seconds * 1000);
+        }
+
+        private void EndMessage(CancellationToken cancelHide)
+        {
+            if (!cancelHide.IsCancellationRequested) { HideMessage(); }
+        }
+
+        public void HideMessage()
+        {
+            InfoIcon.Visibility = CaptionBlock.Visibility = ContentBlock.Visibility = Visibility.Hidden;
+            CaptionBlock.Text = ContentBlock.Text = ""; 
         }
 
     } // class

@@ -111,7 +111,7 @@ namespace ProjectTile
             {
                 int entityFilterID = (pageMode == PageFunctions.Lookup) ? Globals.CurrentEntityID : 0;
                 List<StaffSummaryRecord> gridList = StaffFunctions.GetStaffGridData(activeOnly, nameContains, roleDescription, entityFilterID);
-                StaffDataGrid.ItemsSource = gridList;
+                StaffDataGrid.ItemsSource = gridList.OrderBy(gl => gl.UserID).OrderBy(gl => gl.StaffName);
  
                 if (selectedStaffID > 0)
                 {

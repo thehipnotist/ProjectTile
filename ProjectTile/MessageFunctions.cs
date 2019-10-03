@@ -84,7 +84,7 @@ namespace ProjectTile
         public static void SuccessMessage(string message, string caption)
         {
             //MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
-            winMain.DisplayMessage(message, caption, 30);
+            winMain.DisplayMessage(message, caption, 10);
         }
 
         public static void InvalidMessage(string message, string caption)

@@ -956,13 +956,15 @@ namespace ProjectTile
                                     currentInternalRoles = existingPtDb.ProjectTeams.Where(pt => pt.ProjectID == projectID 
                                         && (pt.FromDate == null || pt.FromDate <= Today)
                                         && (pt.ToDate == null || pt.ToDate >= Today)).Select(pt => pt.ProjectRoleCode).ToList();
+
                                     currentClientRoles = existingPtDb.ClientTeams.Where(ct => ct.ProjectID == projectID
                                         && (ct.FromDate == null || ct.FromDate <= Today)
                                         && (ct.ToDate == null || ct.ToDate >= Today)).Select(ct => ct.ClientTeamRoleCode).ToList(); 
                                 }
                             }
-                            missingInternalRoles = MissingTeamMembers(currentInternalRoles, false);
-                            missingClientRoles = MissingTeamMembers(currentClientRoles, true);
+                            if (currentInternalRoles != null) { missingInternalRoles = MissingTeamMembers(currentInternalRoles, false); }
+                            if (currentClientRoles != null) { missingClientRoles = MissingTeamMembers(currentClientRoles, true); }
+
                             if (otherClientProjects.Exists(p => p.ProjectName == summary.ProjectName))
                             { errorDetails = ", as another project exists for the same client with the same name. Please change the project name."; }
                             else if (otherClientProjects.Exists(p => p.ProjectSummary == summary.ProjectSummary))
