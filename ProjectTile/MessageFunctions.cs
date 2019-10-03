@@ -6,6 +6,7 @@ namespace ProjectTile
 {
     public class MessageFunctions : Globals
     {
+        private static MainWindow winMain = (MainWindow)App.Current.MainWindow;
         public static List<string> queryList = new List<string>();
         
         public static void Error(string customMessage, Exception exp, string caption = "Error")
@@ -82,7 +83,8 @@ namespace ProjectTile
 
         public static void SuccessMessage(string message, string caption)
         {
-            MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
+            //MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
+            winMain.DisplayMessage(message, caption, 30);
         }
 
         public static void InvalidMessage(string message, string caption)

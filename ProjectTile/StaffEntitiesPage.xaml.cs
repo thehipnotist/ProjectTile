@@ -721,7 +721,7 @@ namespace ProjectTile
             bool success = (editMode == ByStaff) ? StaffFunctions.SaveStaffEntitiesChanges(selectedStaffID) : StaffFunctions.SaveEntityStaffChanges(selectedEntityID);
             if (success)
             {
-                MessageFunctions.SuccessMessage("Your changes have been saved successfully. You can make further changes, go back to the previous screen, or close this window.", "Changes Saved");
+                MessageFunctions.SuccessMessage("Your changes have been saved successfully. You can make further changes, go back to the previous screen, or close the current page.", "Changes Saved");
                 CommitButton.IsEnabled = false;            
             }
         }

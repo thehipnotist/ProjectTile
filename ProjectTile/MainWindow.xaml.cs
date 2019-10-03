@@ -2,6 +2,9 @@
 using System.Windows;
 using System.Collections;
 using System.Windows.Controls;
+using System.Threading.Tasks;
+using System.Threading;
+using System.Windows.Threading;
 
 namespace ProjectTile
 {
@@ -166,11 +169,13 @@ namespace ProjectTile
 
         private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            double targetWidth = Main.ActualWidth - 15;
-            double targetHeight = Main.ActualHeight - 69;
+            double frameTargetWidth = Main.ActualWidth - 16;
+            double frameTargetHeight = Main.ActualHeight - 119;
+            double borderTargetHeight = Main.ActualHeight - 69;
 
-            MainFrame.Width = Math.Max(targetWidth, MainFrame.MinWidth);
-            MainFrame.Height = Math.Max(targetHeight, MainFrame.MinHeight);
+            MainFrame.Width = Math.Max(frameTargetWidth, MainFrame.MinWidth);
+            MainFrame.Height = Math.Max(frameTargetHeight, MainFrame.MinHeight);
+            FullBorder.Height = Math.Max(borderTargetHeight, FullBorder.MinHeight);
         }
 
         private void ChangeEntity_Click(object sender, RoutedEventArgs e)
@@ -318,6 +323,26 @@ namespace ProjectTile
             PageFunctions.ShowProjectTeamsPage(pageMode: "", selectedStaffID: Globals.MyStaffID);
         }
 
+        public void DisplayMessage(string message, string caption, int seconds)
+        {
+            Action act1 = new Action(() => { ShowMessage(message, caption); });
+            Action act3 = new Action(() => { HideMessage(); });
+
+            Task task1 = Task.Factory.StartNew(() => { this.Dispatcher.BeginInvoke(act1, DispatcherPriority.Send); });
+            Task task2 = task1.ContinueWith((async) => { Thread.Sleep(seconds * 1000); }, TaskContinuationOptions.OnlyOnRanToCompletion);
+            Task task3 = task2.ContinueWith((antecedent) => this.Dispatcher.BeginInvoke(act3, DispatcherPriority.Background), TaskContinuationOptions.OnlyOnRanToCompletion);
+        }
+
+        private void ShowMessage(string message, string caption)
+        {
+            CaptionBlock.Text = caption;
+            ContentBlock.Text = message;
+        }
+
+        private void HideMessage()
+        {
+            CaptionBlock.Text =  ContentBlock.Text = "";
+        }
 
     } // class
 } // namespace
