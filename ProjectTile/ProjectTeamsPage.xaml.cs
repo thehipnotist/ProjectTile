@@ -537,9 +537,13 @@ namespace ProjectTile
             if (projectSelected) { selectProject(0); }            
             else if (selectedTeamRecord != null) // Just in case
             {
-                ProjectCombo.SelectedItem = ProjectFunctions.ProjectFilterList.First(pfl => pfl.ProjectCode == selectedTeamRecord.Project.ProjectCode);
-                NameLike.Text = ""; // Always show all team members for the project at this point
-                nameFilter(); // Implement the above
+                try
+                {
+                    ProjectCombo.SelectedItem = ProjectFunctions.ProjectFilterList.First(pfl => pfl.ProjectCode == selectedTeamRecord.Project.ProjectCode);
+                    NameLike.Text = ""; // Always show all team members for the project at this point
+                    nameFilter(); // Implement the above
+                }
+                catch (Exception generalException) { MessageFunctions.Error("Error processing project selection", generalException); }
             }
         }
 

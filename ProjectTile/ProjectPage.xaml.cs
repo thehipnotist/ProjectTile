@@ -272,7 +272,7 @@ namespace ProjectTile
                 }
                 if (pageMode != PageFunctions.Lookup) { Globals.SelectedProjectSummary = selectedProject; } // Otherwise don't set this as may cancel selection later
             }
-            catch (Exception generalException) { MessageFunctions.Error("Error processing project selection", generalException); }	
+            catch (Exception generalException) { MessageFunctions.Error("Error displaying project selection", generalException); }	
         }
 
         private void ClientCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
