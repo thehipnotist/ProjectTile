@@ -161,6 +161,12 @@ namespace ProjectTile
 
         public static void ChangeEntity(int entityID, ref Entities selectedEntity, bool makeDefault)
         {
+            if (selectedEntity == null)
+            {
+                MessageFunctions.InvalidMessage("Please select an Entity to amend from the drop-down list.", "No Entity Selected");
+                return;
+            }
+            
             if (entityID >= 0)
             {
                 try
@@ -356,6 +362,12 @@ namespace ProjectTile
 
         public static void SetDefaultEntity(ref Entities selectedEntity, int staffID = 0)
         {
+            if (selectedEntity == null)
+            {
+                MessageFunctions.InvalidMessage("Please select an Entity to amend from the drop-down list.", "No Entity Selected");
+                return;
+            }
+            
             ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
             using (existingPtDb)
             {

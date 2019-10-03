@@ -593,6 +593,7 @@ namespace ProjectTile
                                      join pj in existingPtDb.Projects on pt.ProjectID equals pj.ID
                                      join s in existingPtDb.Staff on pt.StaffID equals s.ID
                                      join pr in existingPtDb.ProjectRoles on pt.ProjectRoleCode equals pr.RoleCode
+                                     where pj.EntityID == CurrentEntityID
                                      select new TeamSummaryRecord
                                      {
                                          ID = pt.ID,
