@@ -74,6 +74,7 @@ namespace ProjectTile
                 PageFunctions.ShowTilesPage();
             }
 
+            if (pageMode != PageFunctions.Lookup) { PageFunctions.ShowFavouriteButton(); }
             refreshStatusCombo();
             //refreshProjectCombo();
             refreshRoleFilterCombo();
@@ -83,7 +84,6 @@ namespace ProjectTile
             toggleEditMode(false);
             this.DataContext = editTeamRecord;
             BackButton.Visibility = ProjectFunctions.BackButtonVisibility();
-            if (pageMode != PageFunctions.Lookup) { ProjectFunctions.ShowFavouriteButton(); }
         }
 
         // ---------------------------------------------------------- //

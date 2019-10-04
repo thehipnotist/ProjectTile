@@ -53,6 +53,7 @@ namespace ProjectTile
                 Globals.ProjectSourceMode = pageMode;
                 //Globals.ProjectSourcePage = "ProjectPage"; // Now set in Page Functions beforehand
                 if (pageMode == PageFunctions.View || !Globals.MyPermissions.Allow("EditProjects")) { viewOnly = true; }
+                if (pageMode != PageFunctions.Lookup) { PageFunctions.ShowFavouriteButton(); }
             }
             catch (Exception generalException)
             {
@@ -79,6 +80,7 @@ namespace ProjectTile
                 HeaderImage2.SetResourceReference(Image.SourceProperty, "SearchIcon");
                 AddButton.Visibility = AmendButton.Visibility = BackButton.Visibility = MoreButton.Visibility =  Visibility.Hidden;
                 CommitButton.Margin = AmendButton.Margin;
+                CancelButtonText.Text = "Cancel";
             }
 
             try
@@ -89,7 +91,6 @@ namespace ProjectTile
                 if (ProjectFunctions.PMFilterList.Exists(ssr => ssr.ID == Globals.MyStaffID)) { PMsCombo.SelectedItem = ProjectFunctions.PMFilterList.First(ssr => ssr.ID == Globals.MyStaffID); }
                 refreshStatusCombo();
                 toggleMoreButton();
-                if (pageMode != PageFunctions.Lookup) { ProjectFunctions.ShowFavouriteButton(); }
             }
             catch (Exception generalException)
             {

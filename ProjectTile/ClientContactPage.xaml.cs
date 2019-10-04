@@ -31,7 +31,7 @@ namespace ProjectTile
         int selectedContactID = 0; // Only used for the initial page parameter, to handle returning to this page
         string originalInstructions;
         
-        TableSecurity myPermissions = LoginFunctions.MyPermissions;
+        TableSecurity myPermissions = Globals.MyPermissions;
         bool canAmend;
         bool canAdd;
         bool canActivate;

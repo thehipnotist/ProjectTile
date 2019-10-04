@@ -6,8 +6,6 @@ namespace ProjectTile
 {
     public class LoginFunctions : Globals
     {
-        private static MainWindow winMain = (MainWindow)App.Current.MainWindow;
-                
         public static bool FirstLoad = true;
 
         //Password functions
@@ -204,16 +202,15 @@ namespace ProjectTile
 
             EntityFunctions.UpdateCurrentEntity(ref thisEntity);
             EntityFunctions.UpdateMyDefaultEntity(ref thisEntity);
-
             MyPermissions = new TableSecurity(MyStaffRecord);
         }
 
         public static void CompleteLogIn()
         {
-            winMain.HideMessage();
-            winMain.MenuSecurity(ref MyPermissions);
+            PageFunctions.HideMessage();
+            PageFunctions.MenuSecurity();
             Globals.FavouriteProjectID = StaffFunctions.MainProjectID(MyStaffID);
-            winMain.ToggleMainMenus(true);
+            PageFunctions.ToggleMainMenus(true);
             PageFunctions.ShowTilesPage();
         }
 

@@ -21,7 +21,6 @@ namespace ProjectTile
         // ---------------------- //
 
         // Global/page parameters //
-        MainWindow winMain = (MainWindow)App.Current.MainWindow;
         string pageMode;
         bool pageSuccess = false;
 
@@ -196,7 +195,7 @@ namespace ProjectTile
             );
 
             Task task1 = Task.Factory.StartNew(() => { this.Dispatcher.BeginInvoke(a, DispatcherPriority.Send); Thread.Sleep(100); });
-            Task task2 = task1.ContinueWith((async) => { winMain.Dispatcher.BeginInvoke(b, DispatcherPriority.SystemIdle); Thread.Sleep(100); }, TaskContinuationOptions.OnlyOnRanToCompletion);
+            Task task2 = task1.ContinueWith((async) => { this.Dispatcher.BeginInvoke(b, DispatcherPriority.SystemIdle); Thread.Sleep(100); }, TaskContinuationOptions.OnlyOnRanToCompletion);
             Task task3 = task2.ContinueWith((antecedent) => this.Dispatcher.BeginInvoke(c, DispatcherPriority.Background), TaskContinuationOptions.OnlyOnRanToCompletion);            
         }
 
@@ -218,7 +217,7 @@ namespace ProjectTile
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             if (Globals.MyStaffID > 0) { PageFunctions.ShowTilesPage(); }
-            else { winMain.Close(); } // not yet logged in, so close application
+            else { PageFunctions.CloseApplication(); } // not yet logged in, so close application
         }
 
     } // class

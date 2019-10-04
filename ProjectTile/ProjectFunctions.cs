@@ -20,7 +20,6 @@ namespace ProjectTile
         public delegate void ReturnToTeamsDelegate();
         public static ReturnToTeamsDelegate SelectProjectForTeam;
         public static ReturnToTeamsDelegate CancelTeamProjectSelection;
-        private static MainWindow winMain = (MainWindow)App.Current.MainWindow;
 
         // ------------------ Lists ----------------- //
 
@@ -74,10 +73,10 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error handling project selection", generalException); }
         }
 
-        public static void BackToTeam()
-        {
-            CancelTeamProjectSelection();
-        }
+        //public static void BackToTeam()
+        //{
+        //    CancelTeamProjectSelection();
+        //}
 
         // --------------- Page setup --------------- //
         
@@ -86,14 +85,14 @@ namespace ProjectTile
             return (ProjectSourcePage != Globals.TilesPageName)? Visibility.Visible : Visibility.Hidden;
         }
 
-        public static void ShowFavouriteButton()
-        {
-            winMain.ShowFavouriteButton();
-        }
+        //public static void ShowFavouriteButton()
+        //{
+        //    PageFunctions.ShowFavouriteButton();
+        //}
 
         public static void ToggleFavouriteButton(bool enableIfMatch)
         {
-            winMain.ToggleFavouriteButton(enableIfMatch && SelectedProjectSummary.ProjectID != FavouriteProjectID);
+            PageFunctions.ToggleFavouriteButton(enableIfMatch && SelectedProjectSummary.ProjectID != FavouriteProjectID);
         }
 
         // ---------------------------------------------------------- //

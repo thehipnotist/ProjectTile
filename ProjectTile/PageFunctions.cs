@@ -16,6 +16,21 @@ namespace ProjectTile
         private static Frame mainFrame = winMain.MainFrame;
         private static UriKind uriDefault = UriKind.RelativeOrAbsolute;
 
+        public delegate void MainWindowDelegate();
+        public static MainWindowDelegate UpdateDetailsBlock;
+        public static MainWindowDelegate HideMessage;
+        public static MainWindowDelegate CloseApplication;
+        public static MainWindowDelegate ShowFavouriteButton;
+        public static MainWindowDelegate MenuSecurity;
+
+        public delegate void MainBooleanDelegate(bool someBoolean);
+        public static MainBooleanDelegate ToggleMainMenus;
+        public static MainBooleanDelegate ToggleSideButtons;
+        public static MainBooleanDelegate ToggleFavouriteButton;
+
+        public delegate void MainMessageDelegate(string message, string caption, int seconds);
+        public static MainMessageDelegate DisplayMessage;
+
         // Create variables for each page mode, to avoid any accidental mis-typing etc.
         public const string View = "View";
         public const string New = "New";
@@ -52,7 +67,7 @@ namespace ProjectTile
                 {
                     string mainFrameSource = ThisPageName();
                     string newPageName = newPageSource.Replace(".xaml", "");
-                    winMain.ToggleSideButtons(false);
+                    ToggleSideButtons(false);
 
                     if (mainFrameSource != TilesPageName && mainFrameSource == newPageName)
                     {
@@ -70,7 +85,7 @@ namespace ProjectTile
                 try 
                 { 
                     navigate(newPageSource);
-                    winMain.ToggleSideButtons(true);
+                    ToggleSideButtons(true);
                 }
                 catch (Exception generalException) { MessageFunctions.Error("Error changing page", generalException); }
             }

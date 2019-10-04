@@ -27,7 +27,6 @@ namespace ProjectTile
 
         // --------- Global/page parameters --------- //
 
-        MainWindow winMain = (MainWindow)App.Current.MainWindow;
         string pageMode;
         bool fromProjectPage = (Globals.ProjectSourcePage != Globals.TilesPageName);
         int originalManagerID = 0;
@@ -163,7 +162,7 @@ namespace ProjectTile
                         ClientCombo.Items.Add(Globals.NoClient);
                         ClientCombo.SelectedIndex = 0;
                     }
-                    ProjectFunctions.ShowFavouriteButton();
+                    PageFunctions.ShowFavouriteButton();
                     ProjectFunctions.ToggleFavouriteButton(true);
                 }
                 catch (Exception generalException) { MessageFunctions.Error("Error setting current project details", generalException); }
@@ -193,7 +192,7 @@ namespace ProjectTile
             displaySelectedStage();
             refreshManagerCombo(false);
             refreshClientCombo();
-            ProjectFunctions.ShowFavouriteButton();
+            PageFunctions.ShowFavouriteButton();
             ProjectFunctions.ToggleFavouriteButton(true);
         }
 

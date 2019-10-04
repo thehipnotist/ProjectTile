@@ -7,8 +7,6 @@ namespace ProjectTile
 {
     public class EntityFunctions : Globals
     {
-        private static MainWindow winMain = (MainWindow)App.Current.MainWindow;       
-        
         // Data retrieval
 
         public static int[] AllowedEntityIDs(int thisUserID) 
@@ -350,7 +348,7 @@ namespace ProjectTile
             CurrentEntity = targetEntity;
             CurrentEntityID = CurrentEntity.ID;
             CurrentEntityName = CurrentEntity.EntityName;
-            winMain.UpdateDetailsBlock();
+            PageFunctions.UpdateDetailsBlock();
         }
 
         // Default Entity functions
@@ -401,7 +399,7 @@ namespace ProjectTile
                     if (displayName != CurrentEntityName) { notCurrent = " Note that you are still currently connected to '" + CurrentEntityName + "'."; }
 
                     MessageFunctions.SuccessMessage("Your default Entity has now been set to '" + displayName + "'." + notCurrent, "Default Entity Changed");
-                    winMain.UpdateDetailsBlock();
+                    PageFunctions.UpdateDetailsBlock();
                     PageFunctions.ShowTilesPage();
                 }
                 catch (Exception generalException) { MessageFunctions.Error("Error changing entity", generalException); }
@@ -414,7 +412,7 @@ namespace ProjectTile
             Entities defaultEntity = targetEntity;
             MyDefaultEntityID = targetEntity.ID;
             MyDefaultEntityName = targetEntity.EntityName;
-            winMain.UpdateDetailsBlock();
+            PageFunctions.UpdateDetailsBlock();
         }
 
     } // class

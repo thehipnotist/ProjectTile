@@ -24,7 +24,6 @@ namespace ProjectTile
         // ---------------------- //
 
         // Global/page parameters //
-        MainWindow winMain = (MainWindow)App.Current.MainWindow;
         string pageMode;
         int selectedContactID = 0;
 

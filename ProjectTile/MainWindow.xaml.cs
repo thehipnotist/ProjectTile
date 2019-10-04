@@ -16,6 +16,7 @@ namespace ProjectTile
 
         private CancellationTokenSource cancelMessageTokenSource = null;
         private bool setFavouriteMode = false;
+        TableSecurity myPermissions;
         
         // ---------------------- //
         // -- Page Management --- //
@@ -27,24 +28,40 @@ namespace ProjectTile
             InitializeComponent();
             Style = (Style)FindResource(typeof(Window));
             ToggleMainMenus(false);
-            ToggleSideButtons(false);
+            ToggleSideButtons(false);            
         }
 
         private void Main_Loaded(object sender, RoutedEventArgs e)
         {
             try
             {
+                subscribeToDelegates();
                 PageFunctions.ShowLoginPage(PageFunctions.LogIn);
                 MessageFunctions.SuccessMessage("Please enter your login credentials.", "Welcome to ProjectTile");
             }
             catch (Exception generalException) { MessageFunctions.Error("Error loading page", generalException); }
         }
 
+        private void subscribeToDelegates()
+        {
+            PageFunctions.UpdateDetailsBlock += UpdateDetailsBlock;
+            PageFunctions.MenuSecurity += MenuSecurity;
+            PageFunctions.HideMessage += HideMessage;
+            PageFunctions.CloseApplication += Close;
+            PageFunctions.DisplayMessage += DisplayMessage;
+            PageFunctions.ToggleMainMenus += ToggleMainMenus;
+            PageFunctions.ToggleSideButtons += ToggleSideButtons;
+            PageFunctions.ShowFavouriteButton += ShowFavouriteButton;
+            PageFunctions.ToggleFavouriteButton += ToggleFavouriteButton;
+        }
+
         // Menu settings //
-        public void MenuSecurity(ref TableSecurity myPermissions) // NB: the reference is needed or an error is thrown
+        public void MenuSecurity() // NB: the reference is needed or an error is thrown
         {
             try
-            {                
+            {
+                myPermissions = Globals.MyPermissions;
+                
                 NewEntity.Visibility = myPermissions.ShowOrCollapse("AddEntities");
                 AmendEntity.Visibility = myPermissions.ShowOrCollapse("EditEntities");
 
