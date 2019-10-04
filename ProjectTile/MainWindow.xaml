@@ -79,17 +79,26 @@
         <TextBlock x:Name="DetailsBlock" HorizontalAlignment="Right" Height="{Binding ActualHeight, ElementName=Main}" Margin="0,65,4,-96" TextWrapping="Wrap" VerticalAlignment="Top" Width="145" 
                    Background="{StaticResource PtBrushHeaderBlue}" TextAlignment="Right" Padding="8,5,8,5" Foreground="White" MinWidth="145" MinHeight="500" 
                    MaxWidth="145" Focusable="True" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
-        <Button x:Name="ProjectButton" HorizontalAlignment="Center" Height="30" Margin="18,0,17,65" VerticalAlignment="Bottom" Width="110" 
+
+        <Button x:Name="FavouriteButton" HorizontalAlignment="Center" Height="30" Margin="18,0,17,75" VerticalAlignment="Bottom" Width="110" 
+            FontWeight="Bold" IsEnabled="True" Click="FavouriteButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{StaticResource PtBrushProject3}"
+            Grid.Column="1">
+            <StackPanel x:Name="FavouritePanel" HorizontalAlignment="Left" VerticalAlignment="Center" Orientation="Horizontal">
+                <Image x:Name="FavouriteImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource FavouriteIcon}"/>
+                <TextBlock x:Name="FavouriteButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Main Project" Margin="4,0,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Button>
+        <Button x:Name="ProjectButton" HorizontalAlignment="Center" Height="30" Margin="18,0,17,120" VerticalAlignment="Bottom" Width="110" 
             FontWeight="Bold" IsEnabled="True" Click="ProjectButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{StaticResource PtBrushProject3}"
-            Grid.Column="1" Background="{StaticResource PtBrushProject1}" OverridesDefaultStyle="True">
-            <StackPanel x:Name="ProjectPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+            Grid.Column="1">
+            <StackPanel x:Name="ProjectPanel" HorizontalAlignment="Left" VerticalAlignment="Center" Orientation="Horizontal">
                 <Image x:Name="ProjectImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource ProjectIcon}"/>
                 <TextBlock x:Name="ProjectButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="My Projects" Margin="5,0,0,0" VerticalAlignment="Center"/>
             </StackPanel>
-        </Button>
+        </Button>        
+        
         <Frame x:Name="MainFrame" Content="Frame" Height="541" Margin="0,30,0,0" NavigationUIVisibility="Hidden" BorderThickness="5" BorderBrush="{x:Null}" 
                Grid.ColumnSpan="2" MinWidth="838" MinHeight="541" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-
         <Border x:Name="FullBorder" BorderThickness="5" BorderBrush="{StaticResource PtBrushFrameBlue}"
                Grid.ColumnSpan="2" Width="Auto" MinHeight="589" MinWidth="840" HorizontalAlignment="Left" VerticalAlignment="Bottom">
             

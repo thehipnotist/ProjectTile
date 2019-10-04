@@ -259,6 +259,7 @@
         <BitmapImage x:Key="EnableIcon" UriSource="base_checkboxes.png"/>
         <BitmapImage x:Key="EntitiesIcon" UriSource="base_globe_32.png"/>
         <BitmapImage x:Key="ExitIcon" UriSource="112_ArrowReturnRight_Blue_24x24_72 (2).png"/>
+        <BitmapImage x:Key="FavouriteIcon" UriSource="FavoriteStar_FrontFacing_24x24_72.png"/>
         <BitmapImage x:Key="HelpIcon" UriSource="109_AllAnnotations_Help_24x24_72.png"/>
         <BitmapImage x:Key="LeftIcon" UriSource="112_LeftArrowShort_Blue_24x24_72.png"/>        
         <BitmapImage x:Key="LoginIcon" UriSource="Keys.png"/>
@@ -271,8 +272,7 @@
         <BitmapImage x:Key="ProjectIcon" UriSource="book_notebook.png"/>
         <BitmapImage x:Key="RightIcon" UriSource="112_RightArrowShort_Blue_24x24_72.png"/>
         <BitmapImage x:Key="SearchIcon" UriSource="base_binoculars_32.png"/>
-        <BitmapImage x:Key="StaffIcon" UriSource="Users.png"/>
-        <BitmapImage x:Key="StarIcon" UriSource="FavoriteStar_FrontFacing_24x24_72.png"/>        
+        <BitmapImage x:Key="StaffIcon" UriSource="Users.png"/>       
         <BitmapImage x:Key="SubtractIcon" UriSource="112_Minus_Blue_24x24_72.png"/>
         <BitmapImage x:Key="SuggestIcon" UriSource="Function_32.png"/>
         <BitmapImage x:Key="TilesIcon" UriSource="1460_PaintPalette_48x48.png"/>

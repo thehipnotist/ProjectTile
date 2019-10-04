@@ -74,15 +74,16 @@ namespace ProjectTile
                 PageFunctions.ShowTilesPage();
             }
 
-            refreshRoleFilterCombo();
             refreshStatusCombo();
-            refreshProjectCombo();
+            //refreshProjectCombo();
+            refreshRoleFilterCombo();
             setTeamTimeRadio();
             Int32.TryParse(staffIDString, out staffID);
             if (staffID > 0) { chooseStaffName(staffID); }
             toggleEditMode(false);
             this.DataContext = editTeamRecord;
             BackButton.Visibility = ProjectFunctions.BackButtonVisibility();
+            if (pageMode != PageFunctions.Lookup) { ProjectFunctions.ShowFavouriteButton(); }
         }
 
         // ---------------------------------------------------------- //
@@ -94,9 +95,9 @@ namespace ProjectTile
         private void refreshTeamDataGrid()
         {
             try
-            {
+            {                
                 TeamSummaryRecord currentRecord = selectedTeamRecord ?? null;
-                ProjectSummaryRecord currentProjectSummary = (Globals.SelectedProjectSummary != null) ? Globals.SelectedProjectSummary : null;
+                ProjectSummaryRecord currentProjectSummary = (ProjectCombo.SelectedItem != null) ? (ProjectSummaryRecord) ProjectCombo.SelectedItem : Globals.AllProjects;                
                 Globals.ProjectStatusFilter statusFilter = Globals.SelectedStatusFilter;
                 string projectRoleCode = Globals.SelectedProjectRole.RoleCode;
                 Globals.TeamTimeFilter timeFilter = Globals.SelectedTeamTimeFilter;
@@ -105,9 +106,9 @@ namespace ProjectTile
                 if (success)
                 {
                     TeamDataGrid.ItemsSource = ProjectFunctions.TeamsGridList;
-                    if (currentRecord != null && ProjectFunctions.TeamsGridList.Exists(tgl => tgl.ID == currentRecord.ID)) 
+                    if (currentRecord != null && ProjectFunctions.TeamsGridList.Exists(tgl => tgl.ID == currentRecord.ID))
                     {
-                        TeamDataGrid.SelectedItem = ProjectFunctions.TeamsGridList.First(tgl => tgl.ID == currentRecord.ID); 
+                        TeamDataGrid.SelectedItem = ProjectFunctions.TeamsGridList.First(tgl => tgl.ID == currentRecord.ID);
                     }
                     else if (ProjectFunctions.TeamsGridList.Count == 1) { TeamDataGrid.SelectedItem = ProjectFunctions.TeamsGridList.ElementAt(0); }
                 }
@@ -155,15 +156,19 @@ namespace ProjectTile
 
         private void refreshNamesList()
         {
-            exactName = false;
-            string nameLike = NameLike.Text;
-            if (nameLike == "") { PossibleNames.Visibility = Visibility.Hidden; }
-            else
+            try
             {
-                PossibleNames.Visibility = Visibility.Visible;
-                staffDropList = StaffFunctions.GetStaffGridData(activeOnly: false, nameContains: nameLike, roleDescription: "", entityID: Globals.CurrentEntityID);
-                PossibleNames.ItemsSource = staffDropList;
+                exactName = false;
+                string nameLike = NameLike.Text;
+                if (nameLike == "") { PossibleNames.Visibility = Visibility.Hidden; }
+                else
+                {
+                    PossibleNames.Visibility = Visibility.Visible;
+                    staffDropList = StaffFunctions.GetStaffGridData(activeOnly: false, nameContains: nameLike, roleDescription: "", entityID: Globals.CurrentEntityID);
+                    PossibleNames.ItemsSource = staffDropList;
+                }
             }
+            catch (Exception generalException) { MessageFunctions.Error("Error processing name change", generalException); }
         }
 
         private void refreshStaffCombo()
@@ -190,30 +195,42 @@ namespace ProjectTile
 
         private void chooseStaffName(int staffID = 0)
         {
-            StaffSummaryRecord selectedStaff = (staffID != 0) ? StaffFunctions.GetStaffSummary(staffID) : (StaffSummaryRecord)PossibleNames.SelectedItem;
-            NameLike.Text = selectedStaff.StaffName;
-            exactName = true;
-            nameFilter();
+            try
+            {
+                StaffSummaryRecord selectedStaff = (staffID != 0) ? StaffFunctions.GetStaffSummary(staffID) : (StaffSummaryRecord)PossibleNames.SelectedItem;
+                NameLike.Text = selectedStaff.StaffName;
+                exactName = true;
+                nameFilter();
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error processing staff name selection", generalException); }
         }
 
         private void nameFilter()
         {
-            PossibleNames.Visibility = Visibility.Hidden;
-            nameLike = NameLike.Text;
-            refreshRoleFilterCombo();
-            toggleStaffNameColumn();
-            refreshTeamDataGrid();
+            try
+            {
+                PossibleNames.Visibility = Visibility.Hidden;
+                nameLike = NameLike.Text;
+                refreshRoleFilterCombo();
+                toggleStaffNameColumn();
+                refreshTeamDataGrid();
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error updating filters for staff name selection change", generalException); }
         }
 
         private void setTeamTimeRadio()
         {
-            switch (Globals.SelectedTeamTimeFilter)
+            try
             {
-                case Globals.TeamTimeFilter.All: AllRadio.IsChecked = true; break;
-                case Globals.TeamTimeFilter.Future: FutureRadio.IsChecked = true; break;
-                case Globals.TeamTimeFilter.Current: CurrentRadio.IsChecked = true; break;
-                default: FutureRadio.IsChecked = true; break;
+                switch (Globals.SelectedTeamTimeFilter)
+                {
+                    case Globals.TeamTimeFilter.All: AllRadio.IsChecked = true; break;
+                    case Globals.TeamTimeFilter.Future: FutureRadio.IsChecked = true; break;
+                    case Globals.TeamTimeFilter.Current: CurrentRadio.IsChecked = true; break;
+                    default: FutureRadio.IsChecked = true; break;
+                }
             }
+            catch (Exception generalException) { MessageFunctions.Error("Error changing time filter", generalException); }
         }
 
         private void teamTimeChanged(Globals.TeamTimeFilter option)
@@ -224,20 +241,24 @@ namespace ProjectTile
 
         private void toggleEditButtons(bool selection)
         {
-            if (selection) 
+            try
             {
-                AddButton.Visibility = (pageMode != PageFunctions.View && Globals.MyPermissions.Allow("AddProjectTeams")) ? Visibility.Visible : Visibility.Hidden;
-                AmendButton.Visibility = (pageMode != PageFunctions.View && Globals.MyPermissions.Allow("EditProjectTeams")) ? Visibility.Visible : Visibility.Hidden;
+                if (selection)
+                {
+                    AddButton.Visibility = (pageMode != PageFunctions.View && Globals.MyPermissions.Allow("AddProjectTeams")) ? Visibility.Visible : Visibility.Hidden;
+                    AmendButton.Visibility = (pageMode != PageFunctions.View && Globals.MyPermissions.Allow("EditProjectTeams")) ? Visibility.Visible : Visibility.Hidden;
+                }
+                else
+                {
+                    AddButton.Visibility = AmendButton.Visibility = Visibility.Hidden;
+                }
             }
-            else
-            { 
-                AddButton.Visibility = AmendButton.Visibility = Visibility.Hidden; 
-            }      
+            catch (Exception generalException) { MessageFunctions.Error("Error changing button display to match selection", generalException); }
         }
 
         private void toggleProjectMode(bool specificProject)
         {
-            projectSelected = specificProject;
+            projectSelected = ProjectButton.IsEnabled = specificProject;
             toggleEditButtons(projectSelected);
             ProjectButtonText.Text = (!projectSelected) ? "Set Project" : "All Projects";
             toggleProjectSearchButton();
@@ -451,8 +472,8 @@ namespace ProjectTile
                     string selection = StatusCombo.SelectedItem.ToString();
                     selection = selection.Replace(" ", "");
                     Globals.SelectedStatusFilter = (Globals.ProjectStatusFilter)Enum.Parse(typeof(Globals.ProjectStatusFilter), selection);
-                    refreshProjectCombo();
                     refreshTeamDataGrid();
+                    refreshProjectCombo();                    
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error processing status filter selection", generalException); }	            
@@ -474,16 +495,20 @@ namespace ProjectTile
             if (ProjectCombo.SelectedItem == null) { } // Do nothing - won't be for long             
             else
             {
-                ProjectSummaryRecord selectedProject = (ProjectSummaryRecord)ProjectCombo.SelectedItem;
-                if (selectedProject == Globals.SearchProjects) { OpenProjectLookup(); }
-                else
+                try
                 {
-                    Globals.SelectedProjectSummary = selectedProject;
-                    AllRadio.IsChecked = true;
-                    refreshTeamDataGrid();
-                    toggleProjectMode(selectedProject != Globals.AllProjects);
-                    //TODO: Adjust project status filter if project isn't in it - works OK for now, as the filter is set globally...
+                    ProjectSummaryRecord selectedProject = (ProjectSummaryRecord)ProjectCombo.SelectedItem;
+                    if (selectedProject == Globals.SearchProjects) { OpenProjectLookup(); }
+                    else
+                    {
+                        Globals.SelectedProjectSummary = selectedProject;
+                        AllRadio.IsChecked = true;
+                        refreshTeamDataGrid();
+                        toggleProjectMode(selectedProject != Globals.AllProjects);
+                        //TODO: Adjust project status filter if project isn't in it - works OK for now, as the filter is set globally...
+                    }
                 }
+                catch (Exception generalException) { MessageFunctions.Error("Error processing project selection", generalException); }
             }
         }
 
@@ -534,7 +559,11 @@ namespace ProjectTile
 
         private void ProjectButton_Click(object sender, RoutedEventArgs e)
         {
-            if (projectSelected) { selectProject(0); }            
+            if (projectSelected) 
+            {
+                try { selectProject(0); }
+                catch (Exception generalException) { MessageFunctions.Error("Error processing return to all projects", generalException); }
+            }            
             else if (selectedTeamRecord != null) // Just in case
             {
                 try
@@ -543,7 +572,7 @@ namespace ProjectTile
                     NameLike.Text = ""; // Always show all team members for the project at this point
                     nameFilter(); // Implement the above
                 }
-                catch (Exception generalException) { MessageFunctions.Error("Error processing project selection", generalException); }
+                catch (Exception generalException) { MessageFunctions.Error("Error processing selection of project", generalException); }
             }
         }
 
@@ -554,10 +583,13 @@ namespace ProjectTile
                 selectedTeamRecord = null;
                 AmendButton.IsEnabled = false;
                 ProjectButton.IsEnabled = projectSelected; // Allows 'Show All' whether or not there is a selection, but 'Set Project' only when a selection
+                ProjectFunctions.ToggleFavouriteButton(false);
             }
             else
             {
                 selectedTeamRecord = (TeamSummaryRecord)TeamDataGrid.SelectedItem;
+                Globals.SelectedProjectSummary = ProjectFunctions.GetProjectSummary(selectedTeamRecord.Project.ID);
+                ProjectFunctions.ToggleFavouriteButton(true);
                 ProjectButton.IsEnabled = true;
                 AmendButton.IsEnabled = true;
             }

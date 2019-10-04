@@ -161,6 +161,7 @@ namespace ProjectTile
 
         public static void ShowProjectPage(string pageMode, string sourcePage = "")
         {
+            if (pageMode == PageFunctions.Amend && !MyPermissions.Allow("EditProjects")) { pageMode = PageFunctions.View; }
             Globals.ProjectSourcePage = (sourcePage != "") ? sourcePage : "ProjectPage";
             ChangePage("ProjectPage.xaml?Mode=" + pageMode);
         }

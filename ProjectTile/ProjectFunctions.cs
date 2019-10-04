@@ -20,6 +20,7 @@ namespace ProjectTile
         public delegate void ReturnToTeamsDelegate();
         public static ReturnToTeamsDelegate SelectProjectForTeam;
         public static ReturnToTeamsDelegate CancelTeamProjectSelection;
+        private static MainWindow winMain = (MainWindow)App.Current.MainWindow;
 
         // ------------------ Lists ----------------- //
 
@@ -83,6 +84,16 @@ namespace ProjectTile
         public static Visibility BackButtonVisibility()
         {
             return (ProjectSourcePage != Globals.TilesPageName)? Visibility.Visible : Visibility.Hidden;
+        }
+
+        public static void ShowFavouriteButton()
+        {
+            winMain.ShowFavouriteButton();
+        }
+
+        public static void ToggleFavouriteButton(bool enableIfMatch)
+        {
+            winMain.ToggleFavouriteButton(enableIfMatch && SelectedProjectSummary.ProjectID != FavouriteProjectID);
         }
 
         // ---------------------------------------------------------- //
@@ -241,6 +252,108 @@ namespace ProjectTile
                 MessageFunctions.Error("Error retrieving project with ID " + projectID.ToString(), generalException);
                 return null;
             }	            
+        }
+
+        public static ProjectSummaryRecord GetProjectSummary(int projectID)
+        {
+            try
+            {
+                bool success = SetFullProjectList();
+                if (success)
+                {
+                    return FullProjectList.Where(fpl => fpl.ProjectID == projectID).FirstOrDefault();
+                }
+                else
+                {
+                    MessageFunctions.Error("Error retrieving project summary data: could not retrieve projects list.", null);
+                    return null;
+                }
+            }
+            catch (Exception generalException) 
+            { 
+                MessageFunctions.Error("Error retrieving project summary data", generalException);
+                return null;
+            }
+        }
+
+        public static Entities ProjectEntity(int projectID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return (from p in existingPtDb.Projects
+                            join e in existingPtDb.Entities on p.EntityID equals e.ID
+                            where p.ID == projectID
+                            select e)
+                            .FirstOrDefault();
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error checking the Entity for project ID " + projectID, generalException);
+                return null;
+            }	
+        }
+
+        public static void OpenFavourite()
+        {
+            if (FavouriteProjectID == 0)
+            {
+                MessageFunctions.Error("Error opening favourate project: no favourite set.", null);
+                return;
+            }
+            
+            Entities requiredEntity = ProjectEntity(FavouriteProjectID);            
+            if (requiredEntity.ID != CurrentEntityID)
+            {
+                bool switchEntity = MessageFunctions.ConfirmOKCancel("This project is in Entity '" + requiredEntity.EntityName + "', which is not the current Entity. Switch to " 
+                    + requiredEntity.EntityName + "?", "Change Entity?");
+                if (switchEntity) { EntityFunctions.SwitchEntity(ref requiredEntity); }
+                else { return; }
+            }
+
+            Globals.SelectedProjectSummary = GetProjectSummary(FavouriteProjectID);
+            PageFunctions.ShowProjectPage(PageFunctions.Amend);
+        }
+
+        public static bool SetFavourite()
+        {
+            if (SelectedProjectSummary == null)
+            {
+                MessageFunctions.Error("Error setting main project: no project selected.", null);
+                return false;
+            }
+            else 
+            {
+                try
+                {
+                    ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                    using (existingPtDb)
+                    {
+                        Staff currentStaffMember = existingPtDb.Staff.FirstOrDefault(s => s.ID == MyStaffID);
+                        if (currentStaffMember != null)
+                        {
+                            currentStaffMember.MainProject = SelectedProjectSummary.ProjectID;
+                            existingPtDb.SaveChanges();
+                        }
+                        else
+                        {
+                            MessageFunctions.Error("Error setting main project: staff record not found.", null);
+                            return false;
+                        }
+                    }
+                    FavouriteProjectID = SelectedProjectSummary.ProjectID;
+                    MessageFunctions.SuccessMessage("Project " + SelectedProjectSummary.ProjectCode + " has been set as your main project.", "Main Project selected");
+                    return true;
+                }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error saving main project selection to the database", generalException);
+                    return false;
+                }
+            }
         }
 
         // Stages and statuses

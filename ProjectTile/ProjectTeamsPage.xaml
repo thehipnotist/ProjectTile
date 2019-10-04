@@ -78,7 +78,7 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn x:Name="IDColumn" Binding="{Binding ID, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="ID" Visibility="Collapsed"/>
                             <DataGridTextColumn x:Name="ProjectCodeColumn" Binding="{Binding Project.ProjectCode, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="Code"/>
-                            <DataGridTextColumn x:Name="ProjectNameColumn" Binding="{Binding Project.ProjectName, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="Project Name" Width="*"/>
+                            <DataGridTextColumn x:Name="ProjectNameColumn" Binding="{Binding Project.ProjectName, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="Project Name"/>
                             <DataGridTextColumn x:Name="StaffNameColumn" Binding="{Binding StaffMember.StaffName, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="Staff Name" Width="*"/>
                             <DataGridTextColumn x:Name="RoleDescriptionColumn" Binding="{Binding ProjectRole.RoleDescription, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="Project Role"/>
                             <DataGridTextColumn x:Name="FromDateColumn" Binding="{Binding EffectiveFrom, StringFormat=dd/MM/yyyy, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="From Date"/>

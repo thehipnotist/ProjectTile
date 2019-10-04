@@ -224,6 +224,24 @@ namespace ProjectTile
             }
         }
 
+        public static int FavouriteProjectID(int staffID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    int? mainID = existingPtDb.Staff.Where(s => s.ID == staffID).Select(s => s.MainProject).FirstOrDefault();
+                    return mainID ?? 0;
+				}
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving main project details", generalException);
+                return 0;
+            }	
+        }
+
         // Changes
 
         public static bool? EnableOrDisable(int staffID)

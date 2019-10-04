@@ -18,6 +18,7 @@ namespace ProjectTile
         public static string MyDefaultEntityName = "";
 
         public static TableSecurity MyPermissions;
+        public static int FavouriteProjectID = 0;
         public const string DbUserPrefix = "ProT_";
 
         // Common enumerations

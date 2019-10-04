@@ -15,7 +15,7 @@ namespace ProjectTile
     {
 
         private CancellationTokenSource cancelMessageTokenSource = null;
-        
+        private bool setFavouriteMode = false;
         
         // ---------------------- //
         // -- Page Management --- //
@@ -72,7 +72,6 @@ namespace ProjectTile
 
                 // More to come...
 
-                //ToggleMenuItem(StaffMenu);
                 StaffMenu.IsEnabled = subMenuItemsVisible(StaffMenu);
                 ProductMenu.IsEnabled = subMenuItemsVisible(ProductMenu);
                 ClientMenu.IsEnabled = subMenuItemsVisible(ClientMenu);
@@ -92,9 +91,9 @@ namespace ProjectTile
             return false;
         }
         
-        public void ToggleMainMenus(bool Show)
+        public void ToggleMainMenus(bool show)
         {
-            if (Show)
+            if (show)
             {
                 MainMenu.Visibility = LoginMenu.Visibility = Visibility.Visible;
             }
@@ -104,16 +103,32 @@ namespace ProjectTile
             }
         }
 
-        public void ToggleSideButtons(bool Show)
+        public void ToggleSideButtons(bool TilesPage)
         {
-            if (Show)
+            if (TilesPage)
             {
-                ProjectButton.Visibility = Visibility.Visible;
+                if (Globals.MyPermissions.Allow("ViewProjects") || Globals.MyPermissions.Allow("EditProjects")) { ProjectButton.Visibility = FavouriteButton.Visibility = Visibility.Visible; }
+                FavouriteButton.IsEnabled = (Globals.FavouriteProjectID > 0);
+                FavouriteButtonText.Text = "Main Project";
+                setFavouriteMode = false;
             }
             else
             {
-                ProjectButton.Visibility = Visibility.Hidden;
+                ProjectButton.Visibility = FavouriteButton.Visibility = Visibility.Hidden;
             }
+        }
+
+        public void ShowFavouriteButton() // Allows other pages to show this for setting the favourite
+        {
+            FavouriteButton.Visibility = Visibility.Visible;
+            FavouriteButtonText.Text = "Set Main";
+            setFavouriteMode = true;
+            ToggleFavouriteButton(false);
+        }
+
+        public void ToggleFavouriteButton(bool enable)
+        {
+            FavouriteButton.IsEnabled = enable;
         }
 
         // ---------------------- //
@@ -365,6 +380,19 @@ namespace ProjectTile
         {
             InfoIcon.Visibility = CaptionBlock.Visibility = ContentBlock.Visibility = Visibility.Hidden;
             CaptionBlock.Text = ContentBlock.Text = ""; 
+        }
+
+        private void FavouriteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (setFavouriteMode) 
+            { 
+                bool success = ProjectFunctions.SetFavourite();
+                if (success) { FavouriteButton.IsEnabled = false; }
+            }
+            else
+            {
+                ProjectFunctions.OpenFavourite();
+            }
         }
 
     } // class

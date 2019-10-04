@@ -126,7 +126,7 @@ namespace ProjectTile
 
             if (pageMode == PageFunctions.Switch)
             {
-                EntityFunctions.ChangeEntity(selectedEntityID, ref selectedEntity, (bool) MakeDefault_CheckBox.IsChecked);
+                EntityFunctions.SwitchEntity(ref selectedEntity, (bool) MakeDefault_CheckBox.IsChecked);
             }
             else if (pageMode == PageFunctions.New)
             {

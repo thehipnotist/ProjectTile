@@ -25,7 +25,7 @@ namespace ProjectTile
 
         // Global/page parameters //
         string pageMode;
-        bool viewOnly = false;
+        bool viewOnly = false;        
 
         // Current variables //     
 
@@ -89,13 +89,13 @@ namespace ProjectTile
                 if (ProjectFunctions.PMFilterList.Exists(ssr => ssr.ID == Globals.MyStaffID)) { PMsCombo.SelectedItem = ProjectFunctions.PMFilterList.First(ssr => ssr.ID == Globals.MyStaffID); }
                 refreshStatusCombo();
                 toggleMoreButton();
+                if (pageMode != PageFunctions.Lookup) { ProjectFunctions.ShowFavouriteButton(); }
             }
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error refreshing filters", generalException);
                 closePage(true);
             }
-
         }
 
         // ---------------------- //
@@ -264,13 +264,18 @@ namespace ProjectTile
                 {
                     selectedProject = null;
                     toggleProjectButtons(false);
+                    ProjectFunctions.ToggleFavouriteButton(false);
                 }
                 else
                 {
                     selectedProject = (ProjectSummaryRecord)ProjectDataGrid.SelectedItem;
-                    toggleProjectButtons(true);
+                    toggleProjectButtons(true);                    
                 }
-                if (pageMode != PageFunctions.Lookup) { Globals.SelectedProjectSummary = selectedProject; } // Otherwise don't set this as may cancel selection later
+                if (pageMode != PageFunctions.Lookup) // Otherwise don't set this as may cancel selection later
+                { 
+                    Globals.SelectedProjectSummary = selectedProject;
+                    ProjectFunctions.ToggleFavouriteButton(selectedProject != null);
+                } 
             }
             catch (Exception generalException) { MessageFunctions.Error("Error displaying project selection", generalException); }	
         }

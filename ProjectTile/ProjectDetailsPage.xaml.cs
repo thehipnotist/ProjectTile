@@ -163,6 +163,8 @@ namespace ProjectTile
                         ClientCombo.Items.Add(Globals.NoClient);
                         ClientCombo.SelectedIndex = 0;
                     }
+                    ProjectFunctions.ShowFavouriteButton();
+                    ProjectFunctions.ToggleFavouriteButton(true);
                 }
                 catch (Exception generalException) { MessageFunctions.Error("Error setting current project details", generalException); }
             }
@@ -175,15 +177,7 @@ namespace ProjectTile
             PageHeader.Content = "Create New Project";
             HeaderImage2.SetResourceReference(Image.SourceProperty, "AddIcon");
             Instructions.Content = "Fill in the details as required and then click 'Save' to create the record.";
-            if (fromProjectPage)
-            {
-                bool usedFilters = ProjectFunctions.PopulateFromFilters(ref thisProjectSummary);
-                //if (usedFilters)
-                //{
-                //    if (thisProjectSummary.ProjectManager != null) { displaySelectedManager(thisProjectSummary.ProjectManager.ID);  }
-                //    if (thisProjectSummary.Client != null) { displaySelectedClient(thisProjectSummary.Client.ID); }
-                //}
-            }
+            if (fromProjectPage) { bool usedFilters = ProjectFunctions.PopulateFromFilters(ref thisProjectSummary); }
             else { BackButton.Visibility = Visibility.Hidden; }
             refreshManagerCombo(false);
             refreshClientCombo();
@@ -199,6 +193,8 @@ namespace ProjectTile
             displaySelectedStage();
             refreshManagerCombo(false);
             refreshClientCombo();
+            ProjectFunctions.ShowFavouriteButton();
+            ProjectFunctions.ToggleFavouriteButton(true);
         }
 
         private void displaySelectedClient(int currentClientID)

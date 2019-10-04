@@ -212,6 +212,7 @@ namespace ProjectTile
         {
             winMain.HideMessage();
             winMain.MenuSecurity(ref MyPermissions);
+            Globals.FavouriteProjectID = StaffFunctions.FavouriteProjectID(MyStaffID);
             winMain.ToggleMainMenus(true);
             PageFunctions.ShowTilesPage();
         }

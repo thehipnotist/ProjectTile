@@ -159,29 +159,24 @@ namespace ProjectTile
             }
         }
 
-        public static void ChangeEntity(int entityID, ref Entities selectedEntity, bool makeDefault)
+        public static void SwitchEntity(ref Entities selectedEntity, bool makeDefault = false)
         {
             if (selectedEntity == null)
             {
-                MessageFunctions.InvalidMessage("Please select an Entity to amend from the drop-down list.", "No Entity Selected");
+                MessageFunctions.InvalidMessage("Please select an Entity from the drop-down list.", "No Entity Selected");
                 return;
-            }
-            
-            if (entityID >= 0)
-            {
-                try
-                {                    
-                    UpdateCurrentEntity(ref selectedEntity);
-                    if (makeDefault) 
-                    {
-                        SetDefaultEntity(ref selectedEntity);
-                        MessageFunctions.SuccessMessage("Your default Entity has now been set to '" + selectedEntity.EntityName + "'.", "Default Entity Changed");
-                    }
-                    PageFunctions.ShowTilesPage();
+            }            
+            try
+            {                    
+                UpdateCurrentEntity(ref selectedEntity);
+                if (makeDefault) 
+                {
+                    SetDefaultEntity(ref selectedEntity);
+                    MessageFunctions.SuccessMessage("Your default Entity has now been set to '" + selectedEntity.EntityName + "'.", "Default Entity Changed");
                 }
-                catch (Exception generalException) { MessageFunctions.Error("Error changing entity", generalException); }
+                PageFunctions.ShowTilesPage();
             }
-            else { MessageFunctions.InvalidMessage("Please select an Entity from the drop-down list.", "No Entity Selected"); }
+            catch (Exception generalException) { MessageFunctions.Error("Error changing current Entity", generalException); }
         }
 
         public static void NewEntity(string entityName, string entityDescription, bool switchTo, bool makeDefault)

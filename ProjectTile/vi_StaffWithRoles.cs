@@ -27,5 +27,7 @@ namespace ProjectTile
         public bool Active { get; set; }
         public Nullable<int> DefaultEntity { get; set; }
         public string RoleDescription { get; set; }
+        public string FullName { get; set; }
+        public Nullable<int> MainProject { get; set; }
     }
 }
