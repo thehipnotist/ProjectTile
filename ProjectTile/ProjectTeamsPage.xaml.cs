@@ -84,6 +84,7 @@ namespace ProjectTile
             toggleEditMode(false);
             this.DataContext = editTeamRecord;
             BackButton.Visibility = ProjectFunctions.BackButtonVisibility();
+            BackButton.ToolTip = ProjectFunctions.BackButtonTooltip();
         }
 
         // ---------------------------------------------------------- //
@@ -633,7 +634,7 @@ namespace ProjectTile
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            ProjectFunctions.ReturnToProjectPage();
+            ProjectFunctions.ReturnToSourcePage(pageMode, staffID);
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)

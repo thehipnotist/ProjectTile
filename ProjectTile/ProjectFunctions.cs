@@ -58,9 +58,37 @@ namespace ProjectTile
             PageFunctions.ShowClientPage(pageMode);
         }
 
+        public static void ReturnToStaffPage(string pageMode, int selectedStaffID = 0)
+        {
+            ResetProjectParameters();
+            PageFunctions.ShowStaffPage(pageMode, selectedStaffID);
+        }
+
         public static void ReturnToProjectPage()
         {
             PageFunctions.ShowProjectPage(ProjectSourceMode, ProjectSourcePage);
+        }
+
+        public static void ReturnToSourcePage(string pageMode, int selectedID = 0)
+        {
+            switch(ProjectSourcePage)
+            {
+                case "TilesPage":
+                    ReturnToTilesPage();
+                    break;
+                case "StaffPage":
+                    ReturnToStaffPage(pageMode, selectedID);
+                    break;
+                case "ClientPage":
+                    ReturnToClientPage(pageMode);
+                    break;
+                case "ProjectPage":
+                    ReturnToProjectPage();
+                    break;
+                default:
+                    ReturnToProjectPage();
+                    break;
+            }
         }
 
         public static void SelectTeamProject(ProjectSummaryRecord selectedRecord)
@@ -73,22 +101,29 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error handling project selection", generalException); }
         }
 
-        //public static void BackToTeam()
-        //{
-        //    CancelTeamProjectSelection();
-        //}
-
         // --------------- Page setup --------------- //
         
-        public static Visibility BackButtonVisibility()
+        public static Visibility BackButtonVisibility(string thisPage = "")
         {
-            return (ProjectSourcePage != Globals.TilesPageName)? Visibility.Visible : Visibility.Hidden;
+            return (ProjectSourcePage != Globals.TilesPageName && ProjectSourcePage != thisPage)? Visibility.Visible : Visibility.Hidden;
         }
 
-        //public static void ShowFavouriteButton()
-        //{
-        //    PageFunctions.ShowFavouriteButton();
-        //}
+        public static string BackButtonTooltip()
+        {
+            switch (ProjectSourcePage)
+            {
+                case "TilesPage":
+                    return "Return to Main Menu";
+                case "StaffPage":
+                    return "Return to staff list";
+                case "ClientPage":
+                    return "Return to clients list";
+                case "ProjectPage":
+                    return "Return to projects list";
+                default:
+                    return "Return to projects list";
+            }
+        }
 
         public static void ToggleFavouriteButton(bool enableIfMatch)
         {

@@ -85,7 +85,8 @@ namespace ProjectTile
 
             try
             {
-                if (Globals.ProjectSourcePage == "ProjectPage") { BackButton.Visibility = Visibility.Hidden; }
+                BackButton.Visibility = ProjectFunctions.BackButtonVisibility("ProjectPage");
+                BackButton.ToolTip = ProjectFunctions.BackButtonTooltip();
                 refreshClientCombo();
                 refreshPMsCombo();
                 if (ProjectFunctions.PMFilterList.Exists(ssr => ssr.ID == Globals.MyStaffID)) { PMsCombo.SelectedItem = ProjectFunctions.PMFilterList.First(ssr => ssr.ID == Globals.MyStaffID); }
@@ -243,8 +244,7 @@ namespace ProjectTile
             if (pageMode == PageFunctions.Lookup) { ProjectFunctions.CancelTeamProjectSelection(); }  
             else if (goBack)
             {
-                if (Globals.ProjectSourcePage == "ClientPage") { ProjectFunctions.ReturnToClientPage(pageMode); }
-                else { ProjectFunctions.ReturnToTilesPage(); }
+                ProjectFunctions.ReturnToSourcePage(pageMode);
             }                       
             else { ProjectFunctions.ReturnToTilesPage(); }
         }

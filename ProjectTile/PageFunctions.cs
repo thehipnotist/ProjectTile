@@ -136,7 +136,6 @@ namespace ProjectTile
             string pageMode; // Mode is based on viewOnly or permissions; sourcePageMode tells us what the previous screen was
             if (viewOnly) { pageMode = View; }
             else { pageMode = MyPermissions.Allow("EditStaffEntities") ? Amend : View; }
-
             ChangePage("StaffEntitiesPage.xaml?Mode=" + pageMode + ",StaffID=" + selectedStaffID.ToString() + ",SourceMode=" + sourcePageMode);
         }
 
@@ -155,7 +154,6 @@ namespace ProjectTile
             string pageMode;  // Mode is based on viewOnly or permissions; sourcePageMode tells us what the previous screen was
             if (ClientSourceMode == View) { pageMode = View; }
             else { pageMode = MyPermissions.Allow("EditClientStaff") ? Amend : View; }
-
             ChangePage("ClientContactPage.xaml?Mode=" + pageMode + ",ContactID=" + contactID.ToString());
         }
 
@@ -170,14 +168,13 @@ namespace ProjectTile
             string pageMode; // Mode is based on viewOnly or permissions; sourcePageMode tells us what the previous screen was
             if (ClientSourceMode == View) { pageMode = View; }
             else { pageMode = MyPermissions.Allow("EditClientProducts") ? Amend : View; }
-
             ChangePage("ClientProductsPage.xaml?Mode=" + pageMode);
         }
 
         public static void ShowProjectPage(string pageMode, string sourcePage = "")
         {
             if (pageMode == PageFunctions.Amend && !MyPermissions.Allow("EditProjects")) { pageMode = PageFunctions.View; }
-            Globals.ProjectSourcePage = (sourcePage != "") ? sourcePage : "ProjectPage";
+            ProjectSourcePage = (sourcePage != "") ? sourcePage : "ProjectPage";
             ChangePage("ProjectPage.xaml?Mode=" + pageMode);
         }
 
@@ -188,18 +185,17 @@ namespace ProjectTile
                 if (ProjectSourceMode == View) { pageMode = View; }
                 else { pageMode = MyPermissions.Allow("EditProjects") ? Amend : View; }
             }
-
             ChangePage("ProjectDetailsPage.xaml?Mode=" + pageMode);
         }
 
-        public static void ShowProjectTeamsPage(string pageMode = "", int selectedStaffID = 0)
+        public static void ShowProjectTeamsPage(string pageMode = "", int selectedStaffID = 0, string sourcePage = "")
         {
             if (pageMode == "")
             {
                 if (ProjectSourceMode == View) { pageMode = View; }
                 else { pageMode = MyPermissions.Allow("EditProjectTeams") ? Amend : View; }
             }
-
+            if (sourcePage != "") { ProjectSourcePage = sourcePage; }
             ChangePage("ProjectTeamsPage.xaml?Mode=" + pageMode + ",StaffID=" + selectedStaffID.ToString());
         }
 

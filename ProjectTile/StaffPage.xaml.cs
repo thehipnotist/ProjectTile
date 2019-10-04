@@ -29,6 +29,8 @@ namespace ProjectTile
 
         bool viewEntities = Globals.MyPermissions.Allow("ViewStaffEntities");
         bool editEntities = Globals.MyPermissions.Allow("EditStaffEntities");
+        bool viewProjects = Globals.MyPermissions.Allow("ViewProjects");
+        bool editProjects = Globals.MyPermissions.Allow("EditProjects");
 
         // Current records //
         StaffSummaryRecord selectedRecord;
@@ -65,6 +67,7 @@ namespace ProjectTile
                 DisableButton.Visibility = Visibility.Hidden;
                 editEntities = false; // Override as it is a view-only screen
                 EntitiesButton.Visibility = (viewEntities) ? Visibility.Visible : Visibility.Hidden;
+                ProjectButton.Visibility = (viewProjects) ? Visibility.Visible : Visibility.Hidden;
             }
             else if (pageMode == PageFunctions.Amend)
             {
@@ -75,7 +78,8 @@ namespace ProjectTile
                 DisableButton.Visibility = Globals.MyPermissions.Allow("ActivateStaff") ? Visibility.Visible : Visibility.Hidden;
                 CommitButton.Visibility = Visibility.Hidden;
                 EntitiesButton.Visibility = (viewEntities || editEntities) ? Visibility.Visible : Visibility.Hidden;
-                if (editEntities) { EntitiesButtonText.Text = "Entities"; }                
+                //if (editEntities) { EntitiesButtonText.Text = "Entities"; }                
+                ProjectButton.Visibility = (viewProjects || editProjects) ? Visibility.Visible : Visibility.Hidden;
             }
             else if (pageMode == PageFunctions.Lookup)
             {
@@ -84,7 +88,7 @@ namespace ProjectTile
                 HeaderImage2.SetResourceReference(Image.SourceProperty, "SearchIcon");
                 Instructions.Content = "Choose a staff member and then click the 'Select' button to return their details.";
                 StaffDataGrid.SelectionMode = DataGridSelectionMode.Single;
-                DisableButton.Visibility = AmendButton.Visibility = EntitiesButton.Visibility = Visibility.Hidden;
+                DisableButton.Visibility = AmendButton.Visibility = EntitiesButton.Visibility = ProjectButton.Visibility = Visibility.Hidden;
                 CancelButtonText.Text = "Cancel";
                 ActiveOnly_CheckBox.IsChecked = true;
             }
@@ -170,9 +174,8 @@ namespace ProjectTile
             selectedRecord = null;
             // selectedStaffID = 0; // Don't clear this automatically, as the refresh tries to reuse it
             pushSelection();
-            AmendButton.IsEnabled = false;
+            AmendButton.IsEnabled = EntitiesButton.IsEnabled = ProjectButton.IsEnabled = false;
             toggleActiveButton(null);
-            EntitiesButton.IsEnabled = false;
         }
 
         private void pushSelection()
@@ -237,9 +240,8 @@ namespace ProjectTile
                     selectedRecord = (StaffSummaryRecord) StaffDataGrid.SelectedItem;
                     selectedStaffID = (selectedRecord == null)? 0 : selectedRecord.ID;
                     pushSelection();
-                    AmendButton.IsEnabled = true;
                     toggleActiveButton(selectedRecord.Active);
-                    EntitiesButton.IsEnabled = true;
+                    AmendButton.IsEnabled = EntitiesButton.IsEnabled = ProjectButton.IsEnabled = true;
                 }
                 else // No record selected, e.g. because filter changed
                 {
@@ -304,6 +306,11 @@ namespace ProjectTile
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
             StaffFunctions.SelectTeamStaff(selectedRecord);
+        }
+
+        private void ProjectButton_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowProjectTeamsPage(pageMode, selectedStaffID, "StaffPage");
         }
 
     } // class
