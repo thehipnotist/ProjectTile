@@ -348,7 +348,7 @@ namespace ProjectTile
                     {                                                
                         AmendButton.Visibility = canAmend ? Visibility.Visible : Visibility.Hidden;
                         AmendButton.IsEnabled = canAmend;
-                        AmendButton.ToolTip = "Amend " + selectedContact.FirstName + " " + selectedContact.Surname + "'s details";
+                        AmendButton.ToolTip = "Amend " + selectedContact.FullName + "'s details";
                     }
                     else
                     {
@@ -501,7 +501,7 @@ namespace ProjectTile
                     selectedContactGridRecord = (ContactSummaryRecord) ContactDataGrid.SelectedItem;
                     AmendButton.IsEnabled = true;                    
                     selectedContact = ClientFunctions.GetContact(selectedContactGridRecord.ID);
-                    AmendButton.ToolTip = "Amend " + selectedContact.FirstName + " " + selectedContact.Surname + "'s details";
+                    AmendButton.ToolTip = "Amend " + selectedContact.FullName + "'s details";
                     toggleActiveButton(selectedContact.Active);
                 }
                 else { clearContactSelection(); }

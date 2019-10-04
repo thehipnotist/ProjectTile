@@ -198,7 +198,7 @@ namespace ProjectTile
         public static void LogIn(Staff thisUser, Entities thisEntity)
         {
             MyStaffRecord = thisUser;
-            MayName = thisUser.FirstName + " " + thisUser.Surname;
+            MayName = thisUser.FullName;
             MyStaffID = thisUser.ID;
             MyUserID = thisUser.UserID;
 
@@ -212,7 +212,7 @@ namespace ProjectTile
         {
             winMain.HideMessage();
             winMain.MenuSecurity(ref MyPermissions);
-            Globals.FavouriteProjectID = StaffFunctions.FavouriteProjectID(MyStaffID);
+            Globals.FavouriteProjectID = StaffFunctions.MainProjectID(MyStaffID);
             winMain.ToggleMainMenus(true);
             PageFunctions.ShowTilesPage();
         }

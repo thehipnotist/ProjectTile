@@ -75,7 +75,7 @@ namespace ProjectTile
                                join sr in existingPtDb.StaffRoles on s.RoleCode equals sr.RoleCode
                                join se in existingPtDb.StaffEntities on s.ID equals se.StaffID
                                where (!activeOnly || s.Active)
-                                    && (nameContains == "" || (s.FirstName + " " + s.Surname).Contains(nameContains))
+                                    && (nameContains == "" || (s.FullName).Contains(nameContains))
                                     && (myAllowedEntities.Contains((int) se.EntityID))
                                     && (roleDescription == AllRecords || roleDescription == "" || sr.RoleDescription == roleDescription)
                                orderby new { s.FirstName, s.Surname, s.UserID }
@@ -164,7 +164,7 @@ namespace ProjectTile
         {
             Staff thisPerson = GetStaffMember(staffID);
             if (thisPerson == null) { return ""; } // Errors will be thrown by GetStaffMember
-            else { return thisPerson.FirstName + " " + thisPerson.Surname; }
+            else { return thisPerson.FullName; }
         }
 
         public static StaffSummaryRecord GetStaffSummary(int staffID, int entityID = 0)
@@ -195,7 +195,7 @@ namespace ProjectTile
             {
                 try
                 {
-                    Staff foundStaff = existingPtDb.Staff.FirstOrDefault(s => s.FirstName + " " + s.Surname == staffName);
+                    Staff foundStaff = existingPtDb.Staff.FirstOrDefault(s => s.FullName == staffName);
                     if (foundStaff == null)
                     {
                         MessageFunctions.Error("Error retrieving staff member " + staffName + ": no matching record found.", null);
@@ -215,7 +215,7 @@ namespace ProjectTile
         {            
             if (SelectedStaffMember != null)
             {
-                return SelectedStaffMember.FirstName + " " + SelectedStaffMember.Surname;
+                return SelectedStaffMember.FullName;
             }
             else
             {
@@ -224,7 +224,7 @@ namespace ProjectTile
             }
         }
 
-        public static int FavouriteProjectID(int staffID)
+        public static int MainProjectID(int staffID)
         {
             try
             {
@@ -286,7 +286,7 @@ namespace ProjectTile
                         string changeAction = SelectedStaffMember.Active ? "disabling" : "enabling";
 
                         bool confirm = MessageFunctions.ConfirmOKCancel(
-                                changeName + " " + SelectedStaffMember.FirstName + " " + SelectedStaffMember.Surname + "'s account? This will take effect immediately.",
+                                changeName + " " + SelectedStaffMember.FullName + "'s account? This will take effect immediately.",
                                 changeName + " user?");
                         if (!confirm)
                         {
@@ -369,7 +369,7 @@ namespace ProjectTile
                         int defaultEntityID = EntityFunctions.GetEntityByName(defaultEnt).ID;
                         string roleCode = GetRoleByDescription(roleDesc);
                         
-                        Staff checkNewName = existingPtDb.Staff.FirstOrDefault(s => s.FirstName + " " + s.Surname == fullName && s.ID != staffID);
+                        Staff checkNewName = existingPtDb.Staff.FirstOrDefault(s => s.FullName == fullName && s.ID != staffID);
                         if (checkNewName != null)
                         {
                             MessageFunctions.InvalidMessage("A different staff member with name '" + fullName + 
@@ -517,7 +517,7 @@ namespace ProjectTile
             {
                 if (thisPerson.LeaveDate < System.DateTime.Today)
                 {
-                    MessageFunctions.InvalidMessage(thisPerson.FirstName + " " + thisPerson.Surname + " has left, and cannot be added to additional Entities.", "Not Current User");
+                    MessageFunctions.InvalidMessage(thisPerson.FullName + " has left, and cannot be added to additional Entities.", "Not Current User");
                     return false;
                 }
                 else { return true; }
@@ -536,7 +536,7 @@ namespace ProjectTile
             {
                 if ((newDefaultID > 0 && newDefaultID == entityID) || (newDefaultID == 0 && thisPerson.DefaultEntity == entityID))
                 {
-                    MessageFunctions.InvalidMessage("Cannot remove " + thisPerson.FirstName + " " + thisPerson.Surname + " from their default Entity.", "Default Entity Required");
+                    MessageFunctions.InvalidMessage("Cannot remove " + thisPerson.FullName + " from their default Entity.", "Default Entity Required");
                     return false;
                 }
                 else
@@ -555,7 +555,7 @@ namespace ProjectTile
 
                             if (openProjects > 0)
                             {
-                                MessageFunctions.InvalidMessage("Cannot remove " + thisPerson.FirstName + " " + thisPerson.Surname + " as they have open projects in this Entity.", "Open Projects Found");
+                                MessageFunctions.InvalidMessage("Cannot remove " + thisPerson.FullName + " as they have open projects in this Entity.", "Open Projects Found");
                                 return false;
                             }
                             else { return true; }
@@ -614,7 +614,7 @@ namespace ProjectTile
                                 select (new StaffSummarySmall()
                                 {
                                     ID = (int)s.ID,
-                                    NameAndUser = (string)s.FirstName + " " + s.Surname + (s.UserID == null ? "" : " (" + s.UserID + ")"),
+                                    NameAndUser = (string)s.FullName + (s.UserID == null ? "" : " (" + s.UserID + ")"),
                                     Status = (DbFunctions.TruncateTime(s.StartDate) > System.DateTime.Today) ? "Not started" :
                                             (DbFunctions.TruncateTime(s.LeaveDate) < System.DateTime.Today) ? "Left" :
                                             ((bool)s.Active) ? "Active" : 
@@ -650,7 +650,7 @@ namespace ProjectTile
                                    select (new StaffSummarySmall()
                                    {
                                        ID = (int)s.ID,
-                                       NameAndUser = (string)s.FirstName + " " + s.Surname + (s.UserID == null ? "" : " (" + s.UserID + ")"),
+                                       NameAndUser = (string)s.FullName + (s.UserID == null ? "" : " (" + s.UserID + ")"),
                                        Status = (DbFunctions.TruncateTime(s.StartDate) > System.DateTime.Today) ? "Not started" :
                                                (DbFunctions.TruncateTime(s.LeaveDate) < System.DateTime.Today) ? "Left" :
                                                ((bool)s.Active) ? "Active" :
@@ -785,7 +785,7 @@ namespace ProjectTile
                         }
                         catch (Exception generalException)
                         {
-                            MessageFunctions.Error("Error adding " + thisPerson.FirstName + " " + thisPerson.Surname + " to entity " + sqlName + "", generalException);
+                            MessageFunctions.Error("Error adding " + thisPerson.FullName + " to entity " + sqlName + "", generalException);
                             return false;
                         }
                     }
@@ -807,7 +807,7 @@ namespace ProjectTile
                         }
                         catch (Exception generalException)
                         {
-                            MessageFunctions.Error("Error removing " + thisPerson.FirstName + " " + thisPerson.Surname + " from entity " + sqlName + "", generalException);
+                            MessageFunctions.Error("Error removing " + thisPerson.FullName + " from entity " + sqlName + "", generalException);
                             return false;
                         }
                     }
@@ -828,7 +828,7 @@ namespace ProjectTile
             try
             {
                 int staffID = thisPerson.ID;
-                string staffName = thisPerson.FirstName + " " + thisPerson.Surname;
+                string staffName = thisPerson.FullName;
 
                 foreach (EntitySummaryRecord thisRecord in affectedEntities)
                 {
@@ -904,7 +904,7 @@ namespace ProjectTile
 
                     if (thisPerson.LeaveDate < System.DateTime.Today)
                     {
-                        MessageFunctions.InvalidMessage(thisPerson.FirstName + " " + thisPerson.Surname + " has left, so their default Entity cannot be changed.", "Not Current User");
+                        MessageFunctions.InvalidMessage(thisPerson.FullName + " has left, so their default Entity cannot be changed.", "Not Current User");
                         return false;
                     }
 

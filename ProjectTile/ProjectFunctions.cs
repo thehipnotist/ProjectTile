@@ -670,8 +670,8 @@ namespace ProjectTile
                                                 join s in existingPtDb.Staff on pt.StaffID equals s.ID
                                                 where pt.ProjectRoleCode == projectRoleCode 
                                                     && (nameLike == "" 
-                                                        || (exact && (s.FirstName + " " + s.Surname).ToUpper() == nameLike) 
-                                                        || (!exact && (s.FirstName + " " + s.Surname).ToUpper().Contains(nameLike)))
+                                                        || (exact && (s.FullName).ToUpper() == nameLike)
+                                                        || (!exact && (s.FullName).ToUpper().Contains(nameLike)))
                                                 select pt
                                                 ).FirstOrDefault();
                     return (firstResult != null);

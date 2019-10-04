@@ -52,8 +52,8 @@ namespace ProjectTile
                     managerNames = (from c in existingPtDb.Clients
                                 join s in existingPtDb.Staff on c.AccountManagerID equals s.ID  
                                 where (int)c.EntityID == entityID
-                                orderby s.FirstName, s.Surname
-                                select s.FirstName + " " + s.Surname)
+                                orderby s.FullName
+                                select s.FullName)
                                 .Distinct().ToList();
 
                     if (includeAll) { managerNames.Add(AllRecords); }
@@ -77,9 +77,9 @@ namespace ProjectTile
                     List<string> managerNames = new List<string>();
                     managerNames = (from s in existingPtDb.Staff
                                     join se in existingPtDb.StaffEntities on s.ID equals se.StaffID
-                                    where (se.EntityID == entityID) && (includeNonAMs || s.RoleCode == AccountManagerCode || s.FirstName + " " + s.Surname == includeIfInEntity)
+                                    where (se.EntityID == entityID) && (includeNonAMs || s.RoleCode == AccountManagerCode || s.FullName == includeIfInEntity)
                                     orderby s.FirstName, s.Surname
-                                    select s.FirstName + " " + s.Surname)
+                                    select s.FullName)
                                 .Distinct().ToList();
 
                     //if (!managerNames.Contains(includeIfInEntity)) { managerNames.Add(includeIfInEntity); } // Now handled above
@@ -134,7 +134,7 @@ namespace ProjectTile
                                       ClientCode = c.ClientCode, 
                                       ClientName = c.ClientName, 
                                       ManagerID = (int) c.AccountManagerID, 
-                                      ManagerName = s.FirstName + " " + s.Surname, 
+                                      ManagerName = s.FullName, 
                                       ActiveClient = c.Active, 
                                       EntityID = c.EntityID, 
                                       EntityName = e.EntityName 
@@ -268,7 +268,7 @@ namespace ProjectTile
                         string managerRole = accountManager.RoleCode;
                         if (managerRole != AccountManagerCode)
                         {
-                            bool confirmOK = MessageFunctions.WarningYesNo(accountManager.FirstName + " " + accountManager.Surname + " is not normally an Account Manager. Is this correct?");
+                            bool confirmOK = MessageFunctions.WarningYesNo(accountManager.FullName + " is not normally an Account Manager. Is this correct?");
                             if (!confirmOK) { return false; }
                         }
                     }
@@ -523,7 +523,7 @@ namespace ProjectTile
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    return existingPtDb.ClientStaff.FirstOrDefault(cs => cs.ClientID == clientID && cs.FirstName + " " + cs.Surname == contactName);
+                    return existingPtDb.ClientStaff.FirstOrDefault(cs => cs.ClientID == clientID && cs.FullName == contactName);
                 }
             }
             catch (Exception generalException)
@@ -547,7 +547,7 @@ namespace ProjectTile
                                   join cs in existingPtDb.ClientStaff on c.ID equals cs.ClientID
                                     into GroupJoin from scs in GroupJoin.DefaultIfEmpty()
                                   where c.EntityID == entityID
-                                    && (contactContains == "" || (scs.FirstName + " " + scs.Surname).Contains(contactContains))
+                                    && (contactContains == "" || scs.FullName.Contains(contactContains))
                                     && (!activeOnly || c.Active)
                                     && (clientContains == "" || c.ClientName.Contains(clientContains))
                                   orderby c.ClientCode
@@ -557,7 +557,7 @@ namespace ProjectTile
                                       ClientCode = c.ClientCode,
                                       ClientName = c.ClientName,
                                       ManagerID = (int)c.AccountManagerID,
-                                      ManagerName = s.FirstName + " " + s.Surname,
+                                      ManagerName = s.FullName,
                                       ActiveClient = c.Active,
                                       EntityID = c.EntityID,
                                       EntityName = e.EntityName
@@ -586,11 +586,11 @@ namespace ProjectTile
                             where ( (clientID == 0 || cs.ClientID == clientID)
                                 && c.EntityID == CurrentEntityID
                                 && (!ActiveOnly || cs.Active)
-                                && (contactContains == "" || (cs.FirstName + " " + cs.Surname).Contains(contactContains) || cs.JobTitle.Contains(contactContains)) )
+                                && (contactContains == "" || (cs.FullName).Contains(contactContains) || cs.JobTitle.Contains(contactContains)) )
                             select (new ContactSummaryRecord 
                             {
                                 ID = cs.ID,
-                                ContactName = cs.FirstName + " " + cs.Surname,
+                                ContactName = cs.FullName,
                                 JobTitle = cs.JobTitle,
                                 PhoneNumber = cs.PhoneNumber,
                                 Email = cs.Email,
@@ -615,14 +615,8 @@ namespace ProjectTile
                     return (from cs in existingPtDb.ClientStaff
                             join c in existingPtDb.Clients on cs.ClientID equals c.ID
                             where c.EntityID == CurrentEntityID 
-                                && (contactContains == "" || (cs.FirstName + " " + cs.Surname).Contains(contactContains))
-                            select cs.FirstName + " " + cs.Surname
-                                /*
-                                JobTitle = cs.JobTitle,
-                                PhoneNumber = cs.PhoneNumber,
-                                Email = cs.Email,
-                                ActiveContact = cs.Active
-                                */
+                                && (contactContains == "" || (cs.FullName).Contains(contactContains))
+                            select cs.FullName
                             ).Distinct().ToList();
                 }
             }
@@ -695,7 +689,7 @@ namespace ProjectTile
                 string changeName = selectedContact.Active ? "Disable" : "Enable";
                 string changeAction = selectedContact.Active ? "disabling" : "enabling";
                 bool confirm = MessageFunctions.ConfirmOKCancel(
-                        changeName + " " + selectedContact.FirstName + " " + selectedContact.Surname + "'s record? This will take effect immediately.",
+                        changeName + " " + selectedContact.FullName + "'s record? This will take effect immediately.",
                         changeName + " user?");
                     
                 if (!confirm) { return null; }
@@ -739,8 +733,8 @@ namespace ProjectTile
                     if (!PageFunctions.SqlInputOK(thisContact.FirstName, true, "First name")) { return false; }
                     if (!PageFunctions.SqlInputOK(thisContact.FirstName, true, "Surname")) { return false; }
 
-                    string contactName = thisContact.FirstName + " " + thisContact.Surname;                    
-                    ClientStaff checkNewName = existingPtDb.ClientStaff.FirstOrDefault(c => c.ID != existingID && c.FirstName + " " + c.Surname == contactName && c.ClientID == clientID);
+                    string contactName = thisContact.FullName;                    
+                    ClientStaff checkNewName = existingPtDb.ClientStaff.FirstOrDefault(c => c.ID != existingID && c.FullName == contactName && c.ClientID == clientID);
                     if (checkNewName != null) 
                     {
                         string errorText = (existingID > 0) ?
@@ -882,7 +876,7 @@ namespace ProjectTile
                                       ClientCode = c.ClientCode,
                                       ClientName = c.ClientName,
                                       ManagerID = (int)c.AccountManagerID,
-                                      ManagerName = s.FirstName + " " + s.Surname,
+                                      ManagerName = s.FullName,
                                       ActiveClient = c.Active,
                                       EntityID = c.EntityID,
                                       EntityName = e.EntityName
