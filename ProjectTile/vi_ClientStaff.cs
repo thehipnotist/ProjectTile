@@ -21,5 +21,7 @@ namespace ProjectTile
         public string JobTitle { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
+        public bool ClientActive { get; set; }
+        public bool StaffActive { get; set; }
     }
 }

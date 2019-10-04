@@ -19,6 +19,7 @@ namespace ProjectTile
             this.ClientTeams = new HashSet<ClientTeams>();
             this.ProjectProducts = new HashSet<ProjectProducts>();
             this.ProjectTeams = new HashSet<ProjectTeams>();
+            this.Staff = new HashSet<Staff>();
         }
     
         public int ID { get; set; }
@@ -38,5 +39,6 @@ namespace ProjectTile
         public virtual ProjectStages ProjectStages { get; set; }
         public virtual ProjectTypes ProjectTypes { get; set; }
         public virtual ICollection<ProjectTeams> ProjectTeams { get; set; }
+        public virtual ICollection<Staff> Staff { get; set; }
     }
 }

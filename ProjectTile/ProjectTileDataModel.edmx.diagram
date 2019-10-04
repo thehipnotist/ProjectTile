@@ -55,6 +55,7 @@
         <AssociationConnector Association="ProjectTileModel.fk_StaffRoleCode" ManuallyRouted="false" />
         <AssociationConnector Association="ProjectTileModel.fk_PermissionRoleCode" ManuallyRouted="false" />
         <EntityTypeShape EntityType="ProjectTileModel.ErrorLog" Width="1.5" PointX="15.375" PointY="0.75" />
+        <AssociationConnector Association="ProjectTileModel.fk_StaffProjectID" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

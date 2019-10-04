@@ -49,6 +49,7 @@
           <Property Name="ClientID" Type="int" Nullable="false" />
           <Property Name="FirstName" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="Surname" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="FullName" Type="nvarchar" MaxLength="201" StoreGeneratedPattern="Computed" Nullable="false" />
           <Property Name="JobTitle" Type="nvarchar" MaxLength="100" />
           <Property Name="PhoneNumber" Type="varchar" MaxLength="50" />
           <Property Name="Email" Type="nvarchar" MaxLength="100" />
@@ -169,6 +170,7 @@
           <Property Name="EmployeeID" Type="varchar" MaxLength="7" StoreGeneratedPattern="Computed" />
           <Property Name="FirstName" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="Surname" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="FullName" Type="nvarchar" MaxLength="201" StoreGeneratedPattern="Computed" Nullable="false" />
           <Property Name="RoleCode" Type="varchar" MaxLength="5" />
           <Property Name="StartDate" Type="date" Nullable="false" />
           <Property Name="LeaveDate" Type="date" />
@@ -177,6 +179,7 @@
           <Property Name="PasswordHash" Type="binary" MaxLength="64" />
           <Property Name="Active" Type="bit" Nullable="false" />
           <Property Name="DefaultEntity" Type="int" />
+          <Property Name="MainProject" Type="int" />
         </EntityType>
         <EntityType Name="StaffEntities">
           <Key>
@@ -212,13 +215,17 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_ClientStaff' does not have a pr
             <PropertyRef Name="EntityName" />
             <PropertyRef Name="ClientCode" />
             <PropertyRef Name="ClientName" />
+            <PropertyRef Name="ClientActive" />
             <PropertyRef Name="StaffName" />
+            <PropertyRef Name="StaffActive" />
           </Key>
           <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
           <Property Name="ClientCode" Type="varchar" MaxLength="15" Nullable="false" />
           <Property Name="ClientName" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="ClientActive" Type="bit" Nullable="false" />
           <Property Name="StaffName" Type="nvarchar" MaxLength="201" Nullable="false" />
           <Property Name="JobTitle" Type="nvarchar" MaxLength="100" />
+          <Property Name="StaffActive" Type="bit" Nullable="false" />
           <Property Name="PhoneNumber" Type="varchar" MaxLength="50" />
           <Property Name="Email" Type="nvarchar" MaxLength="100" />
         </EntityType>
@@ -366,6 +373,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
             <PropertyRef Name="ID" />
             <PropertyRef Name="FirstName" />
             <PropertyRef Name="Surname" />
+            <PropertyRef Name="FullName" />
             <PropertyRef Name="StartDate" />
             <PropertyRef Name="Active" />
             <PropertyRef Name="RoleDescription" />
@@ -374,6 +382,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <Property Name="EmployeeID" Type="varchar" MaxLength="7" />
           <Property Name="FirstName" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="Surname" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="FullName" Type="nvarchar" MaxLength="201" Nullable="false" />
           <Property Name="RoleCode" Type="varchar" MaxLength="5" />
           <Property Name="StartDate" Type="date" Nullable="false" />
           <Property Name="LeaveDate" Type="date" />
@@ -382,6 +391,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <Property Name="PasswordHash" Type="binary" MaxLength="64" />
           <Property Name="Active" Type="bit" Nullable="false" />
           <Property Name="DefaultEntity" Type="int" />
+          <Property Name="MainProject" Type="int" />
           <Property Name="RoleDescription" Type="varchar" MaxLength="100" Nullable="false" />
         </EntityType>
         <Association Name="fk_ClientAccountManagerID">
@@ -597,6 +607,18 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
             </Principal>
             <Dependent Role="StaffEntities">
               <PropertyRef Name="EntityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_StaffProjectID">
+          <End Role="Projects" Type="Self.Projects" Multiplicity="0..1" />
+          <End Role="Staff" Type="Self.Staff" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Staff">
+              <PropertyRef Name="MainProject" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -911,6 +933,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <Parameter Name="PasswordHash" Type="binary" Mode="In" />
           <Parameter Name="Active" Type="bit" Mode="In" />
           <Parameter Name="DefaultEntity" Type="int" Mode="In" />
+          <Parameter Name="MainProject" Type="int" Mode="In" />
         </Function>
         <Function Name="stf_InsertIntoStaffEntities" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="StaffID" Type="int" Mode="In" />
@@ -969,8 +992,10 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
     [vi_ClientStaff].[EntityName] AS [EntityName], 
     [vi_ClientStaff].[ClientCode] AS [ClientCode], 
     [vi_ClientStaff].[ClientName] AS [ClientName], 
+    [vi_ClientStaff].[ClientActive] AS [ClientActive], 
     [vi_ClientStaff].[StaffName] AS [StaffName], 
     [vi_ClientStaff].[JobTitle] AS [JobTitle], 
+    [vi_ClientStaff].[StaffActive] AS [StaffActive], 
     [vi_ClientStaff].[PhoneNumber] AS [PhoneNumber], 
     [vi_ClientStaff].[Email] AS [Email]
     FROM [dbo].[vi_ClientStaff] AS [vi_ClientStaff]</DefiningQuery>
@@ -1064,6 +1089,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
     [vi_StaffWithRoles].[EmployeeID] AS [EmployeeID], 
     [vi_StaffWithRoles].[FirstName] AS [FirstName], 
     [vi_StaffWithRoles].[Surname] AS [Surname], 
+    [vi_StaffWithRoles].[FullName] AS [FullName], 
     [vi_StaffWithRoles].[RoleCode] AS [RoleCode], 
     [vi_StaffWithRoles].[StartDate] AS [StartDate], 
     [vi_StaffWithRoles].[LeaveDate] AS [LeaveDate], 
@@ -1072,6 +1098,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
     [vi_StaffWithRoles].[PasswordHash] AS [PasswordHash], 
     [vi_StaffWithRoles].[Active] AS [Active], 
     [vi_StaffWithRoles].[DefaultEntity] AS [DefaultEntity], 
+    [vi_StaffWithRoles].[MainProject] AS [MainProject], 
     [vi_StaffWithRoles].[RoleDescription] AS [RoleDescription]
     FROM [dbo].[vi_StaffWithRoles] AS [vi_StaffWithRoles]</DefiningQuery>
           </EntitySet>
@@ -1146,6 +1173,10 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <AssociationSet Name="fk_StaffEntityID" Association="Self.fk_StaffEntityID">
             <End Role="Entities" EntitySet="Entities" />
             <End Role="StaffEntities" EntitySet="StaffEntities" />
+          </AssociationSet>
+          <AssociationSet Name="fk_StaffProjectID" Association="Self.fk_StaffProjectID">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="Staff" EntitySet="Staff" />
           </AssociationSet>
           <AssociationSet Name="fk_StaffRoleCode" Association="Self.fk_StaffRoleCode">
             <End Role="StaffRoles" EntitySet="StaffRoles" />
@@ -1225,6 +1256,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <Property Name="Active" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Clients" Relationship="Self.fk_StaffClientID" FromRole="ClientStaff" ToRole="Clients" />
           <NavigationProperty Name="ClientTeams" Relationship="Self.fk_ClientTeamStaffID" FromRole="ClientStaff" ToRole="ClientTeams" />
+          <Property Name="FullName" Type="String" Nullable="false" MaxLength="201" FixedLength="false" Unicode="true" annotation:StoreGeneratedPattern="Computed" />
         </EntityType>
         <EntityType Name="ClientTeamRoles">
           <Key>
@@ -1311,6 +1343,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <NavigationProperty Name="ProjectStages" Relationship="Self.fk_ProjectStageCode" FromRole="Projects" ToRole="ProjectStages" />
           <NavigationProperty Name="ProjectTypes" Relationship="Self.fk_ProjectTypeCode" FromRole="Projects" ToRole="ProjectTypes" />
           <NavigationProperty Name="ProjectTeams" Relationship="Self.fk_TeamProjectID" FromRole="Projects" ToRole="ProjectTeams" />
+          <NavigationProperty Name="Staff" Relationship="ProjectTileModel.fk_StaffProjectID" FromRole="Projects" ToRole="Staff" />
         </EntityType>
         <EntityType Name="ProjectStages">
           <Key>
@@ -1366,6 +1399,9 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <NavigationProperty Name="ProjectTeams" Relationship="Self.fk_TeamStaffID" FromRole="Staff" ToRole="ProjectTeams" />
           <NavigationProperty Name="StaffEntities" Relationship="Self.fk_EntityStaffID" FromRole="Staff" ToRole="StaffEntities" />
           <NavigationProperty Name="StaffRoles" Relationship="Self.fk_StaffRoleCode" FromRole="Staff" ToRole="StaffRoles" />
+          <Property Name="FullName" Type="String" Nullable="false" MaxLength="201" FixedLength="false" Unicode="true" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="MainProject" Type="Int32" />
+          <NavigationProperty Name="Projects" Relationship="ProjectTileModel.fk_StaffProjectID" FromRole="Staff" ToRole="Projects" />
         </EntityType>
         <EntityType Name="StaffEntities">
           <Key>
@@ -1405,6 +1441,8 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
             <PropertyRef Name="ClientCode" />
             <PropertyRef Name="ClientName" />
             <PropertyRef Name="StaffName" />
+            <PropertyRef Name="ClientActive" />
+            <PropertyRef Name="StaffActive" />
           </Key>
           <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="ClientCode" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
@@ -1413,6 +1451,8 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <Property Name="JobTitle" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="PhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ClientActive" Type="Boolean" Nullable="false" />
+          <Property Name="StaffActive" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="vi_ClientsWithAccountManagers">
           <Key>
@@ -1545,6 +1585,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
             <PropertyRef Name="StartDate" />
             <PropertyRef Name="Active" />
             <PropertyRef Name="RoleDescription" />
+            <PropertyRef Name="FullName" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" />
           <Property Name="EmployeeID" Type="String" MaxLength="7" FixedLength="false" Unicode="false" />
@@ -1559,6 +1600,8 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <Property Name="Active" Type="Boolean" Nullable="false" />
           <Property Name="DefaultEntity" Type="Int32" />
           <Property Name="RoleDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="FullName" Type="String" Nullable="false" MaxLength="201" FixedLength="false" Unicode="true" />
+          <Property Name="MainProject" Type="Int32" />
         </EntityType>
         <Association Name="fk_ClientProductID">
           <End Role="Products" Type="Self.Products" Multiplicity="0..1" />
@@ -2191,6 +2234,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
             <Parameter Name="PasswordHash" Mode="In" Type="Binary" />
             <Parameter Name="Active" Mode="In" Type="Boolean" />
             <Parameter Name="DefaultEntity" Mode="In" Type="Int32" />
+            <Parameter Name="MainProject" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="stf_InsertIntoStaffEntities">
             <Parameter Name="StaffID" Mode="In" Type="Int32" />
@@ -2225,6 +2269,10 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
             <Parameter Name="LoggedBy" Mode="In" Type="String" />
             <Parameter Name="InnerException" Mode="In" Type="String" />
           </FunctionImport>
+          <AssociationSet Name="fk_StaffProjectID" Association="ProjectTileModel.fk_StaffProjectID">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="Staff" EntitySet="Staff" />
+          </AssociationSet>
         </EntityContainer>
         <ComplexType Name="cln_GetClientsByAccountManagerID_Result">
           <Property Type="Int32" Name="ID" Nullable="false" />
@@ -2380,6 +2428,18 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <Property Type="String" Name="LoggedBy" Nullable="true" MaxLength="100" />
           <Property Type="String" Name="InnerException" Nullable="true" />
         </ComplexType>
+        <Association Name="fk_StaffProjectID">
+          <End Type="ProjectTileModel.Projects" Role="Projects" Multiplicity="0..1" />
+          <End Type="ProjectTileModel.Staff" Role="Staff" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Staff">
+              <PropertyRef Name="MainProject" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2428,6 +2488,7 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <EntitySetMapping Name="ClientStaff">
             <EntityTypeMapping TypeName="ProjectTileModel.ClientStaff">
               <MappingFragment StoreEntitySet="ClientStaff">
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ClientID" ColumnName="ClientID" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
@@ -2546,6 +2607,8 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <EntitySetMapping Name="Staff">
             <EntityTypeMapping TypeName="ProjectTileModel.Staff">
               <MappingFragment StoreEntitySet="Staff">
+                <ScalarProperty Name="MainProject" ColumnName="MainProject" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
@@ -2594,6 +2657,8 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <EntitySetMapping Name="vi_ClientStaff">
             <EntityTypeMapping TypeName="ProjectTileModel.vi_ClientStaff">
               <MappingFragment StoreEntitySet="vi_ClientStaff">
+                <ScalarProperty Name="StaffActive" ColumnName="StaffActive" />
+                <ScalarProperty Name="ClientActive" ColumnName="ClientActive" />
                 <ScalarProperty Name="EntityName" ColumnName="EntityName" />
                 <ScalarProperty Name="ClientCode" ColumnName="ClientCode" />
                 <ScalarProperty Name="ClientName" ColumnName="ClientName" />
@@ -2704,6 +2769,8 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <EntitySetMapping Name="vi_StaffWithRoles">
             <EntityTypeMapping TypeName="ProjectTileModel.vi_StaffWithRoles">
               <MappingFragment StoreEntitySet="vi_StaffWithRoles">
+                <ScalarProperty Name="MainProject" ColumnName="MainProject" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />

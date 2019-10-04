@@ -845,7 +845,7 @@ namespace ProjectTile
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<stf_GetStaffRolesByRoleCode_Result>("stf_GetStaffRolesByRoleCode", roleCodeParameter);
         }
     
-        public virtual int stf_InsertIntoStaff(string firstName, string surname, string roleCode, Nullable<System.DateTime> startDate, Nullable<System.DateTime> leaveDate, string userID, string passwd, byte[] passwordHash, Nullable<bool> active, Nullable<int> defaultEntity)
+        public virtual int stf_InsertIntoStaff(string firstName, string surname, string roleCode, Nullable<System.DateTime> startDate, Nullable<System.DateTime> leaveDate, string userID, string passwd, byte[] passwordHash, Nullable<bool> active, Nullable<int> defaultEntity, Nullable<int> mainProject)
         {
             var firstNameParameter = firstName != null ?
                 new ObjectParameter("FirstName", firstName) :
@@ -887,7 +887,11 @@ namespace ProjectTile
                 new ObjectParameter("DefaultEntity", defaultEntity) :
                 new ObjectParameter("DefaultEntity", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("stf_InsertIntoStaff", firstNameParameter, surnameParameter, roleCodeParameter, startDateParameter, leaveDateParameter, userIDParameter, passwdParameter, passwordHashParameter, activeParameter, defaultEntityParameter);
+            var mainProjectParameter = mainProject.HasValue ?
+                new ObjectParameter("MainProject", mainProject) :
+                new ObjectParameter("MainProject", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("stf_InsertIntoStaff", firstNameParameter, surnameParameter, roleCodeParameter, startDateParameter, leaveDateParameter, userIDParameter, passwdParameter, passwordHashParameter, activeParameter, defaultEntityParameter, mainProjectParameter);
         }
     
         public virtual int stf_InsertIntoStaffEntities(Nullable<int> staffID, Nullable<int> entityID)

@@ -615,6 +615,11 @@ BEGIN TRY
 							EntityName,	EntityDescription)
 			SELECT			'SampleCo',	'Demonstration Entity'
 
+		-- Insert TestCo separately to ensure SampleCo has ID 0
+		INSERT INTO dbo.Entities (
+							EntityName,	EntityDescription)
+			SELECT			'TestCo',	'Test Entity'
+
 		PRINT 'Populated entities table'
 
 
@@ -650,6 +655,7 @@ BEGIN TRY
 			, EmployeeID AS RIGHT('E000000' + CAST(ID AS VARCHAR(100)), 7) PERSISTED	 
 			, FirstName					NVARCHAR(100)	NOT NULL
 			, Surname					NVARCHAR(100)	NOT NULL
+			, FullName AS FirstName + ' ' + Surname PERSISTED
 			, RoleCode					VARCHAR(5)
 				CONSTRAINT fk_StaffRoleCode FOREIGN KEY REFERENCES dbo.StaffRoles (RoleCode)
 			, StartDate					DATE			NOT NULL
@@ -660,6 +666,7 @@ BEGIN TRY
 			, Active					BIT				NOT NULL
 			, DefaultEntity				INT
 				CONSTRAINT fk_StaffEntity FOREIGN KEY REFERENCES dbo.Entities (ID)
+			, MainProject				INT
 			) 
 
 		PRINT 'Created staff table'
@@ -785,7 +792,7 @@ BEGIN TRY
 		
 		UPDATE s
 		SET UserID = 'S_' + FirstName + LEFT(Surname, 1)
-			, Passwd = LEFT(Firstname, 1) + LEFT(Surname, 1)
+			, Passwd = LEFT(FirstName, 1) + LEFT(Surname, 1)
 			, Active = 1
 		FROM dbo.Staff s
 		WHERE s.StartDate <= GETDATE()
@@ -870,6 +877,13 @@ BEGIN TRY
 			SELECT			ID,			DefaultEntity
 			FROM dbo.Staff	
 
+		-- Add System Administrator to TestCo
+		INSERT INTO dbo.StaffEntities (
+							StaffID,	EntityID)
+			SELECT			ID,			2
+			FROM dbo.Staff
+			WHERE UserID = 'pjadmin'	
+
 		PRINT 'Populated staff entities table'
 
 		EXEC [dbo].[usp_CreateInsertProcedure] 
@@ -880,7 +894,7 @@ BEGIN TRY
 
 		---- Create a view dynamically so it can go in the same batch
 		EXEC ('CREATE VIEW dbo.vi_StaffEntities AS	
-			SELECT s.FirstName + '' '' + s.Surname AS StaffName, e.EntityName, e.EntityDescription, 
+			SELECT s.FullName AS StaffName, e.EntityName, e.EntityDescription, 
 				CASE WHEN s.DefaultEntity = e.ID THEN 1 ELSE 0 END AS DefaultEntity 
 			FROM dbo.StaffEntities se
 				INNER JOIN dbo.Staff s ON se.StaffID = s.ID
@@ -930,21 +944,21 @@ BEGIN TRY
 		PRINT 'Created audit trigger for clients'
 				
 		INSERT INTO dbo.Clients (
-							EntityID,	ClientCode,	ClientName,		AccountManagerID,
+							EntityID,	ClientCode,		ClientName,		AccountManagerID,
 								Active)
-			SELECT			1,			'C_S_LG001',	'Littlegoods',	(SELECT ID FROM dbo.Staff where FirstName + ' ' + Surname = 'Sandie Newtown'),
+			SELECT			1,			'C_S_LG001',	'Littlegoods',	(SELECT ID FROM dbo.Staff where FullName = 'Sandie Newtown'),
 								1
-			UNION SELECT	1,			'C_S_WD001',	'Woodworths',	(SELECT ID FROM dbo.Staff where FirstName + ' ' + Surname = 'Amit Malawi'),
+			UNION SELECT	1,			'C_S_WD001',	'Woodworths',	(SELECT ID FROM dbo.Staff where FullName = 'Amit Malawi'),
 								1
-			UNION SELECT	1,			'C_S_LE001',	'Levisons',		(SELECT ID FROM dbo.Staff where FirstName + ' ' + Surname = 'Amit Malawi'),
+			UNION SELECT	1,			'C_S_LE001',	'Levisons',		(SELECT ID FROM dbo.Staff where FullName = 'Amit Malawi'),
 								1
-			UNION SELECT	1,			'C_S_YP001',	'Your Place',	(SELECT ID FROM dbo.Staff where FirstName + ' ' + Surname = 'Olive Coleman'),
+			UNION SELECT	1,			'C_S_YP001',	'Your Place',	(SELECT ID FROM dbo.Staff where FullName = 'Olive Coleman'),
 								1
-			UNION SELECT	1,			'C_S_SD001',	'Saleday',		(SELECT ID FROM dbo.Staff where FirstName + ' ' + Surname = 'Tim Middleton'),
+			UNION SELECT	1,			'C_S_SD001',	'Saleday',		(SELECT ID FROM dbo.Staff where FullName = 'Tim Middleton'),
 								1
-			UNION SELECT	1,			'C_S_BH001',	'BHN',			(SELECT ID FROM dbo.Staff where FirstName + ' ' + Surname = 'Olive Coleman'),
+			UNION SELECT	1,			'C_S_BH001',	'BHN',			(SELECT ID FROM dbo.Staff where FullName = 'Olive Coleman'),
 								1
-			UNION SELECT	1,			'C_S_CA001',	'Captons',		(SELECT ID FROM dbo.Staff where FirstName + ' ' + Surname = 'Sandie Newtown'),
+			UNION SELECT	1,			'C_S_CA001',	'Captons',		(SELECT ID FROM dbo.Staff where FullName = 'Sandie Newtown'),
 								1		
 
 		PRINT 'Populated clients table'
@@ -1313,6 +1327,12 @@ BEGIN TRY
 		ADD CONSTRAINT ck_ClientEntityID 
 		CHECK (dbo.udf_CheckClientEntity(ClientID, EntityID, TypeCode) = 1)
 
+		-- Add constraint to make sure the user's main project is actually a project
+
+		ALTER TABLE dbo.Staff
+		ADD CONSTRAINT fk_StaffProjectID 
+		FOREIGN KEY (MainProject) REFERENCES dbo.Projects(ID)
+
 		-- Create the usual triggers and procedures etc.
 
 		EXEC dbo.usp_CreateAuditTrigger @TableName = 'Projects', @PrimaryColumn = 'ID'
@@ -1584,95 +1604,101 @@ BEGIN TRY
 			
 		INSERT INTO dbo.ProjectTeams (
 							ProjectID,	
-								StaffID,																			ProjectRoleCode)
+								StaffID,															ProjectRoleCode)
 			SELECT			(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Implementation'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Olive Coleman'),		'PS'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Olive Coleman'),		'PS'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Implementation'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Benjamin Lumberjack'),	'PM'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Benjamin Lumberjack'),	'PM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Implementation'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Emmie Swanson'),		'TL'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Emmie Swanson'),		'TL'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Implementation'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Jack Greengage'),		'SC'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Jack Greengage'),		'SC'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Implementation'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Jessie Higgs'),		'AC'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Jessie Higgs'),			'AC'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Olive Coleman'),		'PS'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Olive Coleman'),		'PS'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Gemma Johnson'),		'PM'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Gemma Johnson'),		'PM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Billy Paper'),		'TL'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Billy Paper'),			'TL'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Ken Bramall'),			'SC'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Ken Bramall'),			'SC'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Simone Egg'),			'IC'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Simone Egg'),			'IC'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'System Admin'),			'OT'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Olive Coleman'),		'PS'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Olive Coleman'),		'PS'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Kayleigh Dawes'),		'PM'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Kayleigh Dawes'),		'PM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Len Wisher'),			'TL'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Len Wisher'),			'TL'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Nellie Harrison'),		'SC'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Nellie Harrison'),		'SC'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Kelly Goldiman'),		'AC'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Kelly Goldiman'),		'AC'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Terry Robins'),		'IC'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Terry Robins'),			'IC'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.5 Upgrade'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Amit Malawi'),			'PS'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Amit Malawi'),			'PS'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.5 Upgrade'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Kenny Hendry'),		'PM'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Kenny Hendry'),			'PM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.5 Upgrade'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Simone Egg'),			'SC'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Simone Egg'),			'SC'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.5 Upgrade'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Jamelia Jemal'),		'TL'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Jamelia Jemal'),		'TL'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Upgrade and Rebuild'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Amit Malawi'),			'PS'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Amit Malawi'),			'PS'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Upgrade and Rebuild'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Kayleigh Dawes'),		'PM'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Kayleigh Dawes'),		'PM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Upgrade and Rebuild'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Meena Hyal'),			'TL'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Meena Hyal'),			'TL'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Upgrade and Rebuild'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Jack Greengage'),		'SC'																											
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Jack Greengage'),		'SC'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Upgrade and Rebuild'),
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'System Admin'),			'OT'																																				
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Add Warehousing to Inventistry 3.4'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Amit Malawi'),			'PS'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Amit Malawi'),			'PS'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Add Warehousing to Inventistry 3.4'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Benjamin Lumberjack'),	'PM'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Benjamin Lumberjack'),	'PM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Add Warehousing to Inventistry 3.4'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'James Bellman'),		'TL'	
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'James Bellman'),		'TL'	
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Add Warehousing to Inventistry 3.4'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Terry Robins'),		'SC'	
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Terry Robins'),			'SC'	
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Rebuild'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Sandie Newtown'),		'PS'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Sandie Newtown'),		'PS'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Rebuild'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Gemma Johnson'),		'PM'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Gemma Johnson'),		'PM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Rebuild'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Nev Patil'),			'TL'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Nev Patil'),			'TL'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Rebuild'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Ken Bramall'),			'SC'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Ken Bramall'),			'SC'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Sandie Newtown'),		'PS'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Sandie Newtown'),		'PS'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Gemma Johnson'),		'PM'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Gemma Johnson'),		'PM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Nev Patil'),			'TL'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Nev Patil'),			'TL'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Ken Bramall'),			'SC'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Ken Bramall'),			'SC'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.2 Implementation'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Sandie Newtown'),		'PS'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Sandie Newtown'),		'PS'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.2 Implementation'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Kayleigh Dawes'),		'PM'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Kayleigh Dawes'),		'PM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.2 Implementation'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Emmie Swanson'),		'TL'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Emmie Swanson'),		'TL'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.2 Implementation'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Nellie Harrison'),		'SC'																								
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Nellie Harrison'),		'SC'																								
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Prepare BankIT 2.1'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Julie Drench'),		'PS'									
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Julie Drench'),			'PS'									
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Prepare BankIT 2.1'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Gemma Johnson'),		'PM'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Gemma Johnson'),		'PM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Prepare BankIT 2.1'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Jack Greengage'),		'SC'
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Jack Greengage'),		'SC'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Prepare BankIT 2.1'),
-								(SELECT ID FROM dbo.Staff WHERE FirstName + ' ' + Surname = 'Jamelia Jemal'),		'IC'										
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'Jamelia Jemal'),		'IC'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Prepare BankIT 2.1'),
+								(SELECT ID FROM dbo.Staff WHERE FullName = 'System Admin'),			'OT'																		
 
 		PRINT 'Populated project teams table'
 
@@ -1705,6 +1731,11 @@ BEGIN TRY
 
 		PRINT 'Created standard procedures for project teams table'
 
+		-- Create 'main project' for sys admin
+		UPDATE dbo.Staff
+		SET MainProject = (SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Upgrade and Rebuild')
+		WHERE ID = (SELECT ID FROM dbo.Staff WHERE FullName = 'System Admin')
+
 		-- Create a view dynamically so it can go in the same batch
 		EXEC ('CREATE VIEW dbo.vi_ProjectTeams AS	
 			SELECT e.EntityName, pj.ProjectName, ISNULL(c.ClientName, '''') AS ''ClientName'', 
@@ -1731,6 +1762,7 @@ BEGIN TRY
 				CONSTRAINT fk_StaffClientID FOREIGN KEY REFERENCES dbo.Clients (ID)
 			, FirstName					NVARCHAR(100)	NOT NULL
 			, Surname					NVARCHAR(100)	NOT NULL
+			, FullName AS FirstName + ' ' + Surname PERSISTED
 			, JobTitle					NVARCHAR(100)
 			, PhoneNumber				VARCHAR(50)
 			, Email						NVARCHAR(100)
@@ -1968,75 +2000,75 @@ BEGIN TRY
 				
 		INSERT INTO dbo.ClientTeams (
 							ProjectID,	
-								ClientStaffID,																				ClientTeamRoleCode)
+								ClientStaffID,																ClientTeamRoleCode)
 			SELECT			(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Implementation'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Gerry Stringer'),		'PS'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Gerry Stringer'),			'PS'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Implementation'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Helen Debonaires'),		'PM'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Helen Debonaires'),		'PM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Implementation'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Olivia Wilfred'),		'IL'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Olivia Wilfred'),			'IL'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Implementation'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Jerry Fillion'),			'AM'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Jerry Fillion'),			'AM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Implementation'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Brian Seachest'),		'AM'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Brian Seachest'),			'AM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Jerry Fillion'),			'PS'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Jerry Fillion'),			'PS'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Helen Debonaires'),		'PM'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Helen Debonaires'),		'PM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Olivia Wilfred'),		'IL'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Olivia Wilfred'),			'IL'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Brian Seachest'),		'AM'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Brian Seachest'),			'AM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Johnny Lemon'),			'PS'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Johnny Lemon'),			'PS'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Jordi Hamilton'),		'PM'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Jordi Hamilton'),			'PM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Pablo McCarthy'),		'IL'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Pablo McCarthy'),			'IL'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Roger Starkey'),			'AM'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Roger Starkey'),			'AM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.5 Upgrade'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Dorian Esteban'),		'PS'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Dorian Esteban'),			'PS'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.5 Upgrade'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Mick Kerslake'),			'PM'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Mick Kerslake'),			'PM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.5 Upgrade'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Kyle Minardi'),			'AM'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Kyle Minardi'),			'AM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.5 Upgrade'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Rich Anstey'),			'IL'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Rich Anstey'),			'IL'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Upgrade and Rebuild'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Vittoria Wood'),			'PS'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Vittoria Wood'),			'PS'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Upgrade and Rebuild'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Selena Gilliam'),		'PM'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Selena Gilliam'),			'PM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Upgrade and Rebuild'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Marina Nataliova'),		'IL'											
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Marina Nataliova'),		'IL'											
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Add Warehousing to Inventistry 3.4'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Stephanie Grant'),		'PS'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Stephanie Grant'),		'PS'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Add Warehousing to Inventistry 3.4'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Betty Jules Keane'),		'PM'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Betty Jules Keane'),		'PM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Add Warehousing to Inventistry 3.4'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Marina Nataliova'),		'IL'	
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Marina Nataliova'),		'IL'	
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Rebuild'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Erin Idol'),				'PS'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Erin Idol'),				'PS'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Rebuild'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Michel Parisienne'),		'PM'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Michel Parisienne'),		'PM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Rebuild'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Johann Kliese'),			'IL'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Johann Kliese'),			'IL'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Rebuild'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Gareth Charman'),		'IM'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Gareth Charman'),			'IM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Erin Idol'),				'PS'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Erin Idol'),				'PS'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Michel Parisienne'),		'PM'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Michel Parisienne'),		'PM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Johann Kliese'),			'IL'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Johann Kliese'),			'IL'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Gareth Charman'),		'IM'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Gareth Charman'),			'IM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.2 Implementation'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Mona Geiler'),			'PS'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Mona Geiler'),			'PS'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.2 Implementation'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Rosa Geiler'),			'PM'
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Rosa Geiler'),			'PM'
 			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.2 Implementation'),
-								(SELECT ID FROM dbo.ClientStaff WHERE FirstName + ' ' + Surname = 'Charles Brighton'),		'IL'																	
+								(SELECT ID FROM dbo.ClientStaff WHERE FullName = 'Charles Brighton'),		'IL'																	
 
 		PRINT 'Populated client teams table'
 

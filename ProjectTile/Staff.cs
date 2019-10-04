@@ -33,11 +33,14 @@ namespace ProjectTile
         public byte[] PasswordHash { get; set; }
         public bool Active { get; set; }
         public Nullable<int> DefaultEntity { get; set; }
+        public string FullName { get; set; }
+        public Nullable<int> MainProject { get; set; }
     
         public virtual ICollection<Clients> Clients { get; set; }
         public virtual Entities Entities { get; set; }
         public virtual ICollection<ProjectTeams> ProjectTeams { get; set; }
         public virtual ICollection<StaffEntities> StaffEntities { get; set; }
         public virtual StaffRoles StaffRoles { get; set; }
+        public virtual Projects Projects { get; set; }
     }
 }
