@@ -37,7 +37,7 @@ namespace ProjectTile
             {
                 subscribeToDelegates();
                 PageFunctions.ShowLoginPage(PageFunctions.LogIn);
-                MessageFunctions.SuccessMessage("Please enter your login credentials.", "Welcome to ProjectTile");
+                MessageFunctions.InfoMessage("Please enter your login credentials.", "Welcome to ProjectTile");
             }
             catch (Exception generalException) { MessageFunctions.Error("Error loading page", generalException); }
         }
@@ -361,14 +361,15 @@ namespace ProjectTile
             PageFunctions.ShowProjectTeamsPage(pageMode: "", selectedStaffID: Globals.MyStaffID);
         }
 
-        public void DisplayMessage(string message, string caption, int seconds)
+        public void DisplayMessage(string message, string caption, int seconds, bool success)
         {
             if (cancelMessageTokenSource != null) { cancelMessageTokenSource.Cancel(); } // Stop any existing 'wait' that will result in the new message being cleared early
+            HideMessage();
             
             cancelMessageTokenSource = new CancellationTokenSource();
             CancellationToken cancelMessageToken = cancelMessageTokenSource.Token;
             
-            Action act1 = new Action(() => { ShowMessage(message, caption); });
+            Action act1 = new Action(() => { ShowMessage(message, caption, success); });
             Action act3 = new Action(() => { EndMessage(cancelMessageToken); });
 
             Task task1 = Task.Factory.StartNew(() => { this.Dispatcher.BeginInvoke(act1, DispatcherPriority.Send); });
@@ -376,11 +377,14 @@ namespace ProjectTile
             Task task3 = task2.ContinueWith((antecedent) => this.Dispatcher.BeginInvoke(act3, DispatcherPriority.Background), TaskContinuationOptions.OnlyOnRanToCompletion);
         }
 
-        private void ShowMessage(string message, string caption)
+        private void ShowMessage(string message, string caption, bool success)
         {
+            if (success) { SuccessImage.Visibility = Visibility.Visible; }
+            else { InfoImage.Visibility = Visibility.Visible; }            
             CaptionBlock.Text = caption;
             ContentBlock.Text = message;
-            InfoIcon.Visibility = CaptionBlock.Visibility = ContentBlock.Visibility = Visibility.Visible;
+            CaptionBlock.Visibility = ContentBlock.Visibility = Visibility.Visible;
+
         }
 
         private void Wait(int seconds)
@@ -395,7 +399,8 @@ namespace ProjectTile
 
         public void HideMessage()
         {
-            InfoIcon.Visibility = CaptionBlock.Visibility = ContentBlock.Visibility = Visibility.Hidden;
+            CaptionBlock.Visibility = ContentBlock.Visibility = Visibility.Hidden;
+            InfoImage.Visibility = SuccessImage.Visibility = Visibility.Collapsed;
             CaptionBlock.Text = ContentBlock.Text = ""; 
         }
 

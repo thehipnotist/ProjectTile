@@ -28,7 +28,7 @@ namespace ProjectTile
         public static MainBooleanDelegate ToggleSideButtons;
         public static MainBooleanDelegate ToggleFavouriteButton;
 
-        public delegate void MainMessageDelegate(string message, string caption, int seconds);
+        public delegate void MainMessageDelegate(string message, string caption, int seconds, bool success);
         public static MainMessageDelegate DisplayMessage;
 
         // Create variables for each page mode, to avoid any accidental mis-typing etc.

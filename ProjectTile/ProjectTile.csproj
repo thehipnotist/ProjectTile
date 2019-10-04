@@ -524,6 +524,15 @@
   <ItemGroup>
     <Resource Include="base_map.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="109_AllAnnotations_Default_48x48_72.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="StatusAnnotations_Information_32xMD.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="StatusAnnotations_Information_32xLG.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

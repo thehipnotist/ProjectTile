@@ -86,7 +86,7 @@ namespace ProjectTile
                    + newLine + "The front end is written in Visual C# with WPF forms. The back end is a scripted SQL Server database."
                     + newLine + "All of the code will be made available on GitHub soon.";
 
-                SystemText = "ProjectTile is designed as a system for managing small software implementation or improvement projects, most of which would be on behalf of clients (software customers)."
+                SystemText = "ProjectTile is designed to simulate an in-house system for managing small software implementation or improvement projects, most of which would be on behalf of clients (software customers)."
                    + newLine + "It allows multiple Entities to be set up to represent different parts of the business - mainly to allow some 'dummy' data to be created in a Sample company"
                    + " - although Products are currently 'global' to all Entities."
                    + newLine + "Staff can be assigned to multiple Entities. Clients are per Entity, although it is possible to copy them (and their contacts, but not products) to another Entity.";
