@@ -209,11 +209,18 @@ namespace ProjectTile
             double frameTargetWidth = Main.ActualWidth - 16;
             double frameTargetHeight = Main.ActualHeight - 69;
             double borderTargetHeight = Main.ActualHeight - 69;
+            double roundTargetHeight = Main.ActualHeight - 149;
+            double roundTargetWidth = Main.ActualWidth - 161;
 
-            MainFrame.Width = Math.Max(frameTargetWidth, MainFrame.MinWidth);
-            MainFrame.Height = Math.Max(frameTargetHeight, MainFrame.MinHeight);
-            FullBorder.Height = Math.Max(borderTargetHeight, FullBorder.MinHeight);
-            FullBorder.Width = Math.Max(frameTargetWidth, FullBorder.MinWidth);
+            MainFrame.Width = frameTargetWidth;
+            MainFrame.Height = frameTargetHeight;
+            FullBorder.Height = borderTargetHeight;
+            FullBorder.Width = frameTargetWidth;
+            RoundOffBorder.Height = roundTargetHeight;
+            RoundOffBorder.Width = roundTargetWidth;
+
+            //MessageBox.Show(Main.ActualWidth.ToString() + ", " + Main.ActualHeight.ToString());
+
         }
 
         private void ChangeEntity_Click(object sender, RoutedEventArgs e)

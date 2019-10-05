@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:ProjectTile"
       mc:Ignorable="d" 
-      d:DesignHeight="535" d:DesignWidth="830"
+      d:DesignHeight="590" d:DesignWidth="830"
 	Title="ProjectDetailsPage" Loaded="Page_Loaded">
 
     <Grid>
@@ -19,6 +19,7 @@
                 <RowDefinition Height="45" MinHeight="45" MaxHeight="45"/>
                 <RowDefinition x:Name="MiddleRow" Height="400*" MinHeight="400"/>
                 <RowDefinition Height="90" MinHeight="90" MaxHeight="90"/>
+                <RowDefinition Height="50" MinHeight="50" MaxHeight="50"/>
             </Grid.RowDefinitions>
 
             <Image x:Name="HeaderImage" Source="{DynamicResource ProjectIcon}" Grid.Row="0" Grid.Column="1" Margin="0,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>

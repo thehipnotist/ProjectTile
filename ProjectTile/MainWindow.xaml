@@ -10,8 +10,12 @@
             <ColumnDefinition Width="145"/>
         </Grid.ColumnDefinitions>
 
-        <Border x:Name="LeftBorder" BorderThickness="3" Margin="5,5,5,5" BorderBrush="{StaticResource PtBrushHeaderBlue}" Background="{StaticResource PtBrushHeaderBlue}"
-               Grid.ColumnSpan="2" Width="4" MinHeight="589" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="{Binding ElementName=FullBorder, Path=ActualHeight}"/>
+
+        <Border x:Name="RoundOffBorder" BorderThickness="5" BorderBrush="{StaticResource PtBrushHeaderBlue}" HorizontalAlignment="Left" VerticalAlignment="Top" 
+                Margin="6,60,0,0" CornerRadius="10" MinHeight="200" MinWidth="200"/>        
+        
+        <Border x:Name="LeftBorder" BorderThickness="5" Margin="5,5,5,5" BorderBrush="{StaticResource PtBrushHeaderBlue}" Background="{StaticResource PtBrushHeaderBlue}"
+               Grid.ColumnSpan="2" Width="5" MinHeight="589" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="{Binding ElementName=FullBorder, Path=ActualHeight}"/>
 
         <TextBlock x:Name="Banner" Background="{StaticResource PtGradientMenu}" HorizontalAlignment="Left" Height="30" Margin="0,0,0,0" VerticalAlignment="Top" MinWidth="710" TextAlignment="Center" 
                    Padding="5" Foreground="White" FontStretch="UltraExpanded" FontSize="14" MinHeight="30" Width="{Binding ElementName=Main, Path=ActualWidth}" 
@@ -76,9 +80,9 @@
                       Padding="6,0,6,0" HorizontalContentAlignment="Center" Background="{StaticResource PtBrushBackgroundBlue}" Foreground="{StaticResource PtBrushExit3}" HorizontalAlignment="Left" Click="ExitMenu_Click"/>
         </Menu>
 
-        <TextBlock x:Name="DetailsBlock" HorizontalAlignment="Right" Height="{Binding ActualHeight, ElementName=Main}" Margin="0,65,4,-96" TextWrapping="Wrap" VerticalAlignment="Top" Width="145" 
-                   Background="{StaticResource PtBrushHeaderBlue}" TextAlignment="Right" Padding="8,5,8,5" Foreground="White" MinWidth="145" MinHeight="500" 
-                   MaxWidth="145" Focusable="True" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
+        <TextBlock x:Name="DetailsBlock" HorizontalAlignment="Right" Height="{Binding ActualHeight, ElementName=Main}" Margin="0,65,4,-10" TextWrapping="Wrap" VerticalAlignment="Top" Width="145" 
+                   Background="{StaticResource PtBrushHeaderBlue}" TextAlignment="Right" Padding="10,5,8,5" Foreground="White" MinWidth="145" MinHeight="500" 
+                   MaxWidth="145" Focusable="True" Grid.Column="2" Grid.RowSpan="2"/>
 
         <Button x:Name="FavouriteButton" HorizontalAlignment="Center" Height="30" Margin="18,0,17,75" VerticalAlignment="Bottom" Width="110" 
             FontWeight="Bold" IsEnabled="True" Click="FavouriteButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{StaticResource PtBrushProject3}"
@@ -95,10 +99,10 @@
                 <Image x:Name="ProjectImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource ProjectIcon}"/>
                 <TextBlock x:Name="ProjectButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="My Projects" Margin="5,0,0,0" VerticalAlignment="Center"/>
             </StackPanel>
-        </Button>        
-       
-        <Border x:Name="FullBorder" BorderThickness="5" BorderBrush="{StaticResource PtBrushFrameBlue}"
-               Grid.ColumnSpan="2" Width="Auto" MinHeight="580" MinWidth="840" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+        </Button>
+
+        <Border x:Name="FullBorder" BorderThickness="5" BorderBrush="{StaticResource PtBrushFrameBlue}" Grid.ColumnSpan="2" Width="Auto" MinHeight="580" MinWidth="840" HorizontalAlignment="Left" 
+                VerticalAlignment="Bottom">
             
             <DockPanel Height="50" VerticalAlignment="Bottom" MinWidth="820" HorizontalAlignment="Left" Background="{StaticResource PtBrushHeaderBlue}"
                   Width="{Binding ElementName=MainFrame, Path=ActualWidth}" FlowDirection="LeftToRight">
@@ -111,9 +115,10 @@
                            Width="Auto" Foreground="White" Text="Set at Runtime Set at Runtime Set at Runtime Set at Runtime Set at Runtime Set at Runtime Set at Runtime Set at Runtime"/>
             </DockPanel>
         </Border>
-
-        <Frame x:Name="MainFrame" Content="Frame" Margin="2,30,0,0" NavigationUIVisibility="Hidden" BorderThickness="5" BorderBrush="{x:Null}" 
-               Grid.ColumnSpan="2" MinWidth="838" MinHeight="580" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-
+        
+        <Frame x:Name="MainFrame" Content="Frame" Margin="5,30,0,0" NavigationUIVisibility="Hidden" BorderThickness="5" Grid.ColumnSpan="2" MinWidth="838" MinHeight="580" HorizontalAlignment="Left" 
+               VerticalAlignment="Top"/>
+       
+        
     </Grid>
 </Window>

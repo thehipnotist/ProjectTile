@@ -4,7 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d" 
-      d:DesignHeight="535" d:DesignWidth="830" 
+      d:DesignHeight="590" d:DesignWidth="830" 
 	  Title="Login" Loaded="Page_Loaded">
     
     <Grid>
@@ -17,6 +17,7 @@
             <RowDefinition Height="45" MinHeight="45" MaxHeight="45"/>
             <RowDefinition x:Name="MiddleRow" Height="400*" MinHeight="400"/>
             <RowDefinition Height="90" MinHeight="90" MaxHeight="90"/>
+            <RowDefinition Height="50" MinHeight="50" MaxHeight="50"/>            
         </Grid.RowDefinitions>
 
         <Image x:Name="HeaderImage" Source="{DynamicResource LoginIcon}" Grid.Row="0" Grid.Column="1" Margin="0,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
@@ -111,9 +112,9 @@
         </Rectangle>
         -->
         
-        <Label x:Name="PleaseWaitLabel" MinHeight="535" Margin="0" MinWidth="685" Background="{StaticResource PtBrushBackgroundBlue}" 
-               Content="Attempting login - please wait..." FontSize="16" Foreground="Black" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Visibility="Hidden"
-               Cursor="Wait" Grid.ColumnSpan="3" Grid.RowSpan="3" Opacity="0.9"/>        
+        <Label x:Name="PleaseWaitLabel" Background="{StaticResource PtBrushBackgroundBlue}"  Content="Attempting login - please wait..." FontSize="16" Foreground="Black" 
+               HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Visibility="Hidden" Cursor="Wait" Grid.ColumnSpan="3" Grid.RowSpan="3" Opacity="0.9"
+               Margin="-5,0,5,0"/>        
 
     </Grid>
 </Page>
