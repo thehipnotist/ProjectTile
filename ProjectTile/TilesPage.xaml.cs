@@ -117,8 +117,9 @@ namespace ProjectTile
                 else { ProjectButton_Amend.Margin = ProjectButton_New.Margin; }
                 if (myPermissions.Allow("EditProjects")) { projectButtons.Add(ProjectButton_Amend); }
                 if (myPermissions.Allow("ViewProjectTeams")) { projectButtons.Add(ProjectButton_Staff); }
-                if (myPermissions.Allow("ViewClientTeams")) { projectButtons.Add(ProjectButton_Contact); }
                 if (myPermissions.Allow("ViewProjectProducts")) { projectButtons.Add(ProjectButton_Product); }
+                else { ProjectButton_Contact.Margin = ProjectButton_Product.Margin; }
+                if (myPermissions.Allow("ViewClientTeams")) { projectButtons.Add(ProjectButton_Contact); }
 
                 // More to come...
 

@@ -207,7 +207,7 @@ namespace ProjectTile
         private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             double frameTargetWidth = Main.ActualWidth - 16;
-            double frameTargetHeight = Main.ActualHeight - 119;
+            double frameTargetHeight = Main.ActualHeight - 69;
             double borderTargetHeight = Main.ActualHeight - 69;
 
             MainFrame.Width = Math.Max(frameTargetWidth, MainFrame.MinWidth);
