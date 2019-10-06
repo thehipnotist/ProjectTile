@@ -41,7 +41,7 @@
                     <CheckBox x:Name="ActiveOnly_CheckBox" Content="Active Only" HorizontalAlignment="Center" Height="30" Margin="250,44,250,0" VerticalAlignment="Top" Width="100" FontWeight="Bold" 
                               VerticalContentAlignment="Center" Padding="5" Checked="ActiveOnly_CheckBox_Checked" Unchecked="ActiveOnly_CheckBox_Unchecked"/>
                     <Label x:Name="MainManagersLabel" Content="Account Manager" HorizontalAlignment="Right" Height="30" Margin="0,45,155,0" VerticalAlignment="Top" Width="115" FontWeight="Bold"/>
-                    <ComboBox x:Name="MainManagersCombo" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="135" 
+                    <ComboBox x:Name="MainManagersCombo" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="135" Style="{DynamicResource PaddedCombo}"
                               SelectionChanged="MainManagersCombo_SelectionChanged"/>
 
                     <DataGrid x:Name="ClientDataGrid" MinHeight="295" Margin="15,90,0,0" Width="500" MinWidth="400" AutoGenerateColumns="False" IsReadOnly="True" 
@@ -125,13 +125,13 @@
                     <CheckBox x:Name="Active_CheckBox" HorizontalAlignment="Right" Height="30" Margin="0,120,30,0" VerticalAlignment="Top" Width="180" FontWeight="Bold" 
                 	    VerticalContentAlignment="Center" UseLayoutRounding="False"/>                    
                     <Label x:Name="EditManagersLabel" Content="Account Manager" HorizontalAlignment="Left" Height="30" Margin="15,165,0,0" VerticalAlignment="Top" Width="115" FontWeight="Bold"/>
-                    <ComboBox x:Name="EditManagersCombo" HorizontalAlignment="Left" Height="30" Margin="130,165,0,0" VerticalAlignment="Top" Width="160"/>
+                    <ComboBox x:Name="EditManagersCombo" HorizontalAlignment="Left" Height="30" Margin="130,165,0,0" VerticalAlignment="Top" Width="160" Style="{DynamicResource PaddedCombo}"/>
                     <CheckBox x:Name="NonAMs_CheckBox" HorizontalAlignment="Left" Height="30" Margin="305,165,0,0" VerticalAlignment="Top" Width="250" FontWeight="Bold" 
                 	    VerticalContentAlignment="Center" UseLayoutRounding="False" Content="Include Non-Account Managers?" Checked="NonAMs_CheckBox_Checked" Unchecked="NonAMs_CheckBox_Unchecked"/>
 
                     <Label x:Name="EntityLabel" Content="Entity" HorizontalAlignment="Left" Height="30" Margin="15,210,0,0" VerticalAlignment="Top" Width="110" FontWeight="Bold"/>
                     <ComboBox x:Name="EntityCombo" HorizontalAlignment="Left" Height="30" Margin="130,210,0,0" VerticalAlignment="Top" Width="160" DisplayMemberPath="EntityName" 
-                              SelectionChanged="EntityList_SelectionChanged" ToolTip="Include all available staff, not just the Account Managers"/>
+                              SelectionChanged="EntityList_SelectionChanged" ToolTip="Include all available staff, not just the Account Managers" Style="{DynamicResource PaddedCombo}"/>
                     <CheckBox x:Name="CopyContacts_CheckBox" HorizontalAlignment="Left" Height="30" Margin="305,210,0,0" VerticalAlignment="Top" Width="250" FontWeight="Bold" 
                 	    VerticalContentAlignment="Center" UseLayoutRounding="False" Content="Copy Active Client Contacts?" ToolTip="Copy all active contacts for this client to the new record"/>
 

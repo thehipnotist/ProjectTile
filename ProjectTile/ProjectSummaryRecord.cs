@@ -70,17 +70,17 @@ namespace ProjectTile
     
         public bool IsCancelled
         {
-            get { return stage.StageCode == CancelledStage; }
+            get { return (stage == null)? false : (stage.StageCode == CancelledStage); }
         }
 
         public bool IsOld
         {
-            get { return stage.ProjectStatus == ClosedStatus; }
+            get { return (stage == null)? false : (stage.ProjectStatus == ClosedStatus); }
         }
     
         public bool IsInternal
         {
-            get { return type.TypeCode == InternalProjectCode; }
+            get { return (type == null)? false : (type.TypeCode == InternalProjectCode); }
         }
 
         public bool IsNew
@@ -90,7 +90,7 @@ namespace ProjectTile
 
         public int StageID
         {
-            get { return stage.StageCode; }
+            get { return (stage == null)? 0 : stage.StageCode; }
         }
 
         public string CodeName

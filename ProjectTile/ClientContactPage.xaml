@@ -67,7 +67,7 @@
                     <CheckBox x:Name="ActiveContact_CheckBox" Content="Active Only" HorizontalAlignment="Center" Height="30" Margin="80,44,0,0" VerticalAlignment="Top" Width="100" FontWeight="Bold" 
                               VerticalContentAlignment="Center" Padding="5" Checked="ActiveContact_CheckBox_Checked" Unchecked="ActiveContact_CheckBox_Unchecked"/>
                     <Label x:Name="ClientsComboLabel" Content="Client" HorizontalAlignment="Right" Height="30" Margin="0,45,175,0" VerticalAlignment="Top" Width="45" FontWeight="Bold"/>
-                    <ComboBox x:Name="ClientCombo" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="155" 
+                    <ComboBox x:Name="ClientCombo" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="155"  Style="{DynamicResource PaddedCombo}"
                               SelectionChanged="ClientCombo_SelectionChanged" DisplayMemberPath="ClientName"/>
                         
                     <DataGrid x:Name="ContactDataGrid" MinHeight="295" Margin="15,90,0,0" Width="500" MinWidth="625" AutoGenerateColumns="False" IsReadOnly="True" 

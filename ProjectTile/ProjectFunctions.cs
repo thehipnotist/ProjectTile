@@ -1031,9 +1031,9 @@ namespace ProjectTile
                 List<Projects> otherClientProjects = null;
                 List<ProjectProducts> linkedProjectProducts = null;
                 List<ClientProducts> liveClientProducts = null;
-                string type = (summary.Type != null) ? summary.Type.TypeCode : "";
+                string type = (summary.Type == null) ? "" : summary.Type.TypeCode;
                 int stage = (summary.Stage != null) ? summary.StageID : -1;
-                bool isUnderway = (summary.Stage != null && stage > StartStage && !summary.IsCancelled);
+                bool isUnderway = (stage > StartStage && !summary.IsCancelled);
                 Projects existingProjectRecord = null;
                 ClientSummaryRecord client = summary.Client ?? null;
                 List<string> currentInternalRoles = null;

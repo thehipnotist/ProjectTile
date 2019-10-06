@@ -12,7 +12,7 @@
 
 
         <Border x:Name="RoundOffBorder" BorderThickness="5" BorderBrush="{StaticResource PtBrushHeaderBlue}" HorizontalAlignment="Left" VerticalAlignment="Top" 
-                Margin="6,60,0,0" CornerRadius="10" MinHeight="200" MinWidth="200"/>        
+                Margin="6,60,0,0" CornerRadius="8" MinHeight="200" MinWidth="200"/>        
         
         <Border x:Name="LeftBorder" BorderThickness="5" Margin="5,5,5,5" BorderBrush="{StaticResource PtBrushHeaderBlue}" Background="{StaticResource PtBrushHeaderBlue}"
                Grid.ColumnSpan="2" Width="5" MinHeight="589" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="{Binding ElementName=FullBorder, Path=ActualHeight}"/>

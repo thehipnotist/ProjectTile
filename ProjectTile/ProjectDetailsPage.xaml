@@ -40,7 +40,7 @@
                     <TextBox x:Name="ProjectCode" HorizontalAlignment="Left" Height="30" Margin="115,75,0,0" VerticalAlignment="Top" Width="145" MaxLength="40" 
                              ToolTip="This is set automatically" Style="{DynamicResource PaddedTextBox}" IsEnabled="false" Text="{Binding Path=ProjectCode, Mode=TwoWay}"/>
                     <Label x:Name="ClientNameLabel" Content="Client" HorizontalAlignment="Right" Height="30" Margin="0,75,320,0" VerticalAlignment="Top" Width="50" FontWeight="Bold"/>
-                    <ComboBox x:Name="ClientCombo" HorizontalAlignment="Right" Height="30" Margin="15,75,140,0" VerticalAlignment="Top" Width="180" 
+                    <ComboBox x:Name="ClientCombo" HorizontalAlignment="Right" Height="30" Margin="15,75,140,0" VerticalAlignment="Top" Width="180" Style="{DynamicResource PaddedCombo}"
                               DisplayMemberPath="ClientName" SelectedItem="{Binding Path=Client, Mode=TwoWay}" SelectionChanged="ClientCombo_SelectionChanged"/>
                     <Button x:Name="SearchButton" HorizontalAlignment="Right" Height="30" Margin="15,75,15,0" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
                             FontWeight="Bold" Click="SearchButton_Click" ToolTip="Return to staff list without saving" BorderBrush="{DynamicResource PtBrushClient3}">
@@ -56,7 +56,7 @@
 
                     <Label x:Name="ProjectTypeLabel" Content="Project Type" HorizontalAlignment="Left" Height="30" Margin="15,165,0,0" VerticalAlignment="Top" Width="100" FontWeight="Bold"/>
                     <ComboBox x:Name="TypeCombo" HorizontalAlignment="Left" Height="30" Margin="115,165,0,0" VerticalAlignment="Top" Width="145" SelectionChanged="TypeCombo_SelectionChanged"
-                              SelectedItem="{Binding Path=Type, Mode=TwoWay}" DisplayMemberPath="TypeName"/>
+                              SelectedItem="{Binding Path=Type, Mode=TwoWay}" DisplayMemberPath="TypeName" Style="{DynamicResource PaddedCombo}"/>
                     <TextBlock x:Name="TypeDescription" HorizontalAlignment="Right" Height="30" Margin="15,165,15,0" TextWrapping="Wrap"
                                Text="{Binding Path=Type.TypeDescription, Mode=OneWay, BindsDirectlyToSource=True, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" 
                                VerticalAlignment="Top"  Width="370" Padding="5"/>
@@ -76,7 +76,7 @@
                     </DatePicker>
 
                     <Label x:Name="ManagerLabel" Content="Project Manager" HorizontalAlignment="Right" Height="30" Margin="0,210,260,0" VerticalAlignment="Top" Width="110" FontWeight="Bold"/>
-                    <ComboBox x:Name="ManagerCombo" HorizontalAlignment="Right" Height="30" Margin="0,210,80,0" VerticalAlignment="Top" Width="175"
+                    <ComboBox x:Name="ManagerCombo" HorizontalAlignment="Right" Height="30" Margin="0,210,80,0" VerticalAlignment="Top" Width="175" Style="{DynamicResource PaddedCombo}"
                               DisplayMemberPath="StaffName" SelectedItem="{Binding Path=ProjectManager, Mode=TwoWay}" SelectionChanged="ManagerCombo_SelectionChanged"/>
                     <CheckBox x:Name="NonPMs_CheckBox" HorizontalAlignment="Right" Height="30" Margin="305,210,15,0" VerticalAlignment="Top" Width="50" FontWeight="Bold" 
                 	            VerticalContentAlignment="Center" UseLayoutRounding="False" Content="Any" Checked="NonPMs_CheckBox_Checked" Unchecked="NonPMs_CheckBox_Unchecked"
@@ -84,7 +84,7 @@
 
                     <Label x:Name="StageLabel" Content="Project Stage" HorizontalAlignment="Left" Height="30" Margin="15,255,0,0" VerticalAlignment="Top" Width="95" FontWeight="Bold"/>
                     <ComboBox x:Name="StageCombo" HorizontalAlignment="Left" Height="30" Margin="115,255,0,0" VerticalAlignment="Top" Width="145" SelectedItem="{Binding Path=Stage, Mode=TwoWay}" 
-                              DisplayMemberPath="StageName" SelectionChanged="StageCombo_SelectionChanged"/>
+                              DisplayMemberPath="StageName" SelectionChanged="StageCombo_SelectionChanged" Style="{DynamicResource PaddedCombo}"/>
                     <TextBlock x:Name="StageDescription" HorizontalAlignment="Right" Height="30" Margin="15,255,15,0" TextWrapping="Wrap" VerticalAlignment="Top" 
                                Width="370" Padding="5" Text="{Binding Path=Stage.StageDescription, Mode=OneWay}"/>
                     <Button x:Name="NextButton" HorizontalAlignment="Right" Height="30" Margin="15,255,15,0" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
