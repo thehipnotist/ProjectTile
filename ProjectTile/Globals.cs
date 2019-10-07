@@ -70,6 +70,7 @@ namespace ProjectTile
         public const int CompletedStage = 15; // First stage of 'Closed'
         public const int CancelledStage = 99;
         public const string InProgressStatus = "In Progress";
+        public const string LiveStatus = "Live";
         public const string ClosedStatus = "Closed";
 
         // Default records

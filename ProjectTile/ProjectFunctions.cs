@@ -40,6 +40,18 @@ namespace ProjectTile
         public static List<ClientSummaryRecord> ClientFilterList;
         public static List<ClientSummaryRecord> ClientOptionsList;
 
+        public static List<Projects> ProjectsNotForProduct;
+        public static List<ProjectProductSummary> ProjectsForProduct;
+        public static List<int> ProjectIDsToAdd = new List<int>();
+        public static List<int> ProjectIDsToRemove = new List<int>();
+        public static List<int> ProjectIDsToUpdate = new List<int>();
+
+        public static List<ClientProductSummary> ProductsNotForProject;
+        public static List<ProjectProductSummary> ProductsForProject;
+        public static List<int> ProductIDsToAdd = new List<int>();
+        public static List<int> ProductIDsToRemove = new List<int>();
+        public static List<int> ProductIDsToUpdate = new List<int>();
+
         // ---------------------------------------------------------- //
         // -------------------- Page Management --------------------- //
         // ---------------------------------------------------------- //
@@ -991,6 +1003,202 @@ namespace ProjectTile
             }	
         }
 
+        // Products
+        public static List<ProjectSummaryRecord> ProjectGridListByProduct(bool activeOnly, string nameContains, int productID, int entityID) 
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    List<int> projectIDList =
+                        (from pj in existingPtDb.Projects
+                                join ps in existingPtDb.ProjectStages on pj.StageCode equals ps.StageCode    
+                                join pp in existingPtDb.ProjectProducts on pj.ID equals pp.ProjectID
+                                join pd in existingPtDb.Products on pp.ProductID equals pd.ID
+                            where (pj.EntityID == entityID 
+                                && (!activeOnly || ps.ProjectStatus == InProgressStatus || ps.ProjectStatus == LiveStatus )
+                                && (nameContains == "" || pj.ProjectName.Contains(nameContains))
+                                && (productID == 0 || pd.ID == productID))
+                            orderby (new { ps.StageCode, pj.StartDate })
+                            select pj.ID).ToList();
+
+                    SetFullProjectList();
+                    return FullProjectList.Where(fpl => projectIDList.Contains(fpl.ProjectID)).ToList();
+				}
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving list of projects by product", generalException);
+                return null;
+            }		
+        }
+
+        public static List<ProjectProductSummary> ProjectsWithProduct(bool activeOnly, int productID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    List<ProjectProductSummary> projectProducts =
+                        (from pd in existingPtDb.Products
+                         join pp in existingPtDb.ProjectProducts on pd.ID equals pp.ProductID
+                         join pj in existingPtDb.Projects on pp.ProjectID equals pj.ID
+                         join ps in existingPtDb.ProjectStages on pj.StageCode equals ps.StageCode
+                         where (productID == 0 || (productID > 0 && pd.ID == productID)) 
+                            && (!activeOnly || ps.ProjectStatus == InProgressStatus || ps.ProjectStatus == LiveStatus) 
+                            && pj.EntityID == CurrentEntityID
+                         orderby pj.ProjectName
+                         select new ProjectProductSummary
+                         {
+                            ID = pp.ID,
+                            Project = pj,
+                            Product = pd,
+                            OldVersion = (pp.OldVersion == null)? 0 : (decimal) pp.OldVersion,
+                            NewVersion = pp.NewVersion
+                         }
+                        ).ToList();
+
+                    return projectProducts;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error listing projects with product ID " + productID.ToString(), generalException);
+                return null;
+            }
+        }
+
+        public static List<Projects> ProjectsWithoutProduct(bool activeOnly, int productID)
+        {
+            try
+            {
+                List<int> projectIDsWithProduct = ProjectsWithProduct(false, productID).Select(pwp => (int)pwp.ProjectID).ToList();
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return (from pj in existingPtDb.Projects
+                            join ps in existingPtDb.ProjectStages on pj.StageCode equals ps.StageCode
+                            where (!activeOnly || ps.ProjectStatus == InProgressStatus || ps.ProjectStatus == LiveStatus) 
+                                && !projectIDsWithProduct.Contains(pj.ID) && pj.EntityID == CurrentEntityID
+                            orderby pj.ProjectCode
+                            select pj).ToList();
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error listing projects without product ID " + productID.ToString(), generalException);
+                return null;
+            }
+        }
+
+        public static List<ProjectProductSummary> LinkedProducts(int projectID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    List<ProjectProductSummary> projectProducts =
+                        (from pd in existingPtDb.Products
+                         join pp in existingPtDb.ProjectProducts on pd.ID equals pp.ProductID
+                         join pj in existingPtDb.Projects on pp.ProjectID equals pj.ID
+                         where pj.ID == projectID
+                         orderby pd.ProductName
+                         select new ProjectProductSummary
+                         {
+                            ID = pp.ID,
+                            Project = pj,
+                            Product = pd,
+                            OldVersion = (pp.OldVersion == null)? 0 : (decimal) pp.OldVersion,
+                            NewVersion = pp.NewVersion
+                         }
+                        ).ToList();
+
+                    return projectProducts;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error listing products for project ID " + projectID.ToString(), generalException);
+                return null;
+            }
+        }
+
+        public static ClientProductSummary DummyClientProduct(Products thisProduct) // For internal projects, where there is no client
+        {
+            return new ClientProductSummary
+            {
+                ID = 0,
+                ClientID = 0,
+                ClientName = "",
+                ClientEntityID = CurrentEntityID,
+                ActiveClient = true,
+                ProductID = thisProduct.ID,
+                ProductName = thisProduct.ProductName,
+                LatestVersion = Math.Floor((decimal)thisProduct.LatestVersion * 10) / 10,
+                Live = true,
+                StatusID = ClientProductStatus.Live,
+                ClientVersion = Math.Floor((decimal)thisProduct.LatestVersion * 10) / 10
+            };
+        }
+        
+        public static List<ClientProductSummary> UnlinkedProducts(int projectID)
+        {
+            try
+            {
+                List<int> productIDsForProject = LinkedProducts(projectID).Select(lp => (int)lp.ProductID).ToList();
+
+                int clientID = GetProjectClientSummary(projectID).ID;
+
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    if (clientID > 0)
+                    {
+                        return (from pd in existingPtDb.Products
+                                join cp in existingPtDb.ClientProducts on pd.ID equals cp.ProductID
+                                join c in existingPtDb.Clients on cp.ClientID equals c.ID
+                                where !productIDsForProject.Contains(pd.ID) && c.ID == clientID
+                                orderby pd.ProductName
+                                select new ClientProductSummary
+                                {
+                                    ID = cp.ID,
+                                    ClientID = c.ID,
+                                    ClientName = c.ClientName,
+                                    ClientEntityID = c.EntityID,
+                                    ActiveClient = c.Active,
+                                    ProductID = pd.ID,
+                                    ProductName = pd.ProductName,
+                                    LatestVersion = Math.Floor((decimal)pd.LatestVersion * 10) / 10,
+                                    Live = (bool)cp.Live,
+                                    StatusID = (cp.Live == true) ? ClientProductStatus.Live : ClientProductStatus.New,
+                                    ClientVersion = Math.Floor((decimal)cp.ProductVersion * 10) / 10
+                                }
+                                ).ToList();                        
+                    }
+                    else
+                    {
+                        List<Products> unlinkedProducts = 
+                                (from pd in existingPtDb.Products
+                                where !productIDsForProject.Contains(pd.ID)
+                                orderby pd.ProductName
+                                select pd
+                                ).ToList();
+                        
+                        List<ClientProductSummary> dummyRecords = unlinkedProducts.Select(pd => DummyClientProduct(pd)).ToList();
+                        return dummyRecords;
+                    }
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error listing products not linked to project ID " + projectID.ToString(), generalException);
+                return null;
+            }
+        }
+
         // -------------- Data updates -------------- // 
 
         public static bool IsGoLive(int originalStage, int newStage)
@@ -1518,6 +1726,256 @@ namespace ProjectTile
             {
                 MessageFunctions.Error("Error creating new project team member", generalException);
                 return 0;
+            }
+        }
+
+        // Project Products (updates)
+        public static decimal GetCurrentVersion(Projects thisProject, Products thisProduct)
+        {
+            try
+            {                               
+                if (thisProject.ClientID == null || thisProject.ClientID <= 0)
+                {
+                    return Math.Floor((thisProduct.LatestVersion ?? 0) * 10) / 10;
+                }
+                else
+                {                                       
+                    ClientProducts thisRecord = ClientFunctions.GetClientProduct((int)thisProject.ClientID, thisProduct.ID);
+                    return thisRecord.ProductVersion ?? 0;
+                }
+            }
+            catch (Exception generalException) 
+            { 
+                MessageFunctions.Error("Error calculating current version", generalException);
+                return 0;           
+            }
+        }
+
+        public static decimal SuggestNewVersion(Projects thisProject, Products thisProduct)
+        {
+            try
+            {
+                if (thisProject.TypeCode.StartsWith("U")) { return Math.Floor((thisProduct.LatestVersion ?? 0) * 10) / 10; }
+                else { return GetCurrentVersion(thisProject, thisProduct); }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error calculating new version", generalException);
+                return 0;
+            }
+        }
+
+        public static bool ToggleProductProjects(List<Projects> affectedProjects, bool addition, Products thisProduct)
+        {
+            try
+            {
+                int productID = thisProduct.ID;
+                string productName = thisProduct.ProductName;
+
+                foreach (Projects thisRecord in affectedProjects)
+                {
+                    int projectID = thisRecord.ID;
+                    Projects thisProject = GetProject(projectID);
+                    //bool canChange = addition ? true : CanRemoveProjectProduct(ref thisProject, productID);
+
+                    //if (!canChange) { return false; }
+                    if (addition)
+                    {
+                        try
+                        {
+                            ProjectProductSummary addRecord = new ProjectProductSummary
+                            {
+                                Project = thisProject,
+                                Product = thisProduct,
+                                OldVersion = GetCurrentVersion(thisProject, thisProduct),
+                                NewVersion = SuggestNewVersion(thisProject, thisProduct)
+                            };
+                            ProjectsForProduct.Add(addRecord);
+                            ProjectsNotForProduct.Remove(thisRecord);
+
+                            if (ProjectIDsToRemove.Contains(projectID)) { ProjectIDsToRemove.Remove(projectID); }
+                            else { ProjectIDsToAdd.Add(projectID); }
+                        }
+                        catch (Exception generalException)
+                        {
+                            MessageFunctions.Error("Error adding product " + productName + " to project " + thisProject.ProjectName, generalException);
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            ProjectsNotForProduct.Add(thisRecord);
+                            ProjectProductSummary removeRecord = ProjectsForProduct.FirstOrDefault(cps => cps.ProjectID == projectID && cps.ProductID == thisProduct.ID);
+                            ProjectsForProduct.Remove(removeRecord);
+
+                            if (ProjectIDsToAdd.Contains(projectID)) { ProjectIDsToAdd.Remove(projectID); }
+                            else { ProjectIDsToRemove.Add(projectID); }
+                        }
+                        catch (Exception generalException)
+                        {
+                            MessageFunctions.Error("Error removing product " + productName + " from project " + thisProject.ProjectName, generalException);
+                            return false;
+                        }
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception generalException)
+            {
+                string change = addition ? "addition" : "removal";
+                MessageFunctions.Error("Error processing " + change + "", generalException);
+                return false;
+            }
+        }
+
+        public static bool ToggleProjectProducts(List<ClientProductSummary> affectedClientProducts, bool addition, ProjectSummaryRecord thisProjectSummary)
+        {
+            try
+            {
+                int projectID = thisProjectSummary.ProjectID;
+                Projects thisProject = new Projects();
+                thisProjectSummary.ConvertToProject(ref thisProject);
+
+                foreach (ClientProductSummary thisRecord in affectedClientProducts)
+                {
+                    int productID = thisRecord.ProductID;
+                    Products thisProduct = ProductFunctions.GetProductByID(productID);
+                    //bool canChange = addition ? true : CanRemoveProjectProduct(ref thisProject, productID);
+
+                    //if (!canChange) { return false; }
+                    if (addition)
+                    {
+                        try
+                        {
+                            ProjectProductSummary addRecord = new ProjectProductSummary
+                            {
+                                Project = thisProject,
+                                Product = thisProduct,
+                                OldVersion = thisRecord.ClientVersion,
+                                NewVersion = SuggestNewVersion(thisProject, thisProduct)
+                            };
+                            ProductsForProject.Add(addRecord);
+                            ProductsNotForProject.Remove(thisRecord);
+
+                            if (ProductIDsToRemove.Contains(productID)) { ProductIDsToRemove.Remove(productID); }
+                            else { ProductIDsToAdd.Add(productID); }
+                        }
+                        catch (Exception generalException)
+                        {
+                            MessageFunctions.Error("Error adding " + thisProduct.ProductName + " to project " + thisProject.ProjectName, generalException);
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            ProductsNotForProject.Add(thisRecord);
+                            ProjectProductSummary removeRecord = ProductsForProject.FirstOrDefault(pfp => pfp.ProjectID == thisProject.ID && pfp.ProductID == productID);
+
+                            MessageBox.Show(removeRecord.ProductName + " " + removeRecord.Project.ProjectCode);
+                            
+                            ProductsForProject.Remove(removeRecord);
+
+                            if (ProductIDsToAdd.Contains(productID)) { ProductIDsToAdd.Remove(productID); }
+                            else { ProductIDsToRemove.Add(productID); }
+                        }
+                        catch (Exception generalException)
+                        {
+                            MessageFunctions.Error("Error removing " + thisProduct.ProductName + " from project " + thisProject.ProjectName, generalException);
+                            return false;
+                        }
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception generalException)
+            {
+                string change = addition ? "addition" : "removal";
+                MessageFunctions.Error("Error processing " + change + "", generalException);
+                return false;
+            }
+        }
+
+        public static bool IgnoreAnyChanges()
+        {
+            if (ProjectIDsToAdd.Count > 0 || ProjectIDsToRemove.Count > 0 || ProjectIDsToUpdate.Count > 0
+                || ProductIDsToAdd.Count > 0 || ProductIDsToRemove.Count > 0 || ProductIDsToUpdate.Count > 0)
+            {
+                return MessageFunctions.WarningYesNo("This will undo any changes you made since you last saved. Continue?");
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public static void ClearAnyChanges()
+        {
+            ProjectIDsToAdd.Clear();
+            ProjectIDsToRemove.Clear();
+            ProjectIDsToUpdate.Clear();
+            ProductIDsToAdd.Clear();
+            ProductIDsToRemove.Clear();
+            ProductIDsToRemove.Clear();
+        }
+
+        public static bool AmendVersion(ProjectProductSummary thisRecord, string version, bool byProject)
+        {
+            decimal versionNumber;
+            bool carryOn = false;
+
+            if (!Decimal.TryParse(version, out versionNumber))
+            {
+                MessageFunctions.Error("Cannot update the version: the given number is not a decimal.", null);
+                return false;
+            }
+            else if (versionNumber == thisRecord.NewVersion) { return false; }
+            else if (thisRecord.LatestVersion < versionNumber)
+            {
+                MessageFunctions.InvalidMessage("The entered version number is higher than the latest product version. Please try again.", "Invalid version");
+                return false;
+            }
+            //else if (thisRecord.NewVersion > versionNumber && thisRecord.StatusID != ProjectProductStatus.Added)
+            //{
+            //    carryOn = MessageFunctions.WarningYesNo("The entered version number is lower than the current one. Is this correct?");
+            //}
+            //else if (thisRecord.StatusID != ProjectProductStatus.Added)
+            //{
+            //    carryOn = MessageFunctions.ConfirmOKCancel("Update the project's version of this product? This is not immediately saved, so it can be undone using the 'Back' button.");
+            //}
+            else { carryOn = true; }
+
+            if (!carryOn) { return false; }
+            else
+            {
+                thisRecord.NewVersion = versionNumber;
+                queueProjectProductUpdate(thisRecord, byProject);
+                return true;
+            }
+        }
+
+        private static void queueProjectProductUpdate(ProjectProductSummary thisRecord, bool byProject)
+        {
+            if (byProject)
+            {
+                int productID = thisRecord.ProductID;
+                if (!ProductIDsToAdd.Contains(productID) && !ProductIDsToUpdate.Contains(productID))
+                {
+                    ProductIDsToUpdate.Add(productID);
+                }
+            }
+            else
+            {
+                int projectID = thisRecord.ProjectID;
+                if (!ProjectIDsToAdd.Contains(projectID) && !ProjectIDsToUpdate.Contains(projectID))
+                {
+                    ProjectIDsToUpdate.Add(projectID);
+                }
             }
         }
 

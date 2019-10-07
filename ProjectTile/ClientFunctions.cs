@@ -960,6 +960,23 @@ namespace ProjectTile
             }
         }
         
+        public static ClientProducts GetClientProduct(int clientID, int productID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return existingPtDb.ClientProducts.Where(cp => cp.ClientID == clientID && cp.ProductID == productID).FirstOrDefault();
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error finding a client product record with product ID " + productID.ToString() + " for client " + clientID.ToString(), generalException);
+                return null;
+            }		
+        }
+
         public static List<ClientProductSummary> ClientsWithProduct(bool activeOnly, int productID)
         {
             try
@@ -995,7 +1012,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.Error("Error listing clients with product ID" + productID.ToString(), generalException);
+                MessageFunctions.Error("Error listing clients with product ID " + productID.ToString(), generalException);
                 return null;
             }		
         }
@@ -1016,7 +1033,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.Error("Error listing clients without product ID" + productID.ToString(), generalException);
+                MessageFunctions.Error("Error listing clients without product ID " + productID.ToString(), generalException);
                 return null;
             }		
         }
@@ -1056,7 +1073,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.Error("Error listing products for client ID" + clientID.ToString(), generalException);
+                MessageFunctions.Error("Error listing products for client ID " + clientID.ToString(), generalException);
                 return null;
             }		
         }
@@ -1085,7 +1102,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.Error("Error listing products not linked to client ID" + clientID.ToString(), generalException);
+                MessageFunctions.Error("Error listing products not linked to client ID " + clientID.ToString(), generalException);
                 return null;
             }		
         }

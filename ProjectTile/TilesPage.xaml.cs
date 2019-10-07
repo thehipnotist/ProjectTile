@@ -413,7 +413,7 @@ namespace ProjectTile
 
         private void ProjectButton_Product_Click(object sender, RoutedEventArgs e)
         {
-
+            PageFunctions.ShowProjectProductsPage();
         }
 
         private void ProjectButton_Staff_Click(object sender, RoutedEventArgs e)

@@ -355,12 +355,12 @@ namespace ProjectTile
 
         private void ProjectContact_Click(object sender, RoutedEventArgs e)
         {
-
+            
         }
 
         private void ProjectProduct_Click(object sender, RoutedEventArgs e)
         {
-
+            PageFunctions.ShowProjectProductsPage();
         }
 
         private void ProjectButton_Click(object sender, RoutedEventArgs e)
