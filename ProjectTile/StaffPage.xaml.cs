@@ -90,7 +90,7 @@ namespace ProjectTile
                 StaffDataGrid.SelectionMode = DataGridSelectionMode.Single;
                 DisableButton.Visibility = AmendButton.Visibility = EntitiesButton.Visibility = ProjectButton.Visibility = Visibility.Hidden;
                 CancelButtonText.Text = "Cancel";
-                ActiveOnly_CheckBox.IsChecked = true;
+                ActiveOnlyCheckBox.IsChecked = true;
             }
         }
 
@@ -203,13 +203,13 @@ namespace ProjectTile
 
         // Control events //
 
-        private void ActiveOnly_CheckBox_Checked(object sender, RoutedEventArgs e)
+        private void ActiveOnlyCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             activeOnly = true;
             refreshStaffGrid();
         }
 
-        private void ActiveOnly_CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        private void ActiveOnlyCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             activeOnly = false;
             refreshStaffGrid();

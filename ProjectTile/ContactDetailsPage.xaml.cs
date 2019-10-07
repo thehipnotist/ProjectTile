@@ -49,8 +49,8 @@ namespace ProjectTile
             FirstName.Focus();
             if (!Globals.MyPermissions.Allow("ActivateClientStaff"))
             {
-                Active_CheckBox.IsEnabled = false;
-                Active_CheckBox.ToolTip = ActiveLabel.ToolTip = "Your current permissions do not allow activating or disabling contacts";
+                ActiveCheckBox.IsEnabled = false;
+                ActiveCheckBox.ToolTip = ActiveLabel.ToolTip = "Your current permissions do not allow activating or disabling contacts";
             }
             try
             {
@@ -85,7 +85,7 @@ namespace ProjectTile
                         FirstName.Text = thisContact.FirstName;
                         Surname.Text = thisContact.Surname;
                         JobTitle.Text = thisContact.JobTitle;                        
-                        Active_CheckBox.IsChecked = thisContact.Active;
+                        ActiveCheckBox.IsChecked = thisContact.Active;
                         PhoneNumber.Text = thisContact.PhoneNumber;
                         Email.Text = thisContact.Email;
                     }
@@ -112,7 +112,7 @@ namespace ProjectTile
         private void createNewContact()
         {
             int newID = 0;
-            try { newID = ClientFunctions.NewContact(FirstName.Text, Surname.Text, JobTitle.Text, PhoneNumber.Text, Email.Text, (bool) Active_CheckBox.IsChecked); }
+            try { newID = ClientFunctions.NewContact(FirstName.Text, Surname.Text, JobTitle.Text, PhoneNumber.Text, Email.Text, (bool) ActiveCheckBox.IsChecked); }
             catch (Exception generalException) { MessageFunctions.Error("Error creating new contact record", generalException); }
             if (newID > 0)
             {
@@ -127,7 +127,7 @@ namespace ProjectTile
             bool success = false;
 
             try { success = ClientFunctions.AmendContact(selectedContactID, FirstName.Text, Surname.Text, JobTitle.Text, PhoneNumber.Text, Email.Text, 
-                (bool)Active_CheckBox.IsChecked); }
+                (bool)ActiveCheckBox.IsChecked); }
             catch (Exception generalException) { MessageFunctions.Error("Error saving amendments to contact", generalException); }
             try
             {

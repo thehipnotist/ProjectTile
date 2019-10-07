@@ -46,8 +46,8 @@ namespace ProjectTile
             toggleConfirm(false);
             if (!Globals.MyPermissions.Allow("ActivateStaff"))
             {
-                Active_CheckBox.IsEnabled = false;
-                Active_CheckBox.ToolTip = ActiveLabel.ToolTip = "Your current permissions do not allow activating or disabling staff members";
+                ActiveCheckBox.IsEnabled = false;
+                ActiveCheckBox.ToolTip = ActiveLabel.ToolTip = "Your current permissions do not allow activating or disabling staff members";
             }      
 
             try
@@ -84,7 +84,7 @@ namespace ProjectTile
                         if (thisStaffMember.StartDate != null) { StartDate.SelectedDate = thisStaffMember.StartDate; }
                         if (thisStaffMember.LeaveDate != null) { LeaveDate.SelectedDate = thisStaffMember.LeaveDate; }
                         EntityCombo.SelectedItem = EntityFunctions.GetEntityName((int) thisStaffMember.DefaultEntity);
-                        Active_CheckBox.IsChecked = thisStaffMember.Active;
+                        ActiveCheckBox.IsChecked = thisStaffMember.Active;
                     }
 
                     catch (Exception generalException) 
@@ -183,7 +183,7 @@ namespace ProjectTile
             {
                 string roleDescription = "";
                 string defaultEntityName = "";
-                bool active = (Active_CheckBox.IsChecked == true);
+                bool active = (ActiveCheckBox.IsChecked == true);
                 string passwd = NewPassword.Password;
 
                 if (RoleCombo.SelectedValue != null) { roleDescription = RoleCombo.SelectedValue.ToString(); }

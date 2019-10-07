@@ -136,7 +136,7 @@ namespace ProjectTile
                 StartDate.IsEnabled = false; // This cannot be read-only so an inner style trigger makes it appear read-only
                 ProjectCode.IsEnabled = true; 
                 ProjectCode.IsReadOnly = true;
-                CommitButton.Visibility = NextButton.Visibility = NonPMs_CheckBox.Visibility = SearchButton.Visibility = Visibility.Hidden;
+                CommitButton.Visibility = NextButton.Visibility = NonPMsCheckBox.Visibility = SearchButton.Visibility = Visibility.Hidden;
                 CancelButtonText.Text = "Close";
                 PageHeader.Content = "View Project Details";
                 HeaderImage2.SetResourceReference(Image.SourceProperty, "ViewIcon");
@@ -356,12 +356,12 @@ namespace ProjectTile
         {
         }
 
-        private void NonPMs_CheckBox_Checked(object sender, RoutedEventArgs e)
+        private void NonPMsCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             refreshManagerCombo(true);
         }
 
-        private void NonPMs_CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        private void NonPMsCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             refreshManagerCombo(false);
         }

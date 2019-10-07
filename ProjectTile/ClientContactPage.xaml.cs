@@ -391,13 +391,13 @@ namespace ProjectTile
             nameFilter();
         }
 
-        private void ActiveClient_CheckBox_Checked(object sender, RoutedEventArgs e)
+        private void ActiveClientCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             clientActiveOnly = true;
             refreshClientGrid();
         }
 
-        private void ActiveClient_CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        private void ActiveClientCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             clientActiveOnly = false;
             refreshClientGrid();
@@ -463,13 +463,13 @@ namespace ProjectTile
             contactFilter(false);
         }
 
-        private void ActiveContact_CheckBox_Checked(object sender, RoutedEventArgs e)
+        private void ActiveContactCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             contactActiveOnly = true;
             refreshContactGrid();
         }
 
-        private void ActiveContact_CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        private void ActiveContactCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             contactActiveOnly = false;
             refreshContactGrid();

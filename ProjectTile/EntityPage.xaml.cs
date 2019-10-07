@@ -56,8 +56,8 @@ namespace ProjectTile
                     HeaderImage2.SetResourceReference(Image.SourceProperty, "ChangeEntityIcon");
                     Instructions.Content = "Pick an Entity from the list to change to it.";
                     EntityName.Visibility = Visibility.Hidden;
-                    SwitchTo_CheckBox.Visibility = Visibility.Hidden;
-                    //MakeDefault_CheckBox.Margin = SwitchTo_CheckBox.Margin;
+                    SwitchToCheckBox.Visibility = Visibility.Hidden;
+                    //MakeDefaultCheckBox.Margin = SwitchToCheckBox.Margin;
                     EntityDescription.IsEnabled = false;
                     EntityList.Margin = EntityName.Margin;
                     CommitButtonText.Text = "Change";
@@ -73,8 +73,8 @@ namespace ProjectTile
                     PageHeader.Content = "Amend Existing Entity";
                     HeaderImage2.SetResourceReference(Image.SourceProperty, "AmendIcon");
                     Instructions.Content = "Pick an Entity from the list to amend it.";
-                    SwitchTo_CheckBox.Visibility = Visibility.Hidden;
-                    MakeDefault_CheckBox.Visibility = Visibility.Hidden;
+                    SwitchToCheckBox.Visibility = Visibility.Hidden;
+                    MakeDefaultCheckBox.Visibility = Visibility.Hidden;
                     EntityDescription.IsEnabled = false;
 
                     Thickness nameMargin = EntityName.Margin;
@@ -92,8 +92,8 @@ namespace ProjectTile
                     HeaderImage2.Stretch = System.Windows.Media.Stretch.UniformToFill;
                     Instructions.Content = "Pick an Entity from the list to set it as your default.";
                     EntityName.Visibility = Visibility.Hidden;
-                    SwitchTo_CheckBox.Visibility = Visibility.Hidden;
-                    MakeDefault_CheckBox.Visibility = Visibility.Hidden;
+                    SwitchToCheckBox.Visibility = Visibility.Hidden;
+                    MakeDefaultCheckBox.Visibility = Visibility.Hidden;
                     EntityDescription.IsEnabled = false;
                     EntityList.Margin = EntityName.Margin;
                     CommitButtonText.Text = "Set Default";
@@ -126,11 +126,11 @@ namespace ProjectTile
 
             if (pageMode == PageFunctions.Switch)
             {
-                EntityFunctions.SwitchEntity(ref selectedEntity, (bool) MakeDefault_CheckBox.IsChecked);
+                EntityFunctions.SwitchEntity(ref selectedEntity, (bool) MakeDefaultCheckBox.IsChecked);
             }
             else if (pageMode == PageFunctions.New)
             {
-                EntityFunctions.NewEntity(displayName, displayDescription, (bool)SwitchTo_CheckBox.IsChecked, (bool)MakeDefault_CheckBox.IsChecked);              
+                EntityFunctions.NewEntity(displayName, displayDescription, (bool)SwitchToCheckBox.IsChecked, (bool)MakeDefaultCheckBox.IsChecked);              
             }
             else if (pageMode == PageFunctions.Amend)
             {
@@ -167,12 +167,12 @@ namespace ProjectTile
                 {
                     if (selectedEntityID != Globals.MyDefaultEntityID)
                     {
-                        MakeDefault_CheckBox.IsEnabled = true;
+                        MakeDefaultCheckBox.IsEnabled = true;
                     }
                     else
                     {
-                        MakeDefault_CheckBox.IsEnabled = false;
-                        MakeDefault_CheckBox.IsChecked = false;
+                        MakeDefaultCheckBox.IsEnabled = false;
+                        MakeDefaultCheckBox.IsChecked = false;
                     }
                 }
             }

@@ -36,7 +36,8 @@
                 <Label x:Name="NameContainsLabel" Content="Name Contains" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="100" FontWeight="Bold"/>
                 <TextBox x:Name="NameContains" HorizontalAlignment="Left" Height="30" Margin="115,45,0,0" VerticalAlignment="Top" Width="120" ToolTip="Type and tab to filter" 
                          LostFocus="NameContains_LostFocus" KeyUp="NameContains_KeyUp" Style="{DynamicResource PaddedTextBox}" CharacterCasing="Upper"/>
-                <CheckBox x:Name="ActiveOnly_CheckBox" Content="Active Only" HorizontalAlignment="Center" Height="30" Margin="55,44,15,0" VerticalAlignment="Top" Width="100" FontWeight="Bold" VerticalContentAlignment="Center" Checked="ActiveOnly_CheckBox_Checked" Unchecked="ActiveOnly_CheckBox_Unchecked"/>
+                <CheckBox x:Name="ActiveOnlyCheckBox" Content="Active Only" HorizontalAlignment="Center" Height="30" Margin="55,44,15,0" VerticalAlignment="Top" Width="100" FontWeight="Bold" 
+                          VerticalContentAlignment="Center" Checked="ActiveOnlyCheckBox_Checked" Unchecked="ActiveOnlyCheckBox_Unchecked" Style="{DynamicResource RoundedCheckbox}"/>
                 <Label x:Name="RoleListLabel" Content="Main Role" HorizontalAlignment="Right" Height="30" Margin="0,45,150,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
                 <ComboBox x:Name="RoleList" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="135" SelectionChanged="RoleList_SelectionChanged"
                            Style="{DynamicResource PaddedCombo}"/>
@@ -50,7 +51,8 @@
                         <DataGridTextColumn x:Name="RoleColumn" Binding="{Binding RoleDescription}" ClipboardContentBinding="{x:Null}" Header="Role"/>
                         <DataGridTextColumn x:Name="StartDateColumn" Binding="{Binding StartDate, StringFormat=dd/MM/yyyy}" ClipboardContentBinding="{x:Null}" Header="Start Date"/>
                         <DataGridTextColumn x:Name="LeaveDateColumn" Binding="{Binding LeaveDate, StringFormat=dd/MM/yyyy}" ClipboardContentBinding="{x:Null}" Header="Leave Date"/>
-                        <DataGridCheckBoxColumn x:Name="ActiveUserColumn" Binding="{Binding Active, Mode=OneWay}" ClipboardContentBinding="{x:Null}" Header="Active" IsReadOnly="True"/>
+                        <DataGridCheckBoxColumn x:Name="ActiveUserColumn" Binding="{Binding Active, Mode=OneWay}" ClipboardContentBinding="{x:Null}" Header="Active" IsReadOnly="True"
+                                                ElementStyle="{DynamicResource CentredCheckbox}"/>
                         <DataGridTextColumn x:Name="DefaultEntityColumn" Binding="{Binding DefaultEntityName}" ClipboardContentBinding="{x:Null}" Header="Default Entity" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>

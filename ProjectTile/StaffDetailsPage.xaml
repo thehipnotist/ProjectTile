@@ -44,8 +44,8 @@
                 <Label x:Name="UserIDLabel" Content="User ID" HorizontalAlignment="Left" Margin="15,120,0,0" VerticalAlignment="Top" FontWeight="Bold" Height="30"/>
                 <TextBox x:Name="UserID" HorizontalAlignment="Left" Height="30" Margin="115,120,0,0" VerticalAlignment="Top" Width="180" ToolTip="A UserID is required if this staff member will use ProjectTile" 
                 	MaxLength="40" Style="{DynamicResource PaddedTextBox}"/>
-                <CheckBox x:Name="Active_CheckBox" HorizontalAlignment="Right" Height="30" Margin="0,120,30,0" VerticalAlignment="Top" Width="180" FontWeight="Bold" 
-                	VerticalContentAlignment="Center" UseLayoutRounding="False"/>
+                <CheckBox x:Name="ActiveCheckBox" HorizontalAlignment="Right" Height="30" Margin="0,120,30,0" VerticalAlignment="Top" Width="180" FontWeight="Bold" 
+                	VerticalContentAlignment="Center" UseLayoutRounding="False" Style="{DynamicResource RoundedCheckbox}"/>
                 <Label x:Name="ActiveLabel" Content="Active" HorizontalAlignment="Right" Height="30" Margin="0,120,215,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
 
                 <Label x:Name="NewPasswordLabel" Content="New Password" HorizontalAlignment="Left" Height="30" Margin="15,165,0,0" VerticalAlignment="Top" Width="100" FontWeight="Bold"/>

@@ -224,7 +224,7 @@ namespace ProjectTile
 
             ClientDataGrid.Visibility = selectionOnly;
             NameContainsLabel.Visibility = NameContains.Visibility = selectionOnly;
-            ActiveOnly_CheckBox.Visibility = (editMode == ByProduct || selectionMode) ? Visibility.Visible : Visibility.Hidden;
+            ActiveOnlyCheckBox.Visibility = (editMode == ByProduct || selectionMode) ? Visibility.Visible : Visibility.Hidden;
 
             ProductButton.Visibility = selectionOnly;
             ClientButton.Visibility = selectionOnly;
@@ -529,12 +529,12 @@ namespace ProjectTile
 
 
         // Control-specific events //
-        private void ActiveOnly_CheckBox_Checked(object sender, RoutedEventArgs e)
+        private void ActiveOnlyCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             toggleActiveOnly(true);
         }
 
-        private void ActiveOnly_CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        private void ActiveOnlyCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             toggleActiveOnly(false);
         }

@@ -35,8 +35,8 @@
                 <Label x:Name="Instructions" Content="" HorizontalAlignment="Left" Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
                 <TextBox x:Name="NameContains" HorizontalAlignment="Left" Height="30" Margin="115,45,0,0" VerticalAlignment="Top" Width="120" ToolTip="Type and tab to filter" 
                          LostFocus="NameContains_LostFocus" KeyUp="NameContains_KeyUp" Style="{DynamicResource PaddedTextBox}" CharacterCasing="Upper"/>
-                <CheckBox x:Name="ActiveOnly_CheckBox" Content="Active Only" HorizontalAlignment="Center" Height="30" Margin="25,45,15,0" VerticalAlignment="Top" Width="100" FontWeight="Bold" 
-                          VerticalContentAlignment="Center" Checked="ActiveOnly_CheckBox_Checked" Unchecked="ActiveOnly_CheckBox_Unchecked"/>
+                <CheckBox x:Name="ActiveOnlyCheckBox" Content="Active Only" HorizontalAlignment="Center" Height="30" Margin="25,45,15,0" VerticalAlignment="Top" Width="100" FontWeight="Bold" 
+                          VerticalContentAlignment="Center" Checked="ActiveOnlyCheckBox_Checked" Unchecked="ActiveOnlyCheckBox_Unchecked" Style="{DynamicResource RoundedCheckbox}"/>
                 <Label x:Name="ProductLabel" Content="Product" HorizontalAlignment="Right" Height="30" Margin="0,45,200,0" VerticalAlignment="Top" Width="55" FontWeight="Bold"/>
                 <ComboBox x:Name="ProductCombo" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="180" SelectionChanged="ProductCombo_SelectionChanged"
                           DisplayMemberPath="ProductName" Style="{DynamicResource PaddedCombo}"/>
@@ -64,7 +64,8 @@
                         <DataGridTextColumn x:Name="IDColumn" Binding="{Binding ID}" ClipboardContentBinding="{x:Null}" Header="ID" Visibility="Collapsed"/>                                               
                         <DataGridTextColumn x:Name="ClientCodeColumn" Binding="{Binding ClientCode}" ClipboardContentBinding="{x:Null}" Header="Code"/>
                         <DataGridTextColumn x:Name="ClientNameColumn" Binding="{Binding ClientName}" ClipboardContentBinding="{x:Null}" Header="Name" Width="*"/>
-                        <DataGridCheckBoxColumn x:Name="ActiveColumn" Binding="{Binding ActiveClient, Mode=OneWay}" ClipboardContentBinding="{x:Null}" Header="Active" IsReadOnly="True"/>
+                        <DataGridCheckBoxColumn x:Name="ActiveColumn" Binding="{Binding ActiveClient, Mode=OneWay}" ClipboardContentBinding="{x:Null}" Header="Active" IsReadOnly="True"
+                                                ElementStyle="{DynamicResource CentredCheckbox}"/>
                         <DataGridTextColumn x:Name="ManagerColumn" Binding="{Binding ManagerName}" ClipboardContentBinding="{x:Null}" Header="Account Manager"/>
                     </DataGrid.Columns>
                 </DataGrid>

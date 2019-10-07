@@ -101,8 +101,8 @@ namespace ProjectTile
             {
                 EditGrid.Visibility = AddButton.Visibility = AmendButton.Visibility = CopyButton.Visibility = Visibility.Hidden;
                 ProductButton.Visibility = ContactButton.Visibility = ProjectButton.Visibility = Visibility.Hidden;
-                ActiveOnly_CheckBox.IsChecked = true;
-                ActiveOnly_CheckBox.IsEnabled = false;
+                ActiveOnlyCheckBox.IsChecked = true;
+                ActiveOnlyCheckBox.IsEnabled = false;
                 MainClientGrid.Visibility = Visibility.Visible;
                 CommitButton.Visibility = Visibility.Visible;
                 CommitButton.IsEnabled = false;
@@ -119,8 +119,8 @@ namespace ProjectTile
 
             if (!Globals.MyPermissions.Allow("ActivateClients"))
             {
-                Active_CheckBox.IsEnabled = false;
-                Active_CheckBox.ToolTip = ActiveLabel.ToolTip = "Your current permissions do not allow activating or disabling clients";
+                ActiveCheckBox.IsEnabled = false;
+                ActiveCheckBox.ToolTip = ActiveLabel.ToolTip = "Your current permissions do not allow activating or disabling clients";
             }     
         }
 
@@ -275,7 +275,7 @@ namespace ProjectTile
                 ButtonsGrid.Visibility = MainClientGrid.Visibility = Visibility.Hidden;
                 EditGrid.Visibility = Visibility.Visible;
                 CommitButton.Visibility = Visibility.Visible;
-                NonAMs_CheckBox.IsChecked = false;
+                NonAMsCheckBox.IsChecked = false;
                 EntityWarningLabel.Visibility = Visibility.Hidden;
 
                 toggleSuggestionMode(false);
@@ -304,9 +304,9 @@ namespace ProjectTile
                 
                         ClientCode.Text = gridRecord.ClientCode;
                         ClientName.Text = gridRecord.ClientName;
-                        Active_CheckBox.IsChecked = gridRecord.ActiveClient;
+                        ActiveCheckBox.IsChecked = gridRecord.ActiveClient;
                         BackButton.Visibility = Visibility.Visible;
-                        refreshEditManagersCombo((bool) NonAMs_CheckBox.IsChecked, gridRecord.ManagerName);
+                        refreshEditManagersCombo((bool) NonAMsCheckBox.IsChecked, gridRecord.ManagerName);
                     }
                     catch (Exception generalException) { MessageFunctions.Error("Error setting up the page for client amendments", generalException); }
                 }
@@ -319,12 +319,12 @@ namespace ProjectTile
                         HeaderImage2.SetResourceReference(Image.SourceProperty, "AddIcon");
                         Instructions.Content = "Fill in the details as required and then click 'Save' to create the record.";
                         toggleEntityControls(false);
-                        refreshEditManagersCombo((bool)NonAMs_CheckBox.IsChecked, "");
+                        refreshEditManagersCombo((bool)NonAMsCheckBox.IsChecked, "");
                         if (pageMode == PageFunctions.Amend) 
                         { 
                             BackButton.Visibility = Visibility.Visible;
                             ClientCode.Text = ClientName.Text = "";
-                            Active_CheckBox.IsChecked = false;
+                            ActiveCheckBox.IsChecked = false;
                             EditManagersCombo.SelectedItem = "";
                         }
                     }
@@ -377,7 +377,7 @@ namespace ProjectTile
             string savedInEntity = "";
             string contactsCopied = "";
 
-            try { newID = ClientFunctions.NewClient(ClientCode.Text, ClientName.Text, accountManagerName, (bool)Active_CheckBox.IsChecked, selectedEntityID); }
+            try { newID = ClientFunctions.NewClient(ClientCode.Text, ClientName.Text, accountManagerName, (bool)ActiveCheckBox.IsChecked, selectedEntityID); }
             catch (Exception generalException) { MessageFunctions.Error("Error creating new client record", generalException); }
 
             if (newID > 0)
@@ -386,7 +386,7 @@ namespace ProjectTile
                 {
                     if (!inCurrentEntity)
                     {                        
-                        if (CopyContacts_CheckBox.IsChecked == true) 
+                        if (CopyContactsCheckBox.IsChecked == true) 
                         { 
                             bool success = ClientFunctions.CopyContacts(selectedRecord.ID, newID);
                             contactsCopied = success ? ", and all active linked contacts have been copied to it" : " but contacts could not be copied";
@@ -416,7 +416,7 @@ namespace ProjectTile
         {
             bool success = false;
             
-            try { success = ClientFunctions.AmendClient(editRecordID, ClientCode.Text, ClientName.Text, accountManagerName, (bool)Active_CheckBox.IsChecked); }
+            try { success = ClientFunctions.AmendClient(editRecordID, ClientCode.Text, ClientName.Text, accountManagerName, (bool)ActiveCheckBox.IsChecked); }
             catch (Exception generalException) { MessageFunctions.Error("Error saving amendments to client", generalException); }
             try
             {
@@ -438,7 +438,7 @@ namespace ProjectTile
         private void toggleEntityControls(bool show)
         {
             if (show) { EntityCombo.Visibility = EntityLabel.Visibility = Visibility.Visible; }
-            else { EntityCombo.Visibility = EntityLabel.Visibility = CopyContacts_CheckBox.Visibility = Visibility.Hidden; }
+            else { EntityCombo.Visibility = EntityLabel.Visibility = CopyContactsCheckBox.Visibility = Visibility.Hidden; }
         }
 
         // ---------------------- //
@@ -471,13 +471,13 @@ namespace ProjectTile
             nameFilter();
         }
 
-        private void ActiveOnly_CheckBox_Checked(object sender, RoutedEventArgs e)
+        private void ActiveOnlyCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             activeOnly = true;
             refreshClientGrid();
         }
 
-        private void ActiveOnly_CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        private void ActiveOnlyCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             activeOnly = false;
             refreshClientGrid();
@@ -534,12 +534,12 @@ namespace ProjectTile
             }
         }        
 
-        private void NonAMs_CheckBox_Checked(object sender, RoutedEventArgs e)
+        private void NonAMsCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             refreshEditManagersCombo(true, EditManagersCombo.SelectedItem.ToString());
         }
 
-        private void NonAMs_CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        private void NonAMsCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             refreshEditManagersCombo(false, EditManagersCombo.SelectedItem.ToString());
         }
@@ -581,10 +581,10 @@ namespace ProjectTile
                     Entities newEntity = (Entities)EntityCombo.SelectedItem;
                     selectedEntityID = newEntity.ID;
                     string accountManager = getEditAMName();
-                    refreshEditManagersCombo((bool)NonAMs_CheckBox.IsChecked, accountManager);
+                    refreshEditManagersCombo((bool)NonAMsCheckBox.IsChecked, accountManager);
                     if (CodeSuggestion.Visibility == Visibility.Visible) { suggestFormat(); }
-                    CopyContacts_CheckBox.Visibility = (selectedEntityID == Globals.CurrentEntityID) ? Visibility.Hidden : Visibility.Visible;
-                    CopyContacts_CheckBox.IsChecked = false;
+                    CopyContactsCheckBox.Visibility = (selectedEntityID == Globals.CurrentEntityID) ? Visibility.Hidden : Visibility.Visible;
+                    CopyContactsCheckBox.IsChecked = false;
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error handling Entity selection change", generalException); }

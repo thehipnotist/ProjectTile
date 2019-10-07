@@ -215,7 +215,7 @@ namespace ProjectTile
 
             StaffGrid.Visibility = selectionOnly;
             NameContainsLabel.Visibility = NameContains.Visibility = selectionOnly;
-            ActiveOnly_CheckBox.Visibility = (editMode == ByEntity || selectionMode) ? Visibility.Visible : Visibility.Hidden;
+            ActiveOnlyCheckBox.Visibility = (editMode == ByEntity || selectionMode) ? Visibility.Visible : Visibility.Hidden;
 
             EntitiesButton.Visibility = selectionOnly;
             StaffButton.Visibility = selectionOnly;
@@ -543,12 +543,12 @@ namespace ProjectTile
 
  
         // Control-specific events //
-        private void ActiveOnly_CheckBox_Checked(object sender, RoutedEventArgs e)
+        private void ActiveOnlyCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             togglActiveOnly(true);
         }
 
-        private void ActiveOnly_CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        private void ActiveOnlyCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             togglActiveOnly(false);
         }
