@@ -111,10 +111,16 @@
             </Rectangle.Triggers>
         </Rectangle>
         -->
-        
-        <Label x:Name="PleaseWaitLabel" Background="{StaticResource PtBrushBackgroundBlue}"  Content="Attempting login - please wait..." FontSize="16" Foreground="Black" 
-               HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Visibility="Hidden" Cursor="Wait" Grid.ColumnSpan="3" Grid.RowSpan="3" Opacity="0.9"
-               Margin="-5,0,5,0"/>        
+
+        <Label x:Name="PleaseWaitLabel" Background="{StaticResource PtBrushBackgroundBlue}" Content="Attempting login - please wait..." FontSize="16" Foreground="Black" 
+               HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Visibility="Hidden" Cursor="Wait" Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="2" Opacity="0.9"
+               Margin="0,-15,-15,0">
+            <Label.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="8"/>
+                </Style>
+            </Label.Resources>
+        </Label>
 
     </Grid>
 </Page>
