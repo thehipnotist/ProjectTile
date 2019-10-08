@@ -1080,10 +1080,14 @@ namespace ProjectTile
                 {
                     return (from pj in existingPtDb.Projects
                             join ps in existingPtDb.ProjectStages on pj.StageCode equals ps.StageCode
+                            join cp in existingPtDb.ClientProducts on pj.ClientID equals cp.ClientID
+                                into GroupJoin from scp in GroupJoin.DefaultIfEmpty()
                             where (!activeOnly || ps.ProjectStatus == InProgressStatus || ps.ProjectStatus == LiveStatus) 
                                 && !projectIDsWithProduct.Contains(pj.ID) && pj.EntityID == CurrentEntityID
+                                && (pj.ClientID == null || pj.ClientID <= 0 || pj.ClientID == scp.ClientID)
+                                && (scp == null || scp.ProductID == productID)
                             orderby pj.ProjectCode
-                            select pj).ToList();
+                            select pj).Distinct().ToList();
                 }
             }
             catch (Exception generalException)
@@ -1875,8 +1879,6 @@ namespace ProjectTile
                         {
                             ProductsNotForProject.Add(thisRecord);
                             ProjectProductSummary removeRecord = ProductsForProject.FirstOrDefault(pfp => pfp.ProjectID == thisProject.ID && pfp.ProductID == productID);
-
-                            MessageBox.Show(removeRecord.ProductName + " " + removeRecord.Project.ProjectCode);
                             
                             ProductsForProject.Remove(removeRecord);
 

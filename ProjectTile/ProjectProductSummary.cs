@@ -30,6 +30,16 @@ namespace ProjectTile
             }     
         }
 
+        public string ClientCode
+        {
+            get
+            {
+                if (Project == null) { return ""; }
+                else if (ClientID <= 0) { return ""; }
+                return ClientFunctions.GetClientByID(ClientID).ClientCode;
+            }
+        }
+
         public int ProductID
         {
             get { return (Product != null) ? Product.ID : 0; }
@@ -66,25 +76,18 @@ namespace ProjectTile
             }
         }
 
-        //public ProjectStages Stage()
-        //{
-        //    if (Project == null) { return null; }
-        //    return ProjectFunctions.GetStageByCode(Project.StageCode);
-        //}
+        public ProjectStages Stage()
+        {
+            if (Project == null) { return null; }
+            return ProjectFunctions.GetStageByCode(Project.StageCode);
+        }
 
-        //public string ClientCode()
-        //{
-        //    if (Project == null) { return ""; }
-        //    else if (ClientID <= 0) { return ""; }
-        //    return ClientFunctions.GetClientByID(ClientID).ClientCode;
-        //}       
-
-        //public string ClientName()
-        //{
-        //    if (Project == null) { return ""; }
-        //    else if (ClientID <= 0) { return ""; }
-        //    return ClientFunctions.GetClientByID(ClientID).ClientName;
-        //}
+        public string ClientName()
+        {
+            if (Project == null) { return ""; }
+            else if (ClientID <= 0) { return ""; }
+            return ClientFunctions.GetClientByID(ClientID).ClientName;
+        }
 
         
     }

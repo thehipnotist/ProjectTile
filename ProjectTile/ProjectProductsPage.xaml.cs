@@ -29,6 +29,7 @@ namespace ProjectTile
         bool activeOnly = false;
         string nameContains = "";
         int selectedProductID = 0;
+        bool resetProductSelection = false;
 
         string activeInstructions = "Select a project and click 'Products', or select an Product and click 'Projects'.";
         string activePageHeader = "Products for each Project";
@@ -64,7 +65,7 @@ namespace ProjectTile
             try
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
-                refreshProductCombo();
+                refreshProductCombo(true);
             }
             catch (Exception generalException)
             {
@@ -112,13 +113,13 @@ namespace ProjectTile
         // ---------------------- //
 
         // Data updates //
-        private void refreshProductCombo()
+        private void refreshProductCombo(bool includeAll)
         {
             try
             {
-                productComboList = ProductFunctions.ProductsList("", true);
+                productComboList = ProductFunctions.ProductsList("", includeAll);
                 ProductCombo.ItemsSource = productComboList;
-                ProductCombo.SelectedItem = productComboList.FirstOrDefault(p => p.ProductName == Globals.AllRecords);
+                ProductCombo.SelectedItem = productComboList.FirstOrDefault(p => p.ID == selectedProductID);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating product filter list", generalException); }
         }
@@ -206,7 +207,12 @@ namespace ProjectTile
                     Instructions.Content = (editMode == ByProject) ? "Move products to the right to add them, or left to remove them." 
                         : "Move projects to the right to add them, or left to remove them.";
                     FromLabel.Visibility = ToLabel.Visibility = Visibility.Visible;
-                    FromLabel.Content = (editMode == ByProject) ? "Available Client Products" : "Available Projects";
+                    if (editMode == ByProject) 
+                    {
+                        FromLabel.Content = (Globals.SelectedProjectSummary.Client == null || Globals.SelectedProjectSummary.Client.ClientName == "") ? 
+                            "Available Products" : "Available Products for " + Globals.SelectedProjectSummary.Client.ClientName; 
+                    }
+                    else { FromLabel.Content = "Available Projects"; }
 
                     string borderBrush = (editMode == ByProject) ? "PtBrushProduct3" : "PtBrushProject3";
                     AddButton.BorderBrush = RemoveButton.BorderBrush = Application.Current.Resources[borderBrush] as SolidColorBrush;
@@ -260,6 +266,7 @@ namespace ProjectTile
 
         private void viewProjectsByProduct()
         {
+            refreshProductCombo(false);
             editMode = ByProduct;
             toggleSelectionControls(false);
             refreshProjectSummaries(true);
@@ -330,22 +337,6 @@ namespace ProjectTile
             }
             catch (Exception generalException) { MessageFunctions.Error("Error activating the 'Add' button", generalException); }
         }
-
-        //private void toggleDisableButton(bool IsLive)
-        //{
-        //    if (IsLive)
-        //    {
-        //        DisableButtonText.Text = "Disable";
-        //        DisableImage.Visibility = Visibility.Visible;
-        //        EnableImage.Visibility = Visibility.Collapsed;
-        //    }
-        //    else
-        //    {
-        //        DisableButtonText.Text = "Activate";
-        //        DisableImage.Visibility = Visibility.Collapsed;
-        //        EnableImage.Visibility = Visibility.Visible;
-        //    }
-        //}
 
         private void toActivated(bool ProjectList)
         {
@@ -474,6 +465,12 @@ namespace ProjectTile
                     if (thisRecord.ClientID > 0)
                     {
                         thisProduct = ClientFunctions.ClientsWithProduct(false, thisRecord.ProductID).FirstOrDefault(cwp => cwp.ClientID == thisRecord.ClientID);
+                        if (thisProduct == null)
+                        {
+                            MessageFunctions.InfoMessage("No client product record found for client " + thisRecord.ClientName() + " with product " + thisRecord.ProductName 
+                                + ". A 'dummy' record will be used instead.", null);
+                            thisProduct = ProjectFunctions.DummyClientProduct(thisRecord.Product);
+                        }
                     }
                     else { thisProduct = ProjectFunctions.DummyClientProduct(thisRecord.Product); }
 
@@ -576,6 +573,12 @@ namespace ProjectTile
 
         private void ProductCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (ProductCombo.SelectedItem == null) { return; } // Do nothing, won't be for long
+            if (resetProductSelection) // Avoids immediate re-processing if set back to previous selection
+            {
+                resetProductSelection = false;
+                return;
+            }            
             if (ProjectFunctions.IgnoreAnyChanges())
             {
                 clearChanges();
@@ -605,6 +608,11 @@ namespace ProjectTile
                 refreshProjectDataGrid();
                 refreshProjectSummaries(true);
             }
+            else
+            {
+                resetProductSelection = true; // If the user cancels the change, don't re-process                
+                ProductCombo.SelectedItem = productComboList.FirstOrDefault(p => p.ID == selectedProductID);
+            }
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -627,7 +635,8 @@ namespace ProjectTile
                 }
                 else
                 {
-                    refreshProjectDataGrid();
+                    refreshProductCombo(true);
+                    //refreshProjectDataGrid();
                     toggleSelectionControls(true);
                     PageHeader.Content = activePageHeader;
                 }
