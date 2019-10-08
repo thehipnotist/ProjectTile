@@ -29,6 +29,7 @@ namespace ProjectTile
         bool activeOnly = false;
         string nameContains = "";
         int selectedProductID = 0;
+        bool resetProductSelection = false;
 
         string activeInstructions = "Select a client and click 'Products', or select an Product and click 'Clients'.";
         string activePageHeader = "Products for each Client";
@@ -64,7 +65,7 @@ namespace ProjectTile
             try
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
-                refreshProductCombo();
+                refreshProductCombo(true);
             }
             catch (Exception generalException)
             {
@@ -117,13 +118,13 @@ namespace ProjectTile
         // ---------------------- //
 
         // Data updates //
-        private void refreshProductCombo()
+        private void refreshProductCombo(bool includeAll)
         {
             try
             {
-                productComboList = ProductFunctions.ProductsList("", true);
+                productComboList = ProductFunctions.ProductsList("", includeAll);
                 ProductCombo.ItemsSource = productComboList;
-                ProductCombo.SelectedItem = productComboList.FirstOrDefault(p => p.ProductName == Globals.AllRecords);
+                ProductCombo.SelectedItem = productComboList.FirstOrDefault(p => p.ID == selectedProductID);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating Product filter list", generalException); }
         }
@@ -262,6 +263,7 @@ namespace ProjectTile
 
         private void viewClientsByProduct()
         {
+            refreshProductCombo(false);
             editMode = ByProduct;
             toggleSelectionControls(false);
             refreshClientSummaries(true);
@@ -574,6 +576,12 @@ namespace ProjectTile
 
         private void ProductCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (ProductCombo.SelectedItem == null) { return; } // Do nothing, won't be for long
+            if (resetProductSelection) // Avoids immediate re-processing if set back to previous selection
+            {
+                resetProductSelection = false;
+                return;
+            } 
             if (ClientFunctions.IgnoreAnyChanges())
             {
                 clearChanges();
@@ -603,6 +611,11 @@ namespace ProjectTile
                 refreshClientDataGrid();
                 refreshClientSummaries(true);
             }
+            else
+            {
+                resetProductSelection = true; // If the user cancels the change, don't re-process                
+                ProductCombo.SelectedItem = productComboList.FirstOrDefault(p => p.ID == selectedProductID);
+            }
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -625,7 +638,8 @@ namespace ProjectTile
                 }
                 else
                 {
-                    refreshClientDataGrid();
+                    refreshProductCombo(true);
+                    //refreshClientDataGrid();
                     toggleSelectionControls(true);
                     PageHeader.Content = activePageHeader;
                 }

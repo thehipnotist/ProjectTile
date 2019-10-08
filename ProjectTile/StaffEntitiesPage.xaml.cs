@@ -32,6 +32,7 @@ namespace ProjectTile
         string nameContains = "";
         int selectedEntityID = 0;
         string selectedStaffName = "";
+        bool resetEntitySelection = false;
 
         string defaultInstructions = "Select a staff member and click 'Entities', or select an Entity and click 'Staff'.";
         string defaultPageHeader = "Staff Members in each Entity";
@@ -44,6 +45,9 @@ namespace ProjectTile
         // Current records //
         StaffSummaryRecord selectedRecord;
         Entities selectedEntity;
+
+        // Lists //
+        List<Entities> entityComboList;
 
         // ---------------------- //
         // -- Page Management --- //
@@ -64,7 +68,7 @@ namespace ProjectTile
                 pageMode = PageFunctions.pageParameter(this, "Mode");
                 sourceMode = PageFunctions.pageParameter(this, "SourceMode");
                 selectedStaffID = Int32.Parse(PageFunctions.pageParameter(this, "StaffID"));
-                refreshEntityList();
+                refreshEntityCombo(true);
             }
             catch (Exception generalException)
             {
@@ -115,12 +119,13 @@ namespace ProjectTile
         // ---------------------- //
 
         // Data updates //
-        private void refreshEntityList()
+        private void refreshEntityCombo(bool includeAll)
         {
             try
             {
-                EntityList.ItemsSource = EntityFunctions.EntityList(Globals.MyStaffID, true);
-                EntityList.SelectedItem = Globals.AllRecords;
+                entityComboList = EntityFunctions.EntityList(Globals.MyStaffID, includeAll);
+                EntityCombo.ItemsSource = entityComboList;
+                EntityCombo.SelectedItem = entityComboList.FirstOrDefault(p => p.ID == selectedEntityID);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating Entity filter list", generalException); }
         }
@@ -128,12 +133,12 @@ namespace ProjectTile
         // Data retrieval //
 
         // Other/shared functions //
-        private void refreshStaffGrid()
+        private void refreshStaffDataGrid()
         {
             try
             {
                 var gridList = StaffFunctions.GetStaffGridData(activeOnly, nameContains, Globals.AllRecords, selectedEntityID);
-                StaffGrid.ItemsSource = gridList;
+                StaffDataGrid.ItemsSource = gridList;
 
                 if (selectedStaffID > 0)
                 {
@@ -141,8 +146,8 @@ namespace ProjectTile
                     {
                         if (gridList.Exists(s => s.ID == selectedStaffID))
                         {
-                            StaffGrid.SelectedItem = gridList.First(s => s.ID == selectedStaffID);
-                            StaffGrid.ScrollIntoView(StaffGrid.SelectedItem);
+                            StaffDataGrid.SelectedItem = gridList.First(s => s.ID == selectedStaffID);
+                            StaffDataGrid.ScrollIntoView(StaffDataGrid.SelectedItem);
                         }
                     }
                     catch (Exception generalException) { MessageFunctions.Error("Error selecting record", generalException); }
@@ -156,7 +161,7 @@ namespace ProjectTile
         private void nameFilter()
         {
             nameContains = NameContains.Text;
-            refreshStaffGrid();
+            refreshStaffDataGrid();
         }
 
         private void clearSelection()
@@ -213,7 +218,7 @@ namespace ProjectTile
                 disableButtons();                
             }
 
-            StaffGrid.Visibility = selectionOnly;
+            StaffDataGrid.Visibility = selectionOnly;
             NameContainsLabel.Visibility = NameContains.Visibility = selectionOnly;
             ActiveOnlyCheckBox.Visibility = (editMode == ByEntity || selectionMode) ? Visibility.Visible : Visibility.Hidden;
 
@@ -230,7 +235,7 @@ namespace ProjectTile
             EntitiesTo.Visibility = (editMode == ByStaff && !selectionMode) ? Visibility.Visible : Visibility.Hidden;     
             
             AddButton.Visibility = DefaultButton.Visibility = RemoveButton.Visibility = (!selectionMode && pageMode == PageFunctions.Amend) ? Visibility.Visible : Visibility.Hidden;
-            EntityLabel.Visibility = EntityList.Visibility = (editMode == ByEntity || selectionMode) ? Visibility.Visible : Visibility.Hidden;
+            EntityLabel.Visibility = EntityCombo.Visibility = (editMode == ByEntity || selectionMode) ? Visibility.Visible : Visibility.Hidden;
         }
 
         private void viewEntitiesByStaffMember()
@@ -253,8 +258,9 @@ namespace ProjectTile
             }
         }
 
-        private void viewStaffMembersByEntity()
+        private void viewStaffByEntity()
         {
+            refreshEntityCombo(false);
             editMode = ByEntity;
             toggleSelectionControls(false);
             refreshStaffSummaries(true);
@@ -523,7 +529,7 @@ namespace ProjectTile
         private void togglActiveOnly(bool isChecked)
         {
             activeOnly = isChecked;
-            refreshStaffGrid();
+            refreshStaffDataGrid();
             if (StaffTo.Visibility == Visibility.Visible) 
             {
                 if (StaffFunctions.IgnoreAnyChanges())
@@ -563,13 +569,13 @@ namespace ProjectTile
             nameFilter();
         }
 
-        private void StaffGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void StaffDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
             {
-                if (StaffGrid.SelectedItem != null)
+                if (StaffDataGrid.SelectedItem != null)
                 {
-                    selectedRecord = (StaffSummaryRecord)StaffGrid.SelectedItem;
+                    selectedRecord = (StaffSummaryRecord)StaffDataGrid.SelectedItem;
                     selectedStaffID = selectedRecord.ID;
                     Globals.SelectedStaffMember = StaffFunctions.GetStaffMember(selectedStaffID);
                     EntitiesButton.IsEnabled = true;
@@ -587,13 +593,19 @@ namespace ProjectTile
             }
         }
 
-        private void EntityList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void EntityCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (EntityCombo.SelectedItem == null) { return; } // Do nothing, won't be for long
+            if (resetEntitySelection) // Avoids immediate re-processing if set back to previous selection
+            {
+                resetEntitySelection = false;
+                return;
+            }
             if (StaffFunctions.IgnoreAnyChanges())
             {
                 StaffFunctions.ClearAnyChanges();
-                string displayName = EntityList.SelectedValue.ToString();
-                if ((displayName) == Globals.AllRecords)
+                Entities selectedRecord = (Entities)EntityCombo.SelectedItem;
+                if (selectedRecord.EntityName == Globals.AllRecords)
                 {
                     selectedEntityID = 0;
                     selectedEntity = null;
@@ -603,7 +615,7 @@ namespace ProjectTile
                 {
                     try
                     {
-                        selectedEntity = EntityFunctions.GetEntityByName(displayName);
+                        selectedEntity = selectedRecord;
                         selectedEntityID = selectedEntity.ID;
                         StaffButton.IsEnabled = true;
                     }
@@ -615,8 +627,13 @@ namespace ProjectTile
                         StaffButton.IsEnabled = false;
                     }
                 }
-                refreshStaffGrid();
+                refreshStaffDataGrid();
                 refreshStaffSummaries(true);
+            }
+            else 
+            {
+                resetEntitySelection = true; // If the user cancels the change, don't re-process                
+                EntityCombo.SelectedItem = entityComboList.FirstOrDefault(p => p.ID == selectedEntityID);
             }
         }
         
@@ -640,7 +657,8 @@ namespace ProjectTile
                 }
                 else
                 {
-                    refreshStaffGrid();                    
+                    refreshEntityCombo(true);
+                    //refreshStaffDataGrid();                    
                     toggleSelectionControls(true);
                     PageHeader.Content = defaultPageHeader;
                 }
@@ -654,7 +672,7 @@ namespace ProjectTile
 
         private void StaffButton_Click(object sender, RoutedEventArgs e)
         {
-            viewStaffMembersByEntity();
+            viewStaffByEntity();
         }
 
         private void StaffFrom_GotFocus(object sender, RoutedEventArgs e)
