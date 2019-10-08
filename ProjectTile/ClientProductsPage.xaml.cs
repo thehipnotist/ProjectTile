@@ -31,7 +31,7 @@ namespace ProjectTile
         int selectedProductID = 0;
         bool resetProductSelection = false;
 
-        string activeInstructions = "Select a client and click 'Products', or select an Product and click 'Clients'.";
+        string activeInstructions = "Select a client and click 'Products', or select a Product and click 'Clients'.";
         string activePageHeader = "Products for each Client";
 
         enum modeType { ProductsOfClient, ClientsForProduct }
@@ -65,6 +65,7 @@ namespace ProjectTile
             try
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
+                selectedProductID = Int32.Parse(PageFunctions.pageParameter(this, "ProductID"));
                 refreshProductCombo(true);
             }
             catch (Exception generalException)
@@ -72,6 +73,13 @@ namespace ProjectTile
                 MessageFunctions.Error("Error retrieving query details", generalException);
                 ClientFunctions.ReturnToTilesPage();
             }
+
+            if (pageMode == PageFunctions.View)
+            {
+                ClientButton.Visibility = Visibility.Hidden;
+                Instructions.Content = "Select a client and click 'Products', or select a product to see its clients.";
+            }
+            else { Instructions.Content = activeInstructions; }
 
             CommitButton.Visibility = Visibility.Hidden;
             ClientFrom.Visibility = ClientTo.Visibility = Visibility.Hidden;
@@ -83,15 +91,19 @@ namespace ProjectTile
                 DisableButton.ToolTip = "Your current permissions do not allow activating or disabling client products";
             }   
 
-            if (Globals.SelectedClient != null) // Opened from the Clients Page
+            if (Globals.SelectedClient != null) // Opened from the Clients Page or Project Products
             {
-                fromSource = "ClientPage";
+                fromSource = Globals.ClientSourcePage;
                 ClientCombo.IsEnabled = false; // Cannot easily recreate the same selection list
                 refreshClientDataGrid(); // Ensure the record we want is listed, though
                 viewProductsByClient();
-
-                if (pageMode == PageFunctions.View) { Instructions.Content = "Note that only products you can access yourself are displayed."; }
-                else { Instructions.Content = "Select the products this user should have, then click 'Save'. You can then choose other client from the list."; }
+            }
+            else if (selectedProductID > 0) // Opened from Project Products
+            {
+                fromSource = Globals.ClientSourcePage;
+                ProductCombo.IsEnabled = false; // Cannot easily recreate the same selection list
+                refreshClientDataGrid(); // Ensure the record we want is listed, though
+                viewClientsByProduct();
             }
             else
             {
@@ -103,13 +115,6 @@ namespace ProjectTile
                 AddButton.Visibility = RemoveButton.Visibility = Visibility.Hidden;
                 VersionLabel.Visibility = Version.Visibility = DisableButton.Visibility = Visibility.Hidden;
                 FromLabel.Visibility = ToLabel.Visibility = Visibility.Hidden;
-
-                if (pageMode == PageFunctions.View)
-                {
-                    ClientButton.Visibility = Visibility.Hidden;
-                    Instructions.Content = "Select a client and click 'Products', or select a product to see its clients.";
-                }
-                else { Instructions.Content = activeInstructions; }
             }
         }
 
@@ -364,7 +369,7 @@ namespace ProjectTile
 
                 if (selectedClientProduct != null)
                 {
-                    Version.Text = selectedClientProduct.ClientVersion.ToString("#.0");
+                    Version.Text = selectedClientProduct.ClientVersion.ToString("#0.0");
                     RemoveButton.IsEnabled = Version.IsEnabled = true;
                     DisableButton.IsEnabled = (Globals.MyPermissions.Allow("ActivateClientProducts"));
                     toggleDisableButton(selectedClientProduct.Live);
@@ -636,6 +641,10 @@ namespace ProjectTile
                 {
                     PageFunctions.ShowClientPage(pageMode = Globals.ClientSourceMode);
                 }
+                else if (backSource == "ProjectProductsPage")
+                {
+                    PageFunctions.ShowProjectProductsPage("", selectedProductID);
+                }
                 else
                 {
                     refreshProductCombo(true);
@@ -762,7 +771,7 @@ namespace ProjectTile
                 refreshEditPage();
                 CommitButton.IsEnabled = true;
             }
-            else { Version.Text = selectedClientProduct.ClientVersion.ToString("#.0"); }
+            else { Version.Text = selectedClientProduct.ClientVersion.ToString("#0.0"); }
         }
 
         private void Version_PreviewTextInput(object sender, TextCompositionEventArgs e)

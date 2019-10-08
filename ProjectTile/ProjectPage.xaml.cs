@@ -365,7 +365,7 @@ namespace ProjectTile
 
         private void ProductMenu_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: Add this once the page is built
+            PageFunctions.ShowProjectProductsPage();
         }
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)

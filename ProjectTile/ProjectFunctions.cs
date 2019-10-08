@@ -1012,15 +1012,14 @@ namespace ProjectTile
                 using (existingPtDb)
                 {
                     List<int> projectIDList =
-                        (from pj in existingPtDb.Projects
-                                join ps in existingPtDb.ProjectStages on pj.StageCode equals ps.StageCode    
+                        (from pj in existingPtDb.Projects 
                                 join pp in existingPtDb.ProjectProducts on pj.ID equals pp.ProjectID
                                 join pd in existingPtDb.Products on pp.ProductID equals pd.ID
-                            where (pj.EntityID == entityID 
-                                && (!activeOnly || ps.ProjectStatus == InProgressStatus || ps.ProjectStatus == LiveStatus )
+                            where (pj.EntityID == entityID
+                                && (!activeOnly || pj.StageCode < LiveStage)
                                 && (nameContains == "" || pj.ProjectName.Contains(nameContains))
                                 && (productID == 0 || pd.ID == productID))
-                            orderby (new { ps.StageCode, pj.StartDate })
+                            orderby (new { pj.StageCode, pj.StartDate })
                             select pj.ID).ToList();
 
                     SetFullProjectList();
@@ -1045,9 +1044,8 @@ namespace ProjectTile
                         (from pd in existingPtDb.Products
                          join pp in existingPtDb.ProjectProducts on pd.ID equals pp.ProductID
                          join pj in existingPtDb.Projects on pp.ProjectID equals pj.ID
-                         join ps in existingPtDb.ProjectStages on pj.StageCode equals ps.StageCode
                          where (productID == 0 || (productID > 0 && pd.ID == productID)) 
-                            && (!activeOnly || ps.ProjectStatus == InProgressStatus || ps.ProjectStatus == LiveStatus) 
+                            && (!activeOnly || pj.StageCode < LiveStage) 
                             && pj.EntityID == CurrentEntityID
                          orderby pj.ProjectName
                          select new ProjectProductSummary
@@ -1056,7 +1054,8 @@ namespace ProjectTile
                             Project = pj,
                             Product = pd,
                             OldVersion = (pp.OldVersion == null)? 0 : (decimal) pp.OldVersion,
-                            NewVersion = pp.NewVersion
+                            NewVersion = pp.NewVersion,
+                            JustAdded = false
                          }
                         ).ToList();
 
@@ -1079,10 +1078,9 @@ namespace ProjectTile
                 using (existingPtDb)
                 {
                     return (from pj in existingPtDb.Projects
-                            join ps in existingPtDb.ProjectStages on pj.StageCode equals ps.StageCode
                             join cp in existingPtDb.ClientProducts on pj.ClientID equals cp.ClientID
                                 into GroupJoin from scp in GroupJoin.DefaultIfEmpty()
-                            where (!activeOnly || ps.ProjectStatus == InProgressStatus || ps.ProjectStatus == LiveStatus) 
+                            where (!activeOnly || pj.StageCode < LiveStage) 
                                 && !projectIDsWithProduct.Contains(pj.ID) && pj.EntityID == CurrentEntityID
                                 && (pj.ClientID == null || pj.ClientID <= 0 || pj.ClientID == scp.ClientID)
                                 && (scp == null || scp.ProductID == productID)
@@ -1116,7 +1114,8 @@ namespace ProjectTile
                             Project = pj,
                             Product = pd,
                             OldVersion = (pp.OldVersion == null)? 0 : (decimal) pp.OldVersion,
-                            NewVersion = pp.NewVersion
+                            NewVersion = pp.NewVersion,
+                            JustAdded = false
                          }
                         ).ToList();
 
@@ -1792,7 +1791,8 @@ namespace ProjectTile
                                 Project = thisProject,
                                 Product = thisProduct,
                                 OldVersion = GetCurrentVersion(thisProject, thisProduct),
-                                NewVersion = SuggestNewVersion(thisProject, thisProduct)
+                                NewVersion = SuggestNewVersion(thisProject, thisProduct),
+                                JustAdded = true
                             };
                             ProjectsForProduct.Add(addRecord);
                             ProjectsNotForProduct.Remove(thisRecord);
@@ -1859,7 +1859,8 @@ namespace ProjectTile
                                 Project = thisProject,
                                 Product = thisProduct,
                                 OldVersion = thisRecord.ClientVersion,
-                                NewVersion = SuggestNewVersion(thisProject, thisProduct)
+                                NewVersion = SuggestNewVersion(thisProject, thisProduct),
+                                JustAdded = true
                             };
                             ProductsForProject.Add(addRecord);
                             ProductsNotForProject.Remove(thisRecord);
@@ -1923,10 +1924,54 @@ namespace ProjectTile
             ProjectIDsToUpdate.Clear();
             ProductIDsToAdd.Clear();
             ProductIDsToRemove.Clear();
-            ProductIDsToRemove.Clear();
+            ProductIDsToUpdate.Clear();
         }
 
-        public static bool AmendVersion(ProjectProductSummary thisRecord, string version, bool byProject)
+        public static bool AmendOldVersion(ProjectProductSummary thisRecord, string version, bool byProject)
+        {
+            decimal versionNumber;
+            bool carryOn = false;
+
+            if (!Decimal.TryParse(version, out versionNumber))
+            {
+                MessageFunctions.Error("Cannot update the version: the given number is not a decimal.", null);
+                return false;
+            }
+            else if (versionNumber == thisRecord.OldVersion) { return false; }
+            else if (thisRecord.LatestVersion < versionNumber && thisRecord.ClientID > 0)
+            {
+                MessageFunctions.InvalidMessage("The entered version number is higher than the latest product version. Please try again.", "Invalid version");
+                return false;
+            }
+            else if (thisRecord.LatestVersion > versionNumber && thisRecord.ClientID == 0)
+            {
+                MessageFunctions.InvalidMessage("The entered version number is lower than the latest product version. Please try again.", "Invalid version");
+                return false;
+            }
+            else if (thisRecord.NewVersion < versionNumber)
+            {
+                carryOn = MessageFunctions.WarningYesNo("The entered version number is higher than the target version. Is this correct?");
+            }
+            else if (thisRecord.OldVersion > versionNumber && !thisRecord.JustAdded)
+            {
+                carryOn = MessageFunctions.WarningYesNo("The entered version number is lower than the one saved previously. Is this correct?");
+            }
+            else if (!thisRecord.JustAdded)
+            {
+                carryOn = MessageFunctions.ConfirmOKCancel("Update the project's source version of this product? This is not immediately saved, so it can be undone using the 'Back' button.");
+            }
+            else { carryOn = true; }
+
+            if (!carryOn) { return false; }
+            else
+            {
+                thisRecord.OldVersion = versionNumber;
+                queueProjectProductUpdate(thisRecord, byProject);
+                return true;
+            }
+        }
+
+        public static bool AmendNewVersion(ProjectProductSummary thisRecord, string version, bool byProject)
         {
             decimal versionNumber;
             bool carryOn = false;
@@ -1937,19 +1982,28 @@ namespace ProjectTile
                 return false;
             }
             else if (versionNumber == thisRecord.NewVersion) { return false; }
-            else if (thisRecord.LatestVersion < versionNumber)
+            else if (thisRecord.LatestVersion < versionNumber && thisRecord.ClientID > 0)
             {
                 MessageFunctions.InvalidMessage("The entered version number is higher than the latest product version. Please try again.", "Invalid version");
                 return false;
             }
-            //else if (thisRecord.NewVersion > versionNumber && thisRecord.StatusID != ProjectProductStatus.Added)
-            //{
-            //    carryOn = MessageFunctions.WarningYesNo("The entered version number is lower than the current one. Is this correct?");
-            //}
-            //else if (thisRecord.StatusID != ProjectProductStatus.Added)
-            //{
-            //    carryOn = MessageFunctions.ConfirmOKCancel("Update the project's version of this product? This is not immediately saved, so it can be undone using the 'Back' button.");
-            //}
+            else if (thisRecord.LatestVersion > versionNumber && thisRecord.ClientID == 0)
+            {
+                MessageFunctions.InvalidMessage("The entered version number is lower than the latest product version. Please try again.", "Invalid version");
+                return false;
+            }
+            else if (thisRecord.OldVersion > versionNumber)
+            {
+                carryOn = MessageFunctions.WarningYesNo("The entered version number is lower than the current version. Is this correct?");
+            }
+            else if (thisRecord.NewVersion > versionNumber && !thisRecord.JustAdded)
+            {
+                carryOn = MessageFunctions.WarningYesNo("The entered version number is lower than the one saved previously. Is this correct?");
+            }
+            else if (!thisRecord.JustAdded)
+            {
+                carryOn = MessageFunctions.ConfirmOKCancel("Update the project's target version of this product? This is not immediately saved, so it can be undone using the 'Back' button.");
+            }
             else { carryOn = true; }
 
             if (!carryOn) { return false; }
@@ -1978,6 +2032,172 @@ namespace ProjectTile
                 {
                     ProjectIDsToUpdate.Add(projectID);
                 }
+            }
+        }
+
+        public static bool SaveProductProjectChanges(int productID)
+        {
+            ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+            using (existingPtDb)
+            {
+                try
+                {
+                    List<ProjectProducts> recordsToRemove = (from pp in existingPtDb.ProjectProducts
+                                                             where pp.ProductID == productID && ProjectIDsToRemove.Contains((int)pp.ProjectID)
+                                                             select pp).ToList();
+                    foreach (ProjectProducts removePP in recordsToRemove)
+                    {
+                        existingPtDb.ProjectProducts.Remove(removePP);
+                    }
+                }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error deleting project links with product ID " + productID.ToString(), generalException);
+                    return false;
+                }
+
+                try
+                {
+                    foreach (int addProjectID in ProjectIDsToAdd)
+                    {
+                        ProjectProductSummary summaryRecord = ProjectsForProduct.FirstOrDefault(cfp => cfp.ProductID == productID && cfp.ProjectID == addProjectID);
+                        if (summaryRecord == null)
+                        {
+                            MessageFunctions.Error("Error saving new project links with product ID " + productID.ToString() + ": no matching display record found", null);
+                            return false;
+                        }
+                        else
+                        {
+                            ProjectProducts pp = new ProjectProducts
+                            {
+                                ProductID = productID,
+                                ProjectID = addProjectID,
+                                OldVersion = summaryRecord.OldVersion,
+                                NewVersion = summaryRecord.NewVersion
+                            };
+                            existingPtDb.ProjectProducts.Add(pp);
+                        }
+                    }
+                }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error saving project links with product ID " + productID.ToString(), generalException);
+                    return false;
+                }
+
+                try
+                {
+                    List<ProjectProducts> recordsToUpdate = (from pp in existingPtDb.ProjectProducts
+                                                             where pp.ProductID == productID && ProjectIDsToUpdate.Contains((int)pp.ProjectID)
+                                                             select pp).ToList();
+                    foreach (ProjectProducts updatePP in recordsToUpdate)
+                    {
+                        ProjectProductSummary summaryRecord = ProjectsForProduct.FirstOrDefault(cfp => cfp.ID == updatePP.ID && cfp.ProductID == updatePP.ProductID
+                            && cfp.ProjectID == updatePP.ProjectID);
+                        if (summaryRecord == null)
+                        {
+                            MessageFunctions.Error("Error updating project links with product ID " + productID.ToString() + ": no matching display record found", null);
+                            return false;
+                        }
+                        else
+                        {
+                            updatePP.OldVersion = summaryRecord.OldVersion;
+                            updatePP.NewVersion = summaryRecord.NewVersion;
+                        }
+                    }
+                }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error saving updates to project links with product ID " + productID.ToString(), generalException);
+                    return false;
+                }
+
+                existingPtDb.SaveChanges();
+                ClearAnyChanges();
+                return true;
+            }
+        }
+
+        public static bool SaveProjectProductChanges(int projectID)
+        {
+            ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+            using (existingPtDb)
+            {
+                try
+                {
+                    List<ProjectProducts> recordsToRemove = (from pp in existingPtDb.ProjectProducts
+                                                             where pp.ProjectID == projectID && ProductIDsToRemove.Contains((int)pp.ProductID)
+                                                             select pp).ToList();
+                    foreach (ProjectProducts removePP in recordsToRemove)
+                    {
+                        existingPtDb.ProjectProducts.Remove(removePP);
+                    }
+                }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error deleting products from project ID " + projectID.ToString(), generalException);
+                    return false;
+                }
+
+                try
+                {
+                    foreach (int addProductID in ProductIDsToAdd)
+                    {
+                        ProjectProductSummary summaryRecord = ProductsForProject.FirstOrDefault(cfp => cfp.ProductID == addProductID && cfp.ProjectID == projectID);
+                        if (summaryRecord == null)
+                        {
+                            MessageFunctions.Error("Error saving new product links with project ID " + projectID.ToString() + ": no matching display record found", null);
+                            return false;
+                        }
+                        else
+                        {
+                            ProjectProducts pp = new ProjectProducts
+                            {
+                                ProductID = addProductID,
+                                ProjectID = projectID,
+                                OldVersion = summaryRecord.OldVersion,
+                                NewVersion = summaryRecord.NewVersion
+                            };
+                            existingPtDb.ProjectProducts.Add(pp);
+                        }
+                    }
+                }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error saving product links with project ID " + projectID.ToString(), generalException);
+                    return false;
+                }
+
+                try
+                {
+                    List<ProjectProducts> recordsToUpdate = (from pp in existingPtDb.ProjectProducts
+                                                             where pp.ProjectID == projectID && ProductIDsToUpdate.Contains((int)pp.ProductID)
+                                                             select pp).ToList();
+                    foreach (ProjectProducts updatePP in recordsToUpdate)
+                    {
+                        ProjectProductSummary summaryRecord = ProductsForProject.FirstOrDefault(cfp => cfp.ID == updatePP.ID && cfp.ProductID == updatePP.ProductID
+                            && cfp.ProjectID == updatePP.ProjectID);
+                        if (summaryRecord == null)
+                        {
+                            MessageFunctions.Error("Error updating product links with project ID " + projectID.ToString() + ": no matching display record found", null);
+                            return false;
+                        }
+                        else
+                        {
+                            updatePP.OldVersion = summaryRecord.OldVersion;
+                            updatePP.NewVersion = summaryRecord.NewVersion;
+                        }
+                    }
+                }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error saving updates to product links with project ID " + projectID.ToString(), generalException);
+                    return false;
+                }
+
+                existingPtDb.SaveChanges();
+                ClearAnyChanges();
+                return true;
             }
         }
 

@@ -109,7 +109,7 @@
                 <Image x:Name="SuccessImage" Source="{DynamicResource SuccessIcon}" Height="40" Width="40" HorizontalAlignment="Left" Margin="15,5,0,5" VerticalAlignment="Bottom"/>
                 <Image x:Name="InfoImage" Source="{DynamicResource InfoIcon}" Height="40" Width="40" HorizontalAlignment="Left" Margin="15,5,0,5" VerticalAlignment="Bottom"
                        Visibility="Collapsed"/>
-                <TextBlock x:Name="CaptionBlock" FontSize="16" FontWeight="Bold" Padding="5,0,5,0" VerticalAlignment="Top" Width="Auto" Margin="5,3,5,5" Foreground="White" 
+                <TextBlock x:Name="CaptionBlock" FontSize="16" FontWeight="Bold" Padding="5,0,5,0" VerticalAlignment="Top" Width="Auto" Margin="5,3,0,5" Foreground="White" 
                            Text="Set at Runtime"/>
                 <TextBlock x:Name="ContentBlock" FontSize="13" FontWeight="Normal" Padding="5,0,15,0" VerticalAlignment="Bottom" Height="40" TextWrapping="Wrap" Margin="5,7,5,5"
                            Width="Auto" Foreground="White" Text="Set at Runtime Set at Runtime Set at Runtime Set at Runtime Set at Runtime Set at Runtime Set at Runtime Set at Runtime"/>

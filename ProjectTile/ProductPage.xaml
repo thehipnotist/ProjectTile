@@ -77,19 +77,26 @@
                         <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Close" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="AmendButton" HorizontalAlignment="Center" Height="30" Margin="15,15,137.5,15" VerticalAlignment="Bottom" Width="110" 
+                <Button x:Name="BackButton" HorizontalAlignment="Left" Height="30" Margin="130,15,15,15" VerticalAlignment="Top" Width="100" Style="{StaticResource RoundedButton}" 
+                        FontWeight="Bold" Click="BackButton_Click" ToolTip="Return to previous page without saving">
+                    <StackPanel x:Name="BackPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                        <Image x:Name="BackImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource BackIcon}"/>
+                        <TextBlock x:Name="BackButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Back" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>                
+                <Button x:Name="AmendButton" HorizontalAlignment="Right" Height="30" Margin="15,15,265,15" VerticalAlignment="Bottom" Width="110" 
                             FontWeight="Bold" Style="{StaticResource RoundedButton}" IsEnabled="False" Click="AmendButton_Click" BorderBrush="{DynamicResource PtBrushProduct3}">
                     <StackPanel x:Name="AmendPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Image x:Name="AmendImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource AmendIcon}"/>
-                        <Frame x:Name="BackImage" Content="{StaticResource BackIcon}" Visibility="Collapsed"/>
+                        <Image x:Name="ReturnImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{StaticResource BackIcon}" Visibility="Collapsed"/>
                         <TextBlock x:Name="AmendButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Amend" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="AddButton" HorizontalAlignment="Center" Height="30" Margin="137.5,15,15,15" VerticalAlignment="Bottom" Width="110" 
+                <Button x:Name="AddButton" HorizontalAlignment="Right" Height="30" Margin="15,15,140,15" VerticalAlignment="Bottom" Width="110" 
                             FontWeight="Bold" Style="{StaticResource RoundedButton}" IsEnabled="True" Click="AddButton_Click" BorderBrush="{DynamicResource PtBrushProduct3}">
                     <StackPanel x:Name="AddPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Image x:Name="AddImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource AddIcon}"/>
-                        <Frame x:Name="BackImage2" Content="{StaticResource BackIcon}" Visibility="Collapsed"/>
+                        <Image x:Name="ReturnImage2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{StaticResource BackIcon}" Visibility="Collapsed"/>
                         <TextBlock x:Name="AddButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="New Product" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>

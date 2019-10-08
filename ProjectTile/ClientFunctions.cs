@@ -1322,7 +1322,7 @@ namespace ProjectTile
             ClientIDsToUpdate.Clear();
             ProductIDsToAdd.Clear();
             ProductIDsToRemove.Clear();
-            ProductIDsToRemove.Clear();
+            ProductIDsToUpdate.Clear();
         }
 
         public static bool SaveProductClientChanges(int productID)

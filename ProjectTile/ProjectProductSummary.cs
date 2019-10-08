@@ -9,7 +9,8 @@ namespace ProjectTile
         public Projects Project { get; set; }
         public Products Product { get; set; }
         public decimal OldVersion { get; set; }
-        public decimal NewVersion { get; set; }        
+        public decimal NewVersion { get; set; }
+        public bool JustAdded { get; set; }
 
         public int ProjectID
         {

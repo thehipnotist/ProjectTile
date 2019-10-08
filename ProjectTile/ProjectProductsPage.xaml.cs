@@ -31,7 +31,7 @@ namespace ProjectTile
         int selectedProductID = 0;
         bool resetProductSelection = false;
 
-        string activeInstructions = "Select a project and click 'Products', or select an Product and click 'Projects'.";
+        string activeInstructions = "Select a project and click 'Products', or select a Product and click 'Projects'.";
         string activePageHeader = "Products for each Project";
 
         enum modeType { ProductsOfProject, ProjectsForProduct }
@@ -65,6 +65,7 @@ namespace ProjectTile
             try
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
+                selectedProductID = Int32.Parse(PageFunctions.pageParameter(this, "ProductID"));
                 refreshProductCombo(true);
             }
             catch (Exception generalException)
@@ -73,38 +74,38 @@ namespace ProjectTile
                 ProjectFunctions.ReturnToTilesPage();
             }
 
+
+            if (pageMode == PageFunctions.View)
+            {
+                ProjectButton.Visibility = Visibility.Hidden;
+                Instructions.Content = "Select a project and click 'Products', or select a product to see its projects.";
+            }
+            else { Instructions.Content = activeInstructions; }
+
             CommitButton.Visibility = Visibility.Hidden;
             ProjectFrom.Visibility = ProjectTo.Visibility = Visibility.Hidden;
             ProjectLabel.Margin = NameContainsLabel.Margin;
             ProjectCombo.Margin = NameContains.Margin;
 
-            if (Globals.SelectedProjectSummary != null && Globals.SelectedProjectSummary.ProjectID > 0) // Opened from the Projects Page
+            if (Globals.SelectedProjectSummary != null && Globals.SelectedProjectSummary.ProjectID > 0) // Opened from another page
             {
-                fromSource = "ProjectPage";
+                fromSource = ProjectFunctions.ProjectSourcePage;
                 ProjectCombo.IsEnabled = false; // Cannot easily recreate the same selection list
                 refreshProjectDataGrid(); // Ensure the record we want is listed, though
                 viewProductsByProject();
-
-                if (pageMode == PageFunctions.View) { Instructions.Content = "Note that only products you can access yourself are displayed."; }
-                else { Instructions.Content = "Select the products this user should have, then click 'Save'. You can then choose other project from the list."; }
+                ActiveOnlyCheckBox.IsChecked = (Globals.SelectedProjectSummary.StageID < Globals.LiveStage);
             }
             else
             {
+                ActiveOnlyCheckBox.IsChecked = true;
                 fromSource = Globals.TilesPageName;
                 ProjectLabel.Visibility = ProjectCombo.Visibility = Visibility.Hidden;
                 BackButton.Visibility = Visibility.Hidden;
                 ProductFrom.Visibility = ProductTo.Visibility = Visibility.Hidden;
 
-                AddButton.Visibility = RemoveButton.Visibility = Visibility.Hidden;
-                VersionLabel.Visibility = Version.Visibility = Visibility.Hidden;
+                AddButton.Visibility = RemoveButton.Visibility = ClientProductButton.Visibility = Visibility.Hidden;
+                OldVersionLabel.Visibility = OldVersion.Visibility = NewVersionLabel.Visibility = NewVersion.Visibility = Visibility.Hidden;
                 FromLabel.Visibility = ToLabel.Visibility = Visibility.Hidden;
-
-                if (pageMode == PageFunctions.View)
-                {
-                    ProjectButton.Visibility = Visibility.Hidden;
-                    Instructions.Content = "Select a project and click 'Products', or select a product to see its projects.";
-                }
-                else { Instructions.Content = activeInstructions; }
             }
         }
 
@@ -170,7 +171,27 @@ namespace ProjectTile
 
         private void disableButtons()
         {
-            AddButton.IsEnabled = RemoveButton.IsEnabled = Version.IsEnabled = false;
+            AddButton.IsEnabled = RemoveButton.IsEnabled = OldVersion.IsEnabled = NewVersion.IsEnabled = false;
+        }
+
+        private bool internalProjectSelected()
+        {
+            return (Globals.SelectedProjectSummary != null & Globals.SelectedProjectSummary.ProjectID > 0
+                && (Globals.SelectedProjectSummary.Client == null || Globals.SelectedProjectSummary.Client.ClientName == ""));
+        }
+
+        private void toggleClientProductButton()
+        {
+            if (editMode == ByProject && internalProjectSelected())
+            {
+                ClientProductButtonText.Text = "Master Products";
+                ClientProductImage.SetResourceReference(Image.SourceProperty, "ProductIcon");
+            }
+            else
+            {
+                ClientProductButtonText.Text = "Client Products";
+                ClientProductImage.SetResourceReference(Image.SourceProperty, "ClientIcon");
+            }
         }
 
         private void toggleSelectionControls(bool selectionMode)
@@ -185,7 +206,7 @@ namespace ProjectTile
                 backSource = fromSource;
                 BackButton.Visibility = (fromSource == Globals.TilesPageName) ? Visibility.Hidden : Visibility.Visible;
                 Instructions.Content = activeInstructions;
-                FromLabel.Visibility = ToLabel.Visibility = Visibility.Hidden;
+                FromLabel.Visibility = ToLabel.Visibility = AddButton.Visibility = RemoveButton.Visibility = ClientProductButton.Visibility = Visibility.Hidden;
                 ProductVersionLabel.Content = "";
             }
             else
@@ -193,30 +214,57 @@ namespace ProjectTile
                 selectionOnly = Visibility.Hidden;
                 editOnly = Visibility.Visible;
                 backSource = (fromSource == Globals.TilesPageName) ? editMode.ToString() : fromSource;
-                BackButton.Visibility = Visibility.Visible;
+                BackButton.Visibility = ClientProductButton.Visibility = Visibility.Visible;
                 ToLabel.Content = (editMode == ByProject) ? "Linked Products (Live in Bold)" : "Linked Projects (Live Products in Bold)";
+                toggleClientProductButton();
+                OldVersion.Text = NewVersion.Text = "";
 
-                if (pageMode == PageFunctions.View)
+                if (pageMode == PageFunctions.View || (editMode == ByProject && Globals.SelectedProjectSummary.StageID >= Globals.LiveStage))
                 {
-                    Instructions.Content = "";
-                    FromLabel.Visibility = Visibility.Hidden;
+                    FromLabel.Visibility = AddButton.Visibility = RemoveButton.Visibility = Visibility.Hidden;
                     ToLabel.Visibility = Visibility.Visible;
+                    ProductTo.Width = ProjectDataGrid.ActualWidth;
+                    if (pageMode == PageFunctions.View)
+                    {
+                        Instructions.Content = (editMode == ByProject) ? "The following products are linked to this project." : "The following projects are linked to this product.";
+                        ProjectTo.Width = ProductTo.ActualWidth;
+                    }
+                    else
+                    {
+                        Instructions.Content = "This page is read-only as the project is " + ProjectFunctions.GetStageByCode(Globals.SelectedProjectSummary.StageID).StageName + ".";
+                        ProjectCombo.IsEnabled = false;
+                    }                
                 }
                 else
                 {
+                    ProductTo.Width = ProjectTo.ActualWidth;
                     Instructions.Content = (editMode == ByProject) ? "Move products to the right to add them, or left to remove them." 
                         : "Move projects to the right to add them, or left to remove them.";
                     FromLabel.Visibility = ToLabel.Visibility = Visibility.Visible;
                     if (editMode == ByProject) 
                     {
-                        FromLabel.Content = (Globals.SelectedProjectSummary.Client == null || Globals.SelectedProjectSummary.Client.ClientName == "") ? 
-                            "Available Products" : "Available Products for " + Globals.SelectedProjectSummary.Client.ClientName; 
+                        if (internalProjectSelected())
+                        {
+                            FromLabel.Content = "Available Products";
+                        }
+                        else
+                        {
+                            FromLabel.Content = "Available Products for " + Globals.SelectedProjectSummary.Client.ClientName;
+                            MessageFunctions.InfoMessage("Only products owned by " + Globals.SelectedProjectSummary.Client.ClientName
+                                + " are displayed. Use the 'Client Projects' button to add any missing products to the client.", "Please note:");
+                        }
                     }
-                    else { FromLabel.Content = "Available Projects"; }
+                    else 
+                    { 
+                        FromLabel.Content = "Available Projects"; 
+                        MessageFunctions.InfoMessage("Only projects for clients who have product " + selectedProduct.ProductName + " (and internal projects) "
+                            + "are displayed, and only non-Live open projects can be added or removed.", "Please note:");
+                    }
 
                     string borderBrush = (editMode == ByProject) ? "PtBrushProduct3" : "PtBrushProject3";
+                    AddButton.Visibility = RemoveButton.Visibility = Visibility.Visible;
                     AddButton.BorderBrush = RemoveButton.BorderBrush = Application.Current.Resources[borderBrush] as SolidColorBrush;
-                    VersionLabel.HorizontalAlignment = Version.HorizontalAlignment = (editMode == ByProject) ? 
+                    OldVersionLabel.HorizontalAlignment = OldVersion.HorizontalAlignment = NewVersionLabel.HorizontalAlignment = NewVersion.HorizontalAlignment = (editMode == ByProject) ? 
                         HorizontalAlignment.Right : HorizontalAlignment.Left;
                 }
 
@@ -239,8 +287,7 @@ namespace ProjectTile
             ProductFrom.Visibility = (editMode == ByProject && !selectionMode && pageMode == PageFunctions.Amend) ? Visibility.Visible : Visibility.Hidden;
             ProductTo.Visibility = (editMode == ByProject && !selectionMode) ? Visibility.Visible : Visibility.Hidden;
 
-            AddButton.Visibility = RemoveButton.Visibility = (!selectionMode && pageMode == PageFunctions.Amend) ? Visibility.Visible : Visibility.Hidden;
-            VersionLabel.Visibility = Version.Visibility = AddButton.Visibility;
+            OldVersionLabel.Visibility = OldVersion.Visibility = NewVersionLabel.Visibility = NewVersion.Visibility = AddButton.Visibility;
             ProductLabel.Visibility = ProductCombo.Visibility = (editMode == ByProduct || selectionMode) ? Visibility.Visible : Visibility.Hidden;
         }
 
@@ -296,10 +343,10 @@ namespace ProjectTile
             if (selectedProduct != null)
             {
                 PageHeader.Content = "Projects with Product '" + selectedProduct.ProductName + "'";
-                if (ProjectFrom.Visibility == Visibility.Visible)
-                {
-                    ProductVersionLabel.Content = "The latest version of " + selectedProduct.ProductName + " is " + selectedProduct.LatestVersion.ToString() + ".";
-                }
+                //if (ProjectFrom.Visibility == Visibility.Visible)
+                //{
+                //    ProductVersionLabel.Content = "The latest version of " + selectedProduct.ProductName + " is " + selectedProduct.LatestVersion.ToString() + ".";
+                //}
             }
         }
 
@@ -333,7 +380,21 @@ namespace ProjectTile
         {
             try
             {
-                AddButton.IsEnabled = (ProjectList && ProjectFrom.SelectedItems != null) || (!ProjectList && ProductFrom.SelectedItems != null);
+                if (ProjectList && ProjectFrom.SelectedItems != null)
+                {
+                    bool showAddButton = true;
+                    foreach (var selectedRow in ProjectFrom.SelectedItems)
+                    {
+                        Projects selection = (Projects)selectedRow;
+                        if (selection.StageCode >= Globals.LiveStage)
+                        {
+                            showAddButton = false;
+                            break;
+                        }    
+                    }
+                    AddButton.IsEnabled = showAddButton;
+                }
+                else { AddButton.IsEnabled = (!ProjectList && ProductFrom.SelectedItems != null); }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error activating the 'Add' button", generalException); }
         }
@@ -349,15 +410,16 @@ namespace ProjectTile
                 else if (productSelected) { selectedProjectProduct = (ProjectProductSummary)ProductTo.SelectedItem; }
                 else { selectedProjectProduct = null; }
 
-                if (selectedProjectProduct != null)
+                if (selectedProjectProduct != null && selectedProjectProduct.Stage().StageCode < Globals.LiveStage)
                 {
-                    Version.Text = selectedProjectProduct.NewVersion.ToString("#.0");
-                    RemoveButton.IsEnabled = Version.IsEnabled = true;
+                    OldVersion.Text = selectedProjectProduct.OldVersion.ToString("#0.0");
+                    NewVersion.Text = selectedProjectProduct.NewVersion.ToString("#0.0");
+                    RemoveButton.IsEnabled = OldVersion.IsEnabled = NewVersion.IsEnabled = true;
                 }
                 else
                 {
-                    Version.Text = "";
-                    RemoveButton.IsEnabled = Version.IsEnabled = false;
+                    OldVersion.Text = NewVersion.Text = "";
+                    RemoveButton.IsEnabled = OldVersion.IsEnabled = NewVersion.IsEnabled = false;
                 }
 
             }
@@ -639,6 +701,7 @@ namespace ProjectTile
                     //refreshProjectDataGrid();
                     toggleSelectionControls(true);
                     PageHeader.Content = activePageHeader;
+                    ProjectCombo.IsEnabled = false;
                 }
             }
         }
@@ -709,12 +772,12 @@ namespace ProjectTile
         {
             bool confirm = MessageFunctions.ConfirmOKCancel("Are you sure you wish to save your amendments?", "Save changes?");
             if (!confirm) { return; }
-            //bool success = (editMode == ByProject) ? ProjectFunctions.SaveProjectProductChanges(Globals.SelectedProjectSummary.ProjectID) : ProjectFunctions.SaveProductProjectChanges(selectedProductID);
-            //if (success)
-            //{
-            //    MessageFunctions.SuccessMessage("Your changes have been saved successfully. You can make further changes, go back to the previous screen, or close the current page.", "Changes Saved");
-            //    CommitButton.IsEnabled = false;
-            //}
+            bool success = (editMode == ByProject) ? ProjectFunctions.SaveProjectProductChanges(Globals.SelectedProjectSummary.ProjectID) : ProjectFunctions.SaveProductProjectChanges(selectedProductID);
+            if (success)
+            {
+                MessageFunctions.SuccessMessage("Your changes have been saved successfully. You can make further changes, go back to the previous screen, or close the current page.", "Changes Saved");
+                CommitButton.IsEnabled = false;
+            }
         }
 
         private void ProjectCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -731,21 +794,59 @@ namespace ProjectTile
             }
         }
 
-        private void Version_LostFocus(object sender, RoutedEventArgs e)
-        {            
-            if (selectedProjectProduct == null) { MessageFunctions.Error("No project product record selected.", null); }
-            bool success = ProjectFunctions.AmendVersion(selectedProjectProduct, Version.Text, (editMode == ByProject));
+        private void OldVersion_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (selectedProjectProduct == null) { return; }
+            bool success = ProjectFunctions.AmendOldVersion(selectedProjectProduct, OldVersion.Text, (editMode == ByProject));
+            if (success)
+            {
+                refreshEditPage();
+                CommitButton.IsEnabled = true;
+            }
+            else { OldVersion.Text = selectedProjectProduct.OldVersion.ToString("#0.0"); }
+        }
+
+        private void OldVersion_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !Globals.ClientVersionFormat.IsMatch((sender as TextBox).Text.Insert((sender as TextBox).SelectionStart, e.Text));
+        }        
+        
+        private void NewVersion_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (selectedProjectProduct == null) { return; }
+            bool success = ProjectFunctions.AmendNewVersion(selectedProjectProduct, NewVersion.Text, (editMode == ByProject));
             if (success) 
             { 
                 refreshEditPage();
                 CommitButton.IsEnabled = true;
             }
-            else { Version.Text = selectedProjectProduct.NewVersion.ToString("#.0"); }
+            else { NewVersion.Text = selectedProjectProduct.NewVersion.ToString("#0.0"); }
         }
 
-        private void Version_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        private void NewVersion_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             e.Handled = !Globals.ClientVersionFormat.IsMatch((sender as TextBox).Text.Insert((sender as TextBox).SelectionStart, e.Text));
+        }
+
+        private void ClientProductButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!ProjectFunctions.IgnoreAnyChanges()) { return; }
+            clearChanges();
+            if (internalProjectSelected()) 
+            {
+                Globals.ProductSourcePage = "ProjectProductsPage";
+                PageFunctions.ShowProductPage(pageMode); 
+            }
+            else 
+            { 
+                if (editMode == modeType.ProductsOfProject && Globals.SelectedProjectSummary != null && Globals.SelectedProjectSummary.Client != null)
+                { 
+                    int clientID = Globals.SelectedProjectSummary.Client.ID;
+                    Globals.SelectedClient = ClientFunctions.GetClientByID(clientID);
+                }
+                Globals.ClientSourcePage = "ProjectProductsPage";
+                PageFunctions.ShowClientProductsPage(selectedProductID); 
+            }
         }
 
 

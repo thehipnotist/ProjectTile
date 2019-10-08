@@ -64,12 +64,12 @@ namespace ProjectTile
             if (pageMode == PageFunctions.View)
             {
                 CommitButton.Visibility = Visibility.Hidden;
-                AmendmentsGrid.Visibility = AmendButton.Visibility = AddButton.Visibility = Visibility.Hidden;
+                AmendmentsGrid.Visibility = AmendButton.Visibility = AddButton.Visibility = BackButton.Visibility = Visibility.Hidden;
             }
             else if (pageMode == PageFunctions.New)
             {
                 additionMode();
-                AmendButton.Visibility = AddButton.Visibility = Visibility.Hidden;
+                AmendButton.Visibility = AddButton.Visibility = BackButton.Visibility = Visibility.Hidden;
                 PageHeader.Content = "Create New Product";
                 HeaderImage2.SetResourceReference(Image.SourceProperty, "AddIcon");
             }
@@ -80,7 +80,7 @@ namespace ProjectTile
                 HeaderImage2.SetResourceReference(Image.SourceProperty, "AmendIcon");
                 amendmentSetup();
             }
-
+            
             refreshProductGrid();
         }
 
@@ -122,7 +122,7 @@ namespace ProjectTile
 
                 AddButtonText.Text = "Cancel";
                 AddImage.Visibility = Visibility.Collapsed;
-                BackImage2.Visibility = Visibility.Visible;
+                ReturnImage2.Visibility = Visibility.Visible;
             }
         }
 
@@ -135,12 +135,13 @@ namespace ProjectTile
 
             AmendButtonText.Text = "Amend";
             AmendImage.Visibility = Visibility.Visible;
-            BackImage.Visibility = Visibility.Collapsed;
+            ReturnImage.Visibility = Visibility.Collapsed;
 
             AddButton.IsEnabled = true;
             AddButtonText.Text = additionMade? "Add Another" : "New Product";
             AddImage.Visibility = Visibility.Visible;
-            BackImage2.Visibility = Visibility.Collapsed;
+            BackButton.Visibility = (Globals.ProductSourcePage != Globals.TilesPageName)? Visibility.Visible : Visibility.Hidden; 
+            ReturnImage2.Visibility = Visibility.Collapsed;
 
             if (pageMode != PageFunctions.New)
             {
@@ -157,10 +158,11 @@ namespace ProjectTile
 
             AmendButtonText.Text = "Cancel";
             AmendImage.Visibility = Visibility.Collapsed;
-            BackImage.Visibility = Visibility.Visible;
+            ReturnImage.Visibility = Visibility.Visible;
 
             AddButton.IsEnabled = false;
             CommitButton.IsEnabled = true;
+            BackButton.Visibility = Visibility.Hidden;
         }
 
         private void descFilter()
@@ -210,6 +212,7 @@ namespace ProjectTile
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
+            Globals.ResetProductParameters();
             PageFunctions.ShowTilesPage();
         }
 
@@ -273,13 +276,22 @@ namespace ProjectTile
                             AddButton.Visibility = Visibility.Visible;
                             AddButton.IsEnabled = true;
                             AddImage.Visibility = Visibility.Visible;
-                            BackImage2.Visibility = Visibility.Collapsed;
+                            ReturnImage2.Visibility = Visibility.Collapsed;
                         }
                         AddButtonText.Text = "Add Another";
                     }
                 }
             }
             else { MessageFunctions.Error("Saving should not be possible.", null); }
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (Globals.ProductSourcePage == "ProjectProductsPage")
+            {
+                PageFunctions.ShowProjectProductsPage();
+            }
+            Globals.ResetProductParameters();
         }
 
 

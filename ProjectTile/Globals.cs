@@ -97,6 +97,7 @@ namespace ProjectTile
         // Page references
         public static string TilesPageName = "TilesPage";
         public const string TilesPageURI = "TilesPage.xaml";
+        public static string ProductSourcePage = TilesPageName; 
         public static string ClientSourcePage = TilesPageName;
         public static string ClientSourceMode = PageFunctions.None;
         public static string ProjectSourcePage = TilesPageName;
@@ -114,6 +115,11 @@ namespace ProjectTile
         public static DateTime InfiniteDate = Today.AddYears(999);
 
         // Shared methods
+        public static void ResetProductParameters()
+        {
+            Globals.ProductSourcePage = TilesPageName;
+        }
+        
         public static void ResetClientParameters()
         {
             SelectedClient = null;

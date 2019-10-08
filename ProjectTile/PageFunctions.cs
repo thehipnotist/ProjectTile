@@ -107,6 +107,7 @@ namespace ProjectTile
         public static void ShowTilesPage()
         {
             ChangePage(TilesPageURI);
+            ResetProjectParameters();
             ResetClientParameters();
             ResetProjectParameters();
         }
@@ -163,12 +164,12 @@ namespace ProjectTile
             ChangePage("ContactDetailsPage.xaml?Mode=" + pageMode + ",ContactID=" + contactID.ToString());
         }
 
-        public static void ShowClientProductsPage()
+        public static void ShowClientProductsPage(int selectedProductID = 0)
         {
             string pageMode; // Mode is based on viewOnly or permissions; sourcePageMode tells us what the previous screen was
             if (ClientSourceMode == View) { pageMode = View; }
             else { pageMode = MyPermissions.Allow("EditClientProducts") ? Amend : View; }
-            ChangePage("ClientProductsPage.xaml?Mode=" + pageMode);
+            ChangePage("ClientProductsPage.xaml?Mode=" + pageMode + ",ProductID=" + selectedProductID.ToString());
         }
 
         public static void ShowProjectPage(string pageMode, string sourcePage = "")
