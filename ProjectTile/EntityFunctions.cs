@@ -53,7 +53,22 @@ namespace ProjectTile
             }
         }
 
-        public static string[] EntityList(int thisUserID, bool includeAll)
+        public static List<Entities> EntityList(int thisUserID, bool includeAll)
+        {
+            try
+            {
+                var entityList = AllowedEntities(thisUserID);
+                if (includeAll) { entityList.Add(AllEntities); }
+                return entityList;
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error listing valid Entity names", generalException);
+                return null;
+            }
+        }        
+        
+        public static string[] EntityNameList(int thisUserID, bool includeAll)
         {
             try
             {

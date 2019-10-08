@@ -48,7 +48,7 @@ namespace ProjectTile
                     PageFunctions.ShowTilesPage();    
                 }
 
-                EntityList.ItemsSource = EntityFunctions.EntityList(Globals.MyStaffID, false);
+                EntityList.ItemsSource = EntityFunctions.EntityNameList(Globals.MyStaffID, false);
 
                 if (pageMode == PageFunctions.Switch)
                 {

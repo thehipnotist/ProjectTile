@@ -34,6 +34,7 @@ namespace ProjectTile
         public const int NoID = -1;
         public const string AllCodes = "!!";
 
+        public static Entities AllEntities = new Entities { ID = 0, EntityName = AllRecords, EntityDescription = AllRecords };
         public static ProjectSummaryRecord SearchProjects = new ProjectSummaryRecord { ProjectID = -1, ProjectCode = SearchRecords, ProjectName = SearchRecords };
         public static ProjectSummaryRecord AllProjects = new ProjectSummaryRecord { ProjectID = 0, ProjectCode = AllRecords, ProjectName = AllRecords };
         public static ClientSummaryRecord AnyClient = new ClientSummaryRecord { ID = 0, ClientCode = "ANY", ClientName = AnyRecord, EntityID = CurrentEntityID, ActiveClient = false };
