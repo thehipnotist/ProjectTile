@@ -52,7 +52,23 @@
 
                 <Label x:Name="ProjectLabel" Content="Project Name" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="95" FontWeight="Bold"/>
                 <ComboBox x:Name="ProjectCombo" HorizontalAlignment="Left" Height="30" Margin="115,45,15,0" VerticalAlignment="Top" Width="280" SelectionChanged="ProjectCombo_SelectionChanged"
-                          DisplayMemberPath="ProjectName" Style="{DynamicResource PaddedCombo}"/>
+                          DisplayMemberPath="ProjectName" Style="{DynamicResource PaddedCombo}">
+                    <ComboBox.Resources>
+                        <Style TargetType="ComboBoxItem">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}"  Value="Closed">
+                                    <Setter Property="Foreground" Value="DarkGray"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}"  Value="Not Started">
+                                    <Setter Property="Foreground" Value="LightBlue"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}"  Value="Live">
+                                    <Setter Property="Foreground" Value="Green"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ComboBox.Resources>
+                </ComboBox>
                 <DataGrid x:Name="ProjectDataGrid" MinHeight="295" Margin="15,90,15,15" MinWidth="625" AutoGenerateColumns="False" IsReadOnly="True" BorderBrush="{StaticResource PtBrushProject3}" 
                           SelectionChanged="ProjectDataGrid_SelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Top" Height="256">
                     <DataGrid.Columns>

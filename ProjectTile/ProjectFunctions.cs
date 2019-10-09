@@ -1561,6 +1561,7 @@ namespace ProjectTile
                     bool completion = (projectSummary.StageID == CompletedStage && originalStage != CompletedStage);                    
                     if (goLive || reversal)
                     {
+                        // TODO: handle internal projects - should we update linked master versions?
                         try
                         {
                                 var linkedProducts = from p in existingPtDb.Projects

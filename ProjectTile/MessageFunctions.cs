@@ -83,14 +83,17 @@ namespace ProjectTile
 
         public static void SuccessMessage(string message, string caption)
         {
-            //MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
             PageFunctions.DisplayMessage(message, caption, 10, true);
         }
 
         public static void InfoMessage(string message, string caption)
         {
-            //MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
             PageFunctions.DisplayMessage(message, caption, 10, false);
+        }
+
+        public static void CancelInfoMessage()
+        {
+            if (InfoMessageDisplaying) { PageFunctions.HideMessage(); }
         }
 
         public static void InvalidMessage(string message, string caption)

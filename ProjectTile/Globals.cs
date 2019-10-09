@@ -21,6 +21,9 @@ namespace ProjectTile
         public static int FavouriteProjectID = 0;
         public const string DbUserPrefix = "ProT_";
 
+        // Status variables
+        public static bool InfoMessageDisplaying = false;
+
         // Common enumerations
         public enum ClientProductStatus { Added = 1, New = 2, InProgress = 3, Live = 4, Updates = 5, Inactive = 6, Retired = 7 }
         public enum ProjectStatusFilter { All, Current, Open, InProgress, Closed }

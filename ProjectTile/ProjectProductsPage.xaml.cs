@@ -216,7 +216,7 @@ namespace ProjectTile
                 backSource = (fromSource == Globals.TilesPageName) ? editMode.ToString() : fromSource;
                 BackButton.Visibility = ClientProductButton.Visibility = Visibility.Visible;
                 ToLabel.Content = (editMode == ByProject) ? "Linked Products (Live in Bold)" : "Linked Projects (Live Products in Bold)";
-                toggleClientProductButton();
+                //toggleClientProductButton();
                 OldVersion.Text = NewVersion.Text = "";
 
                 if (pageMode == PageFunctions.View || (editMode == ByProject && Globals.SelectedProjectSummary.StageID >= Globals.LiveStage))
@@ -241,25 +241,7 @@ namespace ProjectTile
                     Instructions.Content = (editMode == ByProject) ? "Move products to the right to add them, or left to remove them." 
                         : "Move projects to the right to add them, or left to remove them.";
                     FromLabel.Visibility = ToLabel.Visibility = Visibility.Visible;
-                    if (editMode == ByProject) 
-                    {
-                        if (internalProjectSelected())
-                        {
-                            FromLabel.Content = "Available Products";
-                        }
-                        else
-                        {
-                            FromLabel.Content = "Available Products for " + Globals.SelectedProjectSummary.Client.ClientName;
-                            MessageFunctions.InfoMessage("Only products owned by " + Globals.SelectedProjectSummary.Client.ClientName
-                                + " are displayed. Use the 'Client Projects' button to add any missing products to the client.", "Please note:");
-                        }
-                    }
-                    else 
-                    { 
-                        FromLabel.Content = "Available Projects"; 
-                        MessageFunctions.InfoMessage("Only projects for clients who have product " + selectedProduct.ProductName + " (and internal projects) "
-                            + "are displayed, and only non-Live open projects can be added or removed.", "Please note:");
-                    }
+                    //setLabels();
 
                     string borderBrush = (editMode == ByProject) ? "PtBrushProduct3" : "PtBrushProject3";
                     AddButton.Visibility = RemoveButton.Visibility = Visibility.Visible;
@@ -289,6 +271,29 @@ namespace ProjectTile
 
             OldVersionLabel.Visibility = OldVersion.Visibility = NewVersionLabel.Visibility = NewVersion.Visibility = AddButton.Visibility;
             ProductLabel.Visibility = ProductCombo.Visibility = (editMode == ByProduct || selectionMode) ? Visibility.Visible : Visibility.Hidden;
+        }
+
+        private void setLabels()
+        {
+            if (editMode == ByProject)
+            {
+                if (internalProjectSelected())
+                {
+                    FromLabel.Content = "Available Products";
+                }
+                else
+                {
+                    FromLabel.Content = "Available Products for " + Globals.SelectedProjectSummary.Client.ClientName;
+                    MessageFunctions.InfoMessage("Only products owned by " + Globals.SelectedProjectSummary.Client.ClientName
+                        + " are displayed. Use the 'Client Projects' button to add any missing products to the client.", "Please note:");
+                }
+            }
+            else
+            {
+                FromLabel.Content = "Available Projects";
+                MessageFunctions.InfoMessage("Only projects for clients who have product " + selectedProduct.ProductName + " (and internal projects) "
+                    + "are displayed, and only non-Live open projects can be added or removed.", "Please note:");
+            }
         }
 
         private void viewProductsByProject()
@@ -560,6 +565,7 @@ namespace ProjectTile
         {
             ProjectFunctions.ClearAnyChanges();
             selectedProjectProduct = null;
+            MessageFunctions.CancelInfoMessage();
         }
 
         private void toggleActiveOnly(bool isChecked)
@@ -677,35 +683,6 @@ namespace ProjectTile
             }
         }
 
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (ProjectFunctions.IgnoreAnyChanges())
-            {
-                clearChanges();
-                ProjectFunctions.ReturnToTilesPage();
-            }
-        }
-
-        private void BackButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (ProjectFunctions.IgnoreAnyChanges())
-            {
-                clearChanges();
-                if (backSource == "ProjectPage")
-                {
-                    PageFunctions.ShowProjectPage(pageMode = Globals.ProjectSourceMode);
-                }
-                else
-                {
-                    refreshProductCombo(true);
-                    //refreshProjectDataGrid();
-                    toggleSelectionControls(true);
-                    PageHeader.Content = activePageHeader;
-                    ProjectCombo.IsEnabled = false;
-                }
-            }
-        }
-
         private void ProductButton_Click(object sender, RoutedEventArgs e)
         {
             viewProductsByProject();
@@ -768,18 +745,6 @@ namespace ProjectTile
             else { removeProject(); }
         }
 
-        private void CommitButton_Click(object sender, RoutedEventArgs e)
-        {
-            bool confirm = MessageFunctions.ConfirmOKCancel("Are you sure you wish to save your amendments?", "Save changes?");
-            if (!confirm) { return; }
-            bool success = (editMode == ByProject) ? ProjectFunctions.SaveProjectProductChanges(Globals.SelectedProjectSummary.ProjectID) : ProjectFunctions.SaveProductProjectChanges(selectedProductID);
-            if (success)
-            {
-                MessageFunctions.SuccessMessage("Your changes have been saved successfully. You can make further changes, go back to the previous screen, or close the current page.", "Changes Saved");
-                CommitButton.IsEnabled = false;
-            }
-        }
-
         private void ProjectCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ProjectFunctions.IgnoreAnyChanges())
@@ -790,6 +755,8 @@ namespace ProjectTile
                     selectedGridRecord = (ProjectSummaryRecord)ProjectCombo.SelectedItem;
                     Globals.SelectedProjectSummary = selectedGridRecord;
                     refreshProductSummaries(true);
+                    setLabels();
+                    toggleClientProductButton();
                 }
             }
         }
@@ -848,7 +815,48 @@ namespace ProjectTile
                 PageFunctions.ShowClientProductsPage(selectedProductID); 
             }
         }
+        
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ProjectFunctions.IgnoreAnyChanges())
+            {
+                clearChanges();
+                ProjectFunctions.ReturnToTilesPage();
+            }
+        }
 
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ProjectFunctions.IgnoreAnyChanges())
+            {
+                clearChanges();
+                if (backSource == "ProjectPage")
+                {
+                    PageFunctions.ShowProjectPage(pageMode = Globals.ProjectSourceMode);
+                }
+                else
+                {
+                    refreshProductCombo(true);
+                    //refreshProjectDataGrid();
+                    toggleSelectionControls(true);
+                    PageHeader.Content = activePageHeader;
+                    ProjectCombo.IsEnabled = true;
+                }
+            }
+        }
+
+
+        private void CommitButton_Click(object sender, RoutedEventArgs e)
+        {
+            bool confirm = MessageFunctions.ConfirmOKCancel("Are you sure you wish to save your amendments?", "Save changes?");
+            if (!confirm) { return; }
+            bool success = (editMode == ByProject) ? ProjectFunctions.SaveProjectProductChanges(Globals.SelectedProjectSummary.ProjectID) : ProjectFunctions.SaveProductProjectChanges(selectedProductID);
+            if (success)
+            {
+                MessageFunctions.SuccessMessage("Your changes have been saved successfully. You can make further changes, go back to the previous screen, or close the current page.", "Changes Saved");
+                CommitButton.IsEnabled = false;
+            }
+        }
 
     } // class
 } // namespace

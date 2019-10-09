@@ -386,8 +386,16 @@ namespace ProjectTile
 
         private void ShowMessage(string message, string caption, bool success)
         {
-            if (success) { SuccessImage.Visibility = Visibility.Visible; }
-            else { InfoImage.Visibility = Visibility.Visible; }            
+            if (success) 
+            { 
+                SuccessImage.Visibility = Visibility.Visible;
+                Globals.InfoMessageDisplaying = false;
+            }
+            else 
+            { 
+                InfoImage.Visibility = Visibility.Visible;
+                Globals.InfoMessageDisplaying = true;
+            }            
             CaptionBlock.Text = caption;
             ContentBlock.Text = message;
             CaptionBlock.Visibility = ContentBlock.Visibility = Visibility.Visible;
@@ -408,7 +416,8 @@ namespace ProjectTile
         {
             CaptionBlock.Visibility = ContentBlock.Visibility = Visibility.Hidden;
             InfoImage.Visibility = SuccessImage.Visibility = Visibility.Collapsed;
-            CaptionBlock.Text = ContentBlock.Text = ""; 
+            CaptionBlock.Text = ContentBlock.Text = "";
+            Globals.InfoMessageDisplaying = false;
         }
 
         private void FavouriteButton_Click(object sender, RoutedEventArgs e)
