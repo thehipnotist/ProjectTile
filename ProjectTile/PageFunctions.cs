@@ -39,7 +39,6 @@ namespace ProjectTile
         public const string PassChange = "PassChange";
         public const string Switch = "Switch";
         public const string Default = "Default";
-        public const string About = "About";
         public const string None = "None";
         public const string Lookup = "Lookup";
 
@@ -212,9 +211,14 @@ namespace ProjectTile
         }
 
 
-        public static void ShowHelpPage(string pageMode)
+        public static void ShowAboutPage()
         {
-            ChangePage("HelpPage.xaml?Mode=" + pageMode);
+            ChangePage("AboutPage.xaml?Mode=View");
+        }
+
+        public static void ShowFAQPage()
+        {
+            ChangePage("FAQPage.xaml?Mode=View");
         }
 
         // Page initialisation //

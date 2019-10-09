@@ -225,6 +225,24 @@
         <Color x:Key="PtColorHelp1" R="233" G="233" B="241" A="233"/>
         <SolidColorBrush x:Key="PtBrushHelp1" Color="{StaticResource PtColorHelp1}"/>
 
+        <RadialGradientBrush x:Key="PtGradientHelp2">
+            <RadialGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="{StaticResource PtColorHelp2}" Offset="0"/>
+                    <GradientStop Color="{StaticResource PtColorHelp3}" Offset="1"/>
+                </GradientStopCollection>
+            </RadialGradientBrush.GradientStops>
+        </RadialGradientBrush>
+
+        <RadialGradientBrush x:Key="PtGradientHelp1">
+            <RadialGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="{StaticResource PtColorHelp1}" Offset="0"/>
+                    <GradientStop Color="{StaticResource PtColorHelp2}" Offset="1"/>
+                </GradientStopCollection>
+            </RadialGradientBrush.GradientStops>
+        </RadialGradientBrush>
+        
         <!-- Blacks -->
         <Color x:Key="PtColorExit3" R="0" G="0" B="0"  A="255"/>
         <SolidColorBrush x:Key="PtBrushExit3" Color="{StaticResource PtColorExit3}"/>
@@ -249,6 +267,7 @@
         <BitmapImage x:Key="AboutIcon" UriSource="StatusAnnotations_Information_32xLG.png"/>
         <BitmapImage x:Key="AddIcon" UriSource="112_Plus_Grey_24x24_72.png"/>
         <BitmapImage x:Key="AmendIcon" UriSource="Rename.png"/>
+        <BitmapImage x:Key="AssistIcon" UriSource="1508_QuestionMarkRed.png"/>
         <BitmapImage x:Key="BackIcon" UriSource="112_LeftArrowLong_Grey_24x24_72.png"/>
         <BitmapImage x:Key="CancelIcon" UriSource="1385_Disable_24x24_72.png"/>
         <BitmapImage x:Key="ChangeEntityIcon" UriSource="0205_WebInsertHyperlink_32.png"/>
@@ -261,6 +280,7 @@
         <BitmapImage x:Key="EnableIcon" UriSource="base_checkboxes.png"/>
         <BitmapImage x:Key="EntitiesIcon" UriSource="base_globe_32.png"/>
         <BitmapImage x:Key="ExitIcon" UriSource="112_ArrowReturnRight_Blue_24x24_72 (2).png"/>
+        <BitmapImage x:Key="FAQIcon" UriSource="PendingRequest_32x32_72.png"/>
         <BitmapImage x:Key="FavouriteIcon" UriSource="FavoriteStar_FrontFacing_24x24_72.png"/>
         <BitmapImage x:Key="HelpIcon" UriSource="109_AllAnnotations_Help_24x24_72.png"/>
         <BitmapImage x:Key="InfoIcon" UriSource="info.png"/>
@@ -926,11 +946,25 @@
             </Style.Triggers>
         </Style>
 
+        <FontFamily x:Key="MainFont">Yu Gothic</FontFamily>
+        
         <Style TargetType="{x:Type Window}">
-            <Setter Property="FontFamily" Value="Yu Gothic"/>
+            <Setter Property="FontFamily" Value="{DynamicResource MainFont}"/>
         </Style>
         <Style TargetType="{x:Type Page}">
-            <Setter Property="FontFamily" Value="Yu Gothic"/>
+            <Setter Property="FontFamily" Value="{DynamicResource MainFont}"/>
+        </Style>
+
+        <Style x:Key="HeaderSpan" TargetType="{x:Type Span}">
+            <Setter Property="FontFamily" Value="{DynamicResource MainFont}"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        <Style x:Key="QuestionSpan" TargetType="{x:Type Span}" BasedOn="{StaticResource HeaderSpan}">
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Foreground" Value="{DynamicResource PtBrushFontGrey}"/>            
+        </Style>
+        <Style x:Key="AnswerSpan" TargetType="{x:Type Span}" BasedOn="{StaticResource QuestionSpan}">
+            <Setter Property="Foreground" Value="{DynamicResource PtBrushHeaderBlue}"/>
         </Style>
 
         <Style TargetType="{x:Type ListViewItem}">

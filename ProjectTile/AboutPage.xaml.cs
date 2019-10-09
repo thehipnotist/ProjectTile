@@ -6,26 +6,22 @@ using System.Windows.Controls;
 namespace ProjectTile
 {
     /// <summary>
-    /// Interaction logic for HelpPage.xaml
+    /// Interaction logic for AboutPage.xaml
     /// </summary>
-    public partial class HelpPage : Page, INotifyPropertyChanged
+    public partial class AboutPage : Page, INotifyPropertyChanged
     {
         // ---------------------- //
         // -- Global Variables -- //
         // ---------------------- //   
 
         // Global/page parameters //
-        string pageMode;
         string newLine = "\n";
         public event PropertyChangedEventHandler PropertyChanged;
 
         string backgroundText = "";
         public string BackgroundText
         {
-            get
-            {
-                return backgroundText;
-            }
+            get { return backgroundText; }
             set
             {
                 backgroundText = value;
@@ -36,16 +32,25 @@ namespace ProjectTile
         string systemText = "";
         public string SystemText
         {
-            get
-            {
-                return systemText;
-            }
+            get { return systemText; }
             set
             {
                 systemText = value;
                 OnPropertyChanged("SystemText");
             }
         }
+
+        string acknowledgementsText = "";
+        public string AcknowledgementsText
+        {
+            get { return acknowledgementsText; }
+            set
+            {
+                acknowledgementsText = value;
+                OnPropertyChanged("AcknowledgementsText");
+            }
+        }
+
 
         // Current variables //
 
@@ -56,7 +61,7 @@ namespace ProjectTile
         // ---------------------- //
 
         // Initialize and Load //
-        public HelpPage()
+        public AboutPage()
         {
             InitializeComponent();
             Style = (Style)FindResource(typeof(Page));
@@ -67,34 +72,21 @@ namespace ProjectTile
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                pageMode = PageFunctions.pageParameter(this, "Mode");
-            }
-            catch (Exception generalException)
-            {
-                MessageFunctions.Error("Error retrieving query details", generalException);
-                PageFunctions.ShowTilesPage();
-            }
+            BackgroundText = "ProjectTile was created by Mark Adrian Johnson in 2019 to learn and demonstrate his programming skills."
+                + newLine + "The front end is written in Visual C# with WPF forms. The back end is a scripted SQL Server database."
+                + newLine + "All of the code will be made available on GitHub soon.";
 
-            if (pageMode == PageFunctions.About)
-            {
-                CommitButton.Visibility = Visibility.Hidden;
-                CancelButtonText.Text = "Close";
+            SystemText = "ProjectTile is designed to simulate an in-house system for managing small software implementation or improvement projects, most of which would be on behalf of clients "
+                + "(software customers)."
+                + newLine + "It allows multiple Entities to be set up to represent different parts of the business - mainly to allow some 'dummy' data to be created in a Sample company"
+                + " - although Products are currently 'global' to all Entities."
+                + newLine + "Staff can be assigned to multiple Entities. Clients are per Entity, although it is possible to copy them (and their contacts, but not products) to another Entity.";
 
-                BackgroundText = "ProjectTile was created by Mark Adrian Johnson in 2019 to learn and demonstrate his programming skills."
-                   + newLine + "The front end is written in Visual C# with WPF forms. The back end is a scripted SQL Server database."
-                    + newLine + "All of the code will be made available on GitHub soon.";
+            AcknowledgementsText = "Many thanks to all of the people on various forums (StackOverflow, Microsoft etc.) who had previously asked questions that I needed to ask, to the people "
+                + " who took the time to answer, and - most of all - to the ones who gave the answers I needed."
+                + newLine + "Also thanks to the lovely Monica Sudiwala for her patience, and for keeping me sane.";
 
-                SystemText = "ProjectTile is designed to simulate an in-house system for managing small software implementation or improvement projects, most of which would be on behalf of clients (software customers)."
-                   + newLine + "It allows multiple Entities to be set up to represent different parts of the business - mainly to allow some 'dummy' data to be created in a Sample company"
-                   + " - although Products are currently 'global' to all Entities."
-                   + newLine + "Staff can be assigned to multiple Entities. Clients are per Entity, although it is possible to copy them (and their contacts, but not products) to another Entity.";
-            }
-            
         }
-
-
 
         // ---------------------- //
         // -- Data Management --- //

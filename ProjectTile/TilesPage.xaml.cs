@@ -33,6 +33,7 @@ namespace ProjectTile
         List<Button> productButtons = new List<Button>();
         List<Button> clientButtons = new List<Button>();
         List<Button> projectButtons = new List<Button>();
+        List<Button> helpButtons = new List<Button>();
 
         // ---------------------- //
         // -- Page Management --- //
@@ -81,6 +82,7 @@ namespace ProjectTile
                 mainButtons.Add(ProductButton);
                 mainButtons.Add(ClientButton);
                 mainButtons.Add(ProjectButton);
+                mainButtons.Add(HelpButton);
 
                 entityButtons.Add(EntityButton_Change);
                 entityButtons.Add(EntityButton_Default);
@@ -121,8 +123,8 @@ namespace ProjectTile
                 else { ProjectButton_Contact.Margin = ProjectButton_Product.Margin; }
                 if (myPermissions.Allow("ViewClientTeams")) { projectButtons.Add(ProjectButton_Contact); }
 
-                // More to come...
-
+                helpButtons.Add(HelpButton_About);
+                helpButtons.Add(HelpButton_FAQ);
 
                 if (staffButtons.Count == 0) 
                 { 
@@ -196,7 +198,7 @@ namespace ProjectTile
                     else if (thisButton.Name == "ProductButton") { toggleChildButtons(true, ref productButtons); }
                     else if (thisButton.Name == "ClientButton") { toggleChildButtons(true, ref clientButtons); }
                     else if (thisButton.Name == "ProjectButton") { toggleChildButtons(true, ref projectButtons); }
-
+                    else if (thisButton.Name == "HelpButton") { toggleChildButtons(true, ref helpButtons); }
                     // More to come...
 
                 }
@@ -419,6 +421,16 @@ namespace ProjectTile
         private void ProjectButton_Staff_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowProjectTeamsPage();
+        }
+
+        private void HelpButton_About_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowAboutPage();
+        }
+
+        private void HelpButton_FAQ_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowFAQPage();
         }
         
     } // class

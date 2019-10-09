@@ -75,6 +75,7 @@
             <MenuItem x:Name="HelpMenu" Header="_Help" FontWeight="Bold" ToolTip="{StaticResource HelpTip}" BorderBrush="{x:Null}"
                       Padding="6,0,6,0" HorizontalContentAlignment="Center" Background="{StaticResource PtBrushBackgroundBlue}" Foreground="{StaticResource PtBrushHelp3}"  HorizontalAlignment="Left">
                 <MenuItem x:Name="About" Header="About ProjectTile" Click="HelpMenu_About_Click" FontWeight="Normal" Background="{StaticResource PtBrushHelp1}" Foreground="Black"/>
+                <MenuItem x:Name="FQA" Header="Frequently Asked Questions" Click="HelpMenu_FAQ_Click" FontWeight="Normal" Background="{StaticResource PtBrushHelp1}" Foreground="Black"/>
             </MenuItem>
             <MenuItem x:Name="ExitMenu" Header="_Exit" FontWeight="Bold" ToolTip="{StaticResource ExitTip}" BorderBrush="{x:Null}"
                       Padding="6,0,6,0" HorizontalContentAlignment="Center" Background="{StaticResource PtBrushBackgroundBlue}" Foreground="{StaticResource PtBrushExit3}" HorizontalAlignment="Left" Click="ExitMenu_Click"/>

@@ -56,7 +56,7 @@ namespace ProjectTile
         }
 
         // Menu settings //
-        public void MenuSecurity() // NB: the reference is needed or an error is thrown
+        public void MenuSecurity()
         {
             try
             {
@@ -87,8 +87,6 @@ namespace ProjectTile
                 ProjectContact.Visibility = myPermissions.ShowOrCollapse("ViewClientTeams");
                 ProjectProduct.Visibility = myPermissions.ShowOrCollapse("ViewProjectProducts");
 
-                // More to come...
-
                 StaffMenu.IsEnabled = subMenuItemsVisible(StaffMenu);
                 ProductMenu.IsEnabled = subMenuItemsVisible(ProductMenu);
                 ClientMenu.IsEnabled = subMenuItemsVisible(ClientMenu);
@@ -118,34 +116,6 @@ namespace ProjectTile
             {
                 MainMenu.Visibility = LoginMenu.Visibility = Visibility.Hidden;
             }
-        }
-
-        public void ToggleSideButtons(bool TilesPage)
-        {
-            if (TilesPage)
-            {
-                if (Globals.MyPermissions.Allow("ViewProjects") || Globals.MyPermissions.Allow("EditProjects")) { ProjectButton.Visibility = FavouriteButton.Visibility = Visibility.Visible; }
-                FavouriteButton.IsEnabled = (Globals.FavouriteProjectID > 0);
-                FavouriteButtonText.Text = "Main Project";
-                setFavouriteMode = false;
-            }
-            else
-            {
-                ProjectButton.Visibility = FavouriteButton.Visibility = Visibility.Hidden;
-            }
-        }
-
-        public void ShowFavouriteButton() // Allows other pages to show this for setting the favourite
-        {
-            FavouriteButton.Visibility = Visibility.Visible;
-            FavouriteButtonText.Text = "Set Main";
-            setFavouriteMode = true;
-            ToggleFavouriteButton(false);
-        }
-
-        public void ToggleFavouriteButton(bool enable)
-        {
-            FavouriteButton.IsEnabled = enable;
         }
 
         // ---------------------- //
@@ -192,6 +162,86 @@ namespace ProjectTile
                 // Do nothing as it's not worth raising an error when the user wants to leave
                 return true;
             }            
+        }
+
+        public void ToggleSideButtons(bool TilesPage)
+        {
+            if (TilesPage)
+            {
+                if (Globals.MyPermissions.Allow("ViewProjects") || Globals.MyPermissions.Allow("EditProjects")) { ProjectButton.Visibility = FavouriteButton.Visibility = Visibility.Visible; }
+                FavouriteButton.IsEnabled = (Globals.FavouriteProjectID > 0);
+                FavouriteButtonText.Text = "Main Project";
+                setFavouriteMode = false;
+            }
+            else
+            {
+                ProjectButton.Visibility = FavouriteButton.Visibility = Visibility.Hidden;
+            }
+        }
+
+        public void ShowFavouriteButton() // Allows other pages to show this for setting the favourite
+        {
+            FavouriteButton.Visibility = Visibility.Visible;
+            FavouriteButtonText.Text = "Set Main";
+            setFavouriteMode = true;
+            ToggleFavouriteButton(false);
+        }
+
+        public void ToggleFavouriteButton(bool enable)
+        {
+            FavouriteButton.IsEnabled = enable;
+        }
+
+        public void DisplayMessage(string message, string caption, int seconds, bool success)
+        {
+            if (cancelMessageTokenSource != null) { cancelMessageTokenSource.Cancel(); } // Stop any existing 'wait' that will result in the new message being cleared early
+            HideMessage();
+
+            cancelMessageTokenSource = new CancellationTokenSource();
+            CancellationToken cancelMessageToken = cancelMessageTokenSource.Token;
+
+            Action act1 = new Action(() => { ShowMessage(message, caption, success); });
+            Action act3 = new Action(() => { EndMessage(cancelMessageToken); });
+
+            Task task1 = Task.Factory.StartNew(() => { this.Dispatcher.BeginInvoke(act1, DispatcherPriority.Send); });
+            Task task2 = task1.ContinueWith((async) => { Wait(seconds); }, TaskContinuationOptions.OnlyOnRanToCompletion);
+            Task task3 = task2.ContinueWith((antecedent) => this.Dispatcher.BeginInvoke(act3, DispatcherPriority.Background), TaskContinuationOptions.OnlyOnRanToCompletion);
+        }
+
+        private void ShowMessage(string message, string caption, bool success)
+        {
+            if (success)
+            {
+                SuccessImage.Visibility = Visibility.Visible;
+                Globals.InfoMessageDisplaying = false;
+            }
+            else
+            {
+                InfoImage.Visibility = Visibility.Visible;
+                Globals.InfoMessageDisplaying = true;
+            }
+            CaptionBlock.Text = caption;
+            ContentBlock.Text = message;
+            CaptionBlock.Visibility = ContentBlock.Visibility = Visibility.Visible;
+
+        }
+
+        private void Wait(int seconds)
+        {
+            Thread.Sleep(seconds * 1000);
+        }
+
+        private void EndMessage(CancellationToken cancelHide)
+        {
+            if (!cancelHide.IsCancellationRequested) { HideMessage(); }
+        }
+
+        public void HideMessage()
+        {
+            CaptionBlock.Visibility = ContentBlock.Visibility = Visibility.Hidden;
+            InfoImage.Visibility = SuccessImage.Visibility = Visibility.Collapsed;
+            CaptionBlock.Text = ContentBlock.Text = "";
+            Globals.InfoMessageDisplaying = false;
         }
         
         // ---------------------- //
@@ -323,11 +373,6 @@ namespace ProjectTile
             PageFunctions.ShowClientProductsPage();
         }
 
-        private void HelpMenu_About_Click(object sender, RoutedEventArgs e)
-        {
-            PageFunctions.ShowHelpPage(PageFunctions.About);
-        }
-
         private void ExitMenu_Click(object sender, RoutedEventArgs e)
         {
             Close();
@@ -368,56 +413,14 @@ namespace ProjectTile
             PageFunctions.ShowProjectTeamsPage(pageMode: "", selectedStaffID: Globals.MyStaffID);
         }
 
-        public void DisplayMessage(string message, string caption, int seconds, bool success)
+        private void HelpMenu_About_Click(object sender, RoutedEventArgs e)
         {
-            if (cancelMessageTokenSource != null) { cancelMessageTokenSource.Cancel(); } // Stop any existing 'wait' that will result in the new message being cleared early
-            HideMessage();
-            
-            cancelMessageTokenSource = new CancellationTokenSource();
-            CancellationToken cancelMessageToken = cancelMessageTokenSource.Token;
-            
-            Action act1 = new Action(() => { ShowMessage(message, caption, success); });
-            Action act3 = new Action(() => { EndMessage(cancelMessageToken); });
-
-            Task task1 = Task.Factory.StartNew(() => { this.Dispatcher.BeginInvoke(act1, DispatcherPriority.Send); });
-            Task task2 = task1.ContinueWith((async) => { Wait(seconds); }, TaskContinuationOptions.OnlyOnRanToCompletion);
-            Task task3 = task2.ContinueWith((antecedent) => this.Dispatcher.BeginInvoke(act3, DispatcherPriority.Background), TaskContinuationOptions.OnlyOnRanToCompletion);
+            PageFunctions.ShowAboutPage();
         }
 
-        private void ShowMessage(string message, string caption, bool success)
+        private void HelpMenu_FAQ_Click(object sender, RoutedEventArgs e)
         {
-            if (success) 
-            { 
-                SuccessImage.Visibility = Visibility.Visible;
-                Globals.InfoMessageDisplaying = false;
-            }
-            else 
-            { 
-                InfoImage.Visibility = Visibility.Visible;
-                Globals.InfoMessageDisplaying = true;
-            }            
-            CaptionBlock.Text = caption;
-            ContentBlock.Text = message;
-            CaptionBlock.Visibility = ContentBlock.Visibility = Visibility.Visible;
-
-        }
-
-        private void Wait(int seconds)
-        {
-            Thread.Sleep(seconds * 1000);
-        }
-
-        private void EndMessage(CancellationToken cancelHide)
-        {
-            if (!cancelHide.IsCancellationRequested) { HideMessage(); }
-        }
-
-        public void HideMessage()
-        {
-            CaptionBlock.Visibility = ContentBlock.Visibility = Visibility.Hidden;
-            InfoImage.Visibility = SuccessImage.Visibility = Visibility.Collapsed;
-            CaptionBlock.Text = ContentBlock.Text = "";
-            Globals.InfoMessageDisplaying = false;
+            PageFunctions.ShowFAQPage();
         }
 
         private void FavouriteButton_Click(object sender, RoutedEventArgs e)
@@ -432,6 +435,7 @@ namespace ProjectTile
                 ProjectFunctions.OpenFavourite();
             }
         }
+
 
     } // class
 } // namespace
