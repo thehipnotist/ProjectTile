@@ -179,7 +179,14 @@
                             <Image x:Name="BackImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource BackIcon}"/>
                             <TextBlock x:Name="BackButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Back" Margin="5,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
-                    </Button>                    
+                    </Button>
+                    <Button x:Name="RemoveButton" HorizontalAlignment="Right" Height="30" Margin="15,15,390,15" VerticalAlignment="Top" Width="110" 
+                		FontWeight="Bold" Click="RemoveButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{DynamicResource PtBrushStaff3}">
+                        <StackPanel x:Name="RemovePanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                            <Image x:Name="MinusImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource SubtractIcon}"/>
+                            <TextBlock x:Name="RemoveButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Remove" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
                     <Button x:Name="AmendButton" HorizontalAlignment="Right" Height="30" Margin="15,15,265,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" Click="AmendButton_Click" IsEnabled="False" BorderBrush="{DynamicResource PtBrushStaff3}">
                         <StackPanel x:Name="AmendPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
@@ -191,7 +198,7 @@
                 		FontWeight="Bold" Click="AddButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{DynamicResource PtBrushStaff3}">
                         <StackPanel x:Name="AddPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                             <Image x:Name="PlusImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource PlusIcon}"/>
-                            <TextBlock x:Name="AddButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Add Staff" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="AddButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Add" Margin="5,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
                     <Button x:Name="ProjectButton" HorizontalAlignment="Right" Height="30" Margin="15,15,30,15" VerticalAlignment="Bottom" Width="110" 

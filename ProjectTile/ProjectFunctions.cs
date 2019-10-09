@@ -1031,11 +1031,12 @@ namespace ProjectTile
                     List<int> projectIDList =
                         (from pj in existingPtDb.Projects 
                                 join pp in existingPtDb.ProjectProducts on pj.ID equals pp.ProjectID
-                                join pd in existingPtDb.Products on pp.ProductID equals pd.ID
+                                    into GroupJoin from spp in GroupJoin.DefaultIfEmpty()
+                                //join pd in existingPtDb.Products on pp.ProductID equals pd.ID
                             where (pj.EntityID == entityID
                                 && (!activeOnly || pj.StageCode < LiveStage)
                                 && (nameContains == "" || pj.ProjectName.Contains(nameContains))
-                                && (productID == 0 || pd.ID == productID))
+                                && (productID == 0 || spp.ProductID == productID))
                             orderby (new { pj.StageCode, pj.StartDate })
                             select pj.ID).ToList();
 
@@ -1255,7 +1256,45 @@ namespace ProjectTile
                 return "[Undetermined]";
             }
         }
+
+        public static string ListKeyRoles(bool clientTeam)
+        {
+            List<string> dummyTeam = new List<string>();
+            return MissingTeamMembers(dummyTeam, clientTeam);
+        }
         
+        public static string FindMissingRoles(int projectID, bool clientTeam)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    if (!clientTeam)
+                    {
+                        List<string> currentInternalRoles = existingPtDb.ProjectTeams.Where(
+                                            pt => pt.ProjectID == projectID
+                                            && (pt.FromDate == null || pt.FromDate <= Today)
+                                            && (pt.ToDate == null || pt.ToDate >= Today)).Select(pt => pt.ProjectRoleCode).ToList();
+                        return MissingTeamMembers(currentInternalRoles, false);
+                    }
+                    else
+                    {
+                        List<string> currentClientRoles = existingPtDb.ClientTeams.Where(
+                            ct => ct.ProjectID == projectID
+                            && (ct.FromDate == null || ct.FromDate <= Today)
+                            && (ct.ToDate == null || ct.ToDate >= Today)).Select(ct => ct.ClientTeamRoleCode).ToList();
+                        return MissingTeamMembers(currentClientRoles, true);
+                    }
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error checking for missing roles", generalException);
+                return null;
+            }
+        }
+
         public static bool ValidateProject(ProjectSummaryRecord summary, bool amendExisting, bool managerChanged)
         {
             try
@@ -1764,7 +1803,7 @@ namespace ProjectTile
                         return false;
                     }
                     currentVersion.ConvertToProjectTeam(ref thisTeam);
-                    updateOtherInstances(currentVersion);
+                    if (currentVersion.HasKeyRole) { updateOtherInstances(currentVersion); }
                     existingPtDb.SaveChanges();
                     MessageFunctions.SuccessMessage("Your changes have been saved successfully.", "Team Membership Amended");
                     return true;
@@ -1789,7 +1828,7 @@ namespace ProjectTile
                 using (existingPtDb)
                 {
                     existingPtDb.ProjectTeams.Add(thisTeam);
-                    updateOtherInstances(newRecord);
+                    if (newRecord.HasKeyRole) { updateOtherInstances(newRecord); }
                     existingPtDb.SaveChanges();
                     MessageFunctions.SuccessMessage("New project team member added successfully.", "Team Member Added");
                     return thisTeam.ID;
@@ -1799,6 +1838,32 @@ namespace ProjectTile
             {
                 MessageFunctions.Error("Error creating new project team member", generalException);
                 return 0;
+            }
+        }
+
+        public static bool RemoveTeamEntry(TeamSummaryRecord unwantedRecord)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    if (unwantedRecord.HasKeyRole)
+                    {
+                        MessageFunctions.Error("Error removing project team member: this record has a key role", null);
+                        return false;
+                    }
+                    ProjectTeams thisTeam = existingPtDb.ProjectTeams.Where(pt => pt.ID == unwantedRecord.ID).FirstOrDefault();                              
+                    existingPtDb.ProjectTeams.Remove(thisTeam);
+                    existingPtDb.SaveChanges();
+                    MessageFunctions.SuccessMessage("Team member removed successfully.", "Team Member Removed");
+                    return true;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error removing project team member", generalException);
+                return false;
             }
         }
 
