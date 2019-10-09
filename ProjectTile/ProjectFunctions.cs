@@ -667,7 +667,7 @@ namespace ProjectTile
         }
 
         // Project staff in general
-        public static ProjectRoles GetRole(string roleCode)
+        public static ProjectRoles GetInternalRole(string roleCode)
         {
             try
             {
@@ -683,7 +683,24 @@ namespace ProjectTile
                 return null;
             }	
         }
-        
+
+        public static ClientTeamRoles GetClientRole(string roleCode)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return existingPtDb.ClientTeamRoles.Where(pr => pr.RoleCode == roleCode).FirstOrDefault();
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving project role", generalException);
+                return null;
+            }
+        }        
+
         public static int RolePosition(string roleCode)
         {
             int position = Array.IndexOf(ProjectRoleHeirarchy, roleCode);
@@ -1216,19 +1233,27 @@ namespace ProjectTile
 
         public static string MissingTeamMembers(List<string> currentTeam, bool clientTeam)
         {
-            string result = "";
-            string[] keyRoles = clientTeam ? KeyClientRoles : KeyInternalRoles;
-            foreach (string role in keyRoles.Reverse())
+            try
             {
-                if (!currentTeam.Contains(role))
+                string result = "";
+                string[] keyRoles = clientTeam ? KeyClientRoles : KeyInternalRoles;
+                foreach (string role in keyRoles.Reverse())
                 {
-                    string description = GetRole(role).RoleDescription;
-                    if (result == "") { result = description; }
-                    else if (!result.Contains("and")) { result = description + " and " + result; }
-                    else { result = description + ", " + result; }
+                    if (!currentTeam.Contains(role))
+                    {
+                        string description = clientTeam? GetClientRole(role).RoleDescription : GetInternalRole(role).RoleDescription;
+                        if (result == "") { result = description; }
+                        else if (!result.Contains("and")) { result = description + " and " + result; }
+                        else { result = description + ", " + result; }
+                    }
                 }
+                return result;
             }
-            return result;
+            catch (Exception generalException) 
+            { 
+                MessageFunctions.Error("Error identifying missing roles in the " + (clientTeam? "client's" : "internal") + " project team", generalException);
+                return "[Undetermined]";
+            }
         }
         
         public static bool ValidateProject(ProjectSummaryRecord summary, bool amendExisting, bool managerChanged)
@@ -1240,16 +1265,20 @@ namespace ProjectTile
                 string queryDetails = "";
                 string queryMessage = "";
                 List<Projects> otherClientProjects = null;
-                List<ProjectProducts> linkedProjectProducts = null;
-                List<ClientProducts> liveClientProducts = null;
+                int countLinkedProducts = 0;
+                int countLinkedContacts = 0;
+                int countLiveClientProducts = 0;
                 string type = (summary.Type == null) ? "" : summary.Type.TypeCode;
                 int stage = (summary.Stage != null) ? summary.StageID : -1;
                 bool isUnderway = (stage > StartStage && !summary.IsCancelled);
                 Projects existingProjectRecord = null;
                 ClientSummaryRecord client = summary.Client ?? null;
-                List<string> currentInternalRoles = null;
+                bool clientAdded = false;
+                bool clientRemoved = false;
+                bool clientChanged = false;
+                List<string> currentInternalRoles = new List<string>();                
                 string missingInternalRoles = "";
-                List<string> currentClientRoles = null;
+                List<string> currentClientRoles = new List<string>();
                 string missingClientRoles = "";
                 int projectID = summary.ProjectID;
 
@@ -1305,37 +1334,31 @@ namespace ProjectTile
                                     p => p.ID != projectID
                                     && (p.ClientID == client.ID || (summary.IsInternal && (p.ClientID == null || p.ClientID <= 0)))
                                     ).ToList();
-                                liveClientProducts = existingPtDb.ClientProducts.Where(
-                                    cp => cp.ClientID == client.ID && cp.Live == true).ToList();
+                                countLiveClientProducts = existingPtDb.ClientProducts.Where(cp => cp.ClientID == client.ID && cp.Live == true).Count();
                                 if (!summary.IsNew)
                                 {
                                     existingProjectRecord = existingPtDb.Projects.Where(p => p.ID == projectID).FirstOrDefault();
-                                    linkedProjectProducts = existingPtDb.ProjectProducts.Where(pp => pp.ProjectID == projectID).ToList();
-                                    currentInternalRoles = existingPtDb.ProjectTeams.Where(pt => pt.ProjectID == projectID 
+                                    countLinkedProducts = existingPtDb.ProjectProducts.Where(pp => pp.ProjectID == projectID).Count();
+                                    countLinkedContacts = existingPtDb.ClientTeams.Where(ct => ct.ProjectID == projectID).Count();
+                                    currentInternalRoles = existingPtDb.ProjectTeams.Where(
+                                        pt => pt.ProjectID == projectID 
                                         && (pt.FromDate == null || pt.FromDate <= Today)
                                         && (pt.ToDate == null || pt.ToDate >= Today)).Select(pt => pt.ProjectRoleCode).ToList();
-
-                                    currentClientRoles = existingPtDb.ClientTeams.Where(ct => ct.ProjectID == projectID
+                                    missingInternalRoles = MissingTeamMembers(currentInternalRoles, false);
+                                    currentClientRoles = existingPtDb.ClientTeams.Where(
+                                        ct => ct.ProjectID == projectID
                                         && (ct.FromDate == null || ct.FromDate <= Today)
-                                        && (ct.ToDate == null || ct.ToDate >= Today)).Select(ct => ct.ClientTeamRoleCode).ToList(); 
+                                        && (ct.ToDate == null || ct.ToDate >= Today)).Select(ct => ct.ClientTeamRoleCode).ToList();
+                                    missingClientRoles = summary.IsInternal ? "" : MissingTeamMembers(currentClientRoles, true);
+                                    clientAdded = ((existingProjectRecord.ClientID ?? 0) == 0 && client != null);
+                                    clientRemoved = ((existingProjectRecord.ClientID ?? 0) > 0 && client == null);
+                                    clientChanged = ((existingProjectRecord.ClientID ?? 0) > 0 && client != null && client.ID != existingProjectRecord.ClientID);
                                 }
-                            }
-                            if (currentInternalRoles != null) { missingInternalRoles = MissingTeamMembers(currentInternalRoles, false); }
-                            if (currentClientRoles != null) { missingClientRoles = MissingTeamMembers(currentClientRoles, true); }
-
-                            if (otherClientProjects.Exists(p => p.ProjectName == summary.ProjectName))
-                            { errorDetails = ", as another project exists for the same client with the same name. Please change the project name."; }
-                            else if (otherClientProjects.Exists(p => p.ProjectSummary == summary.ProjectSummary))
-                            { errorDetails = ", as another project exists for the same client with the same project summary. Please change the summary details."; }
-                            else if (isUnderway && missingInternalRoles != "")
-                            {
-                                errorDetails = ", as the project does not have a current (internal) " + missingInternalRoles + ". Key roles must be filled throughout the project. "
-                                + "Please keep the project in  'Initation' stage, then use 'Project Teams (Staff)' to complete the project team."; 
-                            }
-                            else if (isUnderway && missingClientRoles != "")
-                            {
-                                errorDetails = ", as the client's project team does not have a current " + missingClientRoles + ". Key roles must be filled throughout the project. "
-                                + "Please keep the project in 'Initation' stage until the required roles are set in 'Project (Client) Contacts'.";
+                                else
+                                {
+                                    missingInternalRoles = "project team";
+                                    missingClientRoles = "project team";
+                                }
                             }
                         }
                         catch (Exception generalException)
@@ -1343,8 +1366,54 @@ namespace ProjectTile
                             MessageFunctions.Error("Error performing project validation against the database", generalException);
                             return false;
                         }
+                        try
+                        {
+                            if (otherClientProjects.Exists(p => p.ProjectName == summary.ProjectName))
+                            { errorDetails = ", as another project exists for the same client with the same name. Please change the project name."; }
+                            else if (otherClientProjects.Exists(p => p.ProjectSummary == summary.ProjectSummary))
+                            { errorDetails = ", as another project exists for the same client with the same project summary. Please change the summary details."; }
+                            else if (isUnderway && missingInternalRoles != "")
+                            {
+                                errorDetails = ", as the project does not have a current (internal) " + missingInternalRoles + ". Key roles must be filled throughout the project. "
+                                + "Please keep the project in  'Initation' stage, then use 'Project Teams (Staff)' to complete the project team.|Key Role Not Covered"; 
+                            }
+                            else if (isUnderway && missingClientRoles != "")
+                            {
+                                errorDetails = ", as the project does not have a current client " + missingClientRoles + ". Key roles must be filled throughout the project. "
+                                + "Please keep the project in 'Initation' stage until the required roles are set in 'Project (Client) Contacts'.|Key Role Not Covered";
+                            }
+                            else if (clientChanged && countLinkedContacts > 0)
+                            {
+                                errorDetails = ". The client cannot be changed, as client contacts have already been added. If you are sure this change is necessary, please "
+                                    + "first remove all client contacts from the project via 'Project Contacts'.|Cannot Change Client";
+                            }
+                            else if (clientRemoved && countLinkedContacts > 0)
+                            {
+                                errorDetails = ". The client cannot be removed, as client contacts have already been added. If you are sure this change is necessary, please "
+                                    + "first remove all client contacts from the project via 'Project Contacts'.|Cannot Remove Client";
+                            }
+                            else if (clientAdded && countLinkedProducts > 0)
+                            {
+                                errorDetails = ". A client cannot be added, as products have been linked to the project (this may cause version/compatibility errors). If this change is "
+                                    + "necessary, please first clear all linked products from the project via 'Project Products'.|Cannot Add Client";
+                            }
+                            else if (clientChanged && countLinkedProducts > 0)
+                            {
+                                errorDetails = ". The client cannot be changed, as products have been linked to the project (this may cause version/compatibility errors). If this change is "
+                                    + "necessary, please first clear all linked products from the project via 'Project Products'.|Cannot Change Client";
+                            }
+                            else if (clientRemoved && countLinkedProducts > 0)
+                            {
+                                errorDetails = ". The client cannot be removed, as products have been linked to the project (this may cause version/compatibility errors). If this change is "
+                                    + "necessary, please first clear all linked products from the project via 'Project Products'.|Cannot Remove Client";
+                            }
+                        }
+                        catch (Exception generalException)
+                        {
+                            MessageFunctions.Error("Error performing secondary project validation", generalException);
+                            return false;
+                        }
                     }
-
                     if (errorDetails != "")
                     {
                         if (summary.IsInternal) { errorDetails = errorDetails.Replace("another project exists for the same client", "another internal project exists"); }
@@ -1370,7 +1439,7 @@ namespace ProjectTile
                     
                     if (managerChanged && summary.ProjectManager.RoleCode != ProjectManagerCode)
                     { queryDetails = queryDetails + "\n" + "The Project Manager is also not normally a Project Manager by role."; }
-                    if (isUnderway && linkedProjectProducts == null)
+                    if (isUnderway && countLinkedProducts == 0)
                     { queryDetails = queryDetails + "\n" + "The project stage also indicates that the project is underway, but it has no linked products."; }
                     if (summary.StartDate == null && !summary.IsCancelled) { queryDetails = queryDetails + "\n" + "The project also has no predicted start date at present."; } // Only projects not yet underway
                     if (summary.StartDate > DateTime.Today.AddYears(1)) { queryDetails = queryDetails + "\n" + "The project also starts more than a year in the future."; }
@@ -1381,9 +1450,9 @@ namespace ProjectTile
                     if (!summary.IsNew && stage - originalStage > 4 && !summary.IsCancelled) { queryDetails = queryDetails + "\n" + "The project has moved through several stages."; }
                     if (!summary.IsInternal)
                     {
-                        if (liveClientProducts.Count == 0 && type != NewSiteCode)
+                        if (countLiveClientProducts == 0 && type != NewSiteCode && type != AddSystemCode)
                         { queryDetails = queryDetails + "\n" + "The project type also indicates a change to an existing product, but this client has no Live products."; }
-                        else if (liveClientProducts.Count != 0 && (type == NewSiteCode))
+                        else if (countLiveClientProducts > 0 && (type == NewSiteCode))
                         { queryDetails = queryDetails + "\n" + "The project type also indicates a brand new installation for a new client, but this client already has one or more Live products."; }
                     }
 

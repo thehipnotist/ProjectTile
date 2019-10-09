@@ -110,8 +110,8 @@ namespace ProjectTile
         public string DefaultRole()
         {
             if (StaffRoleCode == AccountManagerCode) { return SponsorCode; } // Only passed back as a suggestion if it is the client's Account Manager
-            else if (StaffRoleCode == TechnicalManagerCode) { return TechnicalLeadCode; }
-            else if (ProjectFunctions.GetRole(StaffRoleCode) != null) { return StaffRoleCode; }
+            else if (StaffRoleCode == TechnicalManagerCode) { return OurTechLeadCode; }
+            else if (ProjectFunctions.GetInternalRole(StaffRoleCode) != null) { return StaffRoleCode; }
             else { return ""; }
         }
         
