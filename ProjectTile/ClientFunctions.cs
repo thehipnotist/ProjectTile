@@ -11,6 +11,10 @@ namespace ProjectTile
     {        
         public static string EntityWarning = "Note that only clients in the current Entity ('" + CurrentEntityName + "') are displayed.";
         public static string ShortEntityWarning = "Only clients in the current Entity are displayed.";
+        public static ContactSummaryRecord SelectedTeamContact = null;
+        public delegate void ReturnToTeamsDelegate();
+        public static ReturnToTeamsDelegate SelectContactForTeam;
+        public static ReturnToTeamsDelegate CancelTeamContactSelection;
         
         public static string ClientCodeFormat = "";
         public const char AlphaChar = '\u0040'; // @
@@ -496,8 +500,10 @@ namespace ProjectTile
             }
         }
 
+        // Contacts functions
+
         public static List<ClientStaff> GetContactsByClientID(int clientID, bool activeOnly)
-        {           
+        {
             try
             {
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
@@ -506,16 +512,15 @@ namespace ProjectTile
                     return (from cs in existingPtDb.ClientStaff
                             where cs.ClientID == clientID && (!activeOnly || cs.Active)
                             select cs).ToList();
-				}
+                }
             }
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error obtaining contact records for client with ID " + clientID.ToString(), generalException);
                 return null;
-            }	               
-        }
-
-        // Contacts functions
+            }
+        }        
+        
         public static ClientStaff GetContactByName(int clientID, string contactName)
         {
             try
@@ -574,7 +579,7 @@ namespace ProjectTile
             }
         }
 
-        public static List<ContactSummaryRecord> ContactGridList (string contactContains, bool ActiveOnly, int clientID)
+        public static List<ContactSummaryRecord> ContactGridList (string contactContains, bool activeOnly, int clientID)
         {
             try
             {
@@ -585,7 +590,7 @@ namespace ProjectTile
                             join c in existingPtDb.Clients on cs.ClientID equals c.ID
                             where ( (clientID == 0 || cs.ClientID == clientID)
                                 && c.EntityID == CurrentEntityID
-                                && (!ActiveOnly || cs.Active)
+                                && (!activeOnly || cs.Active)
                                 && (contactContains == "" || (cs.FullName).Contains(contactContains) || cs.JobTitle.Contains(contactContains)) )
                             select (new ContactSummaryRecord 
                             {
@@ -594,7 +599,7 @@ namespace ProjectTile
                                 JobTitle = cs.JobTitle,
                                 PhoneNumber = cs.PhoneNumber,
                                 Email = cs.Email,
-                                ActiveContact = cs.Active
+                                Active = cs.Active
                             }) ).ToList();                                                
                 }
             }
@@ -603,6 +608,25 @@ namespace ProjectTile
                 MessageFunctions.Error("Error retrieving list of contacts", generalException);
                 return null;
             }	
+        }
+
+        public static ContactSummaryRecord GetContactSummary(int contactID, int clientID = 0)
+        {
+            try
+            {
+                List<ContactSummaryRecord> allContacts = ContactGridList(contactContains: "", activeOnly: false, clientID: clientID);
+                if (allContacts.Exists(ase => ase.ID == contactID)) { return allContacts.First(ase => ase.ID == contactID); }
+                else
+                {
+                    MessageFunctions.Error("Error retrieving summary data for contact with ID " + contactID.ToString() + ": no matching record found.", null);
+                    return null;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving summary data for staff member with ID " + contactID.ToString(), generalException);
+                return null;
+            }
         }
 
         public static List<string> ContactDropList(string contactContains)

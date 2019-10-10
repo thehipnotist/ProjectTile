@@ -43,7 +43,8 @@ namespace ProjectTile
         public static ClientSummaryRecord AnyClient = new ClientSummaryRecord { ID = 0, ClientCode = "ANY", ClientName = AnyRecord, EntityID = CurrentEntityID, ActiveClient = false };
         public static ClientSummaryRecord NoClient = new ClientSummaryRecord { ID = NoID, ClientCode = "NONE", ClientName = NoRecord, EntityID = CurrentEntityID, ActiveClient = true };
         public static StaffSummaryRecord AllPMs = new StaffSummaryRecord { ID = 0, FirstName = AllRecords, Surname = "", Active = false };
-        public static ProjectRoles AllRoles = new ProjectRoles { RoleCode = AllCodes, RoleDescription = AllRecords };        
+        public static ProjectRoles AllProjectRoles = new ProjectRoles { RoleCode = AllCodes, RoleDescription = AllRecords };
+        public static ClientTeamRoles AllClientRoles = new ClientTeamRoles { RoleCode = AllCodes, RoleDescription = AllRecords };
 
         // Project roles
         public const string AccountManagerCode = "AM";
@@ -57,7 +58,7 @@ namespace ProjectTile
         public const string IntegrationConsultCode = "IC";
         public const string ApplicationConsultCode = "AC";
         public const string TechnicalConsultCode = "TC";
-        public static string[] ProjectRoleHeirarchy = { SponsorCode, ProjectManagerCode, SeniorConsultantCode, OurTechLeadCode, ApplicationConsultCode, TechnicalConsultCode, 
+        public static string[] ProjectRoleHeirarchy = { SponsorCode, ProjectManagerCode, SeniorConsultantCode, OurTechLeadCode, ClientTechLeadCode, ApplicationConsultCode, TechnicalConsultCode, 
                                                           IntegrationConsultCode, OtherRoleCode };
         public static string[] KeyInternalRoles = { SponsorCode, ProjectManagerCode, SeniorConsultantCode, OurTechLeadCode };
         public static string[] KeyClientRoles = { SponsorCode, ProjectManagerCode, ClientTechLeadCode };
@@ -82,7 +83,8 @@ namespace ProjectTile
         public static ClientSummaryRecord DefaultClientSummary = AnyClient;
         public static StaffSummaryRecord DefaultPMSummary = AllPMs;
         public static ProjectStatusFilter DefaultStatusFilter = ProjectStatusFilter.Current;
-        public static ProjectRoles DefaultProjectRole = AllRoles;
+        public static ProjectRoles DefaultProjectRole = AllProjectRoles;
+        public static ClientTeamRoles DefaultClientRole = AllClientRoles;
         public static ProjectSummaryRecord DefaultProjectSummary = AllProjects;
         public static TeamTimeFilter DefaultTeamTimeFilter = TeamTimeFilter.Future;
 
@@ -96,6 +98,7 @@ namespace ProjectTile
 
         public static ProjectStatusFilter SelectedStatusFilter = DefaultStatusFilter;
         public static ProjectRoles SelectedProjectRole = DefaultProjectRole;
+        public static ClientTeamRoles SelectedClientRole = DefaultClientRole;
         public static TeamTimeFilter SelectedTeamTimeFilter = DefaultTeamTimeFilter;
 
         // Page references
@@ -138,6 +141,7 @@ namespace ProjectTile
             SelectedStatusFilter = DefaultStatusFilter;
             SelectedProjectSummary = DefaultProjectSummary;
             SelectedProjectRole = DefaultProjectRole;
+            SelectedClientRole = DefaultClientRole;
             SelectedTeamTimeFilter = DefaultTeamTimeFilter;
             ProjectSourcePage = TilesPageName;
             ProjectSourceMode = PageFunctions.None;

@@ -1,0 +1,225 @@
+﻿<Page x:Class="ProjectTile.ClientTeamsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="590" d:DesignWidth="830"
+	Title="ClientTeamsPage" Loaded="Page_Loaded">
+
+    <Grid>
+        <Grid x:Name="NormalGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="15" MinWidth="15" MaxWidth="15"/>
+                <ColumnDefinition x:Name="CentreColumn" Width="655*" MinWidth="655"/>
+                <ColumnDefinition Width="160" MinWidth="160" MaxWidth="160"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="45" MinHeight="45" MaxHeight="45"/>
+                <RowDefinition x:Name="MiddleRow" Height="400*" MinHeight="400"/>
+                <RowDefinition Height="90" MinHeight="90" MaxHeight="90"/>
+                <RowDefinition Height="50" MinHeight="50" MaxHeight="50"/>
+            </Grid.RowDefinitions>
+
+            <Image x:Name="HeaderImage" Source="{DynamicResource ProjectIcon}" Grid.Row="0" Grid.Column="1" Margin="0,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
+            <Image x:Name="HeaderImage2" Source="{DynamicResource ContactIcon}" Grid.Row="0" Grid.Column="1" Margin="25,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
+            <Label x:Name="PageHeader" Content="Project Teams" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="605" FontWeight="Bold" Background="{x:Null}" Margin="50,0,0,0" 
+                   Foreground="White" Grid.Row="0" Grid.Column="1"/>
+
+            <Border MinHeight="400" MinWidth="655" Height="Auto" Width="Auto" Margin="0,0,0,0" BorderBrush="{StaticResource PtBrushProject3}" Style="{DynamicResource SectionBorder}" Grid.Row="1" 
+                Grid.Column="1">
+                <Grid MinWidth="655" Width="{Binding ElementName=CentreColumn, Path=ActualWidth}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="{Binding ElementName=MiddleRow, Path=ActualHeight}" MinHeight="400"/>
+                    </Grid.RowDefinitions>
+                    <Label x:Name="Instructions" Content="Set at runtime" HorizontalAlignment="Left" Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+
+                    <Label x:Name="StatusLabel" Content="Project Status" HorizontalAlignment="Left" Height="30" Margin="15,45,145,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
+                    <ComboBox x:Name="StatusCombo" HorizontalAlignment="Left" Height="30" Margin="115,45,15,0" VerticalAlignment="Top" Width="90" SelectionChanged="StatusCombo_SelectionChanged"
+                               Style="{DynamicResource PaddedCombo}">
+                        <ComboBox.Resources>
+                            <Style TargetType="ComboBoxItem">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding}" Value="Closed">
+                                        <Setter Property="Foreground" Value="DarkGray"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ComboBox.Resources>
+                    </ComboBox>
+                    <Label x:Name="ProjectLabel" Content="Project" HorizontalAlignment="Right" Height="30" Margin="15,45,365,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
+                    <ComboBox x:Name="ProjectCombo" HorizontalAlignment="Right" Height="30" Margin="70,45,15,0" VerticalAlignment="Top" Width="345" SelectionChanged="ProjectCombo_SelectionChanged"
+                          DisplayMemberPath="CodeName" MaxWidth="345" Style="{DynamicResource PaddedCombo}">
+                        <ComboBox.Resources>
+                            <Style TargetType="ComboBoxItem">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}"  Value="Closed">
+                                        <Setter Property="Foreground" Value="DarkGray"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}"  Value="Not Started">
+                                        <Setter Property="Foreground" Value="LightBlue"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}"  Value="Live">
+                                        <Setter Property="Foreground" Value="Green"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ComboBox.Resources>
+                    </ComboBox>
+                    <Button x:Name="ProjectSearchButton" HorizontalAlignment="Right" Height="30" Margin="15,45,15,0" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
+                            FontWeight="Bold" Click="ProjectSearch_Click" ToolTip="Find a project in the main list" BorderBrush="{DynamicResource PtBrushProject3}">
+                        <StackPanel HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                            <Image x:Name="SearchImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource SearchIcon}"/>
+                            <TextBlock x:Name="SearchButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Search" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <DataGrid x:Name="TeamDataGrid" MinHeight="250" Margin="15,90,15,60" Width="400" MinWidth="400" MaxWidth="625" AutoGenerateColumns="False" IsReadOnly="True" 
+                          BorderBrush="{StaticResource PtBrushProject3}" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionMode="Single"
+                          SelectionChanged="TeamDataGrid_SelectionChanged">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn x:Name="IDColumn" Binding="{Binding ID, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="ID" Visibility="Collapsed"/>
+                            <DataGridTextColumn x:Name="ProjectCodeColumn" Binding="{Binding Project.ProjectCode, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="Code"/>
+                            <DataGridTextColumn x:Name="ProjectNameColumn" Binding="{Binding Project.ProjectName, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="Project Name"/>
+                            <DataGridTextColumn x:Name="ContactNameColumn" Binding="{Binding Contact.ContactName, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="Contact Name" Width="*"/>
+                            <DataGridTextColumn x:Name="RoleDescriptionColumn" Binding="{Binding ClientTeamRole.RoleDescription, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="Project Role"/>
+                            <DataGridTextColumn x:Name="FromDateColumn" Binding="{Binding EffectiveFrom, StringFormat=dd/MM/yyyy, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="From Date"/>
+                            <DataGridTextColumn x:Name="ToDateColumn" Binding="{Binding ToDate, StringFormat=dd/MM/yyyy, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="To Date"/>
+                        </DataGrid.Columns>
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=Project.ProjectStatus}"  Value="Closed">
+                                        <Setter Property="Foreground" Value="DarkGray"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=Project.ProjectStatus}"  Value="Not Started">
+                                        <Setter Property="Foreground" Value="LightBlue"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=Project.ProjectStatus}"  Value="Live">
+                                        <Setter Property="Foreground" Value="Green"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=IsHistoric}"  Value="True">
+                                        <Setter Property="Foreground" Value="Gray"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=IsFuture}"  Value="True">
+                                        <Setter Property="Foreground" Value="Blue"/>
+                                    </DataTrigger>                                    
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.Resources>
+                    </DataGrid>
+
+                    <Grid x:Name="AmendmentGrid" Margin="15,90,15,0" HorizontalAlignment="Right" Width="215" Height="260" VerticalAlignment="Top">
+                        <Border HorizontalAlignment="Right" VerticalAlignment="Top" CornerRadius="3" BorderThickness="1" BorderBrush="{DynamicResource PtBrushClient3}">
+                            <Grid Width="210" Height="115">
+                                <Label x:Name="ContactLabel" Content="Contact Name (Select or Search)" HorizontalAlignment="Right" Height="30" Margin="0,5,15,0" VerticalAlignment="Top" Width="Auto" 
+                                   FontWeight="Bold" HorizontalContentAlignment="Right"/>
+                                <ComboBox x:Name="ContactCombo" HorizontalAlignment="Right" Height="30" Margin="0,35,15,15" VerticalAlignment="Top" Width="180" DisplayMemberPath="ContactName"
+                                          SelectedItem="{Binding Path=Contact, Mode=TwoWay}" SelectionChanged="ContactCombo_SelectionChanged" Style="{DynamicResource PaddedCombo}"/>
+                                <Button x:Name="SearchContactButton" HorizontalAlignment="Right" Height="30" Margin="15,75,15,0" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
+                                        FontWeight="Bold" Click="ContactSearch_Click" ToolTip="Find a contact in the main list" BorderBrush="{DynamicResource PtBrushClient3}">
+                                    <StackPanel HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                                        <Image x:Name="SearchImage2" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource SearchIcon}"/>
+                                        <TextBlock x:Name="SearchContactText" TextAlignment="Left" TextWrapping="Wrap" Text="Search" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                        </Border>
+
+                        <Label x:Name="EditRoleLabel" Content="Role" HorizontalAlignment="Right" Height="30" Margin="0,130,165,15" VerticalAlignment="Top" Width="40" FontWeight="Bold"/>
+                        <ComboBox x:Name="EditRoleCombo" HorizontalAlignment="Right" Height="30" Margin="0,130,0,0" VerticalAlignment="Top" Width="165" DisplayMemberPath="RoleDescription"
+                                  SelectedItem="{Binding Path=ClientTeamRole, Mode=TwoWay}" SelectionChanged="EditRoleCombo_SelectionChanged" Style="{DynamicResource PaddedCombo}"/>
+                        <Label x:Name="FromDateLabel" Content="From" HorizontalAlignment="Right" Height="30" Margin="15,175,165,15" VerticalAlignment="Top" Width="40" FontWeight="Bold"/>
+                        <DatePicker x:Name="FromDate" HorizontalAlignment="Right" Height="30" Margin="0,175,0,0" VerticalAlignment="Top" Width="165" SelectedDateFormat="Short" Background="White"
+                                Padding="5" SelectedDate="{Binding Path=FromDate, Mode=TwoWay}"/>
+                        <Label x:Name="ToDateLabel" Content="To" HorizontalAlignment="Right" Height="30" Margin="15,220,165,0" VerticalAlignment="Top" Width="40" FontWeight="Bold"/>
+                        <DatePicker x:Name="ToDate" HorizontalAlignment="Right" Height="30" Margin="0,220,0,0" VerticalAlignment="Top" Width="165" SelectedDateFormat="Short" Background="White"
+                                Padding="5"  SelectedDate="{Binding Path=ToDate, Mode=TwoWay}"/>                        
+                    </Grid>
+
+                    <Label x:Name="NameLikeLabel" Content="Name" HorizontalAlignment="Left" Height="30" Margin="15,45,155,15" VerticalAlignment="Bottom" Width="Auto" FontWeight="Bold"/>
+                    <TextBox x:Name="NameLike" HorizontalAlignment="Left" Height="30" Margin="65,45,15,15" VerticalAlignment="Bottom" Width="140" ToolTip="Type part of a name and choose from the selection" 
+                          TabIndex="2" LostFocus="NameLike_LostFocus" KeyUp="NameLike_KeyUp" Style="{DynamicResource PaddedTextBox}" CharacterCasing="Upper" GotFocus="NameLike_GotFocus"/>
+                    <ListView x:Name="PossibleNames" HorizontalAlignment="Left" Height="90" Margin="100,75,15,45" VerticalAlignment="Bottom" Width="140" Visibility="Hidden" 
+                              SelectionChanged="PossibleNames_SelectionChanged" DisplayMemberPath="ContactName" VerticalContentAlignment="Bottom"/>
+
+                    <Label x:Name="RoleFilterLabel" Content="Role" HorizontalAlignment="Center" Height="30" Margin="15,45,175,15" VerticalAlignment="Bottom" Width="Auto" FontWeight="Bold"/>
+                    <ComboBox x:Name="RoleFilterCombo" HorizontalAlignment="Center" Height="30" Margin="50,45,15,15" VerticalAlignment="Bottom" Width="150" SelectionChanged="RoleFilterCombo_SelectionChanged"
+                          DisplayMemberPath="RoleDescription" Style="{DynamicResource PaddedCombo}"/>
+
+                    <GroupBox x:Name="TimeGroup"  HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Bottom" Width="190" Padding="0">
+                        <DockPanel FlowDirection="LeftToRight" HorizontalAlignment="Right" LastChildFill="False">
+                            <RadioButton x:Name="AllRadio" Content="All" Height="30" Width="Auto" FontWeight="Bold" Padding="5" HorizontalAlignment="Right"
+                                 VerticalContentAlignment="Center" Checked="AllRadio_Checked" Foreground="Gray"/>
+                            <RadioButton x:Name="FutureRadio" Content="Future" Height="30" Width="Auto" FontWeight="Bold" Padding="5" HorizontalAlignment="Right"
+                                 VerticalContentAlignment="Center" Checked="FutureRadio_Checked" Foreground="Blue"/>
+                            <RadioButton x:Name="CurrentRadio" Content="Current" Height="30" Width="Auto" FontWeight="Bold" Padding="5" HorizontalAlignment="Right"
+                                 VerticalContentAlignment="Center" Checked="CurrentRadio_Checked"/>
+                        </DockPanel>
+                    </GroupBox>
+
+                </Grid>
+            </Border>
+            <Border Height="60" Margin="0,0,0,15" BorderBrush="{StaticResource PtBrushProject3}" MinWidth="655" Style="{DynamicResource SectionBorder}" Grid.Row="2" Grid.Column="1" Width="Auto" 
+                VerticalAlignment="Bottom">
+                <Grid MinWidth="655" Width="{Binding ElementName=CentreColumn, Path=ActualWidth}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition MinHeight="60"/>
+                    </Grid.RowDefinitions>
+                    <Button x:Name="CancelButton" HorizontalAlignment="Left" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="100" Style="{StaticResource RoundedButton}" 
+                        FontWeight="Bold" Click="CancelButton_Click">
+                        <StackPanel x:Name="CancelPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                            <Image x:Name="CancelImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource CancelIcon}"/>
+                            <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Cancel" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="BackButton" HorizontalAlignment="Left" Height="30" Margin="130,15,15,15" VerticalAlignment="Top" Width="100" Style="{StaticResource RoundedButton}" 
+                            FontWeight="Bold" Click="BackButton_Click" ToolTip="Return to projects list">
+                        <StackPanel x:Name="BackPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                            <Image x:Name="BackImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource BackIcon}"/>
+                            <TextBlock x:Name="BackButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Back" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="RemoveButton" HorizontalAlignment="Right" Height="30" Margin="15,15,390,15" VerticalAlignment="Top" Width="110" 
+                		FontWeight="Bold" Click="RemoveButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{DynamicResource PtBrushClient3}">
+                        <StackPanel x:Name="RemovePanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                            <Image x:Name="MinusImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource SubtractIcon}"/>
+                            <TextBlock x:Name="RemoveButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Remove" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="AmendButton" HorizontalAlignment="Right" Height="30" Margin="15,15,265,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
+                        FontWeight="Bold" Click="AmendButton_Click" IsEnabled="False" BorderBrush="{DynamicResource PtBrushClient3}">
+                        <StackPanel x:Name="AmendPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                            <Image x:Name="AmendImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource AmendIcon}"/>
+                            <TextBlock x:Name="AmendButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Amend" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="AddButton" HorizontalAlignment="Right" Height="30" Margin="15,15,140,15" VerticalAlignment="Top" Width="110" 
+                		FontWeight="Bold" Click="AddButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{DynamicResource PtBrushClient3}">
+                        <StackPanel x:Name="AddPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                            <Image x:Name="PlusImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource PlusIcon}"/>
+                            <TextBlock x:Name="AddButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Add" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="ProjectButton" HorizontalAlignment="Right" Height="30" Margin="15,15,30,15" VerticalAlignment="Bottom" Width="110" 
+                		FontWeight="Bold" IsEnabled="False" Click="ProjectButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{StaticResource PtBrushProject3}"
+                        ToolTip="Select the Project to allow amending or adding team members">
+                        <StackPanel x:Name="ProjectPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                            <Image x:Name="ProjectImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource ProjectIcon}"/>
+                            <TextBlock x:Name="ProjectButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Set Project" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
+                        FontWeight="Bold" ToolTip="Apply any changes" Click="CommitButton_Click" BorderBrush="{DynamicResource PtBrushProject3}">
+                        <StackPanel x:Name="CommitPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                            <Image x:Name="CommitImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource CommitIcon}"/>
+                            <TextBlock x:Name="CommitButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Save" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Frame x:Name="LookupFrame" Visibility="Hidden"/>
+    </Grid>
+</Page>

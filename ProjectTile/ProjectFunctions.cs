@@ -39,6 +39,10 @@ namespace ProjectTile
         public static List<ClientSummaryRecord> FullClientList;
         public static List<ClientSummaryRecord> ClientFilterList;
         public static List<ClientSummaryRecord> ClientOptionsList;
+        public static List<ClientTeamSummary> FullClientTeamsList;
+        public static List<ClientTeamSummary> ClientTeamsGridList;
+        public static List<ClientTeamRoles> FullClientRolesList;
+        public static List<ClientTeamRoles> ClientRolesFilterList;
 
         public static List<Projects> ProjectsNotForProduct;
         public static List<ProjectProductSummary> ProjectsForProduct;
@@ -682,24 +686,7 @@ namespace ProjectTile
                 MessageFunctions.Error("Error retrieving project role", generalException);
                 return null;
             }	
-        }
-
-        public static ClientTeamRoles GetClientRole(string roleCode)
-        {
-            try
-            {
-                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
-                using (existingPtDb)
-                {
-                    return existingPtDb.ClientTeamRoles.Where(pr => pr.RoleCode == roleCode).FirstOrDefault();
-                }
-            }
-            catch (Exception generalException)
-            {
-                MessageFunctions.Error("Error retrieving project role", generalException);
-                return null;
-            }
-        }        
+        }     
 
         public static int RolePosition(string roleCode)
         {
@@ -719,6 +706,17 @@ namespace ProjectTile
 				}
             }
             catch (Exception generalException) { MessageFunctions.Error("Error listing project roles", generalException); }	
+        }
+
+        public static void SetRolesFilterList(string nameLike = "", bool exactName = false)
+        {
+            try
+            {
+                SetFullRolesList();
+                RolesFilterList = FullRolesList.Where(frl => nameLike == "" || HasEverHadRole(frl.RoleCode, nameLike, exactName)).ToList();
+                RolesFilterList.Add(AllProjectRoles);
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error setting list of possible roles", generalException); }
         }
 
         public static bool HasEverHadRole(string projectRoleCode, string nameLike, bool exact)
@@ -745,17 +743,6 @@ namespace ProjectTile
                 MessageFunctions.Error("Error checking project role history for the name filter", generalException);
                 return false;
             }	
-        }
-        
-        public static void SetRolesFilterList(string nameLike = "", bool exactName = false)
-        {
-            try
-            {
-                SetFullRolesList();
-                RolesFilterList = FullRolesList.Where(frl => nameLike == "" || HasEverHadRole(frl.RoleCode, nameLike, exactName)).ToList();
-                RolesFilterList.Add(AllRoles);
-            }
-            catch (Exception generalException) { MessageFunctions.Error("Error setting list of possible roles", generalException); }	
         }
 
         public static void SetFullTeamsList()
@@ -811,7 +798,7 @@ namespace ProjectTile
                                                 && (teamRoleCode == AllCodes 
                                                     || ftl.ProjectRole.RoleCode == teamRoleCode)
                                                 && (timeFilter == TeamTimeFilter.All 
-                                                    || IsInTimeFilter(timeFilter, ftl))
+                                                    || IsInTimeFilter(timeFilter, ftl.FromDate, ftl.ToDate))
                                                 ).ToList();
 
                 if (projectID > 0) { TeamsGridList = TeamsGridList.OrderBy(tgl => RolePosition(tgl.ProjectRole.RoleCode)).OrderBy(tgl => tgl.EffectiveFrom).ToList(); }
@@ -824,11 +811,8 @@ namespace ProjectTile
             }
         }
 
-        public static bool IsInTimeFilter(TeamTimeFilter timeFilter, TeamSummaryRecord teamMembership)
+        public static bool IsInTimeFilter(TeamTimeFilter timeFilter, DateTime? fromDate, DateTime? toDate)
         {
-            DateTime? fromDate = teamMembership.FromDate;
-            DateTime? toDate = teamMembership.ToDate;
-
             if (timeFilter == TeamTimeFilter.All) { return true; }
             else if (toDate != null && toDate < Today) { return false; }
             else if (timeFilter == TeamTimeFilter.Current && fromDate != null && fromDate > Today) { return false; }
@@ -837,10 +821,10 @@ namespace ProjectTile
 
         public static bool IsCurrentRole(TeamSummaryRecord teamMembership)
         {
-            return IsInTimeFilter(TeamTimeFilter.Current, teamMembership);
+            return IsInTimeFilter(TeamTimeFilter.Current, teamMembership.FromDate, teamMembership.ToDate);
         }
 
-        public static bool? HasDuplicateRecord(TeamSummaryRecord thisRecord, bool byRole)
+        public static bool? DuplicateTeamMember(TeamSummaryRecord thisRecord, bool byRole)
         {
             try
             {
@@ -867,12 +851,12 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.Error("Error checking for duplicate or overlapping records", generalException);
+                MessageFunctions.Error("Error checking for duplicate or overlapping project team records", generalException);
                 return null;
             }
         }
 
-        public static bool Subsumes(TeamSummaryRecord thisRecord)
+        public static bool SubsumesStaff(TeamSummaryRecord thisRecord)
         {
             try
             {
@@ -886,12 +870,12 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.Error("Error checking for concurrent records", generalException);
+                MessageFunctions.Error("Error checking for concurrent project team records", generalException);
                 return false;
             }
         }
 
-        public static ProjectTeams GetPredecessor(TeamSummaryRecord currentRecord)
+        public static ProjectTeams GetStaffPredecessor(TeamSummaryRecord currentRecord)
         {
             try
             {                
@@ -915,7 +899,7 @@ namespace ProjectTile
             }	
         }
 
-        public static ProjectTeams GetSuccessor(TeamSummaryRecord currentRecord)
+        public static ProjectTeams GetStaffSuccessor(TeamSummaryRecord currentRecord)
         {
             try
             {
@@ -1019,6 +1003,239 @@ namespace ProjectTile
                 return noClient;
             }	
         }
+
+        // Client teams (linked contacts)
+
+        public static ClientTeamRoles GetClientRole(string roleCode)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return existingPtDb.ClientTeamRoles.Where(pr => pr.RoleCode == roleCode).FirstOrDefault();
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving client role", generalException);
+                return null;
+            }
+        }
+
+        public static void SetFullClientRolesList()
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    List<ClientTeamRoles> rolesList = existingPtDb.ClientTeamRoles.ToList();
+                    FullClientRolesList = rolesList.OrderBy(rl => RolePosition(rl.RoleCode)).ToList();
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error listing client roles", generalException); }
+        }
+
+        public static void SetClientRolesFilterList(string nameLike = "", bool exactName = false)
+        {
+            try
+            {
+                SetFullClientRolesList();
+                ClientRolesFilterList = FullClientRolesList.Where(frl => nameLike == "" || HasEverHadClientRole(frl.RoleCode, nameLike, exactName)).ToList();
+                ClientRolesFilterList.Add(AllClientRoles);
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error setting list of possible client roles", generalException); }
+        }
+
+        public static bool HasEverHadClientRole(string clientRoleCode, string nameLike, bool exact)
+        {
+            try
+            {
+                nameLike = nameLike.ToUpper();
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    ClientTeams firstResult = (from ct in existingPtDb.ClientTeams
+                                               join cs in existingPtDb.ClientStaff on ct.ClientStaffID equals cs.ID
+                                               where ct.ClientTeamRoleCode == clientRoleCode
+                                                   && (nameLike == ""
+                                                       || (exact && (cs.FullName).ToUpper() == nameLike)
+                                                       || (!exact && (cs.FullName).ToUpper().Contains(nameLike)))
+                                               select ct
+                                                ).FirstOrDefault();
+                    return (firstResult != null);
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error checking client role history for the name filter", generalException);
+                return false;
+            }
+        }
+
+        public static void SetFullClientTeamsList()
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    FullClientTeamsList = (from ct in existingPtDb.ClientTeams
+                                           join pj in existingPtDb.Projects on ct.ProjectID equals pj.ID
+                                           join cs in existingPtDb.ClientStaff on ct.ClientStaffID equals cs.ID
+                                           join ctr in existingPtDb.ClientTeamRoles on ct.ClientTeamRoleCode equals ctr.RoleCode
+                                           where pj.EntityID == CurrentEntityID
+                                           select new ClientTeamSummary
+                                           {
+                                               ID = ct.ID,
+                                               Project = pj,
+                                               Contact = new ContactSummaryRecord
+                                               {
+                                                   ID = cs.ID,
+                                                   ContactName = cs.FullName,
+                                                   JobTitle = cs.JobTitle,
+                                                   PhoneNumber = cs.PhoneNumber,
+                                                   Email = cs.Email,
+                                                   Active = cs.Active
+                                               },
+                                               ClientRole = ctr,
+                                               FromDate = ct.FromDate,
+                                               ToDate = ct.ToDate
+                                           }
+                                     ).ToList();
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error retrieving full list of client team members", generalException); }
+        }
+
+        public static bool SetClientTeamsGridList(ProjectStatusFilter inStatus, string clientRoleCode, TeamTimeFilter timeFilter, int projectID = 0, string nameContains = "", bool exact = false)
+        {
+            try
+            {
+                nameContains = nameContains.ToUpper();
+                SetFullClientTeamsList();
+                ClientTeamsGridList = FullClientTeamsList.Where(ftl => ((projectID == 0 && IsInFilter(inStatus, ftl.ProjectStage))
+                                                    || (projectID != 0 && ftl.Project.ID == projectID))
+                                                && (nameContains == ""
+                                                    || (exact && ftl.Contact.ContactName.ToUpper() == nameContains)
+                                                    || (!exact && ftl.Contact.ContactName.ToUpper().Contains(nameContains)))
+                                                && (clientRoleCode == AllCodes
+                                                    || ftl.ClientRole.RoleCode == clientRoleCode)
+                                                && (timeFilter == TeamTimeFilter.All
+                                                    || IsInTimeFilter(timeFilter, ftl.FromDate, ftl.ToDate))
+                                                ).ToList();
+
+                if (projectID > 0) { ClientTeamsGridList = ClientTeamsGridList.OrderBy(tgl => RolePosition(tgl.ClientRole.RoleCode)).OrderBy(tgl => tgl.EffectiveFrom).ToList(); }
+                return true;
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving client team members to display", generalException);
+                return false;
+            }
+        }
+
+        public static bool? DuplicateProjectContact(ClientTeamSummary thisRecord, bool byRole)
+        {
+            try
+            {
+                SetFullClientTeamsList();
+                List<ClientTeamSummary> otherInstances = FullClientTeamsList
+                    .Where(ftl => ftl.ID != thisRecord.ID
+                        && ftl.Project.ID == thisRecord.Project.ID
+                        && ((byRole && ftl.RoleCode == thisRecord.RoleCode) || (!byRole && ftl.ContactID == thisRecord.ContactID)))
+                    .ToList();
+
+                if (otherInstances.Count == 0) { return false; }
+                else
+                {
+                    foreach (ClientTeamSummary thisInstance in otherInstances)
+                    {
+                        if (thisInstance.RoleCode == thisRecord.RoleCode) // Required if by contact, as returns null if found (but only) with a different role
+                        {
+                            if (thisInstance.EffectiveFrom > thisRecord.EffectiveTo || thisInstance.EffectiveTo < thisRecord.EffectiveFrom) { } // No overlap                            
+                            else { return true; }
+                        }
+                    }
+                }
+                return null; // If haven't returned already, there is another instance but not a duplicate
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error checking for duplicate or overlapping client team records", generalException);
+                return null;
+            }
+        }
+
+        public static bool SubsumesContact(ClientTeamSummary thisRecord)
+        {
+            try
+            {
+                SetFullClientTeamsList();
+                return FullClientTeamsList.Exists(ftl => ftl.ID != thisRecord.ID
+                        && ftl.Project.ID == thisRecord.Project.ID
+                        && ftl.RoleCode == thisRecord.RoleCode
+                        && ((ftl.FromDate != null && ftl.FromDate >= thisRecord.EffectiveFrom) ||
+                            ((ftl.FromDate == null || ftl.FromDate == thisRecord.Project.StartDate) && thisRecord.EffectiveFrom == thisRecord.Project.StartDate))
+                        && ((ftl.ToDate != null && ftl.ToDate <= thisRecord.EffectiveTo) || (ftl.ToDate == null && thisRecord.ToDate == null)));
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error checking for concurrent client team records", generalException);
+                return false;
+            }
+        }
+
+        public static ClientTeams GetContactPredecessor(ClientTeamSummary currentRecord)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return existingPtDb.ClientTeams
+                        .Where(ct => ct.ID != currentRecord.ID
+                            && ct.ProjectID == currentRecord.Project.ID
+                            && ct.ClientTeamRoleCode == currentRecord.RoleCode
+                            && (ct.FromDate == null || ct.FromDate == currentRecord.Project.StartDate || ct.FromDate < currentRecord.EffectiveFrom))
+                        .OrderByDescending(ct => ct.ToDate ?? InfiniteDate)
+                        .OrderByDescending(ct => ct.FromDate ?? StartOfTime)
+                        .FirstOrDefault();
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving client predecessor information", generalException);
+                return null;
+            }
+        }
+
+        public static ClientTeams GetContactSuccessor(ClientTeamSummary currentRecord)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return existingPtDb.ClientTeams
+                        .Where(ct => ct.ID != currentRecord.ID
+                            && ct.ProjectID == currentRecord.Project.ID
+                            && ct.ClientTeamRoleCode == currentRecord.RoleCode
+                            && (ct.ToDate == null || ct.ToDate > currentRecord.EffectiveTo))
+                        .OrderBy(ct => ct.FromDate ?? StartOfTime)
+                        .OrderBy(ct => ct.ToDate ?? InfiniteDate)
+                        .FirstOrDefault();
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving client successor information", generalException);
+                return null;
+            }
+        }
+
+
 
         // Products
         public static List<ProjectSummaryRecord> ProjectGridListByProduct(bool activeOnly, string nameContains, int productID, int entityID) 
@@ -1725,8 +1942,8 @@ namespace ProjectTile
         {
             try
             {
-                int predecessorID = (GetPredecessor(newRecord) != null)? GetPredecessor(newRecord).ID : 0;
-                int successorID =  (GetSuccessor(newRecord) != null)? GetSuccessor(newRecord).ID : 0;
+                int predecessorID = (GetStaffPredecessor(newRecord) != null)? GetStaffPredecessor(newRecord).ID : 0;
+                int successorID =  (GetStaffSuccessor(newRecord) != null)? GetStaffSuccessor(newRecord).ID : 0;
                 
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
@@ -1866,6 +2083,154 @@ namespace ProjectTile
                 return false;
             }
         }
+
+        // Client Teams (updates)
+
+        public static bool updateOtherClientInstances(ClientTeamSummary newRecord)
+        {
+            try
+            {
+                int predecessorID = (GetContactPredecessor(newRecord) != null) ? GetContactPredecessor(newRecord).ID : 0;
+                int successorID = (GetContactSuccessor(newRecord) != null) ? GetContactSuccessor(newRecord).ID : 0;
+
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    List<ClientTeams> otherInstances = existingPtDb.ClientTeams
+                        .Where(ct => ct.ID != newRecord.ID
+                            && ct.ProjectID == newRecord.Project.ID
+                            && ct.ClientTeamRoleCode == newRecord.RoleCode)
+                        .ToList();
+
+                    if (otherInstances.Count == 0) { return true; }
+                    else
+                    {
+                        DateTime dayBefore = newRecord.EffectiveFrom.AddDays(-1);
+                        DateTime dayAfter = newRecord.EffectiveTo.AddDays(1);
+
+                        foreach (ClientTeams current in otherInstances)
+                        {
+                            DateTime currentFrom = current.FromDate ?? StartOfTime;
+                            DateTime currentTo = current.ToDate ?? InfiniteDate;
+
+                            if (currentFrom >= dayAfter || currentTo <= dayBefore) // No overlap - but may need to change to close the gap
+                            {
+                                if (current.ID == predecessorID && currentTo < dayBefore) { current.ToDate = dayBefore; }
+                                else if (current.ID == successorID && currentFrom > dayAfter) { current.FromDate = dayAfter; }
+                            }
+                            else if (newRecord.FromDate != null && newRecord.ToDate != null && currentFrom <= dayBefore && currentTo >= dayAfter) // Split encompassing record
+                            {
+                                ClientTeams additional = new ClientTeams
+                                {
+                                    ProjectID = current.ProjectID,
+                                    ClientStaffID = current.ClientStaffID,
+                                    ClientTeamRoleCode = current.ClientTeamRoleCode,
+                                    FromDate = dayAfter,
+                                    ToDate = current.ToDate
+                                };
+                                current.ToDate = dayBefore;
+                                existingPtDb.ClientTeams.Add(additional);
+                            }
+                            else if (newRecord.FromDate != null && currentFrom <= dayBefore && currentTo > dayBefore && (current.ToDate == null || currentTo < dayAfter))
+                            { current.ToDate = dayBefore; } // Curtail predecessor
+                            else if (newRecord.ToDate != null && (current.FromDate == null || currentFrom > dayBefore) && currentFrom < dayAfter && currentTo >= dayAfter)
+                            { current.FromDate = dayAfter; } // Delay successor
+                            else if ((currentFrom > dayBefore || current.FromDate == null) && (currentTo < dayAfter || current.ToDate == null)) // Remove subsumed/replaced record
+                            {
+                                existingPtDb.ClientTeams.Remove(current);
+                            }
+                        }
+                    }
+                    existingPtDb.SaveChanges();
+                    return true;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error updating affected client predecessors and/or successors", generalException);
+                return false;
+            }
+        }
+
+        public static bool SaveClientTeamChanges(ClientTeamSummary currentVersion, ClientTeamSummary savedVersion)
+        {
+            if (!currentVersion.ValidateTeamRecord(savedVersion)) { return false; }
+
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    ClientTeams thisTeam = existingPtDb.ClientTeams.Where(ct => ct.ID == savedVersion.ID).FirstOrDefault();
+                    if (thisTeam == null)
+                    {
+                        MessageFunctions.Error("Error saving changes to client team member details: no matching record found.", null);
+                        return false;
+                    }
+                    currentVersion.ConvertToClientTeam(ref thisTeam);
+                    if (currentVersion.HasKeyRole) { updateOtherClientInstances(currentVersion); }
+                    existingPtDb.SaveChanges();
+                    MessageFunctions.SuccessMessage("Your changes have been saved successfully.", "Team Membership Amended");
+                    return true;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error saving changes to client team member details", generalException);
+                return false;
+            }
+        }
+
+        public static int SaveNewClientTeam(ClientTeamSummary newRecord)
+        {
+            if (!newRecord.ValidateTeamRecord(null)) { return 0; }
+            ClientTeams thisTeam = new ClientTeams();
+            newRecord.ConvertToClientTeam(ref thisTeam);
+
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    existingPtDb.ClientTeams.Add(thisTeam);
+                    if (newRecord.HasKeyRole) { updateOtherClientInstances(newRecord); }
+                    existingPtDb.SaveChanges();
+                    MessageFunctions.SuccessMessage("New client team member added successfully.", "Team Member Added");
+                    return thisTeam.ID;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error creating new client team member", generalException);
+                return 0;
+            }
+        }
+
+        public static bool RemoveClientTeamEntry(ClientTeamSummary unwantedRecord)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    if (unwantedRecord.HasKeyRole)
+                    {
+                        MessageFunctions.Error("Error removing client team member: this record has a key role", null);
+                        return false;
+                    }
+                    ClientTeams thisTeam = existingPtDb.ClientTeams.Where(ct => ct.ID == unwantedRecord.ID).FirstOrDefault();
+                    existingPtDb.ClientTeams.Remove(thisTeam);
+                    existingPtDb.SaveChanges();
+                    MessageFunctions.SuccessMessage("Team member removed successfully.", "Team Member Removed");
+                    return true;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error removing client team member", generalException);
+                return false;
+            }
+        }	
 
         // Project Products (updates)
         public static decimal GetCurrentVersion(Projects thisProject, Products thisProduct)

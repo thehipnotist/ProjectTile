@@ -65,8 +65,8 @@
                     <Label x:Name="ContactContainsLabel" Content="Name/Job Contain" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="120" FontWeight="Bold"/>
                     <TextBox x:Name="ContactContains" HorizontalAlignment="Left" Height="30" Margin="135,45,0,0" VerticalAlignment="Top" Width="140" ToolTip="Type and tab to filter" 
                              TabIndex="2" LostFocus="ContactContains_LostFocus" KeyUp="ContactContains_KeyUp" Style="{DynamicResource PaddedTextBox}" CharacterCasing="Upper"/>
-                    <CheckBox x:Name="ActiveContactCheckBox" Content="Active Only" HorizontalAlignment="Center" Height="30" Margin="80,44,0,0" VerticalAlignment="Top" Width="100" FontWeight="Bold" 
-                              VerticalContentAlignment="Center" Padding="5" Checked="ActiveContactCheckBox_Checked" Unchecked="ActiveContactCheckBox_Unchecked" Style="{DynamicResource RoundedCheckbox}"/>
+                    <CheckBox x:Name="ActiveCheckBox" Content="Active Only" HorizontalAlignment="Center" Height="30" Margin="80,44,0,0" VerticalAlignment="Top" Width="100" FontWeight="Bold" 
+                              VerticalContentAlignment="Center" Padding="5" Checked="ActiveCheckBox_Checked" Unchecked="ActiveCheckBox_Unchecked" Style="{DynamicResource RoundedCheckbox}"/>
                     <Label x:Name="ClientsComboLabel" Content="Client" HorizontalAlignment="Right" Height="30" Margin="0,45,175,0" VerticalAlignment="Top" Width="45" FontWeight="Bold"/>
                     <ComboBox x:Name="ClientCombo" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="155"  Style="{DynamicResource PaddedCombo}"
                               SelectionChanged="ClientCombo_SelectionChanged" DisplayMemberPath="ClientName"/>
@@ -79,7 +79,7 @@
                             <DataGridTextColumn x:Name="JobColumn" Binding="{Binding JobTitle}" ClipboardContentBinding="{x:Null}" Header="Job Title" Width="*"/>
                             <DataGridTextColumn x:Name="PhoneColumn" Binding="{Binding PhoneNumber}" ClipboardContentBinding="{x:Null}" Header="Telephone Number(s)"/>
                             <DataGridTextColumn x:Name="EmailColumn" Binding="{Binding Email}" ClipboardContentBinding="{x:Null}" Header="Email"/>
-                            <DataGridCheckBoxColumn x:Name="ActiveColumn" Binding="{Binding ActiveContact, Mode=OneWay}" ClipboardContentBinding="{x:Null}" Header="Active" IsReadOnly="True"
+                            <DataGridCheckBoxColumn x:Name="ActiveColumn" Binding="{Binding Active, Mode=OneWay}" ClipboardContentBinding="{x:Null}" Header="Active" IsReadOnly="True"
                                                     ElementStyle="{DynamicResource CentredCheckbox}"/>                            
                         </DataGrid.Columns>
                     </DataGrid>

@@ -463,13 +463,13 @@ namespace ProjectTile
             contactFilter(false);
         }
 
-        private void ActiveContactCheckBox_Checked(object sender, RoutedEventArgs e)
+        private void ActiveCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             contactActiveOnly = true;
             refreshContactGrid();
         }
 
-        private void ActiveContactCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        private void ActiveCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             contactActiveOnly = false;
             refreshContactGrid();
