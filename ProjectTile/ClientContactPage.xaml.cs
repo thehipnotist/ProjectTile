@@ -28,7 +28,7 @@ namespace ProjectTile
         string pageMode;
         //string fromSource = "";
         //string sourceMode = "";
-        int selectedContactID = 0; // Only used for the initial page parameter, to handle returning to this page
+        int initialContactID = 0; // Only used for the initial page parameter, to handle returning to this page
         string originalInstructions;
         
         TableSecurity myPermissions = Globals.MyPermissions;
@@ -70,8 +70,7 @@ namespace ProjectTile
             try
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
-                //sourceMode = PageFunctions.pageParameter(this, "SourceMode");
-                selectedContactID = Int32.Parse(PageFunctions.pageParameter(this, "ContactID"));
+                initialContactID = Int32.Parse(PageFunctions.pageParameter(this, "ContactID"));
             }
             catch (Exception generalException)
             {
@@ -82,22 +81,25 @@ namespace ProjectTile
             try
             {
                 originalInstructions = Instructions.Content.ToString();
-                if (pageMode == PageFunctions.View) { canAmend = canAdd = canActivate = false; }
+                if (pageMode == PageFunctions.View || pageMode == PageFunctions.Lookup) 
+                { 
+                    canAmend = canAdd = canActivate = false;
+                    CommitButton.Visibility = (pageMode == PageFunctions.Lookup)? Visibility.Visible : Visibility.Hidden;
+                    CommitButton.Margin = AddButton.Margin;
+                    ClientCombo.IsEnabled = (pageMode == PageFunctions.Lookup); 
+                }
                 else
                 {
                     canAmend = myPermissions.Allow("EditClientStaff");
                     canAdd = myPermissions.Allow("AddClientStaff");
                     canActivate = myPermissions.Allow("ActivateClientStaff");
                     originalInstructions = originalInstructions.Replace("View", "View or Amend");
+                    CommitButton.Visibility = Visibility.Hidden;
                 }
 
-                if (Globals.SelectedClient != null)
-                {
-                    contactMode();
-                }
+                if (Globals.SelectedClient != null) { contactMode(); }
                 else
                 {
-                    //fromSource = "TilesPage";
                     EntityWarningLabel.Content = ClientFunctions.ShortEntityWarning;
                     clientMode();
                 }
@@ -230,10 +232,10 @@ namespace ProjectTile
             try
             {
                 int selectedID = 0;
-                if (selectedContactID > 0)
+                if (initialContactID > 0)
                 {
-                    selectedID = selectedContactID;
-                    selectedContactID = 0; // Only used at page initiation, so this stops it interfering later
+                    selectedID = initialContactID;
+                    initialContactID = 0; // Only used at page initiation, so this stops it interfering later
                 }
                 else if (selectedContactGridRecord != null) { selectedID = selectedContactGridRecord.ID; }
 
@@ -410,7 +412,7 @@ namespace ProjectTile
                 if (ClientDataGrid.SelectedItem != null)
                 {
                     selectedClientGridRecord = (ClientSummaryRecord)ClientDataGrid.SelectedItem;
-                    ClientFunctions.SelectClient(selectedClientGridRecord.ID);
+                    if (pageMode != PageFunctions.Lookup) { ClientFunctions.SelectClient(selectedClientGridRecord.ID); }
                     ContactButton.IsEnabled = true;
                     checkForSingleContact();
                 }
@@ -425,7 +427,8 @@ namespace ProjectTile
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            ClientFunctions.ReturnToTilesPage();
+            if (pageMode == PageFunctions.Lookup) { ClientFunctions.CancelTeamContactSelection(); }
+            else { ClientFunctions.ReturnToTilesPage(); }
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -544,6 +547,11 @@ namespace ProjectTile
         private void PossibleContacts_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (PossibleContacts.SelectedItem != null) { chooseContactName(); }
+        }
+
+        private void CommitButton_Click(object sender, RoutedEventArgs e)
+        {
+            ClientFunctions.SelectTeamContact(selectedContactGridRecord);
         }
 
     } // class

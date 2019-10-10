@@ -360,7 +360,7 @@ namespace ProjectTile
 
         private void ContactMenu_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: Add this once the page is built
+            PageFunctions.ShowProjectContactsPage();
         }
 
         private void ProductMenu_Click(object sender, RoutedEventArgs e)

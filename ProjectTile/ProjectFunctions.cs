@@ -39,8 +39,8 @@ namespace ProjectTile
         public static List<ClientSummaryRecord> FullClientList;
         public static List<ClientSummaryRecord> ClientFilterList;
         public static List<ClientSummaryRecord> ClientOptionsList;
-        public static List<ClientTeamSummary> FullClientTeamsList;
-        public static List<ClientTeamSummary> ClientTeamsGridList;
+        public static List<ProjectContactSummary> FullProjectContactsList;
+        public static List<ProjectContactSummary> ProjectContactsGridList;
         public static List<ClientTeamRoles> FullClientRolesList;
         public static List<ClientTeamRoles> ClientRolesFilterList;
 
@@ -1074,19 +1074,19 @@ namespace ProjectTile
             }
         }
 
-        public static void SetFullClientTeamsList()
+        public static void SetFullProjectContactsList()
         {
             try
             {
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    FullClientTeamsList = (from ct in existingPtDb.ClientTeams
+                    FullProjectContactsList = (from ct in existingPtDb.ClientTeams
                                            join pj in existingPtDb.Projects on ct.ProjectID equals pj.ID
                                            join cs in existingPtDb.ClientStaff on ct.ClientStaffID equals cs.ID
                                            join ctr in existingPtDb.ClientTeamRoles on ct.ClientTeamRoleCode equals ctr.RoleCode
                                            where pj.EntityID == CurrentEntityID
-                                           select new ClientTeamSummary
+                                           select new ProjectContactSummary
                                            {
                                                ID = ct.ID,
                                                Project = pj,
@@ -1099,7 +1099,7 @@ namespace ProjectTile
                                                    Email = cs.Email,
                                                    Active = cs.Active
                                                },
-                                               ClientRole = ctr,
+                                               TeamRole = ctr,
                                                FromDate = ct.FromDate,
                                                ToDate = ct.ToDate
                                            }
@@ -1109,24 +1109,91 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error retrieving full list of client team members", generalException); }
         }
 
-        public static bool SetClientTeamsGridList(ProjectStatusFilter inStatus, string clientRoleCode, TeamTimeFilter timeFilter, int projectID = 0, string nameContains = "", bool exact = false)
+        public static List<Projects> projectsRequiringContacts()
+        {
+            try
+            {
+                List<Projects> returnProjects = new List<Projects>();
+                
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    List<Projects> nonInternalProjects = existingPtDb.Projects.Where(p => p.ClientID != null && p.ClientID > 0).ToList();
+                    foreach (Projects p in nonInternalProjects)
+                    {
+                        if (existingPtDb.ClientTeams.FirstOrDefault(ct => ct.ProjectID == p.ID) == null) { returnProjects.Add(p); }
+                    }
+                }
+                return returnProjects;
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error finding projects that have clients but no linked contacts", generalException);
+                return null;
+            }		
+        }
+
+        public static ProjectContactSummary DummyContact(Projects thisProject)
+        {
+            try
+            {
+                return new ProjectContactSummary
+                {
+                    ID = Globals.NoID,
+                    Project = thisProject,
+                    Contact = new ContactSummaryRecord
+                    {
+                        ID = NoID,
+                        ContactName = "<None Added Yet>",
+                        JobTitle = "",
+                        PhoneNumber = "",
+                        Email = "",
+                        Active = false
+                    },
+                    TeamRole = null,
+                    FromDate = null,
+                    ToDate = null
+                };
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error creating dummy contact for project " + thisProject.ProjectCode, generalException);
+                return null;
+            }	
+        }
+        
+        public static bool SetProjectContactsGridList(ProjectStatusFilter inStatus, string clientRoleCode, TeamTimeFilter timeFilter, int projectID = 0, string nameContains = "", bool exact = false)
         {
             try
             {
                 nameContains = nameContains.ToUpper();
-                SetFullClientTeamsList();
-                ClientTeamsGridList = FullClientTeamsList.Where(ftl => ((projectID == 0 && IsInFilter(inStatus, ftl.ProjectStage))
+                SetFullProjectContactsList();
+                ProjectContactsGridList = FullProjectContactsList.Where(ftl => ((projectID == 0 && IsInFilter(inStatus, ftl.ProjectStage))
                                                     || (projectID != 0 && ftl.Project.ID == projectID))
                                                 && (nameContains == ""
                                                     || (exact && ftl.Contact.ContactName.ToUpper() == nameContains)
                                                     || (!exact && ftl.Contact.ContactName.ToUpper().Contains(nameContains)))
                                                 && (clientRoleCode == AllCodes
-                                                    || ftl.ClientRole.RoleCode == clientRoleCode)
+                                                    || ftl.TeamRole.RoleCode == clientRoleCode)
                                                 && (timeFilter == TeamTimeFilter.All
                                                     || IsInTimeFilter(timeFilter, ftl.FromDate, ftl.ToDate))
                                                 ).ToList();
 
-                if (projectID > 0) { ClientTeamsGridList = ClientTeamsGridList.OrderBy(tgl => RolePosition(tgl.ClientRole.RoleCode)).OrderBy(tgl => tgl.EffectiveFrom).ToList(); }
+                if (clientRoleCode == AllCodes && nameContains == "" && projectID == 0) // When not filtered, need an empty record so we can select the project
+                {
+                    List<Projects> additionalProjects = projectsRequiringContacts();
+                    foreach (Projects p in additionalProjects)
+                    {
+                        ProjectStages stage = GetStageByCode(p.StageCode);
+                        if (IsInFilter(inStatus, stage))
+                        {
+                            ProjectContactSummary dummy = DummyContact(p);
+                            ProjectContactsGridList.Add(dummy);
+                        }
+                    }
+                }
+
+//                if (projectID > 0) { ProjectContactsGridList = ProjectContactsGridList.OrderBy(tgl => RolePosition(tgl.ClientRole.RoleCode)).OrderBy(tgl => tgl.EffectiveFrom).ToList(); }
                 return true;
             }
             catch (Exception generalException)
@@ -1136,12 +1203,12 @@ namespace ProjectTile
             }
         }
 
-        public static bool? DuplicateProjectContact(ClientTeamSummary thisRecord, bool byRole)
+        public static bool? DuplicateProjectContact(ProjectContactSummary thisRecord, bool byRole)
         {
             try
             {
-                SetFullClientTeamsList();
-                List<ClientTeamSummary> otherInstances = FullClientTeamsList
+                SetFullProjectContactsList();
+                List<ProjectContactSummary> otherInstances = FullProjectContactsList
                     .Where(ftl => ftl.ID != thisRecord.ID
                         && ftl.Project.ID == thisRecord.Project.ID
                         && ((byRole && ftl.RoleCode == thisRecord.RoleCode) || (!byRole && ftl.ContactID == thisRecord.ContactID)))
@@ -1150,7 +1217,7 @@ namespace ProjectTile
                 if (otherInstances.Count == 0) { return false; }
                 else
                 {
-                    foreach (ClientTeamSummary thisInstance in otherInstances)
+                    foreach (ProjectContactSummary thisInstance in otherInstances)
                     {
                         if (thisInstance.RoleCode == thisRecord.RoleCode) // Required if by contact, as returns null if found (but only) with a different role
                         {
@@ -1168,12 +1235,12 @@ namespace ProjectTile
             }
         }
 
-        public static bool SubsumesContact(ClientTeamSummary thisRecord)
+        public static bool SubsumesContact(ProjectContactSummary thisRecord)
         {
             try
             {
-                SetFullClientTeamsList();
-                return FullClientTeamsList.Exists(ftl => ftl.ID != thisRecord.ID
+                SetFullProjectContactsList();
+                return FullProjectContactsList.Exists(ftl => ftl.ID != thisRecord.ID
                         && ftl.Project.ID == thisRecord.Project.ID
                         && ftl.RoleCode == thisRecord.RoleCode
                         && ((ftl.FromDate != null && ftl.FromDate >= thisRecord.EffectiveFrom) ||
@@ -1187,7 +1254,7 @@ namespace ProjectTile
             }
         }
 
-        public static ClientTeams GetContactPredecessor(ClientTeamSummary currentRecord)
+        public static ClientTeams GetContactPredecessor(ProjectContactSummary currentRecord)
         {
             try
             {
@@ -1211,7 +1278,7 @@ namespace ProjectTile
             }
         }
 
-        public static ClientTeams GetContactSuccessor(ClientTeamSummary currentRecord)
+        public static ClientTeams GetContactSuccessor(ProjectContactSummary currentRecord)
         {
             try
             {
@@ -2086,7 +2153,7 @@ namespace ProjectTile
 
         // Client Teams (updates)
 
-        public static bool updateOtherClientInstances(ClientTeamSummary newRecord)
+        public static bool updateOtherClientInstances(ProjectContactSummary newRecord)
         {
             try
             {
@@ -2152,9 +2219,9 @@ namespace ProjectTile
             }
         }
 
-        public static bool SaveClientTeamChanges(ClientTeamSummary currentVersion, ClientTeamSummary savedVersion)
+        public static bool SaveProjectContactChanges(ProjectContactSummary currentVersion, ProjectContactSummary savedVersion)
         {
-            if (!currentVersion.ValidateTeamRecord(savedVersion)) { return false; }
+            if (!currentVersion.Validate(savedVersion)) { return false; }
 
             try
             {
@@ -2181,9 +2248,9 @@ namespace ProjectTile
             }
         }
 
-        public static int SaveNewClientTeam(ClientTeamSummary newRecord)
+        public static int SaveNewProjectContact(ProjectContactSummary newRecord)
         {
-            if (!newRecord.ValidateTeamRecord(null)) { return 0; }
+            if (!newRecord.Validate(null)) { return 0; }
             ClientTeams thisTeam = new ClientTeams();
             newRecord.ConvertToClientTeam(ref thisTeam);
 
@@ -2206,7 +2273,7 @@ namespace ProjectTile
             }
         }
 
-        public static bool RemoveClientTeamEntry(ClientTeamSummary unwantedRecord)
+        public static bool RemoveProjectContact(ProjectContactSummary unwantedRecord)
         {
             try
             {

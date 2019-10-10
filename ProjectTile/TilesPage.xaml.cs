@@ -410,7 +410,7 @@ namespace ProjectTile
 
         private void ProjectButton_Contact_Click(object sender, RoutedEventArgs e)
         {
-
+            PageFunctions.ShowProjectContactsPage();
         }
 
         private void ProjectButton_Product_Click(object sender, RoutedEventArgs e)

@@ -5,12 +5,12 @@ using System.Text;
 
 namespace ProjectTile
 {
-    class ClientTeamSummary : Globals
+    public class ProjectContactSummary : Globals
     {
         public int ID { get; set; }
         public Projects Project { get; set; }
         public ContactSummaryRecord Contact { get; set; }
-        public ClientTeamRoles ClientRole { get; set; }
+        public ClientTeamRoles TeamRole { get; set; }
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
 
@@ -55,7 +55,7 @@ namespace ProjectTile
 
         public string RoleCode
         {
-            get { return (ClientRole == null) ? "" : ClientRole.RoleCode; }
+            get { return (TeamRole == null) ? "" : TeamRole.RoleCode; }
         }
 
         public bool HasKeyRole
@@ -105,9 +105,9 @@ namespace ProjectTile
             }
         }
 
-        public ClientTeamSummary ShallowCopy()
+        public ProjectContactSummary ShallowCopy()
         {
-            return (ClientTeamSummary) this.MemberwiseClone();
+            return (ProjectContactSummary) this.MemberwiseClone();
         }
 
         public bool RoleOverlap()
@@ -115,7 +115,7 @@ namespace ProjectTile
             return (ProjectFunctions.DuplicateProjectContact(this, byRole: true) == true);
         }
 
-        public bool ValidateTeamRecord(ClientTeamSummary savedVersion)
+        public bool Validate(ProjectContactSummary savedVersion)
         {
             bool contactChanged = true;
             bool roleChanged = true;
@@ -123,7 +123,7 @@ namespace ProjectTile
             bool amendment = false;
             ClientTeams predecessor = Predecessor();
 
-            if (savedVersion == null) { savedVersion = new ClientTeamSummary(); } // Prevents having to check for null each time
+            if (savedVersion == null) { savedVersion = new ProjectContactSummary(); } // Prevents having to check for null each time
             else
             {
                 amendment = true;
@@ -136,32 +136,32 @@ namespace ProjectTile
                 string errorMessage = "";
                 if (Contact == null)
                 { errorMessage = "Please choose a contact from the list, or use the 'Search' function.|No Contact Selected"; }
-                else if (ClientRole == null)
-                { errorMessage = "Please select a project role for the contact member.|No Role Selected"; }
+                else if (TeamRole == null)
+                { errorMessage = "Please select a project role for the contact.|No Role Selected"; }
                 else if (FromDate == null)
-                { errorMessage = "Please enter a date from which this user is (or was) part of the team.|No Start Date"; }
+                { errorMessage = "Please enter a date from which this contact is (or was) part of the team.|No Start Date"; }
                 else if (EffectiveTo < FromDate)
                 { errorMessage = "The 'To' date cannot be after the 'From' date.|Invalid Dates"; }
                 else if (amendment && (contactChanged || roleChanged) && savedVersion.IsHistoric)
                 { errorMessage = "Past team members cannot be amended, except to change their dates.|Historic Record"; }
                 else if (!Contact.Active && FromDate <= Today && EffectiveTo > Today)
-                { errorMessage = Contact.ContactName + " is inactive and cannot be part of the current project team now, but can be added for a future date.|Inactive User"; }
+                { errorMessage = Contact.ContactName + " is inactive and cannot be part of the current client team now, but can be added for a future date.|Inactive User"; }
                 else if (IsDuplicate())
                 { errorMessage = Contact.ContactName + " already has the same role in the project during this period. Please check the existing record.|Duplicate Record"; }
                 else if (HasKeyRole && predecessor == null && FromDate > Project.StartDate)
                 {
-                    errorMessage = ClientRole.RoleDescription + " is a key role, and is not covered at the start of the project. Please adjust the 'from' date, then (if appropriate) "
-                      + "add an initial " + ClientRole.RoleDescription + " afterwards; the date of this record will then be adjusted automatically.|Key Role Not Covered";
+                    errorMessage = TeamRole.RoleDescription + " is a key role, and is not covered at the start of the project. Please adjust the 'from' date, then (if appropriate) "
+                      + "add an initial " + TeamRole.RoleDescription + " afterwards; the date of this record will then be adjusted automatically.|Key Role Not Covered";
                 }
                 else if (HasKeyRole && Successor() == null & ToDate != null)
                 {
-                    errorMessage = ClientRole.RoleDescription + " is a key role, and must always have a current record. Please leave the 'to' date blank, then (if appropriate) "
-                      + "add a subsequent " + ClientRole.RoleDescription + " afterwards; the date of this record will then be adjusted automatically.|Key Role Not Covered";
+                    errorMessage = TeamRole.RoleDescription + " is a key role, and must always have a current record. Please leave the 'to' date blank, then (if appropriate) "
+                      + "add a subsequent " + TeamRole.RoleDescription + " afterwards; the date of this record will then be adjusted automatically.|Key Role Not Covered";
                 }
                 else if (amendment && roleChanged && savedVersion.HasKeyRole)
                 {
-                    errorMessage = "The existing role (" + savedVersion.ClientRole.RoleDescription + ") is a key role, and must always be filled during the project. Please ensure "
-                      + "continuity in that role (e.g. by selecting an alternative contact for this record) before changing/adding this user's new project role.|Key Role Not Covered";
+                    errorMessage = "The existing role (" + savedVersion.TeamRole.RoleDescription + ") is a key role, and must always be filled during the project. Please ensure "
+                      + "continuity in that role (e.g. by selecting an alternative contact for this record) before changing/adding this contact's new project role.|Key Role Not Covered";
                 }
                 if (errorMessage != "")
                 {
@@ -171,7 +171,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.Error("Error validating project team details", generalException);
+                MessageFunctions.Error("Error validating client project team details", generalException);
                 return false;
             }
 
@@ -193,27 +193,27 @@ namespace ProjectTile
                         && ((ToDate != null && (predecessor.ToDate == null || predecessor.ToDate > ToDate)))
                         )
                     {
-                        MessageFunctions.AddQuery("Projects can only have one " + ClientRole.RoleDescription + " at a time, and this project already has another " + ClientRole.RoleDescription
+                        MessageFunctions.AddQuery("Projects can only have one client " + TeamRole.RoleDescription + " at a time, and this project already has another " + TeamRole.RoleDescription
                           + " throughout this period. The existing record will automatically be split into 'before' and 'after' sections.");
                     }
                     else if (ProjectFunctions.SubsumesContact(this)) // Opposite scenario of above
                     {
-                        MessageFunctions.AddQuery("Projects can only have one " + ClientRole.RoleDescription + " at a time, and this period entirely covers an existing " + ClientRole.RoleDescription
+                        MessageFunctions.AddQuery("Projects can only have one client " + TeamRole.RoleDescription + " at a time, and this period entirely covers an existing " + TeamRole.RoleDescription
                           + " record. That record will therefore be automatically deleted, and other existing records' dates adjusted to avoid overlaps.");
                     }
                     else if (RoleOverlap()) // Only if not throwing above - i.e. there is at least one overlap, but no complete replacement or split
                     {
-                        MessageFunctions.AddQuery("Projects can only have one " + ClientRole.RoleDescription + " at a time, and this project already has another " + ClientRole.RoleDescription
+                        MessageFunctions.AddQuery("Projects can only have one client " + TeamRole.RoleDescription + " at a time, and this project already has another " + TeamRole.RoleDescription
                           + " during part of this period. Existing records' dates will be automatically adjusted to avoid overlaps.");
                     }
                     if (predecessor != null && predecessor.ToDate != null && EffectiveFrom.AddDays(-1) > predecessor.ToDate)
                     {
-                        MessageFunctions.AddQuery(ClientRole.RoleDescription + " is a key role, but this leaves a gap after the previous incumbent, so that record will be extended automatically. "
+                        MessageFunctions.AddQuery(TeamRole.RoleDescription + " is a key role, but this leaves a gap after the previous incumbent, so that record will be extended automatically. "
                             + "If that is not correct please adjust the 'from' date, or (after saving) add another interim record in between; existing dates will be adjusted to fit.");
                     }
                     if (Successor() != null && Successor().FromDate != null && EffectiveTo.AddDays(1) < Successor().FromDate)
                     {
-                        MessageFunctions.AddQuery(ClientRole.RoleDescription + " is a key role, but this leaves a gap to the next incumbent, so that record will be extended automatically. "
+                        MessageFunctions.AddQuery(TeamRole.RoleDescription + " is a key role, but this leaves a gap to the next incumbent, so that record will be extended automatically. "
                             + "If that is not correct please adjust the 'to' date, or (after saving) add another interim record in between; existing dates will be adjusted to fit.");
                     }
                 }
@@ -221,7 +221,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.Error("Error validating project team details", generalException);
+                MessageFunctions.Error("Error validating client project team details", generalException);
                 return false;
             }
 		    finally
@@ -244,7 +244,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.Error("Error converting summary to project team record", generalException);
+                MessageFunctions.Error("Error converting summary to client team record", generalException);
                 return false;
             }
         }    

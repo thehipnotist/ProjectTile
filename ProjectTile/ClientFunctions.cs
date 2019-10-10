@@ -42,7 +42,24 @@ namespace ProjectTile
         public delegate void ReturnToProjectsDelegate();
         public static ReturnToProjectsDelegate SelectClientForProject;
         public static ReturnToProjectsDelegate CancelProjectClientSelection;
-        
+
+        // --------------- Navigation --------------- // 	
+
+        public static void SelectTeamContact(ContactSummaryRecord selectedRecord)
+        {
+            try
+            {
+                SelectedTeamContact = selectedRecord;
+                SelectContactForTeam();
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error handling contact selection", generalException); }
+        }
+
+        public static void BackToTeam()
+        {
+            CancelTeamContactSelection();
+        }
+
         // Data retrieval
 
         public static List<string> CurrentManagersList(int entityID, bool includeAll)

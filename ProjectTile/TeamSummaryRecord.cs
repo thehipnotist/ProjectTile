@@ -220,17 +220,17 @@ namespace ProjectTile
                         && ((ToDate != null && (predecessor.ToDate == null || predecessor.ToDate > ToDate)))
                         )
                     {
-                        MessageFunctions.AddQuery("Projects can only have one " + ProjectRole.RoleDescription + " at a time, and this project already has another " + ProjectRole.RoleDescription
+                        MessageFunctions.AddQuery("Projects can only have one internal " + ProjectRole.RoleDescription + " at a time, and this project already has another " + ProjectRole.RoleDescription
                           + " throughout this period. The existing record will automatically be split into 'before' and 'after' sections.");
                     }
                     else if (ProjectFunctions.SubsumesStaff(this)) // Opposite scenario of above
                     {
-                        MessageFunctions.AddQuery("Projects can only have one " + ProjectRole.RoleDescription + " at a time, and this period entirely covers an existing " + ProjectRole.RoleDescription
+                        MessageFunctions.AddQuery("Projects can only have one internal " + ProjectRole.RoleDescription + " at a time, and this period entirely covers an existing " + ProjectRole.RoleDescription
                           + " record. That record will therefore be automatically deleted, and other existing records' dates adjusted to avoid overlaps.");
                     }
                     else if (RoleOverlap()) // Only if not throwing above - i.e. there is at least one overlap, but no complete replacement or split
                     {
-                        MessageFunctions.AddQuery("Projects can only have one " + ProjectRole.RoleDescription + " at a time, and this project already has another " + ProjectRole.RoleDescription
+                        MessageFunctions.AddQuery("Projects can only have one internal " + ProjectRole.RoleDescription + " at a time, and this project already has another " + ProjectRole.RoleDescription
                           + " during part of this period. Existing records' dates will be automatically adjusted to avoid overlaps.");
                     }
                     if (predecessor != null && predecessor.ToDate != null && EffectiveFrom.AddDays(-1) > predecessor.ToDate)

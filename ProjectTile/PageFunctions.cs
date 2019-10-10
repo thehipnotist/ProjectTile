@@ -210,6 +210,16 @@ namespace ProjectTile
             ChangePage("ProjectProductsPage.xaml?Mode=" + pageMode + ",ProductID=" + selectedProductID.ToString());
         }
 
+        public static void ShowProjectContactsPage(string pageMode = "", int selectedContactID = 0, string sourcePage = "")
+        {
+            if (pageMode == "")
+            {
+                if (ProjectSourceMode == View) { pageMode = View; }
+                else { pageMode = MyPermissions.Allow("EditClientTeams") ? Amend : View; }
+            }
+            if (sourcePage != "") { ProjectSourcePage = sourcePage; }
+            ChangePage("ProjectContactsPage.xaml?Mode=" + pageMode + ",ContactID=" + selectedContactID.ToString());
+        }
 
         public static void ShowAboutPage()
         {

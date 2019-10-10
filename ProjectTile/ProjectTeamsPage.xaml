@@ -26,7 +26,7 @@
             <Label x:Name="PageHeader" Content="Project Teams" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="605" FontWeight="Bold" Background="{x:Null}" Margin="50,0,0,0" 
                    Foreground="White" Grid.Row="0" Grid.Column="1"/>
 
-            <Border MinHeight="400" MinWidth="655" Height="Auto" Width="Auto" Margin="0,0,0,0" BorderBrush="{StaticResource PtBrushProject3}" Style="{DynamicResource SectionBorder}" Grid.Row="1" 
+            <Border MinHeight="400" MinWidth="655" Height="Auto" Width="Auto" Margin="0,0,0,0" BorderBrush="{StaticResource PtBrushStaff3}" Style="{DynamicResource SectionBorder}" Grid.Row="1" 
                 Grid.Column="1">
                 <Grid MinWidth="655" Width="{Binding ElementName=CentreColumn, Path=ActualWidth}">
                     <Grid.RowDefinitions>

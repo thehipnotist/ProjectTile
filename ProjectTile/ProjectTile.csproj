@@ -64,6 +64,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ProjectContactSummary.cs" />
     <Compile Include="FAQPage.xaml.cs">
       <DependentUpon>FAQPage.xaml</DependentUpon>
     </Compile>
@@ -75,6 +76,9 @@
       <DependentUpon>ProjectProductsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ProjectProductSummary.cs" />
+    <Compile Include="ProjectContactsPage.xaml.cs">
+      <DependentUpon>ProjectContactsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TeamSummaryRecord.cs" />
     <Compile Include="ClientSummaryRecord.cs" />
     <Compile Include="ClientContactPage.xaml.cs">
@@ -328,6 +332,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="AboutPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ProjectContactsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

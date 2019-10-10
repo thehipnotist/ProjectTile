@@ -400,7 +400,7 @@ namespace ProjectTile
 
         private void ProjectContact_Click(object sender, RoutedEventArgs e)
         {
-            
+            PageFunctions.ShowProjectContactsPage();
         }
 
         private void ProjectProduct_Click(object sender, RoutedEventArgs e)
