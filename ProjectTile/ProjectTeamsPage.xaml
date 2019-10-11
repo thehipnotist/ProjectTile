@@ -89,21 +89,26 @@
                         <DataGrid.Resources>
                             <Style TargetType="DataGridRow">
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Path=Project.ProjectStatus}"  Value="Closed">
+                                    <DataTrigger Binding="{Binding Path=HasKeyRole}" Value="True">
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}" Value="Closed">
                                         <Setter Property="Foreground" Value="DarkGray"/>
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding Path=Project.ProjectStatus}"  Value="Not Started">
-                                        <Setter Property="Foreground" Value="LightBlue"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Path=Project.ProjectStatus}"  Value="Live">
-                                        <Setter Property="Foreground" Value="Green"/>
-                                    </DataTrigger>
                                     <DataTrigger Binding="{Binding Path=IsHistoric}"  Value="True">
-                                        <Setter Property="Foreground" Value="Gray"/>
+                                        <Setter Property="Foreground" Value="DarkGray"/>
+                                        <Setter Property="FontWeight" Value="Normal"/>
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding Path=IsFuture}"  Value="True">
-                                        <Setter Property="Foreground" Value="Blue"/>
-                                    </DataTrigger>                                    
+                                        <Setter Property="Foreground" Value="LightBlue"/>
+                                        <Setter Property="FontWeight" Value="Normal"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}" Value="Not Started">
+                                        <Setter Property="Foreground" Value="LightBlue"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}" Value="Live">
+                                        <Setter Property="Foreground" Value="Green"/>
+                                    </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </DataGrid.Resources>

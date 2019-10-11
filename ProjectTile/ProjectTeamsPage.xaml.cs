@@ -85,6 +85,7 @@ namespace ProjectTile
             if (staffID > 0) { chooseStaffName(staffID); }
             this.DataContext = editTeamRecord;
             toggleBackButton();
+            MessageFunctions.InfoMessage("Current key roles are bold. Future roles are blue, and past ones are grey; otherwise, Live (open) projects are green.", "Grid formatting:");
         }
 
         // ---------------------------------------------------------- //
@@ -268,6 +269,7 @@ namespace ProjectTile
                 {
                     AddButton.Visibility = (pageMode != PageFunctions.View && Globals.MyPermissions.Allow("AddProjectTeams")) ? Visibility.Visible : Visibility.Hidden;
                     AmendButton.Visibility = RemoveButton.Visibility = canEditTeams? Visibility.Visible : Visibility.Hidden;
+                    AllRadio.IsChecked = true;
                 }
                 else
                 {
@@ -406,8 +408,8 @@ namespace ProjectTile
 
         private bool rolesCheck()
         {
-            if (selectedTeamRecord == null) { return true; }
-            string missingRoles = ProjectFunctions.FindMissingRoles(selectedTeamRecord.Project.ID, false);
+            if (!projectSelected || Globals.SelectedProjectSummary == null || Globals.SelectedProjectSummary.ProjectID <= 0) { return true; }
+            string missingRoles = ProjectFunctions.FindMissingRoles(Globals.SelectedProjectSummary.ProjectID, false);
             if (missingRoles == "") { return true; }
             else { return MessageFunctions.WarningYesNo("The following key roles are missing for this project: " + missingRoles + ". Are you sure you want to leave them vacant? "
                 + "The project will not be able to progress beyond Initiation until these roles are filled.","Ignore Vacant Roles?"); }
@@ -537,7 +539,6 @@ namespace ProjectTile
                     else
                     {
                         Globals.SelectedProjectSummary = selectedProject;
-                        AllRadio.IsChecked = true;
                         refreshTeamDataGrid();
                         toggleProjectMode(selectedProject != Globals.AllProjects);
                     }
