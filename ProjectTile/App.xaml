@@ -1177,6 +1177,7 @@
 
         <Style x:Key="CentredCheckbox" TargetType="{x:Type CheckBox}" BasedOn="{StaticResource RoundedCheckbox}">
             <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="IsHitTestVisible" Value="False"/>
         </Style>
         
     </Application.Resources>
