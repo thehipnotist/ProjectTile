@@ -80,7 +80,8 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn x:Name="ProjectCodeColumn" Binding="{Binding Project.ProjectCode, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="Code"/>
                             <DataGridTextColumn x:Name="ProjectNameColumn" Binding="{Binding Project.ProjectName, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="Project Name"/>
-                            <DataGridTextColumn x:Name="ContactNameColumn" Binding="{Binding Contact.ContactName, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="Contact Name"/>
+                            <DataGridTextColumn x:Name="ContactNameColumn" Binding="{Binding Contact.ContactName, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="Contact Name"
+                                                Width="*" MinWidth="100"/>
                             <DataGridTextColumn x:Name="RoleDescriptionColumn" Binding="{Binding TeamRole.RoleDescription, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="Project Role"/>
                             <DataGridTextColumn x:Name="FromDateColumn" Binding="{Binding EffectiveFrom, StringFormat=dd/MM/yyyy, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="From Date"/>
                             <DataGridTextColumn x:Name="ToDateColumn" Binding="{Binding ToDate, StringFormat=dd/MM/yyyy, Mode=OneTime}" ClipboardContentBinding="{x:Null}" Header="To Date"/>
@@ -88,21 +89,26 @@
                         <DataGrid.Resources>
                             <Style TargetType="DataGridRow">
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Path=Project.ProjectStatus}"  Value="Closed">
+                                    <DataTrigger Binding="{Binding Path=HasKeyRole}" Value="True">
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}" Value="Closed">
                                         <Setter Property="Foreground" Value="DarkGray"/>
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding Path=Project.ProjectStatus}"  Value="Not Started">
+                                    <DataTrigger Binding="{Binding Path=IsHistoric}"  Value="True">
+                                        <Setter Property="Foreground" Value="DarkGray"/>
+                                        <Setter Property="FontWeight" Value="Normal"/>
+                                    </DataTrigger>                                    
+                                    <DataTrigger Binding="{Binding Path=IsFuture}"  Value="True">
+                                        <Setter Property="Foreground" Value="LightBlue"/>
+                                        <Setter Property="FontWeight" Value="Normal"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}" Value="Not Started">
                                         <Setter Property="Foreground" Value="LightBlue"/>
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding Path=Project.ProjectStatus}"  Value="Live">
+                                    <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}" Value="Live">
                                         <Setter Property="Foreground" Value="Green"/>
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding Path=IsHistoric}"  Value="True">
-                                        <Setter Property="Foreground" Value="Gray"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Path=IsFuture}"  Value="True">
-                                        <Setter Property="Foreground" Value="Blue"/>
-                                    </DataTrigger>                                    
                                 </Style.Triggers>
                             </Style>
                         </DataGrid.Resources>
@@ -139,8 +145,8 @@
                     <Label x:Name="NameLikeLabel" Content="Name" HorizontalAlignment="Left" Height="30" Margin="15,45,155,15" VerticalAlignment="Bottom" Width="Auto" FontWeight="Bold"/>
                     <TextBox x:Name="NameLike" HorizontalAlignment="Left" Height="30" Margin="65,45,15,15" VerticalAlignment="Bottom" Width="140" ToolTip="Type part of a name and choose from the selection" 
                           TabIndex="2" LostFocus="NameLike_LostFocus" KeyUp="NameLike_KeyUp" Style="{DynamicResource PaddedTextBox}" CharacterCasing="Upper" GotFocus="NameLike_GotFocus"/>
-                    <ListView x:Name="PossibleNames" HorizontalAlignment="Left" Height="90" Margin="100,75,15,45" VerticalAlignment="Bottom" Width="140" Visibility="Hidden" 
-                              SelectionChanged="PossibleNames_SelectionChanged" DisplayMemberPath="ContactName" VerticalContentAlignment="Bottom"/>
+                    <ListView x:Name="PossibleNames" HorizontalAlignment="Left" Height="90" Margin="100,75,15,45" VerticalAlignment="Bottom" Width="200" Visibility="Hidden" 
+                              SelectionChanged="PossibleNames_SelectionChanged" DisplayMemberPath="NameAndClient" VerticalContentAlignment="Bottom"/>
 
                     <Label x:Name="RoleFilterLabel" Content="Role" HorizontalAlignment="Center" Height="30" Margin="15,45,175,15" VerticalAlignment="Bottom" Width="Auto" FontWeight="Bold"/>
                     <ComboBox x:Name="RoleFilterCombo" HorizontalAlignment="Center" Height="30" Margin="50,45,15,15" VerticalAlignment="Bottom" Width="150" SelectionChanged="RoleFilterCombo_SelectionChanged"

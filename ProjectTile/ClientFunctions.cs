@@ -596,7 +596,7 @@ namespace ProjectTile
             }
         }
 
-        public static List<ContactSummaryRecord> ContactGridList (string contactContains, bool activeOnly, int clientID)
+        public static List<ContactSummaryRecord> ContactGridList (string contactContains, bool activeOnly, int clientID, bool includeJob)
         {
             try
             {
@@ -608,16 +608,17 @@ namespace ProjectTile
                             where ( (clientID == 0 || cs.ClientID == clientID)
                                 && c.EntityID == CurrentEntityID
                                 && (!activeOnly || cs.Active)
-                                && (contactContains == "" || (cs.FullName).Contains(contactContains) || cs.JobTitle.Contains(contactContains)) )
+                                && (contactContains == "" || (cs.FullName).Contains(contactContains) || (includeJob && cs.JobTitle.Contains(contactContains))) )
                             select (new ContactSummaryRecord 
                             {
                                 ID = cs.ID,
+                                ClientID = c.ID,
                                 ContactName = cs.FullName,
                                 JobTitle = cs.JobTitle,
                                 PhoneNumber = cs.PhoneNumber,
                                 Email = cs.Email,
                                 Active = cs.Active
-                            }) ).ToList();                                                
+                            }) ).Distinct().ToList();                                                
                 }
             }
             catch (Exception generalException)
@@ -631,7 +632,7 @@ namespace ProjectTile
         {
             try
             {
-                List<ContactSummaryRecord> allContacts = ContactGridList(contactContains: "", activeOnly: false, clientID: clientID);
+                List<ContactSummaryRecord> allContacts = ContactGridList(contactContains: "", activeOnly: false, clientID: clientID, includeJob: false);
                 if (allContacts.Exists(ase => ase.ID == contactID)) { return allContacts.First(ase => ase.ID == contactID); }
                 else
                 {

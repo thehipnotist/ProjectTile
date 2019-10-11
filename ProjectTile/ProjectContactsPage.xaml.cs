@@ -37,6 +37,7 @@ namespace ProjectTile
         int contactID;
         bool projectSelected = false;
         bool canEditTeams = false;
+        string defaultHeader = "Project Contacts";
 
         // ------------- Current records ------------ //
 
@@ -85,6 +86,7 @@ namespace ProjectTile
             if (contactID > 0) { chooseContactName(contactID); }
             this.DataContext = editTeamRecord;
             toggleBackButton();
+            MessageFunctions.InfoMessage("Current key roles are bold. Future roles are blue, and past ones are grey; otherwise, Live (open) projects are green.", "Grid formatting:");
         }
 
         // ---------------------------------------------------------- //
@@ -123,15 +125,15 @@ namespace ProjectTile
                 string projectRoleCode = Globals.SelectedClientRole.RoleCode;
                 Globals.TeamTimeFilter timeFilter = Globals.SelectedTeamTimeFilter;
 
-                bool success = ProjectFunctions.SetProjectContactsGridList(statusFilter, projectRoleCode, timeFilter, currentProjectSummary.ProjectID, nameLike, exactName);
+                bool success = ProjectFunctions.SetContactsGridList(statusFilter, projectRoleCode, timeFilter, currentClientID(), currentProjectSummary.ProjectID, nameLike, exactName);
                 if (success)
                 {
-                    TeamDataGrid.ItemsSource = ProjectFunctions.ProjectContactsGridList;
-                    if (currentRecord != null && ProjectFunctions.ProjectContactsGridList.Exists(tgl => tgl.ID == currentRecord.ID))
+                    TeamDataGrid.ItemsSource = ProjectFunctions.ContactsGridList;
+                    if (currentRecord != null && ProjectFunctions.ContactsGridList.Exists(tgl => tgl.ID == currentRecord.ID))
                     {
-                        TeamDataGrid.SelectedItem = ProjectFunctions.ProjectContactsGridList.First(tgl => tgl.ID == currentRecord.ID);
+                        TeamDataGrid.SelectedItem = ProjectFunctions.ContactsGridList.First(tgl => tgl.ID == currentRecord.ID);
                     }
-                    else if (ProjectFunctions.ProjectContactsGridList.Count == 1) { TeamDataGrid.SelectedItem = ProjectFunctions.ProjectContactsGridList.ElementAt(0); }
+                    else if (ProjectFunctions.ContactsGridList.Count == 1) { TeamDataGrid.SelectedItem = ProjectFunctions.ContactsGridList.ElementAt(0); }
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating project team grid data", generalException); }
@@ -154,7 +156,7 @@ namespace ProjectTile
             try
             {
                 ClientTeamRoles currentRecord = (Globals.SelectedClientRole != null) ? Globals.SelectedClientRole : Globals.DefaultClientRole;
-                ProjectFunctions.SetClientRolesFilterList(nameLike, exactName);
+                ProjectFunctions.SetClientRolesFilterList(currentClientID(), nameLike, exactName);
                 RoleFilterCombo.ItemsSource = ProjectFunctions.ClientRolesFilterList;
                 if (!ProjectFunctions.ClientRolesFilterList.Exists(rfl => rfl.RoleCode == currentRecord.RoleCode)) { currentRecord = Globals.AllClientRoles; }
                 RoleFilterCombo.SelectedItem = ProjectFunctions.ClientRolesFilterList.First(rfl => rfl.RoleCode == currentRecord.RoleCode);
@@ -184,8 +186,9 @@ namespace ProjectTile
                 if (nameLike == "") { PossibleNames.Visibility = Visibility.Hidden; }
                 else
                 {
+                    int projectClientID = projectSelected? Globals.SelectedClient.ID : 0;
                     PossibleNames.Visibility = Visibility.Visible;
-                    contactDropList = ClientFunctions.ContactGridList(contactContains: nameLike, activeOnly: false, clientID: selectedTeamRecord.ClientID);
+                    contactDropList = ClientFunctions.ContactGridList(contactContains: nameLike, activeOnly: false, clientID: projectClientID, includeJob: false);
                     PossibleNames.ItemsSource = contactDropList;
                 }
             }
@@ -194,7 +197,7 @@ namespace ProjectTile
 
         private void refreshContactCombo()
         {
-            contactComboList = ClientFunctions.ContactGridList(contactContains: "", activeOnly: true, clientID: Globals.SelectedClient.ID);
+            contactComboList = ClientFunctions.ContactGridList(contactContains: "", activeOnly: true, clientID: Globals.SelectedClient.ID, includeJob: false);
             ContactCombo.ItemsSource = contactComboList;
         }
 
@@ -214,12 +217,43 @@ namespace ProjectTile
 
         // --------- Other/shared functions --------- // 
 
+        private void setCurrentClient(Clients client, ClientSummaryRecord clientSummary = null)
+        {
+            try
+            {
+                if (client == null && clientSummary == null)
+                {
+                    Globals.SelectedClient = null;
+                    PageHeader.Content = defaultHeader;
+                    if (!projectSelected) { MessageFunctions.CancelInfoMessage(); }
+                }
+                else
+                {
+                    if (client == null) { client = ClientFunctions.GetClientByID(clientSummary.ID); }                    
+                    Globals.SelectedClient = client;
+                    PageHeader.Content = defaultHeader + " for Client " + client.ClientCode + " (" + client.ClientName + ")";                    
+                    if (!projectSelected)
+                    {
+                        MessageFunctions.InfoMessage("This effectively sets the current client to " + client.ClientName + " until the name filter is changed/cleared "
+                            + " or a different project is selected (the projects drop-down list is unaffected)", "Client " + client.ClientCode + " selected");
+                    }
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error processing client selection", generalException); }
+        }
+        
+        private int currentClientID()
+        { 
+            return ((projectSelected || exactName) & Globals.SelectedClient != null) ? Globals.SelectedClient.ID : 0; 
+        }
+        
         private void chooseContactName(int contactID = 0)
         {
             try
             {
                 ContactSummaryRecord selectedContact = (contactID != 0) ? ClientFunctions.GetContactSummary(contactID) : (ContactSummaryRecord)PossibleNames.SelectedItem;
                 NameLike.Text = selectedContact.ContactName;
+                setCurrentClient(selectedContact.Client, null);
                 exactName = true;
                 nameFilter();
             }
@@ -232,6 +266,8 @@ namespace ProjectTile
             {
                 PossibleNames.Visibility = Visibility.Hidden;
                 nameLike = NameLike.Text;
+                if (nameLike == "") { exactName = false; }
+                if (!exactName && !projectSelected) { setCurrentClient(null); }                
                 refreshRoleFilterCombo();
                 toggleContactNameColumn();
                 refreshTeamDataGrid();
@@ -268,6 +304,7 @@ namespace ProjectTile
                 {
                     AddButton.Visibility = (pageMode != PageFunctions.View && Globals.MyPermissions.Allow("AddClientTeams")) ? Visibility.Visible : Visibility.Hidden;
                     AmendButton.Visibility = RemoveButton.Visibility = canEditTeams? Visibility.Visible : Visibility.Hidden;
+                    AllRadio.IsChecked = true;
                 }
                 else
                 {
@@ -405,8 +442,8 @@ namespace ProjectTile
 
         private bool rolesCheck()
         {
-            if (selectedTeamRecord == null) { return true; }
-            string missingRoles = ProjectFunctions.FindMissingRoles(selectedTeamRecord.Project.ID, true);
+            if (!projectSelected || Globals.SelectedProjectSummary == null || Globals.SelectedProjectSummary.ProjectID <= 0) { return true; }
+            string missingRoles = ProjectFunctions.FindMissingRoles(Globals.SelectedProjectSummary.ProjectID, true);
             if (missingRoles == "") { return true; }
             else { return MessageFunctions.WarningYesNo("The following key client roles are missing for this project: " + missingRoles + ". Are you sure you want to leave them vacant? "
                 + "The project will not be able to progress beyond Initiation until these roles are filled.","Ignore Vacant Roles?"); }
@@ -532,8 +569,7 @@ namespace ProjectTile
                     else
                     {
                         Globals.SelectedProjectSummary = selectedProject;
-                        if (selectedProject.Client != null) { Globals.SelectedClient = ClientFunctions.GetClientByID(selectedProject.Client.ID); }
-                        AllRadio.IsChecked = true;
+                        setCurrentClient(null, selectedProject.Client ?? null);                        
                         refreshTeamDataGrid();
                         toggleProjectMode(selectedProject != Globals.AllProjects);
                     }
@@ -655,9 +691,13 @@ namespace ProjectTile
         private void ProjectButton_Click(object sender, RoutedEventArgs e)
         {
             if (projectSelected)
-            {
-                if (!rolesCheck()) { return; }
-                try { selectProject(0); }
+            {                
+                try 
+                {
+                    if (!rolesCheck()) { return; }
+                    selectProject(0);
+                    if (!exactName && !projectSelected) { setCurrentClient(null); }
+                }
                 catch (Exception generalException) { MessageFunctions.Error("Error processing return to all projects", generalException); }
             }
             else if (selectedTeamRecord != null) // Just in case

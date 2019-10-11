@@ -39,8 +39,8 @@ namespace ProjectTile
         public static List<ClientSummaryRecord> FullClientList;
         public static List<ClientSummaryRecord> ClientFilterList;
         public static List<ClientSummaryRecord> ClientOptionsList;
-        public static List<ProjectContactSummary> FullProjectContactsList;
-        public static List<ProjectContactSummary> ProjectContactsGridList;
+        public static List<ProjectContactSummary> FullContactsList;
+        public static List<ProjectContactSummary> ContactsGridList;
         public static List<ClientTeamRoles> FullClientRolesList;
         public static List<ClientTeamRoles> ClientRolesFilterList;
 
@@ -790,7 +790,7 @@ namespace ProjectTile
             {
                 nameContains = nameContains.ToUpper();
                 SetFullTeamsList();
-                TeamsGridList = FullTeamsList.Where(ftl => ((projectID == 0 && IsInFilter(inStatus, ftl.ProjectStage)) 
+                TeamsGridList = FullTeamsList.Where(ftl => ((projectID == 0 && IsInFilter(inStatus, ftl.Stage)) 
                                                     || (projectID != 0 && ftl.Project.ID == projectID ))
                                                 && (nameContains == "" 
                                                     || (exact && ftl.StaffMember.StaffName.ToUpper() == nameContains) 
@@ -801,7 +801,7 @@ namespace ProjectTile
                                                     || IsInTimeFilter(timeFilter, ftl.FromDate, ftl.ToDate))
                                                 ).ToList();
 
-                if (projectID > 0) { TeamsGridList = TeamsGridList.OrderBy(tgl => RolePosition(tgl.ProjectRole.RoleCode)).OrderBy(tgl => tgl.EffectiveFrom).ToList(); }
+                TeamsGridList = TeamsGridList.OrderBy(tgl => tgl.EffectiveFrom).OrderBy(tgl => RolePosition(tgl.ProjectRole.RoleCode)).OrderBy(tgl => tgl.Project.ID).ToList();
                 return true;
             }
             catch (Exception generalException) 
@@ -1037,18 +1037,18 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error listing client roles", generalException); }
         }
 
-        public static void SetClientRolesFilterList(string nameLike = "", bool exactName = false)
+        public static void SetClientRolesFilterList(int clientID, string nameLike = "", bool exactName = false)
         {
             try
             {
                 SetFullClientRolesList();
-                ClientRolesFilterList = FullClientRolesList.Where(frl => nameLike == "" || HasEverHadClientRole(frl.RoleCode, nameLike, exactName)).ToList();
+                ClientRolesFilterList = FullClientRolesList.Where(frl => nameLike == "" || HasEverHadClientRole(frl.RoleCode, nameLike, exactName, clientID)).ToList();
                 ClientRolesFilterList.Add(AllClientRoles);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error setting list of possible client roles", generalException); }
         }
 
-        public static bool HasEverHadClientRole(string clientRoleCode, string nameLike, bool exact)
+        public static bool HasEverHadClientRole(string clientRoleCode, string nameLike, bool exact, int clientID)
         {
             try
             {
@@ -1059,9 +1059,10 @@ namespace ProjectTile
                     ClientTeams firstResult = (from ct in existingPtDb.ClientTeams
                                                join cs in existingPtDb.ClientStaff on ct.ClientStaffID equals cs.ID
                                                where ct.ClientTeamRoleCode == clientRoleCode
-                                                   && (nameLike == ""
+                                               && (clientID == 0 || cs.ClientID == clientID)    
+                                               && (nameLike == ""
                                                        || (exact && (cs.FullName).ToUpper() == nameLike)
-                                                       || (!exact && (cs.FullName).ToUpper().Contains(nameLike)))
+                                                       || (!exact && (cs.FullName).ToUpper().Contains(nameLike)))                                                   
                                                select ct
                                                 ).FirstOrDefault();
                     return (firstResult != null);
@@ -1074,14 +1075,14 @@ namespace ProjectTile
             }
         }
 
-        public static void SetFullProjectContactsList()
+        public static void SetFullContactsList()
         {
             try
             {
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    FullProjectContactsList = (from ct in existingPtDb.ClientTeams
+                    FullContactsList = (from ct in existingPtDb.ClientTeams
                                            join pj in existingPtDb.Projects on ct.ProjectID equals pj.ID
                                            join cs in existingPtDb.ClientStaff on ct.ClientStaffID equals cs.ID
                                            join ctr in existingPtDb.ClientTeamRoles on ct.ClientTeamRoleCode equals ctr.RoleCode
@@ -1162,24 +1163,27 @@ namespace ProjectTile
             }	
         }
         
-        public static bool SetProjectContactsGridList(ProjectStatusFilter inStatus, string clientRoleCode, TeamTimeFilter timeFilter, int projectID = 0, string nameContains = "", bool exact = false)
+        public static bool SetContactsGridList(ProjectStatusFilter inStatus, string roleCode, TeamTimeFilter timeFilter, int clientID = 0, int projectID = 0, 
+            string nameContains = "", bool exact = false)
         {
             try
             {
                 nameContains = nameContains.ToUpper();
-                SetFullProjectContactsList();
-                ProjectContactsGridList = FullProjectContactsList.Where(ftl => ((projectID == 0 && IsInFilter(inStatus, ftl.ProjectStage))
+                SetFullContactsList();
+                ContactsGridList = FullContactsList.Where(ftl => ((projectID == 0 && IsInFilter(inStatus, ftl.Stage))
                                                     || (projectID != 0 && ftl.Project.ID == projectID))
+                                                && (clientID == 0 
+                                                    || ftl.ClientID == clientID )
                                                 && (nameContains == ""
                                                     || (exact && ftl.Contact.ContactName.ToUpper() == nameContains)
                                                     || (!exact && ftl.Contact.ContactName.ToUpper().Contains(nameContains)))
-                                                && (clientRoleCode == AllCodes
-                                                    || ftl.TeamRole.RoleCode == clientRoleCode)
+                                                && (roleCode == AllCodes
+                                                    || ftl.TeamRole.RoleCode == roleCode)
                                                 && (timeFilter == TeamTimeFilter.All
                                                     || IsInTimeFilter(timeFilter, ftl.FromDate, ftl.ToDate))
                                                 ).ToList();
 
-                if (clientRoleCode == AllCodes && nameContains == "" && projectID == 0) // When not filtered, need an empty record so we can select the project
+                if (roleCode == AllCodes && nameContains == "" && projectID == 0) // When not filtered, need an empty record so we can select the project
                 {
                     List<Projects> additionalProjects = projectsRequiringContacts();
                     foreach (Projects p in additionalProjects)
@@ -1188,12 +1192,12 @@ namespace ProjectTile
                         if (IsInFilter(inStatus, stage))
                         {
                             ProjectContactSummary dummy = DummyContact(p);
-                            ProjectContactsGridList.Add(dummy);
+                            ContactsGridList.Add(dummy);
                         }
                     }
                 }
 
-//                if (projectID > 0) { ProjectContactsGridList = ProjectContactsGridList.OrderBy(tgl => RolePosition(tgl.ClientRole.RoleCode)).OrderBy(tgl => tgl.EffectiveFrom).ToList(); }
+                ContactsGridList = ContactsGridList.OrderBy(pcl => pcl.EffectiveFrom).OrderBy(pcl => RolePosition(pcl.RoleCode)).OrderBy(pcl => pcl.Project.ID).ToList();
                 return true;
             }
             catch (Exception generalException)
@@ -1207,8 +1211,8 @@ namespace ProjectTile
         {
             try
             {
-                SetFullProjectContactsList();
-                List<ProjectContactSummary> otherInstances = FullProjectContactsList
+                SetFullContactsList();
+                List<ProjectContactSummary> otherInstances = FullContactsList
                     .Where(ftl => ftl.ID != thisRecord.ID
                         && ftl.Project.ID == thisRecord.Project.ID
                         && ((byRole && ftl.RoleCode == thisRecord.RoleCode) || (!byRole && ftl.ContactID == thisRecord.ContactID)))
@@ -1239,8 +1243,8 @@ namespace ProjectTile
         {
             try
             {
-                SetFullProjectContactsList();
-                return FullProjectContactsList.Exists(ftl => ftl.ID != thisRecord.ID
+                SetFullContactsList();
+                return FullContactsList.Exists(ftl => ftl.ID != thisRecord.ID
                         && ftl.Project.ID == thisRecord.Project.ID
                         && ftl.RoleCode == thisRecord.RoleCode
                         && ((ftl.FromDate != null && ftl.FromDate >= thisRecord.EffectiveFrom) ||

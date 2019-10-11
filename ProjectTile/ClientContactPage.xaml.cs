@@ -239,7 +239,7 @@ namespace ProjectTile
                 }
                 else if (selectedContactGridRecord != null) { selectedID = selectedContactGridRecord.ID; }
 
-                contactGridList = ClientFunctions.ContactGridList(contactContains, contactActiveOnly, Globals.SelectedClient.ID);
+                contactGridList = ClientFunctions.ContactGridList(contactContains, contactActiveOnly, Globals.SelectedClient.ID, includeJob: true);
                 ContactDataGrid.ItemsSource = contactGridList;
                 if (selectedID > 0)
                 {

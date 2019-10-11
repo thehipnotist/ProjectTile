@@ -14,7 +14,7 @@ namespace ProjectTile
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
 
-        public ProjectStages ProjectStage
+        public ProjectStages Stage
         {
             get { return ProjectFunctions.GetStageByCode(Project.StageCode); }
         }
