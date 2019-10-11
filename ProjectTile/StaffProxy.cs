@@ -2,7 +2,7 @@
 
 namespace ProjectTile
 {
-    public class StaffSummaryRecord : Globals
+    public class StaffProxy : Globals
     {
         public int ID { get; set; }
         public string EmployeeID { get; set; }

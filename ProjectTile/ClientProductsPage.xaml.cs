@@ -7,7 +7,6 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Navigation;
 
 namespace ProjectTile
 {
@@ -41,12 +40,12 @@ namespace ProjectTile
 
         // Lists //
         List<Products> productComboList;
-        List<ClientSummaryRecord> clientGridList;
+        List<ClientProxy> clientGridList;
 
         // Current records //
-        ClientSummaryRecord selectedGridRecord;
+        ClientProxy selectedGridRecord;
         Products selectedProduct;
-        ClientProductSummary selectedClientProduct;
+        ClientProductProxy selectedClientProduct;
 
         // ---------------------- //
         // -- Page Management --- //
@@ -363,8 +362,8 @@ namespace ProjectTile
                 bool clientSelected = (ClientList && ClientTo.SelectedItem != null); 
                 bool productSelected = (!ClientList && ProductTo.SelectedItem != null);
                 
-                if (clientSelected) { selectedClientProduct = (ClientProductSummary) ClientTo.SelectedItem;  }
-                else if (productSelected) { selectedClientProduct = (ClientProductSummary)ProductTo.SelectedItem; }
+                if (clientSelected) { selectedClientProduct = (ClientProductProxy) ClientTo.SelectedItem;  }
+                else if (productSelected) { selectedClientProduct = (ClientProductProxy)ProductTo.SelectedItem; }
                 else { selectedClientProduct = null; }
 
                 if (selectedClientProduct != null)
@@ -451,7 +450,7 @@ namespace ProjectTile
                 if (ClientTo.SelectedItem != null)
                 {
                     List<Clients> removeList = new List<Clients>();
-                    ClientProductSummary thisRecord = (ClientProductSummary) ClientTo.SelectedItem;
+                    ClientProductProxy thisRecord = (ClientProductProxy) ClientTo.SelectedItem;
                     Clients thisClient = ClientFunctions.GetClientByID(thisRecord.ClientID);
                     removeList.Add(thisClient);
 
@@ -480,7 +479,7 @@ namespace ProjectTile
                 if (ProductTo.SelectedItem != null)
                 {
                     List<Products> removeList = new List<Products>();
-                    ClientProductSummary thisRecord = (ClientProductSummary) ProductTo.SelectedItem;
+                    ClientProductProxy thisRecord = (ClientProductProxy) ProductTo.SelectedItem;
                     Products thisProduct = ProductFunctions.GetProductByID(thisRecord.ProductID);
                     removeList.Add(thisProduct);
 
@@ -562,7 +561,7 @@ namespace ProjectTile
             {
                 if (ClientDataGrid.SelectedItem != null)
                 {
-                    selectedGridRecord = (ClientSummaryRecord)ClientDataGrid.SelectedItem;
+                    selectedGridRecord = (ClientProxy)ClientDataGrid.SelectedItem;
                     ClientFunctions.SelectClient(selectedGridRecord.ID);
                     ProductButton.IsEnabled = true;
                 }
@@ -736,7 +735,7 @@ namespace ProjectTile
                 clearChanges();
                 if (ClientCombo.SelectedItem != null)
                 {
-                    selectedGridRecord = (ClientSummaryRecord)ClientCombo.SelectedItem;
+                    selectedGridRecord = (ClientProxy)ClientCombo.SelectedItem;
                     ClientFunctions.SelectClient(selectedGridRecord.ID);
                     refreshProductSummaries(true);
                 }

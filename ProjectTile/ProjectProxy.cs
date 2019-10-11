@@ -3,14 +3,14 @@ using System.ComponentModel;
 
 namespace ProjectTile
 {
-    public class ProjectSummaryRecord : Globals, INotifyPropertyChanged
+    public class ProjectProxy : Globals, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
         private ProjectTypes type;
         private ProjectStages stage;
-        private StaffSummaryRecord projectManager;
-        private ClientSummaryRecord client;
+        private StaffProxy projectManager;
+        private ClientProxy client;
         
         public int ProjectID { get; set; }
         public string ProjectCode { get; set; }
@@ -26,7 +26,7 @@ namespace ProjectTile
             }
         }
         public int EntityID { get; set; }
-        public ClientSummaryRecord Client
+        public ClientProxy Client
         {
             get { return client; }
             set
@@ -35,7 +35,7 @@ namespace ProjectTile
                 OnPropertyChanged("Client");
             }
         }
-        public StaffSummaryRecord ProjectManager
+        public StaffProxy ProjectManager
         {
             get { return projectManager; }
             set

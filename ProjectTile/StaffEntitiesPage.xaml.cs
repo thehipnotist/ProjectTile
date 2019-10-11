@@ -43,7 +43,7 @@ namespace ProjectTile
         modeType editMode;
 
         // Current records //
-        StaffSummaryRecord selectedRecord;
+        StaffProxy selectedRecord;
         Entities selectedEntity;
 
         // Lists //
@@ -343,10 +343,10 @@ namespace ProjectTile
             {
                 if (StaffFrom.SelectedItems != null)
                 {                                       
-                    List<StaffSummarySmall> fromList = new List<StaffSummarySmall>();                    
+                    List<StaffProxySmall> fromList = new List<StaffProxySmall>();                    
                     foreach (var selectedRow in StaffFrom.SelectedItems)
                     {
-                        fromList.Add((StaffSummarySmall)selectedRow);                        
+                        fromList.Add((StaffProxySmall)selectedRow);                        
                     }
                     
                     bool success = StaffFunctions.ToggleEntityStaff(fromList, true, selectedEntity);
@@ -374,10 +374,10 @@ namespace ProjectTile
             {
                 if (EntitiesFrom.SelectedItems != null)
                 {
-                    List<EntitySummaryRecord> fromList = new List<EntitySummaryRecord>();
+                    List<EntityProxy> fromList = new List<EntityProxy>();
                     foreach (var selectedRow in EntitiesFrom.SelectedItems)
                     {
-                        fromList.Add((EntitySummaryRecord)selectedRow);
+                        fromList.Add((EntityProxy)selectedRow);
                     }
 
                     bool success = StaffFunctions.ToggleStaffEntities(fromList, true, Globals.SelectedStaffMember);
@@ -405,10 +405,10 @@ namespace ProjectTile
             {
                 if (StaffTo.SelectedItems != null)
                 {
-                    List<StaffSummarySmall> toList = new List<StaffSummarySmall>();
+                    List<StaffProxySmall> toList = new List<StaffProxySmall>();
                     foreach (var selectedRow in StaffTo.SelectedItems)
                     {
-                        toList.Add((StaffSummarySmall)selectedRow);
+                        toList.Add((StaffProxySmall)selectedRow);
                     }
 
                     bool success = StaffFunctions.ToggleEntityStaff(toList, false, selectedEntity);
@@ -436,10 +436,10 @@ namespace ProjectTile
             {
                 if (EntitiesTo.SelectedItems != null)
                 {
-                    List<EntitySummaryRecord> toList = new List<EntitySummaryRecord>();
+                    List<EntityProxy> toList = new List<EntityProxy>();
                     foreach (var selectedRow in EntitiesTo.SelectedItems)
                     {
-                        toList.Add((EntitySummaryRecord)selectedRow);
+                        toList.Add((EntityProxy)selectedRow);
                     }
 
                     bool success = StaffFunctions.ToggleStaffEntities(toList, false, Globals.SelectedStaffMember);
@@ -477,7 +477,7 @@ namespace ProjectTile
                     }
                     else
                     {
-                        EntitySummaryRecord thisRecord = (EntitySummaryRecord) EntitiesTo.SelectedItem;
+                        EntityProxy thisRecord = (EntityProxy) EntitiesTo.SelectedItem;
                         if (thisRecord.Default == false)
                         {
                             int entityID = thisRecord.ID;
@@ -501,10 +501,10 @@ namespace ProjectTile
                 {
                     if (StaffTo.SelectedItems != null)
                     {
-                        List<StaffSummarySmall> defaultList = new List<StaffSummarySmall>();
+                        List<StaffProxySmall> defaultList = new List<StaffProxySmall>();
                         foreach (var selectedRow in StaffTo.SelectedItems)
                         {
-                            defaultList.Add((StaffSummarySmall)selectedRow);
+                            defaultList.Add((StaffProxySmall)selectedRow);
                         }
 
                         bool success = StaffFunctions.MakeDefault(defaultList, selectedEntity);
@@ -575,7 +575,7 @@ namespace ProjectTile
             {
                 if (StaffDataGrid.SelectedItem != null)
                 {
-                    selectedRecord = (StaffSummaryRecord)StaffDataGrid.SelectedItem;
+                    selectedRecord = (StaffProxy)StaffDataGrid.SelectedItem;
                     selectedStaffID = selectedRecord.ID;
                     Globals.SelectedStaffMember = StaffFunctions.GetStaffMember(selectedStaffID);
                     EntitiesButton.IsEnabled = true;

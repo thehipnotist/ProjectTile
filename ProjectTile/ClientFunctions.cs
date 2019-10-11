@@ -6,12 +6,11 @@ using System.Text;
 
 namespace ProjectTile
 {
-
     class ClientFunctions : Globals
     {        
         public static string EntityWarning = "Note that only clients in the current Entity ('" + CurrentEntityName + "') are displayed.";
         public static string ShortEntityWarning = "Only clients in the current Entity are displayed.";
-        public static ContactSummaryRecord SelectedTeamContact = null;
+        public static ContactProxy SelectedTeamContact = null;
         public delegate void ReturnToTeamsDelegate();
         public static ReturnToTeamsDelegate SelectContactForTeam;
         public static ReturnToTeamsDelegate CancelTeamContactSelection;
@@ -27,25 +26,25 @@ namespace ProjectTile
         public static string ExplainCode;
 
         public static List<Clients> ClientsNotForProduct;
-        public static List<ClientProductSummary> ClientsForProduct;
+        public static List<ClientProductProxy> ClientsForProduct;
         public static List<int> ClientIDsToAdd = new List<int>();
         public static List<int> ClientIDsToRemove = new List<int>();
         public static List<int> ClientIDsToUpdate = new List<int>();
 
         public static List<Products> ProductsNotForClient;
-        public static List<ClientProductSummary> ProductsForClient;
+        public static List<ClientProductProxy> ProductsForClient;
         public static List<int> ProductIDsToAdd = new List<int>();
         public static List<int> ProductIDsToRemove = new List<int>();
         public static List<int> ProductIDsToUpdate = new List<int>();
 
-        public static ClientSummaryRecord SelectedProjectClient = null;
+        public static ClientProxy SelectedProjectClient = null;
         public delegate void ReturnToProjectsDelegate();
         public static ReturnToProjectsDelegate SelectClientForProject;
         public static ReturnToProjectsDelegate CancelProjectClientSelection;
 
         // --------------- Navigation --------------- // 	
 
-        public static void SelectTeamContact(ContactSummaryRecord selectedRecord)
+        public static void SelectTeamContact(ContactProxy selectedRecord)
         {
             try
             {
@@ -133,14 +132,14 @@ namespace ProjectTile
             }
         }
 
-        public static List<ClientSummaryRecord> ClientGridList(bool activeOnly, string nameContains, int managerID, int entityID)
+        public static List<ClientProxy> ClientGridList(bool activeOnly, string nameContains, int managerID, int entityID)
         {
             try
             {
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    List<ClientSummaryRecord> clientList = new List<ClientSummaryRecord>();
+                    List<ClientProxy> clientList = new List<ClientProxy>();
                     clientList = (from c in existingPtDb.Clients
                                   join s in existingPtDb.Staff on c.AccountManagerID equals s.ID
                                   join e in existingPtDb.Entities on c.EntityID equals e.ID
@@ -149,7 +148,7 @@ namespace ProjectTile
                                     && (!activeOnly || c.Active)
                                     && (nameContains == "" || c.ClientName.Contains(nameContains))
                                   orderby c.ClientCode
-                                  select (new ClientSummaryRecord() 
+                                  select (new ClientProxy() 
                                   { 
                                       ID = c.ID, 
                                       ClientCode = c.ClientCode, 
@@ -206,14 +205,14 @@ namespace ProjectTile
             }
         }
 
-        public static ClientSummaryRecord GetClientSummary(int clientID, int entityID = 0)
+        public static ClientProxy GetClientProxy(int clientID, int entityID = 0)
         {
             try
             {
                 if (clientID == -1) { return NoClient; }
                 
                 if (entityID == 0) { entityID = CurrentEntityID; }
-                List<ClientSummaryRecord> allClientsInEntity = ClientGridList(activeOnly: false, nameContains: "", managerID: 0, entityID: entityID);
+                List<ClientProxy> allClientsInEntity = ClientGridList(activeOnly: false, nameContains: "", managerID: 0, entityID: entityID);
                 if (allClientsInEntity.Exists(ace => ace.ID == clientID)) { return allClientsInEntity.First(ace => ace.ID == clientID); }
                 else
                 {
@@ -555,14 +554,14 @@ namespace ProjectTile
             }	
         }
 
-        public static List<ClientSummaryRecord> ClientGridListByContact(bool activeOnly, string clientContains, string contactContains, int entityID)
+        public static List<ClientProxy> ClientGridListByContact(bool activeOnly, string clientContains, string contactContains, int entityID)
         {
             try
             {
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    List<ClientSummaryRecord> clientList = new List<ClientSummaryRecord>();
+                    List<ClientProxy> clientList = new List<ClientProxy>();
                     clientList = (from c in existingPtDb.Clients
                                   join s in existingPtDb.Staff on c.AccountManagerID equals s.ID
                                   join e in existingPtDb.Entities on c.EntityID equals e.ID
@@ -573,7 +572,7 @@ namespace ProjectTile
                                     && (!activeOnly || c.Active)
                                     && (clientContains == "" || c.ClientName.Contains(clientContains))
                                   orderby c.ClientCode
-                                  select (new ClientSummaryRecord()
+                                  select (new ClientProxy()
                                   {
                                       ID = c.ID,
                                       ClientCode = c.ClientCode,
@@ -596,7 +595,7 @@ namespace ProjectTile
             }
         }
 
-        public static List<ContactSummaryRecord> ContactGridList (string contactContains, bool activeOnly, int clientID, bool includeJob)
+        public static List<ContactProxy> ContactGridList (string contactContains, bool activeOnly, int clientID, bool includeJob)
         {
             try
             {
@@ -609,7 +608,7 @@ namespace ProjectTile
                                 && c.EntityID == CurrentEntityID
                                 && (!activeOnly || cs.Active)
                                 && (contactContains == "" || (cs.FullName).Contains(contactContains) || (includeJob && cs.JobTitle.Contains(contactContains))) )
-                            select (new ContactSummaryRecord 
+                            select (new ContactProxy 
                             {
                                 ID = cs.ID,
                                 ClientID = c.ID,
@@ -628,11 +627,11 @@ namespace ProjectTile
             }	
         }
 
-        public static ContactSummaryRecord GetContactSummary(int contactID, int clientID = 0)
+        public static ContactProxy GetContactProxy(int contactID, int clientID = 0)
         {
             try
             {
-                List<ContactSummaryRecord> allContacts = ContactGridList(contactContains: "", activeOnly: false, clientID: clientID, includeJob: false);
+                List<ContactProxy> allContacts = ContactGridList(contactContains: "", activeOnly: false, clientID: clientID, includeJob: false);
                 if (allContacts.Exists(ase => ase.ID == contactID)) { return allContacts.First(ase => ase.ID == contactID); }
                 else
                 {
@@ -894,14 +893,14 @@ namespace ProjectTile
         }
 
         // Client Products
-        public static List<ClientSummaryRecord> ClientGridListByProduct(bool activeOnly, string clientContains, int productID, int entityID)
+        public static List<ClientProxy> ClientGridListByProduct(bool activeOnly, string clientContains, int productID, int entityID)
         {
             try
             {
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    List<ClientSummaryRecord> clientList = new List<ClientSummaryRecord>();
+                    List<ClientProxy> clientList = new List<ClientProxy>();
                     clientList = (from c in existingPtDb.Clients
                                   join s in existingPtDb.Staff on c.AccountManagerID equals s.ID
                                   join e in existingPtDb.Entities on c.EntityID equals e.ID
@@ -912,7 +911,7 @@ namespace ProjectTile
                                     && (!activeOnly || c.Active)
                                     && (clientContains == "" || c.ClientName.Contains(clientContains))
                                   orderby c.ClientCode
-                                  select (new ClientSummaryRecord()
+                                  select (new ClientProxy()
                                   {
                                       ID = c.ID,
                                       ClientCode = c.ClientCode,
@@ -935,7 +934,7 @@ namespace ProjectTile
             }
         }
 
-        private static ClientProductStatus clientProductStatus(ClientProductSummary thisRecord)
+        private static ClientProductStatus clientProductStatus(ClientProductProxy thisRecord)
         {
             try
             {
@@ -994,9 +993,9 @@ namespace ProjectTile
             }
         }
 
-        private static void refineProductStatuses(ref List<ClientProductSummary> clientProducts)
+        private static void refineProductStatuses(ref List<ClientProductProxy> clientProducts)
         {
-            foreach (ClientProductSummary cp in clientProducts)
+            foreach (ClientProductProxy cp in clientProducts)
             {
                 cp.StatusID = clientProductStatus(cp);
             }
@@ -1019,20 +1018,20 @@ namespace ProjectTile
             }		
         }
 
-        public static List<ClientProductSummary> ClientsWithProduct(bool activeOnly, int productID)
+        public static List<ClientProductProxy> ClientsWithProduct(bool activeOnly, int productID)
         {
             try
             {
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    List<ClientProductSummary> clientProducts = 
+                    List<ClientProductProxy> clientProducts = 
                         (from p in existingPtDb.Products
                         join cp in existingPtDb.ClientProducts on p.ID equals cp.ProductID
                         join c in existingPtDb.Clients on cp.ClientID equals c.ID
                         where (productID == 0 || p.ID == productID)  && (!activeOnly || c.Active) && c.EntityID == CurrentEntityID
                         orderby c.ClientName
-                        select new ClientProductSummary 
+                        select new ClientProductProxy 
                         {
                             ID = cp.ID,
                             ClientID = c.ID,
@@ -1080,20 +1079,20 @@ namespace ProjectTile
             }		
         }
 
-        public static List<ClientProductSummary> LinkedProducts(int clientID)
+        public static List<ClientProductProxy> LinkedProducts(int clientID)
         {
             try
             {
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    List<ClientProductSummary> clientProducts = 
+                    List<ClientProductProxy> clientProducts = 
                         (from p in existingPtDb.Products
                         join cp in existingPtDb.ClientProducts on p.ID equals cp.ProductID
                         join c in existingPtDb.Clients on cp.ClientID equals c.ID
                         where c.ID == clientID
                         orderby p.ProductName
-                        select new ClientProductSummary
+                        select new ClientProductProxy
                         {
                             ID = cp.ID,
                             ClientID = c.ID,
@@ -1213,7 +1212,7 @@ namespace ProjectTile
                     {
                         try
                         {
-                            ClientProductSummary addRecord = new ClientProductSummary
+                            ClientProductProxy addRecord = new ClientProductProxy
                                 {
                                     ClientID = clientID,
                                     ClientName = thisClient.ClientName,
@@ -1243,7 +1242,7 @@ namespace ProjectTile
                         try
                         {
                             ClientsNotForProduct.Add(thisRecord);
-                            ClientProductSummary removeRecord = ClientsForProduct.FirstOrDefault(cps => cps.ClientID == clientID && cps.ProductID == thisProduct.ID);
+                            ClientProductProxy removeRecord = ClientsForProduct.FirstOrDefault(cps => cps.ClientID == clientID && cps.ProductID == thisProduct.ID);
                             ClientsForProduct.Remove(removeRecord);
 
                             if (ClientIDsToAdd.Contains(clientID)) { ClientIDsToAdd.Remove(clientID); }
@@ -1284,7 +1283,7 @@ namespace ProjectTile
                     {
                         try
                         {
-                            ClientProductSummary addRecord = new ClientProductSummary
+                            ClientProductProxy addRecord = new ClientProductProxy
                             {
                                 ClientID = thisClient.ID,
                                 ClientName = thisClient.ClientName,
@@ -1320,7 +1319,7 @@ namespace ProjectTile
                         try
                         {
                             ProductsNotForClient.Add(thisRecord);
-                            ClientProductSummary removeRecord = ProductsForClient.FirstOrDefault(cps => cps.ClientID == thisClient.ID && cps.ProductID == productID);
+                            ClientProductProxy removeRecord = ProductsForClient.FirstOrDefault(cps => cps.ClientID == thisClient.ID && cps.ProductID == productID);
                             ProductsForClient.Remove(removeRecord);
 
                             if (ProductIDsToAdd.Contains(productID)) { ProductIDsToAdd.Remove(productID); }
@@ -1392,8 +1391,8 @@ namespace ProjectTile
                 {
                     foreach (int addClientID in ClientIDsToAdd)
                     {
-                        ClientProductSummary summaryRecord = ClientsForProduct.FirstOrDefault(cfp => cfp.ProductID == productID && cfp.ClientID == addClientID);
-                         if (summaryRecord == null)
+                        ClientProductProxy proxyRecord = ClientsForProduct.FirstOrDefault(cfp => cfp.ProductID == productID && cfp.ClientID == addClientID);
+                         if (proxyRecord == null)
                          {
                              MessageFunctions.Error("Error saving new client links with product ID " + productID.ToString() + ": no matching display record found", null);
                              return false;
@@ -1404,8 +1403,8 @@ namespace ProjectTile
                              { 
                                  ProductID = productID, 
                                  ClientID = addClientID, 
-                                 Live = summaryRecord.Live, 
-                                 ProductVersion = summaryRecord.ClientVersion 
+                                 Live = proxyRecord.Live, 
+                                 ProductVersion = proxyRecord.ClientVersion 
                              };
                              existingPtDb.ClientProducts.Add(cp);
                          }
@@ -1424,17 +1423,17 @@ namespace ProjectTile
                                                             select cp).ToList();
                     foreach (ClientProducts updateCP in recordsToUpdate)
                     {
-                        ClientProductSummary summaryRecord = ClientsForProduct.FirstOrDefault(cfp => cfp.ID == updateCP.ID && cfp.ProductID == updateCP.ProductID 
+                        ClientProductProxy proxyRecord = ClientsForProduct.FirstOrDefault(cfp => cfp.ID == updateCP.ID && cfp.ProductID == updateCP.ProductID 
                             && cfp.ClientID == updateCP.ClientID);
-                        if (summaryRecord == null)
+                        if (proxyRecord == null)
                         {
                             MessageFunctions.Error("Error updating client links with product ID " + productID.ToString() + ": no matching display record found", null);
                             return false;
                         }
                         else
                         {
-                            updateCP.Live = summaryRecord.Live;
-                            updateCP.ProductVersion = summaryRecord.ClientVersion;
+                            updateCP.Live = proxyRecord.Live;
+                            updateCP.ProductVersion = proxyRecord.ClientVersion;
                         }                        
                     }
                 }
@@ -1475,8 +1474,8 @@ namespace ProjectTile
                 {
                     foreach (int addProductID in ProductIDsToAdd)
                     {
-                        ClientProductSummary summaryRecord = ProductsForClient.FirstOrDefault(cfp => cfp.ProductID == addProductID && cfp.ClientID == clientID);
-                        if (summaryRecord == null)
+                        ClientProductProxy proxyRecord = ProductsForClient.FirstOrDefault(cfp => cfp.ProductID == addProductID && cfp.ClientID == clientID);
+                        if (proxyRecord == null)
                         {
                             MessageFunctions.Error("Error saving new product links with client ID " + clientID.ToString() + ": no matching display record found", null);
                             return false;
@@ -1487,8 +1486,8 @@ namespace ProjectTile
                             {
                                 ProductID = addProductID,
                                 ClientID = clientID,
-                                Live = summaryRecord.Live,
-                                ProductVersion = summaryRecord.ClientVersion
+                                Live = proxyRecord.Live,
+                                ProductVersion = proxyRecord.ClientVersion
                             };
                             existingPtDb.ClientProducts.Add(cp);
                         }
@@ -1507,17 +1506,17 @@ namespace ProjectTile
                                                             select cp).ToList();
                     foreach (ClientProducts updateCP in recordsToUpdate)
                     {                        
-                        ClientProductSummary summaryRecord = ProductsForClient.FirstOrDefault(cfp => cfp.ID == updateCP.ID && cfp.ProductID == updateCP.ProductID
+                        ClientProductProxy proxyRecord = ProductsForClient.FirstOrDefault(cfp => cfp.ID == updateCP.ID && cfp.ProductID == updateCP.ProductID
                             && cfp.ClientID == updateCP.ClientID);
-                        if (summaryRecord == null)
+                        if (proxyRecord == null)
                         {
                             MessageFunctions.Error("Error updating product links with client ID " + clientID.ToString() + ": no matching display record found", null);
                             return false;
                         }
                         else
                         {
-                            updateCP.Live = summaryRecord.Live;
-                            updateCP.ProductVersion = summaryRecord.ClientVersion;
+                            updateCP.Live = proxyRecord.Live;
+                            updateCP.ProductVersion = proxyRecord.ClientVersion;
                         }
                     }
                 }
@@ -1533,7 +1532,7 @@ namespace ProjectTile
             }
         }
 
-        private static void queueClientProductUpdate(ClientProductSummary thisRecord, bool byClient)
+        private static void queueClientProductUpdate(ClientProductProxy thisRecord, bool byClient)
         {
             if (byClient) 
             {
@@ -1553,7 +1552,7 @@ namespace ProjectTile
             }
         }
         
-        public static bool ActivateProduct(ClientProductSummary thisRecord, bool byClient)
+        public static bool ActivateProduct(ClientProductProxy thisRecord, bool byClient)
         {
             try
             {            
@@ -1614,7 +1613,7 @@ namespace ProjectTile
             }
         }
 
-        public static bool DisableProduct(ClientProductSummary thisRecord, bool byClient)
+        public static bool DisableProduct(ClientProductProxy thisRecord, bool byClient)
         {
             try
             {
@@ -1654,7 +1653,7 @@ namespace ProjectTile
             }
         }
 
-        public static bool AmendVersion(ClientProductSummary thisRecord, string version, bool byClient)
+        public static bool AmendVersion(ClientProductProxy thisRecord, string version, bool byClient)
         {           
             decimal versionNumber;
             bool carryOn = false;
@@ -1702,7 +1701,7 @@ namespace ProjectTile
             PageFunctions.ShowTilesPage();
         }
 
-        public static void SelectProjectClient(ClientSummaryRecord selectedRecord)
+        public static void SelectProjectClient(ClientProxy selectedRecord)
         {
             try
             {            

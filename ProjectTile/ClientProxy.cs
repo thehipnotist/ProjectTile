@@ -1,7 +1,7 @@
 ﻿namespace ProjectTile
 
 {
-    public class ClientSummaryRecord : Globals
+    public class ClientProxy : Globals
     {
         public int ID { get; set; }
         public string ClientCode { get; set; }

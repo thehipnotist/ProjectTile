@@ -1,16 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ProjectTile
 {
@@ -41,13 +34,13 @@ namespace ProjectTile
 
         // ------------- Current records ------------ //
 
-        ProjectContactSummary selectedTeamRecord = null;
-        ProjectContactSummary editTeamRecord = null;
+        ProjectContactProxy selectedTeamRecord = null;
+        ProjectContactProxy editTeamRecord = null;
 
         // ------------------ Lists ----------------- //
         
-        List<ContactSummaryRecord> contactDropList;
-        List<ContactSummaryRecord> contactComboList;
+        List<ContactProxy> contactDropList;
+        List<ContactProxy> contactComboList;
 
 
         // ---------------------------------------------------------- //
@@ -119,13 +112,13 @@ namespace ProjectTile
         {
             try
             {
-                ProjectContactSummary currentRecord = selectedTeamRecord ?? null;
-                ProjectSummaryRecord currentProjectSummary = (ProjectCombo.SelectedItem != null) ? (ProjectSummaryRecord) ProjectCombo.SelectedItem : Globals.AllProjects;                
+                ProjectContactProxy currentRecord = selectedTeamRecord ?? null;
+                ProjectProxy currentProjectProxy = (ProjectCombo.SelectedItem != null) ? (ProjectProxy) ProjectCombo.SelectedItem : Globals.AllProjects;                
                 Globals.ProjectStatusFilter statusFilter = Globals.SelectedStatusFilter;
                 string projectRoleCode = Globals.SelectedClientRole.RoleCode;
                 Globals.TeamTimeFilter timeFilter = Globals.SelectedTeamTimeFilter;
 
-                bool success = ProjectFunctions.SetContactsGridList(statusFilter, projectRoleCode, timeFilter, currentClientID(), currentProjectSummary.ProjectID, nameLike, exactName);
+                bool success = ProjectFunctions.SetContactsGridList(statusFilter, projectRoleCode, timeFilter, currentClientID(), currentProjectProxy.ProjectID, nameLike, exactName);
                 if (success)
                 {
                     TeamDataGrid.ItemsSource = ProjectFunctions.ContactsGridList;
@@ -143,7 +136,7 @@ namespace ProjectTile
         {
             try
             {
-                ProjectSummaryRecord currentRecord = (Globals.SelectedProjectSummary != null) ? Globals.SelectedProjectSummary : Globals.DefaultProjectSummary;
+                ProjectProxy currentRecord = (Globals.SelectedProjectProxy != null) ? Globals.SelectedProjectProxy : Globals.DefaultProjectProxy;
                 ProjectFunctions.SetProjectFilterList(Globals.SelectedStatusFilter);
                 ProjectCombo.ItemsSource = ProjectFunctions.ProjectFilterList;
                 selectProject(currentRecord.ProjectID);
@@ -217,11 +210,11 @@ namespace ProjectTile
 
         // --------- Other/shared functions --------- // 
 
-        private void setCurrentClient(Clients client, ClientSummaryRecord clientSummary = null)
+        private void setCurrentClient(Clients client, ClientProxy clientProxy = null)
         {
             try
             {
-                if (client == null && clientSummary == null)
+                if (client == null && clientProxy == null)
                 {
                     Globals.SelectedClient = null;
                     PageHeader.Content = defaultHeader;
@@ -229,7 +222,7 @@ namespace ProjectTile
                 }
                 else
                 {
-                    if (client == null) { client = ClientFunctions.GetClientByID(clientSummary.ID); }                    
+                    if (client == null) { client = ClientFunctions.GetClientByID(clientProxy.ID); }                    
                     Globals.SelectedClient = client;
                     PageHeader.Content = defaultHeader + " for Client " + client.ClientCode + " (" + client.ClientName + ")";                    
                     if (!projectSelected)
@@ -251,7 +244,7 @@ namespace ProjectTile
         {
             try
             {
-                ContactSummaryRecord selectedContact = (contactID != 0) ? ClientFunctions.GetContactSummary(contactID) : (ContactSummaryRecord)PossibleNames.SelectedItem;
+                ContactProxy selectedContact = (contactID != 0) ? ClientFunctions.GetContactProxy(contactID) : (ContactProxy)PossibleNames.SelectedItem;
                 NameLike.Text = selectedContact.ContactName;
                 setCurrentClient(selectedContact.Client, null);
                 exactName = true;
@@ -357,7 +350,7 @@ namespace ProjectTile
         {
             try
             {
-                if (editing && Globals.SelectedProjectSummary.IsOld)
+                if (editing && Globals.SelectedProjectProxy.IsOld)
                 {
                     MessageFunctions.InvalidMessage("Contact cannot be amended for closed or cancelled projects.", "Project is Closed");
                     return;
@@ -399,9 +392,9 @@ namespace ProjectTile
                 }
                 else
                 {
-                    editTeamRecord = new ProjectContactSummary();
+                    editTeamRecord = new ProjectContactProxy();
                     this.DataContext = editTeamRecord;
-                    editTeamRecord.Project = ProjectFunctions.GetProject(Globals.SelectedProjectSummary.ProjectID);
+                    editTeamRecord.Project = ProjectFunctions.GetProject(Globals.SelectedProjectProxy.ProjectID);
                     Instructions.Content = "Insert the details as required and then click 'Save' to commit them.";
                     if (Globals.SelectedClientRole != null && Globals.SelectedClientRole != Globals.AllClientRoles) { selectEditRole(Globals.SelectedClientRole.RoleCode); }
                 }
@@ -421,7 +414,7 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error selecting current project in the list", generalException); }	
         }
 
-        private void selectContact(ContactSummaryRecord contact)
+        private void selectContact(ContactProxy contact)
         {
             try
             {
@@ -442,8 +435,8 @@ namespace ProjectTile
 
         private bool rolesCheck()
         {
-            if (!projectSelected || Globals.SelectedProjectSummary == null || Globals.SelectedProjectSummary.ProjectID <= 0) { return true; }
-            string missingRoles = ProjectFunctions.FindMissingRoles(Globals.SelectedProjectSummary.ProjectID, true);
+            if (!projectSelected || Globals.SelectedProjectProxy == null || Globals.SelectedProjectProxy.ProjectID <= 0) { return true; }
+            string missingRoles = ProjectFunctions.FindMissingRoles(Globals.SelectedProjectProxy.ProjectID, true);
             if (missingRoles == "") { return true; }
             else { return MessageFunctions.WarningYesNo("The following key client roles are missing for this project: " + missingRoles + ". Are you sure you want to leave them vacant? "
                 + "The project will not be able to progress beyond Initiation until these roles are filled.","Ignore Vacant Roles?"); }
@@ -476,7 +469,7 @@ namespace ProjectTile
             try
             {
                 CloseProjectLookup();
-                Globals.SelectedProjectSummary = ProjectFunctions.SelectedTeamProject;
+                Globals.SelectedProjectProxy = ProjectFunctions.SelectedTeamProject;
                 refreshProjectCombo();
                 refreshStatusCombo();
             }
@@ -564,11 +557,11 @@ namespace ProjectTile
             {
                 try
                 {
-                    ProjectSummaryRecord selectedProject = (ProjectSummaryRecord)ProjectCombo.SelectedItem;
+                    ProjectProxy selectedProject = (ProjectProxy)ProjectCombo.SelectedItem;
                     if (selectedProject == Globals.SearchProjects) { OpenProjectLookup(); }
                     else
                     {
-                        Globals.SelectedProjectSummary = selectedProject;
+                        Globals.SelectedProjectProxy = selectedProject;
                         setCurrentClient(null, selectedProject.Client ?? null);                        
                         refreshTeamDataGrid();
                         toggleProjectMode(selectedProject != Globals.AllProjects);
@@ -634,8 +627,8 @@ namespace ProjectTile
             }
             else
             {
-                selectedTeamRecord = (ProjectContactSummary)TeamDataGrid.SelectedItem;
-                Globals.SelectedProjectSummary = ProjectFunctions.GetProjectSummary(selectedTeamRecord.Project.ID);
+                selectedTeamRecord = (ProjectContactProxy)TeamDataGrid.SelectedItem;
+                Globals.SelectedProjectProxy = ProjectFunctions.GetProjectProxy(selectedTeamRecord.Project.ID);
                 ProjectFunctions.ToggleFavouriteButton(true);
                 ProjectButton.IsEnabled = AmendButton.IsEnabled = true;
                 RemoveButton.IsEnabled = (!selectedTeamRecord.HasKeyRole);
@@ -718,7 +711,7 @@ namespace ProjectTile
 
             if (editTeamRecord.ID > 0)
             {
-                ProjectContactSummary previousVersion = selectedTeamRecord;
+                ProjectContactProxy previousVersion = selectedTeamRecord;
                 success = ProjectFunctions.SaveProjectContactChanges(editTeamRecord, previousVersion);
             }
             else

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace ProjectTile
 {
-    public class ProjectProductSummary : Globals
+    public class ProjectProductProxy : Globals
     {
         public int ID { get; set; }
         public Projects Project { get; set; }

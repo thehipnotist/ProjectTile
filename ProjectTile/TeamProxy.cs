@@ -2,11 +2,11 @@
 
 namespace ProjectTile
 {
-    public class TeamSummaryRecord : Globals
+    public class TeamProxy : Globals
     {
         public int ID { get; set; }
         public Projects Project { get; set; }
-        public StaffSummaryRecord StaffMember { get; set; }
+        public StaffProxy StaffMember { get; set; }
         public ProjectRoles ProjectRole { get; set; }
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
@@ -130,9 +130,9 @@ namespace ProjectTile
             return true;
         }
 
-        public TeamSummaryRecord ShallowCopy()
+        public TeamProxy ShallowCopy()
         {
-            return (TeamSummaryRecord) this.MemberwiseClone();
+            return (TeamProxy) this.MemberwiseClone();
         }
 
         public bool RoleOverlap()
@@ -140,7 +140,7 @@ namespace ProjectTile
             return (ProjectFunctions.DuplicateTeamMember(this, byRole: true) == true);
         }
 
-        public bool ValidateTeamRecord(TeamSummaryRecord savedVersion)
+        public bool ValidateTeamRecord(TeamProxy savedVersion)
         {
             bool staffChanged = true;
             bool roleChanged = true;
@@ -148,7 +148,7 @@ namespace ProjectTile
             bool amendment = false;
             ProjectTeams predecessor = Predecessor();
 
-            if (savedVersion == null) { savedVersion = new TeamSummaryRecord(); } // Prevents having to check for null each time
+            if (savedVersion == null) { savedVersion = new TeamProxy(); } // Prevents having to check for null each time
             else
             {
                 amendment = true;

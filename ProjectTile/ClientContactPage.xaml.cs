@@ -2,16 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ProjectTile
 {
@@ -44,13 +37,13 @@ namespace ProjectTile
         string contactContains = ""; 
 
         // Current records //
-        ClientSummaryRecord selectedClientGridRecord = null;
-        ContactSummaryRecord selectedContactGridRecord = null;
+        ClientProxy selectedClientGridRecord = null;
+        ContactProxy selectedContactGridRecord = null;
         ClientStaff selectedContact = null;
 
         // Lists //
-        List<ClientSummaryRecord> clientGridList;
-        List<ContactSummaryRecord> contactGridList;
+        List<ClientProxy> clientGridList;
+        List<ContactProxy> contactGridList;
         List<string> contactDropList;
 
         // ---------------------- //
@@ -278,7 +271,7 @@ namespace ProjectTile
                     refreshClientGrid();                    
                     ClientCombo.Items.Clear(); // Just in case!
                     ClientCombo.ItemsSource = clientGridList;
-                    ClientSummaryRecord thisRecord = clientGridList.FirstOrDefault(cgl => cgl.ID == Globals.SelectedClient.ID);
+                    ClientProxy thisRecord = clientGridList.FirstOrDefault(cgl => cgl.ID == Globals.SelectedClient.ID);
                     if (thisRecord != null) { ClientCombo.SelectedItem = thisRecord; }
                 }                            
 
@@ -411,7 +404,7 @@ namespace ProjectTile
             {
                 if (ClientDataGrid.SelectedItem != null)
                 {
-                    selectedClientGridRecord = (ClientSummaryRecord)ClientDataGrid.SelectedItem;
+                    selectedClientGridRecord = (ClientProxy)ClientDataGrid.SelectedItem;
                     if (pageMode != PageFunctions.Lookup) { ClientFunctions.SelectClient(selectedClientGridRecord.ID); }
                     ContactButton.IsEnabled = true;
                     checkForSingleContact();
@@ -486,7 +479,7 @@ namespace ProjectTile
                 {
                     if (ClientCombo.SelectedItem != null) // No need for an 'else', won't be long...
                     {
-                        ClientSummaryRecord thisRecord = (ClientSummaryRecord)ClientCombo.SelectedItem;
+                        ClientProxy thisRecord = (ClientProxy)ClientCombo.SelectedItem;
                         ClientFunctions.SelectClient(thisRecord.ID);
                     }
                 }
@@ -501,7 +494,7 @@ namespace ProjectTile
             {
                 if (ContactDataGrid.SelectedItem != null)
                 {
-                    selectedContactGridRecord = (ContactSummaryRecord) ContactDataGrid.SelectedItem;
+                    selectedContactGridRecord = (ContactProxy) ContactDataGrid.SelectedItem;
                     AmendButton.IsEnabled = true;                    
                     selectedContact = ClientFunctions.GetContact(selectedContactGridRecord.ID);
                     AmendButton.ToolTip = "Amend " + selectedContact.FullName + "'s details";

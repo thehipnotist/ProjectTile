@@ -1,6 +1,6 @@
 ﻿namespace ProjectTile
 {
-    public class ClientProductSummary : Globals
+    public class ClientProductProxy : Globals
     {        
         private string status;
         private ClientProductStatus statusID;

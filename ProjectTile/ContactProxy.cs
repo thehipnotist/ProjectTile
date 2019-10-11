@@ -1,6 +1,6 @@
 ﻿namespace ProjectTile
 {
-    public class ContactSummaryRecord : Globals
+    public class ContactProxy : Globals
     {
         public int ID {get; set; }
         public int ClientID {get; set; }

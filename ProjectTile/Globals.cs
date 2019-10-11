@@ -38,11 +38,11 @@ namespace ProjectTile
         public const string AllCodes = "!!";
 
         public static Entities AllEntities = new Entities { ID = 0, EntityName = AllRecords, EntityDescription = AllRecords };
-        public static ProjectSummaryRecord SearchProjects = new ProjectSummaryRecord { ProjectID = -1, ProjectCode = SearchRecords, ProjectName = SearchRecords };
-        public static ProjectSummaryRecord AllProjects = new ProjectSummaryRecord { ProjectID = 0, ProjectCode = AllRecords, ProjectName = AllRecords };
-        public static ClientSummaryRecord AnyClient = new ClientSummaryRecord { ID = 0, ClientCode = "ANY", ClientName = AnyRecord, EntityID = CurrentEntityID, ActiveClient = false };
-        public static ClientSummaryRecord NoClient = new ClientSummaryRecord { ID = NoID, ClientCode = "NONE", ClientName = NoRecord, EntityID = CurrentEntityID, ActiveClient = true };
-        public static StaffSummaryRecord AllPMs = new StaffSummaryRecord { ID = 0, FirstName = AllRecords, Surname = "", Active = false };
+        public static ProjectProxy SearchProjects = new ProjectProxy { ProjectID = -1, ProjectCode = SearchRecords, ProjectName = SearchRecords };
+        public static ProjectProxy AllProjects = new ProjectProxy { ProjectID = 0, ProjectCode = AllRecords, ProjectName = AllRecords };
+        public static ClientProxy AnyClient = new ClientProxy { ID = 0, ClientCode = "ANY", ClientName = AnyRecord, EntityID = CurrentEntityID, ActiveClient = false };
+        public static ClientProxy NoClient = new ClientProxy { ID = NoID, ClientCode = "NONE", ClientName = NoRecord, EntityID = CurrentEntityID, ActiveClient = true };
+        public static StaffProxy AllPMs = new StaffProxy { ID = 0, FirstName = AllRecords, Surname = "", Active = false };
         public static ProjectRoles AllProjectRoles = new ProjectRoles { RoleCode = AllCodes, RoleDescription = AllRecords };
         public static ClientTeamRoles AllClientRoles = new ClientTeamRoles { RoleCode = AllCodes, RoleDescription = AllRecords };
 
@@ -80,21 +80,21 @@ namespace ProjectTile
         public const string ClosedStatus = "Closed";
 
         // Default records
-        public static ClientSummaryRecord DefaultClientSummary = AnyClient;
-        public static StaffSummaryRecord DefaultPMSummary = AllPMs;
+        public static ClientProxy DefaultClientProxy = AnyClient;
+        public static StaffProxy DefaultPMProxy = AllPMs;
         public static ProjectStatusFilter DefaultStatusFilter = ProjectStatusFilter.Current;
         public static ProjectRoles DefaultProjectRole = AllProjectRoles;
         public static ClientTeamRoles DefaultClientRole = AllClientRoles;
-        public static ProjectSummaryRecord DefaultProjectSummary = AllProjects;
+        public static ProjectProxy DefaultProjectProxy = AllProjects;
         public static TeamTimeFilter DefaultTeamTimeFilter = TeamTimeFilter.Future;
 
         // Selected records affecting multiple pages
         public static Clients SelectedClient = null;
         public static Staff SelectedStaffMember = null;
 
-        public static ClientSummaryRecord SelectedClientSummary = DefaultClientSummary;
-        public static StaffSummaryRecord SelectedPMSummary = DefaultPMSummary;
-        public static ProjectSummaryRecord SelectedProjectSummary = DefaultProjectSummary;
+        public static ClientProxy SelectedClientProxy = DefaultClientProxy;
+        public static StaffProxy SelectedPMProxy = DefaultPMProxy;
+        public static ProjectProxy SelectedProjectProxy = DefaultProjectProxy;
 
         public static ProjectStatusFilter SelectedStatusFilter = DefaultStatusFilter;
         public static ProjectRoles SelectedProjectRole = DefaultProjectRole;
@@ -136,10 +136,10 @@ namespace ProjectTile
         
         public static void ResetProjectParameters()
         {
-            SelectedClientSummary = DefaultClientSummary;
-            SelectedPMSummary = DefaultPMSummary;
+            SelectedClientProxy = DefaultClientProxy;
+            SelectedPMProxy = DefaultPMProxy;
             SelectedStatusFilter = DefaultStatusFilter;
-            SelectedProjectSummary = DefaultProjectSummary;
+            SelectedProjectProxy = DefaultProjectProxy;
             SelectedProjectRole = DefaultProjectRole;
             SelectedClientRole = DefaultClientRole;
             SelectedTeamTimeFilter = DefaultTeamTimeFilter;

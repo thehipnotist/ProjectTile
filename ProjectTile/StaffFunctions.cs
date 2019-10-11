@@ -13,28 +13,28 @@ namespace ProjectTile
         // ---------------------------------------------------------- //
         
         public static int newDefaultID = 0;
-        public static StaffSummaryRecord SelectedTeamStaff = null;
+        public static StaffProxy SelectedTeamStaff = null;
         public delegate void ReturnToTeamsDelegate();
         public static ReturnToTeamsDelegate SelectStaffForTeam;
         public static ReturnToTeamsDelegate CancelTeamStaffSelection;
 
         // ------------------ Lists ----------------- //
 
-        public static List<StaffSummarySmall> StaffForEntity; // Initiated later
-        public static List<StaffSummarySmall> StaffNotForEntity; // Initiated later
+        public static List<StaffProxySmall> StaffForEntity; // Initiated later
+        public static List<StaffProxySmall> StaffNotForEntity; // Initiated later
         public static List<int> StaffIDsToAdd = new List<int>();
         public static List<int> StaffIDsToRemove = new List<int>();
         public static List<int> StaffDefaultsToSet = new List<int>();
 
-        public static List<EntitySummaryRecord> EntitiesForStaff; // Initiated later
-        public static List<EntitySummaryRecord> EntitiesNotForStaff; // Initiated later
+        public static List<EntityProxy> EntitiesForStaff; // Initiated later
+        public static List<EntityProxy> EntitiesNotForStaff; // Initiated later
         public static List<int> EntityIDsToAdd = new List<int>();
         public static List<int> EntityIDsToRemove = new List<int>();
         public static List<int> EntityDefaultsToSet = new List<int>();
 
         // --------------- Navigation --------------- // 	
 
-        public static void SelectTeamStaff(StaffSummaryRecord selectedRecord)
+        public static void SelectTeamStaff(StaffProxy selectedRecord)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace ProjectTile
 
         // Get staff data
         
-        public static List<StaffSummaryRecord> GetStaffGridData(bool activeOnly, string nameContains, string roleDescription, int entityID)
+        public static List<StaffProxy> GetStaffGridData(bool activeOnly, string nameContains, string roleDescription, int entityID)
         {
             ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
             using (existingPtDb)
@@ -71,7 +71,7 @@ namespace ProjectTile
                     }
 
                     // Set the contents based on all of the filters
-                    List<StaffSummaryRecord> gridList = (from s in existingPtDb.Staff
+                    List<StaffProxy> gridList = (from s in existingPtDb.Staff
                                join sr in existingPtDb.StaffRoles on s.RoleCode equals sr.RoleCode
                                join se in existingPtDb.StaffEntities on s.ID equals se.StaffID
                                where (!activeOnly || s.Active)
@@ -79,7 +79,7 @@ namespace ProjectTile
                                     && (myAllowedEntities.Contains((int) se.EntityID))
                                     && (roleDescription == AllRecords || roleDescription == "" || sr.RoleDescription == roleDescription)
                                orderby new { s.FirstName, s.Surname, s.UserID }
-                               select (new StaffSummaryRecord()
+                               select (new StaffProxy()
                                {
                                    ID = (int)s.ID,
                                    EmployeeID = s.EmployeeID,
@@ -167,13 +167,13 @@ namespace ProjectTile
             else { return thisPerson.FullName; }
         }
 
-        public static StaffSummaryRecord GetStaffSummary(int staffID, int entityID = 0)
+        public static StaffProxy GetStaffProxy(int staffID, int entityID = 0)
         {
             try
             {
                 if (entityID == 0) { entityID = CurrentEntityID; }
                 
-                List<StaffSummaryRecord> allStaffinEntity = GetStaffGridData(activeOnly: true, nameContains: "", roleDescription: AllRecords, entityID: CurrentEntityID);
+                List<StaffProxy> allStaffinEntity = GetStaffGridData(activeOnly: true, nameContains: "", roleDescription: AllRecords, entityID: CurrentEntityID);
                 if (allStaffinEntity.Exists(ase => ase.ID == staffID)) { return allStaffinEntity.First(ase => ase.ID == staffID); }
                 else
                 {
@@ -597,7 +597,7 @@ namespace ProjectTile
             }
         }
 
-        public static List<StaffSummarySmall> StaffInEntity(bool activeOnly, int entityID)
+        public static List<StaffProxySmall> StaffInEntity(bool activeOnly, int entityID)
         {
             ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
             using (existingPtDb)
@@ -605,13 +605,13 @@ namespace ProjectTile
                 try
                 {
                     var includeList = EntityStaffIDs(activeOnly, entityID);
-                    var listResults = new List<StaffSummarySmall>();
+                    var listResults = new List<StaffProxySmall>();
 
                     listResults = (from s in existingPtDb.Staff
                                 join de in existingPtDb.Entities on s.DefaultEntity equals de.ID
                                 where (!activeOnly || s.Active) && includeList.Contains(s.ID)
                                 orderby new { s.FirstName, s.Surname, s.UserID }
-                                select (new StaffSummarySmall()
+                                select (new StaffProxySmall()
                                 {
                                     ID = (int)s.ID,
                                     NameAndUser = (string)s.FullName + (s.UserID == null ? "" : " (" + s.UserID + ")"),
@@ -633,7 +633,7 @@ namespace ProjectTile
             }
         }
 
-        public static List<StaffSummarySmall> StaffNotInEntity(bool activeOnly, int entityID)
+        public static List<StaffProxySmall> StaffNotInEntity(bool activeOnly, int entityID)
         {
             ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
             using (existingPtDb)
@@ -641,13 +641,13 @@ namespace ProjectTile
                 try
                 {
                     var avoidList = EntityStaffIDs(activeOnly, entityID);
-                    var listResults = new List<StaffSummarySmall>();
+                    var listResults = new List<StaffProxySmall>();
 
                     listResults = (from s in existingPtDb.Staff
                                    join de in existingPtDb.Entities on s.DefaultEntity equals de.ID
                                    where (!activeOnly || s.Active) && !avoidList.Contains(s.ID)
                                    orderby new { s.FirstName, s.Surname, s.UserID }
-                                   select (new StaffSummarySmall()
+                                   select (new StaffProxySmall()
                                    {
                                        ID = (int)s.ID,
                                        NameAndUser = (string)s.FullName + (s.UserID == null ? "" : " (" + s.UserID + ")"),
@@ -690,7 +690,7 @@ namespace ProjectTile
             }
         }
         
-        public static List<EntitySummaryRecord> AllowedLinkedEntities (int staffID)
+        public static List<EntityProxy> AllowedLinkedEntities (int staffID)
         {
             ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
             using (existingPtDb)
@@ -700,10 +700,10 @@ namespace ProjectTile
                     var includeList = AllowedStaffEntityIDs(staffID);
                     int defaultEntity = (int)GetStaffMember(staffID).DefaultEntity;
 
-                    List<EntitySummaryRecord> entitiesList = (from e in existingPtDb.Entities
+                    List<EntityProxy> entitiesList = (from e in existingPtDb.Entities
                             where includeList.Contains(e.ID)
                             //orderby new { Default = (e.ID == defaultEntity), e.EntityName }
-                            select (new EntitySummaryRecord()
+                            select (new EntityProxy()
                             {                             
                                 ID = (int)e.ID,
                                 Name = e.EntityName,
@@ -721,7 +721,7 @@ namespace ProjectTile
             }
         }
 
-        public static List<EntitySummaryRecord> AllowedUnlinkedEntities(int staffID)
+        public static List<EntityProxy> AllowedUnlinkedEntities(int staffID)
         {
             ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
             using (existingPtDb)
@@ -731,10 +731,10 @@ namespace ProjectTile
                     var avoidList = AllowedStaffEntityIDs(staffID);
                     int defaultEntity = (int)GetStaffMember(staffID).DefaultEntity;
 
-                    List<EntitySummaryRecord> entitiesList = (from e in existingPtDb.Entities
+                    List<EntityProxy> entitiesList = (from e in existingPtDb.Entities
                             where !avoidList.Contains(e.ID)
                             //orderby new { Default = (e.ID == defaultEntity), e.EntityName }
-                            select (new EntitySummaryRecord()
+                            select (new EntityProxy()
                             {
                                 ID = (int)e.ID,
                                 Name = e.EntityName,
@@ -753,14 +753,14 @@ namespace ProjectTile
             }
         }     
         
-        public static bool ToggleEntityStaff(List<StaffSummarySmall> affectedStaff, bool addition, Entities thisEntity)
+        public static bool ToggleEntityStaff(List<StaffProxySmall> affectedStaff, bool addition, Entities thisEntity)
         {
             try
             {
                 int entityID = thisEntity.ID;
                 string sqlName = thisEntity.EntityName;
                 
-                foreach (StaffSummarySmall thisRecord in affectedStaff)
+                foreach (StaffProxySmall thisRecord in affectedStaff)
                 {
                     int selectedFromID = thisRecord.ID;
                     Staff thisPerson = GetStaffMember(selectedFromID);
@@ -823,14 +823,14 @@ namespace ProjectTile
             }
         }
 
-        public static bool ToggleStaffEntities(List<EntitySummaryRecord> affectedEntities, bool addition, Staff thisPerson)
+        public static bool ToggleStaffEntities(List<EntityProxy> affectedEntities, bool addition, Staff thisPerson)
         {
             try
             {
                 int staffID = thisPerson.ID;
                 string staffName = thisPerson.FullName;
 
-                foreach (EntitySummaryRecord thisRecord in affectedEntities)
+                foreach (EntityProxy thisRecord in affectedEntities)
                 {
                     int selectedFromID = thisRecord.ID;
                     Entities thisEntity = EntityFunctions.GetEntity(selectedFromID);
@@ -893,11 +893,11 @@ namespace ProjectTile
             }
         }
 
-        public static bool MakeDefault(List<StaffSummarySmall> affectedStaff, Entities thisEntity)
+        public static bool MakeDefault(List<StaffProxySmall> affectedStaff, Entities thisEntity)
         {
             try
             {
-                foreach (StaffSummarySmall thisRecord in affectedStaff)
+                foreach (StaffProxySmall thisRecord in affectedStaff)
                 {
                     int selectedStaffID = thisRecord.ID;
                     Staff thisPerson = GetStaffMember(selectedStaffID);
@@ -911,7 +911,7 @@ namespace ProjectTile
                     StaffDefaultsToSet.Add(thisPerson.ID);
 
                     int displayIndex = StaffForEntity.FindIndex(sfe => sfe.ID == selectedStaffID);
-                    StaffSummarySmall displayRecord = StaffForEntity.ElementAt(displayIndex);
+                    StaffProxySmall displayRecord = StaffForEntity.ElementAt(displayIndex);
                     if (displayRecord == null)
                     {
                         MessageFunctions.Error("Error updating default Entity in display: display record not found.", null);
@@ -934,7 +934,7 @@ namespace ProjectTile
             try
             {
                 int displayIndex;
-                EntitySummaryRecord displayRecord;
+                EntityProxy displayRecord;
                 Staff thisPerson = GetStaffMember(staffID);
                 if (thisPerson.DefaultEntity != entityID)
                 {

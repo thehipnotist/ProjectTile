@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ProjectTile
 {
@@ -30,7 +21,7 @@ namespace ProjectTile
         // Current variables //     
 
         // Current records //
-        ProjectSummaryRecord selectedProject = Globals.SelectedProjectSummary ?? null;
+        ProjectProxy selectedProject = Globals.SelectedProjectProxy ?? null;
 
         // ---------------------- //
         // -- Page Management --- //
@@ -109,21 +100,21 @@ namespace ProjectTile
         {
             try
             {
-                ProjectSummaryRecord currentRecord = (selectedProject != null && selectedProject.ProjectID > 0 ) ? selectedProject : null;
-                int clientID = (Globals.SelectedClientSummary != null) ? ProjectFunctions.SelectedClientSummary.ID : 0;
-                int managerID = (Globals.SelectedPMSummary != null) ? ProjectFunctions.SelectedPMSummary.ID : 0;
+                ProjectProxy currentRecord = (selectedProject != null && selectedProject.ProjectID > 0 ) ? selectedProject : null;
+                int clientID = (Globals.SelectedClientProxy != null) ? ProjectFunctions.SelectedClientProxy.ID : 0;
+                int managerID = (Globals.SelectedPMProxy != null) ? ProjectFunctions.SelectedPMProxy.ID : 0;
                 Globals.ProjectStatusFilter statusFilter = Globals.SelectedStatusFilter;
 
                 if (currentRecord != null) // Reset filters if necessary to show the selected record
                 {
                     if (clientID != 0 && clientID != currentRecord.Client.ID)
                     {
-                        Globals.SelectedClientSummary = Globals.AnyClient;
+                        Globals.SelectedClientProxy = Globals.AnyClient;
 
                     }
                     if (managerID != 0 && managerID != currentRecord.ProjectManager.ID)
                     {
-                        Globals.SelectedPMSummary = Globals.AllPMs;
+                        Globals.SelectedPMProxy = Globals.AllPMs;
                     }
                     if (!ProjectFunctions.IsInFilter(statusFilter, currentRecord.Stage))
                     {
@@ -155,9 +146,9 @@ namespace ProjectTile
         {
             try
             {                
-                ProjectSummaryRecord currentRecord = (selectedProject != null) ? selectedProject : null;
-                int clientID = (Globals.SelectedClientSummary != null)? ProjectFunctions.SelectedClientSummary.ID : 0;
-                int managerID = (Globals.SelectedPMSummary != null) ? ProjectFunctions.SelectedPMSummary.ID : 0;
+                ProjectProxy currentRecord = (selectedProject != null) ? selectedProject : null;
+                int clientID = (Globals.SelectedClientProxy != null)? ProjectFunctions.SelectedClientProxy.ID : 0;
+                int managerID = (Globals.SelectedPMProxy != null) ? ProjectFunctions.SelectedPMProxy.ID : 0;
                 Globals.ProjectStatusFilter statusFilter = Globals.SelectedStatusFilter;               
 
                 bool success = ProjectFunctions.SetProjectGridList(statusFilter, clientID, managerID);
@@ -187,7 +178,7 @@ namespace ProjectTile
         {
             try
             {
-                ClientSummaryRecord currentRecord = (Globals.SelectedClientSummary != null) ? Globals.SelectedClientSummary : Globals.DefaultClientSummary;     
+                ClientProxy currentRecord = (Globals.SelectedClientProxy != null) ? Globals.SelectedClientProxy : Globals.DefaultClientProxy;     
                 ProjectFunctions.SetClientFilterList();
                 ClientCombo.ItemsSource = ProjectFunctions.ClientFilterList;
                 if (ProjectFunctions.ClientFilterList.Exists(ccl => ccl.ID == currentRecord.ID))
@@ -215,7 +206,7 @@ namespace ProjectTile
         {
             try
             {
-                StaffSummaryRecord currentRecord = (Globals.SelectedPMSummary != null) ? Globals.SelectedPMSummary : Globals.DefaultPMSummary;            
+                StaffProxy currentRecord = (Globals.SelectedPMProxy != null) ? Globals.SelectedPMProxy : Globals.DefaultPMProxy;            
                 ProjectFunctions.SetPMFilterList();
                 PMsCombo.ItemsSource = ProjectFunctions.PMFilterList;
                 if (ProjectFunctions.PMFilterList.Exists(pcl => pcl.ID == currentRecord.ID))
@@ -269,12 +260,12 @@ namespace ProjectTile
                 }
                 else
                 {
-                    selectedProject = (ProjectSummaryRecord)ProjectDataGrid.SelectedItem;
+                    selectedProject = (ProjectProxy)ProjectDataGrid.SelectedItem;
                     toggleProjectButtons(true);                    
                 }
                 if (pageMode != PageFunctions.Lookup) // Otherwise don't set this as may cancel selection later
                 { 
-                    Globals.SelectedProjectSummary = selectedProject;
+                    Globals.SelectedProjectProxy = selectedProject;
                     ProjectFunctions.ToggleFavouriteButton(selectedProject != null);
                 } 
             }
@@ -288,9 +279,9 @@ namespace ProjectTile
                 if (ClientCombo.SelectedItem == null) { } // Won't be for long
                 else
                 {
-                    Globals.SelectedClientSummary = (ClientSummaryRecord)ClientCombo.SelectedItem;
-                    toggleGridColumn(ClientCodeColumn, (Globals.SelectedClientSummary.ID == 0));
-                    toggleGridColumn(ClientNameColumn, (Globals.SelectedClientSummary.ID == 0));
+                    Globals.SelectedClientProxy = (ClientProxy)ClientCombo.SelectedItem;
+                    toggleGridColumn(ClientCodeColumn, (Globals.SelectedClientProxy.ID == 0));
+                    toggleGridColumn(ClientNameColumn, (Globals.SelectedClientProxy.ID == 0));
                     refreshMainProjectGrid();
                 }
             }
@@ -304,8 +295,8 @@ namespace ProjectTile
                 if (PMsCombo.SelectedItem == null) { } // Won't be for long
                 else
                 {
-                    Globals.SelectedPMSummary = (StaffSummaryRecord)PMsCombo.SelectedItem;
-                    toggleGridColumn(ProjectManagerColumn, (Globals.SelectedPMSummary.ID == 0));
+                    Globals.SelectedPMProxy = (StaffProxy)PMsCombo.SelectedItem;
+                    toggleGridColumn(ProjectManagerColumn, (Globals.SelectedPMProxy.ID == 0));
                     refreshMainProjectGrid();
                 }
             }

@@ -1,6 +1,6 @@
 ﻿namespace ProjectTile
 {
-    public class StaffSummarySmall : Globals
+    public class StaffProxySmall : Globals
     {
         public int ID { get; set; }
         public string NameAndUser { get; set; }

@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ProjectTile
 {
@@ -33,7 +27,7 @@ namespace ProjectTile
         bool viewProjects;
         bool amendProjects;
         int editRecordID = 0;
-        List<ClientSummaryRecord> gridList;
+        List<ClientProxy> gridList;
 
         // Current variables //
         int accountManagerID = 0;
@@ -42,7 +36,7 @@ namespace ProjectTile
         // Current records //
         bool activeOnly = false;
         string nameContains = "";
-        ClientSummaryRecord selectedRecord = null;
+        ClientProxy selectedRecord = null;
 
         // ---------------------- //
         // -- Page Management --- //
@@ -268,7 +262,7 @@ namespace ProjectTile
             if (!clicked) { ClientFunctions.ClientCodeFormat = ""; }
         }
 
-        private void editMode(ClientSummaryRecord gridRecord, bool copy = false)
+        private void editMode(ClientProxy gridRecord, bool copy = false)
         {
             try
             { 
@@ -510,7 +504,7 @@ namespace ProjectTile
 
         private void ProjectButton_Click(object sender, RoutedEventArgs e)
         {
-            Globals.SelectedClientSummary = selectedRecord;
+            Globals.SelectedClientProxy = selectedRecord;
             PageFunctions.ShowProjectPage(pageMode, "ClientPage");
         }
 
@@ -520,7 +514,7 @@ namespace ProjectTile
             {
                 if (ClientDataGrid.SelectedItem != null)
                 {
-                    selectedRecord = (ClientSummaryRecord)ClientDataGrid.SelectedItem;
+                    selectedRecord = (ClientProxy)ClientDataGrid.SelectedItem;
                     ClientFunctions.SelectClient(selectedRecord.ID);
                     toggleSideButtons(true);
                     if (pageMode == PageFunctions.Lookup) { CommitButton.IsEnabled = true; }

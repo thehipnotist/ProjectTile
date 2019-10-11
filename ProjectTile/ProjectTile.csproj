@@ -64,7 +64,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ProjectContactSummary.cs" />
+    <Compile Include="ProjectContactProxy.cs" />
     <Compile Include="FAQPage.xaml.cs">
       <DependentUpon>FAQPage.xaml</DependentUpon>
     </Compile>
@@ -75,12 +75,12 @@
     <Compile Include="ProjectProductsPage.xaml.cs">
       <DependentUpon>ProjectProductsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ProjectProductSummary.cs" />
+    <Compile Include="ProjectProductProxy.cs" />
     <Compile Include="ProjectContactsPage.xaml.cs">
       <DependentUpon>ProjectContactsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TeamSummaryRecord.cs" />
-    <Compile Include="ClientSummaryRecord.cs" />
+    <Compile Include="TeamProxy.cs" />
+    <Compile Include="ClientProxy.cs" />
     <Compile Include="ClientContactPage.xaml.cs">
       <DependentUpon>ClientContactPage.xaml</DependentUpon>
     </Compile>
@@ -91,7 +91,7 @@
     <Compile Include="ProjectTeamsPage.xaml.cs">
       <DependentUpon>ProjectTeamsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ProjectSummaryRecord.cs" />
+    <Compile Include="ProjectProxy.cs" />
     <Compile Include="Clients.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
@@ -119,7 +119,7 @@
     <Compile Include="Entities.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="EntitySummaryRecord.cs" />
+    <Compile Include="EntityProxy.cs" />
     <Compile Include="EntityFunctions.cs" />
     <Compile Include="EntityPage.xaml.cs">
       <DependentUpon>EntityPage.xaml</DependentUpon>
@@ -242,16 +242,16 @@
     </Compile>
     <Compile Include="LoginFunctions.cs" />
     <Compile Include="StaffFunctions.cs" />
-    <Compile Include="ContactSummaryRecord.cs" />
-    <Compile Include="StaffSummaryRecord.cs" />
+    <Compile Include="ContactProxy.cs" />
+    <Compile Include="StaffProxy.cs" />
     <Compile Include="StaffPage.xaml.cs">
       <DependentUpon>StaffPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="StaffRoles.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="ClientProductSummary.cs" />
-    <Compile Include="StaffSummarySmall.cs" />
+    <Compile Include="ClientProductProxy.cs" />
+    <Compile Include="StaffProxySmall.cs" />
     <Compile Include="stf_GetStaffByID_Result.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>

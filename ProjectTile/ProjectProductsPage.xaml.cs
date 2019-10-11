@@ -7,7 +7,6 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Navigation;
 
 namespace ProjectTile
 {
@@ -41,12 +40,12 @@ namespace ProjectTile
 
         // Lists //
         List<Products> productComboList;
-        List<ProjectSummaryRecord> projectGridList;
+        List<ProjectProxy> projectGridList;
 
         // Current records //
-        ProjectSummaryRecord selectedGridRecord;
+        ProjectProxy selectedGridRecord;
         Products selectedProduct;
-        ProjectProductSummary selectedProjectProduct;
+        ProjectProductProxy selectedProjectProduct;
 
         // ---------------------- //
         // -- Page Management --- //
@@ -87,13 +86,13 @@ namespace ProjectTile
             ProjectLabel.Margin = NameContainsLabel.Margin;
             ProjectCombo.Margin = NameContains.Margin;
 
-            if (Globals.SelectedProjectSummary != null && Globals.SelectedProjectSummary.ProjectID > 0) // Opened from another page
+            if (Globals.SelectedProjectProxy != null && Globals.SelectedProjectProxy.ProjectID > 0) // Opened from another page
             {
                 fromSource = ProjectFunctions.ProjectSourcePage;
                 ProjectCombo.IsEnabled = false; // Cannot easily recreate the same selection list
                 refreshProjectDataGrid(); // Ensure the record we want is listed, though
                 viewProductsByProject();
-                ActiveOnlyCheckBox.IsChecked = (Globals.SelectedProjectSummary.StageID < Globals.LiveStage);
+                ActiveOnlyCheckBox.IsChecked = (Globals.SelectedProjectProxy.StageID < Globals.LiveStage);
             }
             else
             {
@@ -130,7 +129,7 @@ namespace ProjectTile
         {
             try
             {
-                int selectedID = (Globals.SelectedProjectSummary != null) ? Globals.SelectedProjectSummary.ProjectID : 0;
+                int selectedID = (Globals.SelectedProjectProxy != null) ? Globals.SelectedProjectProxy.ProjectID : 0;
 
                 projectGridList = ProjectFunctions.ProjectGridListByProduct(activeOnly, nameContains, selectedProductID, Globals.CurrentEntityID); 
                 ProjectDataGrid.ItemsSource = projectGridList;
@@ -165,7 +164,7 @@ namespace ProjectTile
         {
             selectedGridRecord = null;
             // selectedProjectID = 0; // Don't clear this automatically, as the refresh tries to reuse it
-            Globals.SelectedProjectSummary = null; // Ditto
+            Globals.SelectedProjectProxy = null; // Ditto
             ProductButton.IsEnabled = false;
         }
 
@@ -176,8 +175,8 @@ namespace ProjectTile
 
         private bool internalProjectSelected()
         {
-            return (Globals.SelectedProjectSummary != null & Globals.SelectedProjectSummary.ProjectID > 0
-                && (Globals.SelectedProjectSummary.Client == null || Globals.SelectedProjectSummary.Client.ClientName == ""));
+            return (Globals.SelectedProjectProxy != null & Globals.SelectedProjectProxy.ProjectID > 0
+                && (Globals.SelectedProjectProxy.Client == null || Globals.SelectedProjectProxy.Client.ClientName == ""));
         }
 
         private void toggleClientProductButton()
@@ -219,7 +218,7 @@ namespace ProjectTile
                 //toggleClientProductButton();
                 OldVersion.Text = NewVersion.Text = "";
 
-                if (pageMode == PageFunctions.View || (editMode == ByProject && Globals.SelectedProjectSummary.StageID >= Globals.LiveStage))
+                if (pageMode == PageFunctions.View || (editMode == ByProject && Globals.SelectedProjectProxy.StageID >= Globals.LiveStage))
                 {
                     FromLabel.Visibility = AddButton.Visibility = RemoveButton.Visibility = Visibility.Hidden;
                     ToLabel.Visibility = Visibility.Visible;
@@ -231,7 +230,7 @@ namespace ProjectTile
                     }
                     else
                     {
-                        Instructions.Content = "This page is read-only as the project is " + ProjectFunctions.GetStageByCode(Globals.SelectedProjectSummary.StageID).StageName + ".";
+                        Instructions.Content = "This page is read-only as the project is " + ProjectFunctions.GetStageByCode(Globals.SelectedProjectProxy.StageID).StageName + ".";
                         ProjectCombo.IsEnabled = false;
                     }                
                 }
@@ -283,8 +282,8 @@ namespace ProjectTile
                 }
                 else
                 {
-                    FromLabel.Content = "Available Products for " + Globals.SelectedProjectSummary.Client.ClientName;
-                    MessageFunctions.InfoMessage("Only products owned by " + Globals.SelectedProjectSummary.Client.ClientName
+                    FromLabel.Content = "Available Products for " + Globals.SelectedProjectProxy.Client.ClientName;
+                    MessageFunctions.InfoMessage("Only products owned by " + Globals.SelectedProjectProxy.Client.ClientName
                         + " are displayed. Use the 'Client Projects' button to add any missing products to the client.", "Please note:");
                 }
             }
@@ -303,9 +302,9 @@ namespace ProjectTile
             try
             {
                 ProjectCombo.ItemsSource = projectGridList;
-                if (Globals.SelectedProjectSummary != null)
+                if (Globals.SelectedProjectProxy != null)
                 {
-                    ProjectCombo.SelectedItem = projectGridList.First(pgl => pgl.ProjectID == Globals.SelectedProjectSummary.ProjectID);
+                    ProjectCombo.SelectedItem = projectGridList.First(pgl => pgl.ProjectID == Globals.SelectedProjectProxy.ProjectID);
                 }
                 refreshProductSummaries(true);
             }
@@ -359,8 +358,8 @@ namespace ProjectTile
         {
             if (fromDatabase)
             {
-                ProjectFunctions.ProductsNotForProject = ProjectFunctions.UnlinkedProducts(Globals.SelectedProjectSummary.ProjectID);
-                ProjectFunctions.ProductsForProject = ProjectFunctions.LinkedProducts(Globals.SelectedProjectSummary.ProjectID);
+                ProjectFunctions.ProductsNotForProject = ProjectFunctions.UnlinkedProducts(Globals.SelectedProjectProxy.ProjectID);
+                ProjectFunctions.ProductsForProject = ProjectFunctions.LinkedProducts(Globals.SelectedProjectProxy.ProjectID);
             }
             ProductFrom.ItemsSource = ProjectFunctions.ProductsNotForProject;
             ProductFrom.Items.SortDescriptions.Clear();
@@ -375,9 +374,9 @@ namespace ProjectTile
             ProductTo.SelectedItem = null;
 
             disableButtons();
-            if (Globals.SelectedProjectSummary != null)
+            if (Globals.SelectedProjectProxy != null)
             {
-                PageHeader.Content = "Products for " + Globals.SelectedProjectSummary.ProjectName;
+                PageHeader.Content = "Products for " + Globals.SelectedProjectProxy.ProjectName;
             }
         }
 
@@ -411,8 +410,8 @@ namespace ProjectTile
                 bool projectSelected = (ProjectList && ProjectTo.SelectedItem != null);
                 bool productSelected = (!ProjectList && ProductTo.SelectedItem != null);
 
-                if (projectSelected) { selectedProjectProduct = (ProjectProductSummary)ProjectTo.SelectedItem; }
-                else if (productSelected) { selectedProjectProduct = (ProjectProductSummary)ProductTo.SelectedItem; }
+                if (projectSelected) { selectedProjectProduct = (ProjectProductProxy)ProjectTo.SelectedItem; }
+                else if (productSelected) { selectedProjectProduct = (ProjectProductProxy)ProductTo.SelectedItem; }
                 else { selectedProjectProduct = null; }
 
                 if (selectedProjectProduct != null && selectedProjectProduct.Stage().StageCode < Globals.LiveStage)
@@ -467,13 +466,13 @@ namespace ProjectTile
             {
                 if (ProductFrom.SelectedItems != null)
                 {
-                    List<ClientProductSummary> addList = new List<ClientProductSummary>();
+                    List<ClientProductProxy> addList = new List<ClientProductProxy>();
                     foreach (var selectedRow in ProductFrom.SelectedItems)
                     {
-                        addList.Add((ClientProductSummary)selectedRow);
+                        addList.Add((ClientProductProxy)selectedRow);
                     }
 
-                    bool success = ProjectFunctions.ToggleProjectProducts(addList, true, Globals.SelectedProjectSummary);
+                    bool success = ProjectFunctions.ToggleProjectProducts(addList, true, Globals.SelectedProjectProxy);
                     if (success)
                     {
                         refreshProductSummaries(false);
@@ -498,7 +497,7 @@ namespace ProjectTile
                 if (ProjectTo.SelectedItem != null)
                 {
                     List<Projects> removeList = new List<Projects>();
-                    ProjectProductSummary thisRecord = (ProjectProductSummary) ProjectTo.SelectedItem;
+                    ProjectProductProxy thisRecord = (ProjectProductProxy) ProjectTo.SelectedItem;
                     Projects thisProject = ProjectFunctions.GetProject(thisRecord.ProjectID);
                     removeList.Add(thisProject);
 
@@ -526,9 +525,9 @@ namespace ProjectTile
             {
                 if (ProductTo.SelectedItem != null)
                 {
-                    List<ClientProductSummary> removeList = new List<ClientProductSummary>();
-                    ClientProductSummary thisProduct = null;
-                    ProjectProductSummary thisRecord = (ProjectProductSummary) ProductTo.SelectedItem;
+                    List<ClientProductProxy> removeList = new List<ClientProductProxy>();
+                    ClientProductProxy thisProduct = null;
+                    ProjectProductProxy thisRecord = (ProjectProductProxy) ProductTo.SelectedItem;
                     if (thisRecord.ClientID > 0)
                     {
                         thisProduct = ClientFunctions.ClientsWithProduct(false, thisRecord.ProductID).FirstOrDefault(cwp => cwp.ClientID == thisRecord.ClientID);
@@ -543,7 +542,7 @@ namespace ProjectTile
 
                     removeList.Add(thisProduct);
 
-                    bool success = ProjectFunctions.ToggleProjectProducts(removeList, false, Globals.SelectedProjectSummary);
+                    bool success = ProjectFunctions.ToggleProjectProducts(removeList, false, Globals.SelectedProjectProxy);
                     if (success)
                     {
                         refreshProductSummaries(false);
@@ -622,8 +621,8 @@ namespace ProjectTile
             {
                 if (ProjectDataGrid.SelectedItem != null)
                 {
-                    selectedGridRecord = (ProjectSummaryRecord)ProjectDataGrid.SelectedItem;
-                    Globals.SelectedProjectSummary = selectedGridRecord;
+                    selectedGridRecord = (ProjectProxy)ProjectDataGrid.SelectedItem;
+                    Globals.SelectedProjectProxy = selectedGridRecord;
                     ProductButton.IsEnabled = true;
                 }
                 else // No record selected, e.g. because filter changed
@@ -634,7 +633,7 @@ namespace ProjectTile
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error processing selection change", generalException);
-                Globals.SelectedProjectSummary = null; // Avoid accidentally using the previous selection
+                Globals.SelectedProjectProxy = null; // Avoid accidentally using the previous selection
                 clearSelection();
             }
         }
@@ -752,8 +751,8 @@ namespace ProjectTile
                 clearChanges();
                 if (ProjectCombo.SelectedItem != null)
                 {
-                    selectedGridRecord = (ProjectSummaryRecord)ProjectCombo.SelectedItem;
-                    Globals.SelectedProjectSummary = selectedGridRecord;
+                    selectedGridRecord = (ProjectProxy)ProjectCombo.SelectedItem;
+                    Globals.SelectedProjectProxy = selectedGridRecord;
                     refreshProductSummaries(true);
                     setLabels();
                     toggleClientProductButton();
@@ -806,9 +805,9 @@ namespace ProjectTile
             }
             else 
             { 
-                if (editMode == modeType.ProductsOfProject && Globals.SelectedProjectSummary != null && Globals.SelectedProjectSummary.Client != null)
+                if (editMode == modeType.ProductsOfProject && Globals.SelectedProjectProxy != null && Globals.SelectedProjectProxy.Client != null)
                 { 
-                    int clientID = Globals.SelectedProjectSummary.Client.ID;
+                    int clientID = Globals.SelectedProjectProxy.Client.ID;
                     Globals.SelectedClient = ClientFunctions.GetClientByID(clientID);
                 }
                 Globals.ClientSourcePage = "ProjectProductsPage";
@@ -850,7 +849,7 @@ namespace ProjectTile
         {
             bool confirm = MessageFunctions.ConfirmOKCancel("Are you sure you wish to save your amendments?", "Save changes?");
             if (!confirm) { return; }
-            bool success = (editMode == ByProject) ? ProjectFunctions.SaveProjectProductChanges(Globals.SelectedProjectSummary.ProjectID) : ProjectFunctions.SaveProductProjectChanges(selectedProductID);
+            bool success = (editMode == ByProject) ? ProjectFunctions.SaveProjectProductChanges(Globals.SelectedProjectProxy.ProjectID) : ProjectFunctions.SaveProductProjectChanges(selectedProductID);
             if (success)
             {
                 MessageFunctions.SuccessMessage("Your changes have been saved successfully. You can make further changes, go back to the previous screen, or close the current page.", "Changes Saved");

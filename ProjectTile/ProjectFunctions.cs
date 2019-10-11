@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace ProjectTile
 {
@@ -16,42 +12,42 @@ namespace ProjectTile
         // -------------------- Global Variables -------------------- //
         // ---------------------------------------------------------- //
 
-        public static ProjectSummaryRecord SelectedTeamProject = null;
+        public static ProjectProxy SelectedTeamProject = null;
         public delegate void ReturnToTeamsDelegate();
         public static ReturnToTeamsDelegate SelectProjectForTeam;
         public static ReturnToTeamsDelegate CancelTeamProjectSelection;
 
         // ------------------ Lists ----------------- //
 
-        public static List<ProjectSummaryRecord> FullProjectList;
-        public static List<ProjectSummaryRecord> ProjectGridList;
-        public static List<ProjectSummaryRecord> ProjectFilterList;
+        public static List<ProjectProxy> FullProjectList;
+        public static List<ProjectProxy> ProjectGridList;
+        public static List<ProjectProxy> ProjectFilterList;
         public static List<string> StatusFilterList;
         public static List<ProjectStages> FullStageList;
         public static List<ProjectTypes> FullTypeList;
-        public static List<StaffSummaryRecord> FullPMsList;
-        public static List<StaffSummaryRecord> PMFilterList;
-        public static List<StaffSummaryRecord> PMOptionsList;
-        public static List<TeamSummaryRecord> FullTeamsList;
-        public static List<TeamSummaryRecord> TeamsGridList;
+        public static List<StaffProxy> FullPMsList;
+        public static List<StaffProxy> PMFilterList;
+        public static List<StaffProxy> PMOptionsList;
+        public static List<TeamProxy> FullTeamsList;
+        public static List<TeamProxy> TeamsGridList;
         public static List<ProjectRoles> FullRolesList;
         public static List<ProjectRoles> RolesFilterList;
-        public static List<ClientSummaryRecord> FullClientList;
-        public static List<ClientSummaryRecord> ClientFilterList;
-        public static List<ClientSummaryRecord> ClientOptionsList;
-        public static List<ProjectContactSummary> FullContactsList;
-        public static List<ProjectContactSummary> ContactsGridList;
+        public static List<ClientProxy> FullClientList;
+        public static List<ClientProxy> ClientFilterList;
+        public static List<ClientProxy> ClientOptionsList;
+        public static List<ProjectContactProxy> FullContactsList;
+        public static List<ProjectContactProxy> ContactsGridList;
         public static List<ClientTeamRoles> FullClientRolesList;
         public static List<ClientTeamRoles> ClientRolesFilterList;
 
         public static List<Projects> ProjectsNotForProduct;
-        public static List<ProjectProductSummary> ProjectsForProduct;
+        public static List<ProjectProductProxy> ProjectsForProduct;
         public static List<int> ProjectIDsToAdd = new List<int>();
         public static List<int> ProjectIDsToRemove = new List<int>();
         public static List<int> ProjectIDsToUpdate = new List<int>();
 
-        public static List<ClientProductSummary> ProductsNotForProject;
-        public static List<ProjectProductSummary> ProductsForProject;
+        public static List<ClientProductProxy> ProductsNotForProject;
+        public static List<ProjectProductProxy> ProductsForProject;
         public static List<int> ProductIDsToAdd = new List<int>();
         public static List<int> ProductIDsToRemove = new List<int>();
         public static List<int> ProductIDsToUpdate = new List<int>();
@@ -107,7 +103,7 @@ namespace ProjectTile
             }
         }
 
-        public static void SelectTeamProject(ProjectSummaryRecord selectedRecord)
+        public static void SelectTeamProject(ProjectProxy selectedRecord)
         {
             try
             {
@@ -143,7 +139,7 @@ namespace ProjectTile
 
         public static void ToggleFavouriteButton(bool enableIfMatch)
         {
-            PageFunctions.ToggleFavouriteButton(enableIfMatch && SelectedProjectSummary.ProjectID != FavouriteProjectID);
+            PageFunctions.ToggleFavouriteButton(enableIfMatch && SelectedProjectProxy.ProjectID != FavouriteProjectID);
         }
 
         // ---------------------------------------------------------- //
@@ -156,7 +152,7 @@ namespace ProjectTile
         {
             try
             {
-                List<ProjectSummaryRecord> projectList = null;
+                List<ProjectProxy> projectList = null;
                 
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
@@ -166,7 +162,7 @@ namespace ProjectTile
                                    join t in existingPtDb.ProjectTypes on pj.TypeCode equals t.TypeCode
                                    where pj.EntityID == CurrentEntityID
                                    orderby (new { ps.StageCode, pj.StartDate })
-                                   select new ProjectSummaryRecord
+                                   select new ProjectProxy
                                    {
                                        ProjectID = pj.ID,
                                        ProjectCode = pj.ProjectCode,
@@ -180,9 +176,9 @@ namespace ProjectTile
                         ).ToList();
                 }
 
-                foreach (ProjectSummaryRecord thisProject in projectList)
+                foreach (ProjectProxy thisProject in projectList)
                 {
-                    thisProject.Client = GetProjectClientSummary(thisProject.ProjectID);
+                    thisProject.Client = GetProjectClientProxy(thisProject.ProjectID);
                     thisProject.ProjectManager = GetCurrentPM(thisProject.ProjectID);
                 }
 
@@ -253,13 +249,13 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error retrieving project drop-down data", generalException); }
         }
 
-        public static bool PopulateFromFilters(ref ProjectSummaryRecord thisSummary)
+        public static bool PopulateFromFilters(ref ProjectProxy thisProxy)
         {
             try
             {
                 string question = "";
-                StaffSummaryRecord manager = SelectedPMSummary;
-                ClientSummaryRecord client = SelectedClientSummary;
+                StaffProxy manager = SelectedPMProxy;
+                ClientProxy client = SelectedClientProxy;
 
                 bool useManager = (manager.ID != 0 && manager.Active);
                 bool useClient = (client.ID != 0 && client.ActiveClient);
@@ -276,8 +272,8 @@ namespace ProjectTile
                 bool autoPopulate = MessageFunctions.QuestionYesNo(question, "Use Filter Details?");
                 if (!autoPopulate) { return false; }
 
-                if (useClient) { thisSummary.Client = client; }
-                if (useManager) { thisSummary.ProjectManager = manager; }
+                if (useClient) { thisProxy.Client = client; }
+                if (useManager) { thisProxy.ProjectManager = manager; }
                 return true;
             }
             catch (Exception generalException)
@@ -304,7 +300,7 @@ namespace ProjectTile
             }	            
         }
 
-        public static ProjectSummaryRecord GetProjectSummary(int projectID)
+        public static ProjectProxy GetProjectProxy(int projectID)
         {
             try
             {
@@ -364,13 +360,13 @@ namespace ProjectTile
                 else { return; }
             }
 
-            Globals.SelectedProjectSummary = GetProjectSummary(FavouriteProjectID);
+            Globals.SelectedProjectProxy = GetProjectProxy(FavouriteProjectID);
             PageFunctions.ShowProjectPage(PageFunctions.Amend);
         }
 
         public static bool SetFavourite()
         {
-            if (SelectedProjectSummary == null)
+            if (SelectedProjectProxy == null)
             {
                 MessageFunctions.Error("Error setting main project: no project selected.", null);
                 return false;
@@ -385,7 +381,7 @@ namespace ProjectTile
                         Staff currentStaffMember = existingPtDb.Staff.FirstOrDefault(s => s.ID == MyStaffID);
                         if (currentStaffMember != null)
                         {
-                            currentStaffMember.MainProject = SelectedProjectSummary.ProjectID;
+                            currentStaffMember.MainProject = SelectedProjectProxy.ProjectID;
                             existingPtDb.SaveChanges();
                         }
                         else
@@ -394,8 +390,8 @@ namespace ProjectTile
                             return false;
                         }
                     }
-                    FavouriteProjectID = SelectedProjectSummary.ProjectID;
-                    MessageFunctions.SuccessMessage("Project " + SelectedProjectSummary.ProjectCode + " has been set as your main project.", "Main Project selected");
+                    FavouriteProjectID = SelectedProjectProxy.ProjectID;
+                    MessageFunctions.SuccessMessage("Project " + SelectedProjectProxy.ProjectCode + " has been set as your main project.", "Main Project selected");
                     return true;
                 }
                 catch (Exception generalException)
@@ -521,7 +517,7 @@ namespace ProjectTile
         public static void SetFullPMsList()
         {
             List<int> currentManagers;
-            List<StaffSummaryRecord> managersList;
+            List<StaffProxy> managersList;
             
             try
             {
@@ -538,7 +534,7 @@ namespace ProjectTile
                          where se.EntityID == CurrentEntityID 
                             && (s.RoleCode == ProjectManagerCode || currentManagers.Contains(s.ID)) 
                          orderby new { s.FirstName, s.Surname, s.UserID }
-                         select new StaffSummaryRecord
+                         select new StaffProxy
                          {
                              ID = (int)s.ID,
                              EmployeeID = s.EmployeeID,
@@ -566,7 +562,7 @@ namespace ProjectTile
             try
             {
                 SetFullPMsList();
-                List<StaffSummaryRecord> comboList = FullPMsList;
+                List<StaffProxy> comboList = FullPMsList;
                 comboList.Add(AllPMs);
                 PMFilterList = comboList;
             }
@@ -577,7 +573,7 @@ namespace ProjectTile
         {
             try
             {
-                List<StaffSummaryRecord> managerList = null;
+                List<StaffProxy> managerList = null;
                 if (anyActiveUser) { managerList = StaffFunctions.GetStaffGridData(activeOnly: true, nameContains: "", roleDescription: AllRecords, entityID: CurrentEntityID); }
                 else
                 {
@@ -586,7 +582,7 @@ namespace ProjectTile
                 }
                 if (currentManagerID > 0  && !managerList.Exists(pol => pol.ID == currentManagerID))
                 {                    
-                    StaffSummaryRecord thisManager = StaffFunctions.GetStaffSummary(currentManagerID);
+                    StaffProxy thisManager = StaffFunctions.GetStaffProxy(currentManagerID);
                     managerList.Add(thisManager);                    
                 }
                 PMOptionsList = managerList.OrderBy(pol => pol.StaffName).ToList();
@@ -594,11 +590,11 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error retrieving data for Project Managers drop-down list", generalException); }
         }
 
-        public static StaffSummaryRecord GetPMInOptionsList(int managerID)
+        public static StaffProxy GetPMInOptionsList(int managerID)
         {
             try
             {
-                StaffSummaryRecord thisPM = PMOptionsList.Where(pol => pol.ID == managerID).FirstOrDefault();
+                StaffProxy thisPM = PMOptionsList.Where(pol => pol.ID == managerID).FirstOrDefault();
                 if (thisPM != null) { return thisPM; }
                 else
                 {
@@ -635,12 +631,12 @@ namespace ProjectTile
             }	
         }
 
-        public static StaffSummaryRecord GetCurrentPM(int projectID)
+        public static StaffProxy GetCurrentPM(int projectID)
         {
             try
             {
                 ProjectTeams currentPMRecord = null;
-                StaffSummaryRecord currentPM = null;
+                StaffProxy currentPM = null;
                 List<ProjectTeams> eligiblePMs = CurrentAndFuturePMs(projectID, Yesterday);
                 
                 if (eligiblePMs.Count == 0) { return null; } // Shouldn't happen, but just in case
@@ -655,7 +651,7 @@ namespace ProjectTile
                     currentPMRecord = possiblePMs.FirstOrDefault();                    
                 }
 
-                currentPM = StaffFunctions.GetStaffSummary(currentPMRecord.StaffID);
+                currentPM = StaffFunctions.GetStaffProxy(currentPMRecord.StaffID);
                 if (currentPM == null) 
                 {
                     MessageFunctions.Error("Error retrieving current Project Manager record for project with ID " + projectID.ToString() + ": no matching staff member found.", null);
@@ -757,11 +753,11 @@ namespace ProjectTile
                                      join s in existingPtDb.Staff on pt.StaffID equals s.ID
                                      join pr in existingPtDb.ProjectRoles on pt.ProjectRoleCode equals pr.RoleCode
                                      where pj.EntityID == CurrentEntityID
-                                     select new TeamSummaryRecord
+                                     select new TeamProxy
                                      {
                                          ID = pt.ID,
                                          Project = pj,
-                                         StaffMember = new StaffSummaryRecord
+                                         StaffMember = new StaffProxy
                                              {
                                                  ID = (int)s.ID,
                                                  EmployeeID = s.EmployeeID,
@@ -819,17 +815,17 @@ namespace ProjectTile
             else { return true; };
         }
 
-        public static bool IsCurrentRole(TeamSummaryRecord teamMembership)
+        public static bool IsCurrentRole(TeamProxy teamMembership)
         {
             return IsInTimeFilter(TeamTimeFilter.Current, teamMembership.FromDate, teamMembership.ToDate);
         }
 
-        public static bool? DuplicateTeamMember(TeamSummaryRecord thisRecord, bool byRole)
+        public static bool? DuplicateTeamMember(TeamProxy thisRecord, bool byRole)
         {
             try
             {
                 SetFullTeamsList();
-                List<TeamSummaryRecord> otherInstances = FullTeamsList
+                List<TeamProxy> otherInstances = FullTeamsList
                     .Where(ftl => ftl.ID != thisRecord.ID
                         && ftl.Project.ID == thisRecord.Project.ID
                         && ((byRole && ftl.RoleCode == thisRecord.RoleCode) || (!byRole && ftl.StaffID == thisRecord.StaffID)))
@@ -838,7 +834,7 @@ namespace ProjectTile
                 if (otherInstances.Count == 0) { return false; }
                 else
                 {
-                    foreach (TeamSummaryRecord thisInstance in otherInstances)
+                    foreach (TeamProxy thisInstance in otherInstances)
                     {
                         if (thisInstance.RoleCode == thisRecord.RoleCode) // Required if by staff member, as returns null if found (but only) with a different role
                         {
@@ -856,7 +852,7 @@ namespace ProjectTile
             }
         }
 
-        public static bool SubsumesStaff(TeamSummaryRecord thisRecord)
+        public static bool SubsumesStaff(TeamProxy thisRecord)
         {
             try
             {
@@ -875,7 +871,7 @@ namespace ProjectTile
             }
         }
 
-        public static ProjectTeams GetStaffPredecessor(TeamSummaryRecord currentRecord)
+        public static ProjectTeams GetStaffPredecessor(TeamProxy currentRecord)
         {
             try
             {                
@@ -899,7 +895,7 @@ namespace ProjectTile
             }	
         }
 
-        public static ProjectTeams GetStaffSuccessor(TeamSummaryRecord currentRecord)
+        public static ProjectTeams GetStaffSuccessor(TeamProxy currentRecord)
         {
             try
             {
@@ -935,7 +931,7 @@ namespace ProjectTile
             {
                 if (ClientFilterList != null) { ClientFilterList.Clear(); }
                 SetFullClientList();
-                List<ClientSummaryRecord> comboList = FullClientList;
+                List<ClientProxy> comboList = FullClientList;
                 comboList.Add(AnyClient);
                 comboList.Insert(0, NoClient);
                 ClientFilterList = comboList;
@@ -949,18 +945,18 @@ namespace ProjectTile
             {
                 if (ClientOptionsList != null) { ClientOptionsList.Clear(); }
                 SetFullClientList();
-                List<ClientSummaryRecord> comboList = FullClientList.Where(fcl => fcl.ActiveClient || fcl.ID == currentClientID).ToList();
+                List<ClientProxy> comboList = FullClientList.Where(fcl => fcl.ActiveClient || fcl.ID == currentClientID).ToList();
                 comboList.Insert(0, NoClient);
                 ClientOptionsList = comboList;
             }
             catch (Exception generalException) { MessageFunctions.Error("Error retrieving data for client drop-down list", generalException); }
         }
 
-        public static ClientSummaryRecord GetClientInOptionsList(int clientID)
+        public static ClientProxy GetClientInOptionsList(int clientID)
         {
             try
             {
-                ClientSummaryRecord thisClient = ClientOptionsList.Where(col => col.ID == clientID).FirstOrDefault();
+                ClientProxy thisClient = ClientOptionsList.Where(col => col.ID == clientID).FirstOrDefault();
                 if (thisClient != null) { return thisClient; }
                 else
                 {
@@ -975,9 +971,9 @@ namespace ProjectTile
             }
         }
 
-        public static ClientSummaryRecord GetProjectClientSummary(int projectID)
+        public static ClientProxy GetProjectClientProxy(int projectID)
         {
-            ClientSummaryRecord noClient = new ClientSummaryRecord { ID = NoID, ClientCode = "", ClientName = "", EntityID = CurrentEntityID };
+            ClientProxy noClient = new ClientProxy { ID = NoID, ClientCode = "", ClientName = "", EntityID = CurrentEntityID };
             
             if (projectID == 0) { return noClient; }
             try
@@ -994,7 +990,7 @@ namespace ProjectTile
                     
                     int? clientID = thisProject.ClientID;
                     if (clientID == null || clientID == 0) { return noClient; }
-                    else { return ClientFunctions.GetClientSummary((int) clientID); }
+                    else { return ClientFunctions.GetClientProxy((int) clientID); }
                 }
             }
             catch (Exception generalException)
@@ -1087,11 +1083,11 @@ namespace ProjectTile
                                            join cs in existingPtDb.ClientStaff on ct.ClientStaffID equals cs.ID
                                            join ctr in existingPtDb.ClientTeamRoles on ct.ClientTeamRoleCode equals ctr.RoleCode
                                            where pj.EntityID == CurrentEntityID
-                                           select new ProjectContactSummary
+                                           select new ProjectContactProxy
                                            {
                                                ID = ct.ID,
                                                Project = pj,
-                                               Contact = new ContactSummaryRecord
+                                               Contact = new ContactProxy
                                                {
                                                    ID = cs.ID,
                                                    ContactName = cs.FullName,
@@ -1134,15 +1130,15 @@ namespace ProjectTile
             }		
         }
 
-        public static ProjectContactSummary DummyContact(Projects thisProject)
+        public static ProjectContactProxy DummyContact(Projects thisProject)
         {
             try
             {
-                return new ProjectContactSummary
+                return new ProjectContactProxy
                 {
                     ID = Globals.NoID,
                     Project = thisProject,
-                    Contact = new ContactSummaryRecord
+                    Contact = new ContactProxy
                     {
                         ID = NoID,
                         ContactName = "<None Added Yet>",
@@ -1191,7 +1187,7 @@ namespace ProjectTile
                         ProjectStages stage = GetStageByCode(p.StageCode);
                         if (IsInFilter(inStatus, stage))
                         {
-                            ProjectContactSummary dummy = DummyContact(p);
+                            ProjectContactProxy dummy = DummyContact(p);
                             ContactsGridList.Add(dummy);
                         }
                     }
@@ -1207,12 +1203,12 @@ namespace ProjectTile
             }
         }
 
-        public static bool? DuplicateProjectContact(ProjectContactSummary thisRecord, bool byRole)
+        public static bool? DuplicateProjectContact(ProjectContactProxy thisRecord, bool byRole)
         {
             try
             {
                 SetFullContactsList();
-                List<ProjectContactSummary> otherInstances = FullContactsList
+                List<ProjectContactProxy> otherInstances = FullContactsList
                     .Where(ftl => ftl.ID != thisRecord.ID
                         && ftl.Project.ID == thisRecord.Project.ID
                         && ((byRole && ftl.RoleCode == thisRecord.RoleCode) || (!byRole && ftl.ContactID == thisRecord.ContactID)))
@@ -1221,7 +1217,7 @@ namespace ProjectTile
                 if (otherInstances.Count == 0) { return false; }
                 else
                 {
-                    foreach (ProjectContactSummary thisInstance in otherInstances)
+                    foreach (ProjectContactProxy thisInstance in otherInstances)
                     {
                         if (thisInstance.RoleCode == thisRecord.RoleCode) // Required if by contact, as returns null if found (but only) with a different role
                         {
@@ -1239,7 +1235,7 @@ namespace ProjectTile
             }
         }
 
-        public static bool SubsumesContact(ProjectContactSummary thisRecord)
+        public static bool SubsumesContact(ProjectContactProxy thisRecord)
         {
             try
             {
@@ -1258,7 +1254,7 @@ namespace ProjectTile
             }
         }
 
-        public static ClientTeams GetContactPredecessor(ProjectContactSummary currentRecord)
+        public static ClientTeams GetContactPredecessor(ProjectContactProxy currentRecord)
         {
             try
             {
@@ -1282,7 +1278,7 @@ namespace ProjectTile
             }
         }
 
-        public static ClientTeams GetContactSuccessor(ProjectContactSummary currentRecord)
+        public static ClientTeams GetContactSuccessor(ProjectContactProxy currentRecord)
         {
             try
             {
@@ -1309,7 +1305,7 @@ namespace ProjectTile
 
 
         // Products
-        public static List<ProjectSummaryRecord> ProjectGridListByProduct(bool activeOnly, string nameContains, int productID, int entityID) 
+        public static List<ProjectProxy> ProjectGridListByProduct(bool activeOnly, string nameContains, int productID, int entityID) 
         {
             try
             {
@@ -1339,14 +1335,14 @@ namespace ProjectTile
             }		
         }
 
-        public static List<ProjectProductSummary> ProjectsWithProduct(bool activeOnly, int productID)
+        public static List<ProjectProductProxy> ProjectsWithProduct(bool activeOnly, int productID)
         {
             try
             {
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    List<ProjectProductSummary> projectProducts =
+                    List<ProjectProductProxy> projectProducts =
                         (from pd in existingPtDb.Products
                          join pp in existingPtDb.ProjectProducts on pd.ID equals pp.ProductID
                          join pj in existingPtDb.Projects on pp.ProjectID equals pj.ID
@@ -1354,7 +1350,7 @@ namespace ProjectTile
                             && (!activeOnly || pj.StageCode < LiveStage) 
                             && pj.EntityID == CurrentEntityID
                          orderby pj.ProjectName
-                         select new ProjectProductSummary
+                         select new ProjectProductProxy
                          {
                             ID = pp.ID,
                             Project = pj,
@@ -1401,20 +1397,20 @@ namespace ProjectTile
             }
         }
 
-        public static List<ProjectProductSummary> LinkedProducts(int projectID)
+        public static List<ProjectProductProxy> LinkedProducts(int projectID)
         {
             try
             {
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    List<ProjectProductSummary> projectProducts =
+                    List<ProjectProductProxy> projectProducts =
                         (from pd in existingPtDb.Products
                          join pp in existingPtDb.ProjectProducts on pd.ID equals pp.ProductID
                          join pj in existingPtDb.Projects on pp.ProjectID equals pj.ID
                          where pj.ID == projectID
                          orderby pd.ProductName
-                         select new ProjectProductSummary
+                         select new ProjectProductProxy
                          {
                             ID = pp.ID,
                             Project = pj,
@@ -1435,9 +1431,9 @@ namespace ProjectTile
             }
         }
 
-        public static ClientProductSummary DummyClientProduct(Products thisProduct) // For internal projects, where there is no client
+        public static ClientProductProxy DummyClientProduct(Products thisProduct) // For internal projects, where there is no client
         {
-            return new ClientProductSummary
+            return new ClientProductProxy
             {
                 ID = 0,
                 ClientID = 0,
@@ -1453,13 +1449,13 @@ namespace ProjectTile
             };
         }
         
-        public static List<ClientProductSummary> UnlinkedProducts(int projectID)
+        public static List<ClientProductProxy> UnlinkedProducts(int projectID)
         {
             try
             {
                 List<int> productIDsForProject = LinkedProducts(projectID).Select(lp => (int)lp.ProductID).ToList();
 
-                int clientID = GetProjectClientSummary(projectID).ID;
+                int clientID = GetProjectClientProxy(projectID).ID;
 
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
@@ -1471,7 +1467,7 @@ namespace ProjectTile
                                 join c in existingPtDb.Clients on cp.ClientID equals c.ID
                                 where !productIDsForProject.Contains(pd.ID) && c.ID == clientID
                                 orderby pd.ProductName
-                                select new ClientProductSummary
+                                select new ClientProductProxy
                                 {
                                     ID = cp.ID,
                                     ClientID = c.ID,
@@ -1496,7 +1492,7 @@ namespace ProjectTile
                                 select pd
                                 ).ToList();
                         
-                        List<ClientProductSummary> dummyRecords = unlinkedProducts.Select(pd => DummyClientProduct(pd)).ToList();
+                        List<ClientProductProxy> dummyRecords = unlinkedProducts.Select(pd => DummyClientProduct(pd)).ToList();
                         return dummyRecords;
                     }
                 }
@@ -1583,7 +1579,7 @@ namespace ProjectTile
             }
         }
 
-        public static bool ValidateProject(ProjectSummaryRecord summary, bool amendExisting, bool managerChanged)
+        public static bool ValidateProject(ProjectProxy proxy, bool amendExisting, bool managerChanged)
         {
             try
             {                
@@ -1595,11 +1591,11 @@ namespace ProjectTile
                 int countLinkedProducts = 0;
                 int countLinkedContacts = 0;
                 int countLiveClientProducts = 0;
-                string type = (summary.Type == null) ? "" : summary.Type.TypeCode;
-                int stage = (summary.Stage != null) ? summary.StageID : -1;
-                bool isUnderway = (stage > StartStage && !summary.IsCancelled);
+                string type = (proxy.Type == null) ? "" : proxy.Type.TypeCode;
+                int stage = (proxy.Stage != null) ? proxy.StageID : -1;
+                bool isUnderway = (stage > StartStage && !proxy.IsCancelled);
                 Projects existingProjectRecord = null;
-                ClientSummaryRecord client = summary.Client ?? null;
+                ClientProxy client = proxy.Client ?? null;
                 bool clientAdded = false;
                 bool clientRemoved = false;
                 bool clientChanged = false;
@@ -1607,48 +1603,48 @@ namespace ProjectTile
                 string missingInternalRoles = "";
                 List<string> currentClientRoles = new List<string>();
                 string missingClientRoles = "";
-                int projectID = summary.ProjectID;
+                int projectID = proxy.ProjectID;
 
                 try
                 {
                     if (client == null)
                     { errorDetails = ". Please select a client record from the drop-down list. If this is an internal project, select '" + NoRecord + "'|No Client Selected"; }
-                    else if (!summary.IsInternal && !client.ActiveClient)
+                    else if (!proxy.IsInternal && !client.ActiveClient)
                     { errorDetails = ", as the selected client record is not active.|Inactive Client"; }
-                    else if (summary.ProjectName == null || summary.ProjectName == "")
+                    else if (proxy.ProjectName == null || proxy.ProjectName == "")
                     { errorDetails = ". Please enter a name for the project.|No Project Name"; }
                     else if (type == "")
                     { errorDetails = ". Please select a project type from the drop-down list.|No Type Selected"; }
-                    else if (summary.IsInternal && client.ID != NoID)
+                    else if (proxy.IsInternal && client.ID != NoID)
                     {
                         errorDetails = ". Projects for clients cannot be internal. Please choose a different "
                             + "project type if the client selection is correct, or select '" + NoRecord + "' from the client drop-down for an internal project.|Client and Project Type Mismatch";
                     }
-                    else if (!summary.IsInternal && client.ID == NoID)
+                    else if (!proxy.IsInternal && client.ID == NoID)
                     {
                         errorDetails = ". Projects without clients must use the 'Internal project' type. "
                             + "Please choose the correct project type if this is an internal project, or select a client from the client drop-down.|Client and Project Type Mismatch";
                     }
-                    else if (isUnderway && summary.StartDate == null)
+                    else if (isUnderway && proxy.StartDate == null)
                     {
                         errorDetails = ", as no start date has been set. Please enter a start date or keep the project in the 'Initation' stage."
                             + "|No Start Date";
                     }
-                    else if (isUnderway && summary.StartDate > Today)
+                    else if (isUnderway && proxy.StartDate > Today)
                     {
                         errorDetails = ", as the start date is in the future. Please change the start date or keep the project in the 'Initation' stage."
                             + "|No Start Date";
                     }
-                    else if (summary.ProjectManager == null)
+                    else if (proxy.ProjectManager == null)
                     {
                         errorDetails = ". Please select a Project Manager from the drop-down list. Try the 'Any' option if the required record is not listed, "
                             + "otherwise check that their account is active.|No Project Manager Selected";
                     }
-                    else if (!summary.ProjectManager.Active)
+                    else if (!proxy.ProjectManager.Active)
                     { errorDetails = ", as the selected Project Manager is not an active user. Ask an administrator for help if required." + "|Inactive Project Manager"; }
-                    else if (summary.Stage == null)
+                    else if (proxy.Stage == null)
                     { errorDetails = ". Please select a project stage from the drop-down list.|No Stage Selected"; }
-                    else if (summary.ProjectSummary == null || summary.ProjectSummary == "")
+                    else if (proxy.ProjectSummary == null || proxy.ProjectSummary == "")
                     { errorDetails = ". Please enter a summary description of the project.|No Project Summary"; }
                     else
                     {
@@ -1659,10 +1655,10 @@ namespace ProjectTile
                             {
                                 otherClientProjects = existingPtDb.Projects.Where(
                                     p => p.ID != projectID
-                                    && (p.ClientID == client.ID || (summary.IsInternal && (p.ClientID == null || p.ClientID <= 0)))
+                                    && (p.ClientID == client.ID || (proxy.IsInternal && (p.ClientID == null || p.ClientID <= 0)))
                                     ).ToList();
                                 countLiveClientProducts = existingPtDb.ClientProducts.Where(cp => cp.ClientID == client.ID && cp.Live == true).Count();
-                                if (!summary.IsNew)
+                                if (!proxy.IsNew)
                                 {
                                     existingProjectRecord = existingPtDb.Projects.Where(p => p.ID == projectID).FirstOrDefault();
                                     countLinkedProducts = existingPtDb.ProjectProducts.Where(pp => pp.ProjectID == projectID).Count();
@@ -1676,7 +1672,7 @@ namespace ProjectTile
                                         ct => ct.ProjectID == projectID
                                         && (ct.FromDate == null || ct.FromDate <= Today)
                                         && (ct.ToDate == null || ct.ToDate >= Today)).Select(ct => ct.ClientTeamRoleCode).ToList();
-                                    missingClientRoles = summary.IsInternal ? "" : MissingTeamMembers(currentClientRoles, true);
+                                    missingClientRoles = proxy.IsInternal ? "" : MissingTeamMembers(currentClientRoles, true);
                                     clientAdded = ((existingProjectRecord.ClientID ?? 0) == 0 && client != null);
                                     clientRemoved = ((existingProjectRecord.ClientID ?? 0) > 0 && client == null);
                                     clientChanged = ((existingProjectRecord.ClientID ?? 0) > 0 && client != null && client.ID != existingProjectRecord.ClientID);
@@ -1695,9 +1691,9 @@ namespace ProjectTile
                         }
                         try
                         {
-                            if (otherClientProjects.Exists(p => p.ProjectName == summary.ProjectName))
+                            if (otherClientProjects.Exists(p => p.ProjectName == proxy.ProjectName))
                             { errorDetails = ", as another project exists for the same client with the same name. Please change the project name."; }
-                            else if (otherClientProjects.Exists(p => p.ProjectSummary == summary.ProjectSummary))
+                            else if (otherClientProjects.Exists(p => p.ProjectSummary == proxy.ProjectSummary))
                             { errorDetails = ", as another project exists for the same client with the same project summary. Please change the summary details."; }
                             else if (isUnderway && missingInternalRoles != "")
                             {
@@ -1743,7 +1739,7 @@ namespace ProjectTile
                     }
                     if (errorDetails != "")
                     {
-                        if (summary.IsInternal) { errorDetails = errorDetails.Replace("another project exists for the same client", "another internal project exists"); }
+                        if (proxy.IsInternal) { errorDetails = errorDetails.Replace("another project exists for the same client", "another internal project exists"); }
                         if (amendExisting) { errorMessage = "Could not save changes" + errorDetails; }
                         else { errorMessage = "Could not save project" + errorDetails; }
                         MessageFunctions.SplitInvalid(errorMessage);
@@ -1764,18 +1760,18 @@ namespace ProjectTile
                     bool reversal = goLive? false : IsLiveReversal(originalStage, stage);
                     string reversalQuery = reversal? "This will reverse the 'Go-Live' action, and all status and version changes to linked products." : "";
                     
-                    if (managerChanged && summary.ProjectManager.RoleCode != ProjectManagerCode)
+                    if (managerChanged && proxy.ProjectManager.RoleCode != ProjectManagerCode)
                     { queryDetails = queryDetails + "\n" + "The Project Manager is also not normally a Project Manager by role."; }
                     if (isUnderway && countLinkedProducts == 0)
                     { queryDetails = queryDetails + "\n" + "The project stage also indicates that the project is underway, but it has no linked products."; }
-                    if (summary.StartDate == null && !summary.IsCancelled) { queryDetails = queryDetails + "\n" + "The project also has no predicted start date at present."; } // Only projects not yet underway
-                    if (summary.StartDate > DateTime.Today.AddYears(1)) { queryDetails = queryDetails + "\n" + "The project also starts more than a year in the future."; }
-                    if ((existingProjectRecord == null || existingProjectRecord.StartDate == null || existingProjectRecord.StartDate > summary.StartDate)
-                        && summary.StartDate < DateTime.Today.AddYears(-1)) { queryDetails = queryDetails + "\n" + "The project also starts more than a year in the past."; }
+                    if (proxy.StartDate == null && !proxy.IsCancelled) { queryDetails = queryDetails + "\n" + "The project also has no predicted start date at present."; } // Only projects not yet underway
+                    if (proxy.StartDate > DateTime.Today.AddYears(1)) { queryDetails = queryDetails + "\n" + "The project also starts more than a year in the future."; }
+                    if ((existingProjectRecord == null || existingProjectRecord.StartDate == null || existingProjectRecord.StartDate > proxy.StartDate)
+                        && proxy.StartDate < DateTime.Today.AddYears(-1)) { queryDetails = queryDetails + "\n" + "The project also starts more than a year in the past."; }
                     if (originalStage > stage && !reversal) // Live reversals are handled separately
                     { queryDetails = queryDetails + "\n" + "The new stage is also less advanced than the previous one."; }
-                    if (!summary.IsNew && stage - originalStage > 4 && !summary.IsCancelled) { queryDetails = queryDetails + "\n" + "The project has moved through several stages."; }
-                    if (!summary.IsInternal)
+                    if (!proxy.IsNew && stage - originalStage > 4 && !proxy.IsCancelled) { queryDetails = queryDetails + "\n" + "The project has moved through several stages."; }
+                    if (!proxy.IsInternal)
                     {
                         if (countLiveClientProducts == 0 && type != NewSiteCode && type != AddSystemCode)
                         { queryDetails = queryDetails + "\n" + "The project type also indicates a change to an existing product, but this client has no Live products."; }
@@ -1800,12 +1796,12 @@ namespace ProjectTile
                         
                         return MessageFunctions.WarningYesNo(queryMessage);
                     }
-                    else if (summary.IsCancelled && existingProjectRecord != null && existingProjectRecord.StageCode != CancelledStage)
+                    else if (proxy.IsCancelled && existingProjectRecord != null && existingProjectRecord.StageCode != CancelledStage)
                     {
                         queryMessage = "Are you sure you wish to cancel this project?";
                         return MessageFunctions.ConfirmOKCancel(queryMessage);
                     }
-                    else if (summary.IsNew)
+                    else if (proxy.IsNew)
                     {
                         queryMessage = "Are you sure you wish to create this project? Project records cannot be deleted, although they can be cancelled.";
                         return MessageFunctions.ConfirmOKCancel(queryMessage);
@@ -1833,18 +1829,18 @@ namespace ProjectTile
             }		
         }
 
-        public static bool SaveNewProject(ref ProjectSummaryRecord projectSummary)
+        public static bool SaveNewProject(ref ProjectProxy projectProxy)
         {
-            if (!ValidateProject(projectSummary, false, true)) { return false; }            
+            if (!ValidateProject(projectProxy, false, true)) { return false; }            
             try
             {
                 Projects thisProject = new Projects();
-                bool converted = projectSummary.ConvertToProject(ref thisProject);
+                bool converted = projectProxy.ConvertToProject(ref thisProject);
                 if (!converted || thisProject == null) { return false; } // Errors should be thrown by the conversion
                 ProjectTeams addPM = new ProjectTeams
                 {
                     ProjectID = 0, // Set below when the project is saved
-                    StaffID = projectSummary.ProjectManager.ID,
+                    StaffID = projectProxy.ProjectManager.ID,
                     ProjectRoleCode = ProjectManagerCode,
                     FromDate = (DateTime.Today < thisProject.StartDate) ? DateTime.Today : thisProject.StartDate
                 };
@@ -1854,8 +1850,8 @@ namespace ProjectTile
                 {
                     existingPtDb.Projects.Add(thisProject);
                     existingPtDb.SaveChanges();
-                    projectSummary.ProjectID = thisProject.ID;
-                    SelectedProjectSummary = projectSummary;
+                    projectProxy.ProjectID = thisProject.ID;
+                    SelectedProjectProxy = projectProxy;
 
                     addPM.ProjectID = thisProject.ID;
                     existingPtDb.ProjectTeams.Add(addPM);
@@ -1872,13 +1868,13 @@ namespace ProjectTile
             }		            
         }
 
-        public static bool SaveProjectChanges(ProjectSummaryRecord projectSummary, bool managerChanged, int originalStage)
+        public static bool SaveProjectChanges(ProjectProxy projectProxy, bool managerChanged, int originalStage)
         {
                    
-            if (!ValidateProject(projectSummary, true, managerChanged)) { return false; }
+            if (!ValidateProject(projectProxy, true, managerChanged)) { return false; }
             try
             {
-                int projectID = projectSummary.ProjectID;
+                int projectID = projectProxy.ProjectID;
                 
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
@@ -1889,7 +1885,7 @@ namespace ProjectTile
                         MessageFunctions.Error("Error saving project amendments to the database: no matching project found.", null);
                         return false;
                     }
-                    bool converted = projectSummary.ConvertToProject(ref thisProject);
+                    bool converted = projectProxy.ConvertToProject(ref thisProject);
                     if (!converted) { return false; } // Errors should be thrown by the conversion
 
                     if (managerChanged)
@@ -1899,7 +1895,7 @@ namespace ProjectTile
                             ProjectTeams newPMRecord = new ProjectTeams
                             {
                                 ProjectID = projectID,
-                                StaffID = projectSummary.ProjectManager.ID,
+                                StaffID = projectProxy.ProjectManager.ID,
                                 ProjectRoleCode = ProjectManagerCode,
                                 FromDate = (DateTime.Today < thisProject.StartDate) ? DateTime.Today : thisProject.StartDate
                             };
@@ -1911,7 +1907,7 @@ namespace ProjectTile
                                 ProjectTeams lastPMRecord = existingPMs.First();
                                 lastPMRecord = existingPtDb.ProjectTeams.Find(lastPMRecord.ID); // Get it from the database again so we can amend/remove it
 
-                                if (( lastPMRecord.FromDate != null && lastPMRecord.FromDate > OneMonthAgo) || projectSummary.StageID <= StartStage)
+                                if (( lastPMRecord.FromDate != null && lastPMRecord.FromDate > OneMonthAgo) || projectProxy.StageID <= StartStage)
                                 {
                                     string lastPMName = StaffFunctions.GetStaffName(lastPMRecord.StaffID);
                                     DateTime fromDateTime = (DateTime)lastPMRecord.FromDate;
@@ -1952,9 +1948,9 @@ namespace ProjectTile
                         }
                     }
 
-                    bool goLive = IsGoLive(originalStage, projectSummary.StageID);
-                    bool reversal = goLive ? false : IsLiveReversal(originalStage, projectSummary.StageID);
-                    bool completion = (projectSummary.StageID == CompletedStage && originalStage != CompletedStage);                    
+                    bool goLive = IsGoLive(originalStage, projectProxy.StageID);
+                    bool reversal = goLive ? false : IsLiveReversal(originalStage, projectProxy.StageID);
+                    bool completion = (projectProxy.StageID == CompletedStage && originalStage != CompletedStage);                    
                     if (goLive || reversal)
                     {
                         // TODO: handle internal projects - should we update linked master versions?
@@ -1975,7 +1971,7 @@ namespace ProjectTile
                                     }
                                     else
                                     {
-                                        if (Array.IndexOf(NewProductTypeCodes, projectSummary.Type.TypeCode) >= 0) { product.ClientProducts.Live = false; }
+                                        if (Array.IndexOf(NewProductTypeCodes, projectProxy.Type.TypeCode) >= 0) { product.ClientProducts.Live = false; }
                                         if (product.ClientProducts.ProductVersion == product.ProjectProducts.NewVersion) 
                                         { 
                                             product.ClientProducts.ProductVersion = product.ProjectProducts.OldVersion; 
@@ -1991,7 +1987,7 @@ namespace ProjectTile
                     }	
 
                     existingPtDb.SaveChanges();
-                    SelectedProjectSummary = projectSummary;
+                    SelectedProjectProxy = projectProxy;
                     string congratulations = "";
                     if (completion) { congratulations = " Congratulations on completing the project."; }
                     else if (goLive) { congratulations = " Congratulations on going Live.";  }
@@ -2009,7 +2005,7 @@ namespace ProjectTile
 
         // Project Teams (updates)
         
-        public static bool updateOtherInstances(TeamSummaryRecord newRecord)
+        public static bool updateOtherInstances(TeamProxy newRecord)
         {
             try
             {
@@ -2075,7 +2071,7 @@ namespace ProjectTile
             }
         }
 
-        public static bool SaveProjectTeamChanges(TeamSummaryRecord currentVersion, TeamSummaryRecord savedVersion)
+        public static bool SaveProjectTeamChanges(TeamProxy currentVersion, TeamProxy savedVersion)
         {
             if (!currentVersion.ValidateTeamRecord(savedVersion)) { return false; }
 
@@ -2104,7 +2100,7 @@ namespace ProjectTile
             }	
         }
 
-        public static int SaveNewProjectTeam(TeamSummaryRecord newRecord)
+        public static int SaveNewProjectTeam(TeamProxy newRecord)
         {
             if (!newRecord.ValidateTeamRecord(null)) { return 0; }
             ProjectTeams thisTeam = new ProjectTeams();
@@ -2129,7 +2125,7 @@ namespace ProjectTile
             }
         }
 
-        public static bool RemoveTeamEntry(TeamSummaryRecord unwantedRecord)
+        public static bool RemoveTeamEntry(TeamProxy unwantedRecord)
         {
             try
             {
@@ -2157,7 +2153,7 @@ namespace ProjectTile
 
         // Client Teams (updates)
 
-        public static bool updateOtherClientInstances(ProjectContactSummary newRecord)
+        public static bool updateOtherClientInstances(ProjectContactProxy newRecord)
         {
             try
             {
@@ -2223,7 +2219,7 @@ namespace ProjectTile
             }
         }
 
-        public static bool SaveProjectContactChanges(ProjectContactSummary currentVersion, ProjectContactSummary savedVersion)
+        public static bool SaveProjectContactChanges(ProjectContactProxy currentVersion, ProjectContactProxy savedVersion)
         {
             if (!currentVersion.Validate(savedVersion)) { return false; }
 
@@ -2252,7 +2248,7 @@ namespace ProjectTile
             }
         }
 
-        public static int SaveNewProjectContact(ProjectContactSummary newRecord)
+        public static int SaveNewProjectContact(ProjectContactProxy newRecord)
         {
             if (!newRecord.Validate(null)) { return 0; }
             ClientTeams thisTeam = new ClientTeams();
@@ -2277,7 +2273,7 @@ namespace ProjectTile
             }
         }
 
-        public static bool RemoveProjectContact(ProjectContactSummary unwantedRecord)
+        public static bool RemoveProjectContact(ProjectContactProxy unwantedRecord)
         {
             try
             {
@@ -2357,7 +2353,7 @@ namespace ProjectTile
                     {
                         try
                         {
-                            ProjectProductSummary addRecord = new ProjectProductSummary
+                            ProjectProductProxy addRecord = new ProjectProductProxy
                             {
                                 Project = thisProject,
                                 Product = thisProduct,
@@ -2382,7 +2378,7 @@ namespace ProjectTile
                         try
                         {
                             ProjectsNotForProduct.Add(thisRecord);
-                            ProjectProductSummary removeRecord = ProjectsForProduct.FirstOrDefault(cps => cps.ProjectID == projectID && cps.ProductID == thisProduct.ID);
+                            ProjectProductProxy removeRecord = ProjectsForProduct.FirstOrDefault(cps => cps.ProjectID == projectID && cps.ProductID == thisProduct.ID);
                             ProjectsForProduct.Remove(removeRecord);
 
                             if (ProjectIDsToAdd.Contains(projectID)) { ProjectIDsToAdd.Remove(projectID); }
@@ -2406,15 +2402,15 @@ namespace ProjectTile
             }
         }
 
-        public static bool ToggleProjectProducts(List<ClientProductSummary> affectedClientProducts, bool addition, ProjectSummaryRecord thisProjectSummary)
+        public static bool ToggleProjectProducts(List<ClientProductProxy> affectedClientProducts, bool addition, ProjectProxy thisProjectProxy)
         {
             try
             {
-                int projectID = thisProjectSummary.ProjectID;
+                int projectID = thisProjectProxy.ProjectID;
                 Projects thisProject = new Projects();
-                thisProjectSummary.ConvertToProject(ref thisProject);
+                thisProjectProxy.ConvertToProject(ref thisProject);
 
-                foreach (ClientProductSummary thisRecord in affectedClientProducts)
+                foreach (ClientProductProxy thisRecord in affectedClientProducts)
                 {
                     int productID = thisRecord.ProductID;
                     Products thisProduct = ProductFunctions.GetProductByID(productID);
@@ -2425,7 +2421,7 @@ namespace ProjectTile
                     {
                         try
                         {
-                            ProjectProductSummary addRecord = new ProjectProductSummary
+                            ProjectProductProxy addRecord = new ProjectProductProxy
                             {
                                 Project = thisProject,
                                 Product = thisProduct,
@@ -2450,7 +2446,7 @@ namespace ProjectTile
                         try
                         {
                             ProductsNotForProject.Add(thisRecord);
-                            ProjectProductSummary removeRecord = ProductsForProject.FirstOrDefault(pfp => pfp.ProjectID == thisProject.ID && pfp.ProductID == productID);
+                            ProjectProductProxy removeRecord = ProductsForProject.FirstOrDefault(pfp => pfp.ProjectID == thisProject.ID && pfp.ProductID == productID);
                             
                             ProductsForProject.Remove(removeRecord);
 
@@ -2498,7 +2494,7 @@ namespace ProjectTile
             ProductIDsToUpdate.Clear();
         }
 
-        public static bool AmendOldVersion(ProjectProductSummary thisRecord, string version, bool byProject)
+        public static bool AmendOldVersion(ProjectProductProxy thisRecord, string version, bool byProject)
         {
             decimal versionNumber;
             bool carryOn = false;
@@ -2542,7 +2538,7 @@ namespace ProjectTile
             }
         }
 
-        public static bool AmendNewVersion(ProjectProductSummary thisRecord, string version, bool byProject)
+        public static bool AmendNewVersion(ProjectProductProxy thisRecord, string version, bool byProject)
         {
             decimal versionNumber;
             bool carryOn = false;
@@ -2586,7 +2582,7 @@ namespace ProjectTile
             }
         }
 
-        private static void queueProjectProductUpdate(ProjectProductSummary thisRecord, bool byProject)
+        private static void queueProjectProductUpdate(ProjectProductProxy thisRecord, bool byProject)
         {
             if (byProject)
             {
@@ -2631,8 +2627,8 @@ namespace ProjectTile
                 {
                     foreach (int addProjectID in ProjectIDsToAdd)
                     {
-                        ProjectProductSummary summaryRecord = ProjectsForProduct.FirstOrDefault(cfp => cfp.ProductID == productID && cfp.ProjectID == addProjectID);
-                        if (summaryRecord == null)
+                        ProjectProductProxy proxyRecord = ProjectsForProduct.FirstOrDefault(cfp => cfp.ProductID == productID && cfp.ProjectID == addProjectID);
+                        if (proxyRecord == null)
                         {
                             MessageFunctions.Error("Error saving new project links with product ID " + productID.ToString() + ": no matching display record found", null);
                             return false;
@@ -2643,8 +2639,8 @@ namespace ProjectTile
                             {
                                 ProductID = productID,
                                 ProjectID = addProjectID,
-                                OldVersion = summaryRecord.OldVersion,
-                                NewVersion = summaryRecord.NewVersion
+                                OldVersion = proxyRecord.OldVersion,
+                                NewVersion = proxyRecord.NewVersion
                             };
                             existingPtDb.ProjectProducts.Add(pp);
                         }
@@ -2663,17 +2659,17 @@ namespace ProjectTile
                                                              select pp).ToList();
                     foreach (ProjectProducts updatePP in recordsToUpdate)
                     {
-                        ProjectProductSummary summaryRecord = ProjectsForProduct.FirstOrDefault(cfp => cfp.ID == updatePP.ID && cfp.ProductID == updatePP.ProductID
+                        ProjectProductProxy proxyRecord = ProjectsForProduct.FirstOrDefault(cfp => cfp.ID == updatePP.ID && cfp.ProductID == updatePP.ProductID
                             && cfp.ProjectID == updatePP.ProjectID);
-                        if (summaryRecord == null)
+                        if (proxyRecord == null)
                         {
                             MessageFunctions.Error("Error updating project links with product ID " + productID.ToString() + ": no matching display record found", null);
                             return false;
                         }
                         else
                         {
-                            updatePP.OldVersion = summaryRecord.OldVersion;
-                            updatePP.NewVersion = summaryRecord.NewVersion;
+                            updatePP.OldVersion = proxyRecord.OldVersion;
+                            updatePP.NewVersion = proxyRecord.NewVersion;
                         }
                     }
                 }
@@ -2714,8 +2710,8 @@ namespace ProjectTile
                 {
                     foreach (int addProductID in ProductIDsToAdd)
                     {
-                        ProjectProductSummary summaryRecord = ProductsForProject.FirstOrDefault(cfp => cfp.ProductID == addProductID && cfp.ProjectID == projectID);
-                        if (summaryRecord == null)
+                        ProjectProductProxy proxyRecord = ProductsForProject.FirstOrDefault(cfp => cfp.ProductID == addProductID && cfp.ProjectID == projectID);
+                        if (proxyRecord == null)
                         {
                             MessageFunctions.Error("Error saving new product links with project ID " + projectID.ToString() + ": no matching display record found", null);
                             return false;
@@ -2726,8 +2722,8 @@ namespace ProjectTile
                             {
                                 ProductID = addProductID,
                                 ProjectID = projectID,
-                                OldVersion = summaryRecord.OldVersion,
-                                NewVersion = summaryRecord.NewVersion
+                                OldVersion = proxyRecord.OldVersion,
+                                NewVersion = proxyRecord.NewVersion
                             };
                             existingPtDb.ProjectProducts.Add(pp);
                         }
@@ -2746,17 +2742,17 @@ namespace ProjectTile
                                                              select pp).ToList();
                     foreach (ProjectProducts updatePP in recordsToUpdate)
                     {
-                        ProjectProductSummary summaryRecord = ProductsForProject.FirstOrDefault(cfp => cfp.ID == updatePP.ID && cfp.ProductID == updatePP.ProductID
+                        ProjectProductProxy proxyRecord = ProductsForProject.FirstOrDefault(cfp => cfp.ID == updatePP.ID && cfp.ProductID == updatePP.ProductID
                             && cfp.ProjectID == updatePP.ProjectID);
-                        if (summaryRecord == null)
+                        if (proxyRecord == null)
                         {
                             MessageFunctions.Error("Error updating product links with project ID " + projectID.ToString() + ": no matching display record found", null);
                             return false;
                         }
                         else
                         {
-                            updatePP.OldVersion = summaryRecord.OldVersion;
-                            updatePP.NewVersion = summaryRecord.NewVersion;
+                            updatePP.OldVersion = proxyRecord.OldVersion;
+                            updatePP.NewVersion = proxyRecord.NewVersion;
                         }
                     }
                 }

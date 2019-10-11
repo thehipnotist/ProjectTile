@@ -5,11 +5,11 @@ using System.Text;
 
 namespace ProjectTile
 {
-    public class ProjectContactSummary : Globals
+    public class ProjectContactProxy : Globals
     {
         public int ID { get; set; }
         public Projects Project { get; set; }
-        public ContactSummaryRecord Contact { get; set; }
+        public ContactProxy Contact { get; set; }
         public ClientTeamRoles TeamRole { get; set; }
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
@@ -105,9 +105,9 @@ namespace ProjectTile
             }
         }
 
-        public ProjectContactSummary ShallowCopy()
+        public ProjectContactProxy ShallowCopy()
         {
-            return (ProjectContactSummary) this.MemberwiseClone();
+            return (ProjectContactProxy) this.MemberwiseClone();
         }
 
         public bool RoleOverlap()
@@ -115,7 +115,7 @@ namespace ProjectTile
             return (ProjectFunctions.DuplicateProjectContact(this, byRole: true) == true);
         }
 
-        public bool Validate(ProjectContactSummary savedVersion)
+        public bool Validate(ProjectContactProxy savedVersion)
         {
             bool contactChanged = true;
             bool roleChanged = true;
@@ -123,7 +123,7 @@ namespace ProjectTile
             bool amendment = false;
             ClientTeams predecessor = Predecessor();
 
-            if (savedVersion == null) { savedVersion = new ProjectContactSummary(); } // Prevents having to check for null each time
+            if (savedVersion == null) { savedVersion = new ProjectContactProxy(); } // Prevents having to check for null each time
             else
             {
                 amendment = true;

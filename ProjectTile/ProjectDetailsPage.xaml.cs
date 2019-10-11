@@ -1,18 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.ComponentModel;
-using System.Collections.ObjectModel;
 
 namespace ProjectTile
 {
@@ -36,7 +25,7 @@ namespace ProjectTile
 
         // ------------- Current records ------------ //
 
-        private ProjectSummaryRecord thisProjectSummary = null;
+        private ProjectProxy thisProjectProxy = null;
 
         // ---------------------------------------------------------- //
         // -------------------- Page Management --------------------- //
@@ -81,7 +70,7 @@ namespace ProjectTile
                 catch (Exception generalException) { MessageFunctions.Error("Error populating drop-down lists", generalException); }
 
                 if (pageMode == PageFunctions.New) { setUpNewMode(); }
-                else if (pageMode == PageFunctions.Amend && Globals.SelectedProjectSummary != null)  // Just to be sure
+                else if (pageMode == PageFunctions.Amend && Globals.SelectedProjectProxy != null)  // Just to be sure
                 {
                     setUpAmendMode();
                 }
@@ -92,7 +81,7 @@ namespace ProjectTile
                 }
             }
             
-            this.DataContext = thisProjectSummary;                        
+            this.DataContext = thisProjectProxy;                        
         }
 
         // ---------------------------------------------------------- //
@@ -105,7 +94,7 @@ namespace ProjectTile
         {
             try
             {
-                int currentManagerID = (thisProjectSummary.ProjectManager != null)? thisProjectSummary.ProjectManager.ID : 0;
+                int currentManagerID = (thisProjectProxy.ProjectManager != null)? thisProjectProxy.ProjectManager.ID : 0;
                 ProjectFunctions.SetPMOptionsList(anyActive, currentManagerID);
                 ManagerCombo.ItemsSource = ProjectFunctions.PMOptionsList;
                 if (currentManagerID > 0) { displaySelectedManager(currentManagerID); }
@@ -117,7 +106,7 @@ namespace ProjectTile
         {
             try
             {
-                int currentClientID = (thisProjectSummary.Client != null) ? thisProjectSummary.Client.ID : 0;
+                int currentClientID = (thisProjectProxy.Client != null) ? thisProjectProxy.Client.ID : 0;
                 ProjectFunctions.SetClientOptionsList(currentClientID);
                 ClientCombo.ItemsSource = ProjectFunctions.ClientOptionsList;
                 if (currentClientID != 0) { displaySelectedClient(currentClientID); }
@@ -148,15 +137,15 @@ namespace ProjectTile
                 closeDetailsPage(false, false);
             }
 
-            if (Globals.SelectedProjectSummary != null) // Just to be sure (for view mode)
+            if (Globals.SelectedProjectProxy != null) // Just to be sure (for view mode)
             {
                 try
                 {
-                    thisProjectSummary = Globals.SelectedProjectSummary;
-                    TypeCombo.Items.Add(thisProjectSummary.Type);
-                    StageCombo.Items.Add(thisProjectSummary.Stage);
-                    ManagerCombo.Items.Add(thisProjectSummary.ProjectManager);
-                    if (thisProjectSummary.Client != null && thisProjectSummary.Client.ID > 0) { ClientCombo.Items.Add(thisProjectSummary.Client); }
+                    thisProjectProxy = Globals.SelectedProjectProxy;
+                    TypeCombo.Items.Add(thisProjectProxy.Type);
+                    StageCombo.Items.Add(thisProjectProxy.Stage);
+                    ManagerCombo.Items.Add(thisProjectProxy.ProjectManager);
+                    if (thisProjectProxy.Client != null && thisProjectProxy.Client.ID > 0) { ClientCombo.Items.Add(thisProjectProxy.Client); }
                     else
                     {
                         ClientCombo.Items.Add(Globals.NoClient);
@@ -171,12 +160,12 @@ namespace ProjectTile
 
         private void setUpNewMode()
         {
-            thisProjectSummary = new ProjectSummaryRecord();
-            thisProjectSummary.EntityID = Globals.CurrentEntityID;
+            thisProjectProxy = new ProjectProxy();
+            thisProjectProxy.EntityID = Globals.CurrentEntityID;
             PageHeader.Content = "Create New Project";
             HeaderImage2.SetResourceReference(Image.SourceProperty, "AddIcon");
             Instructions.Content = "Fill in the details as required and then click 'Save' to create the record.";
-            if (fromProjectPage) { bool usedFilters = ProjectFunctions.PopulateFromFilters(ref thisProjectSummary); }
+            if (fromProjectPage) { bool usedFilters = ProjectFunctions.PopulateFromFilters(ref thisProjectProxy); }
             else { BackButton.Visibility = Visibility.Hidden; }
             refreshManagerCombo(false);
             refreshClientCombo();
@@ -185,9 +174,9 @@ namespace ProjectTile
 
         private void setUpAmendMode()
         {
-            thisProjectSummary = Globals.SelectedProjectSummary;
-            originalManagerID = thisProjectSummary.ProjectManager.ID;
-            originalStage = thisProjectSummary.StageID;
+            thisProjectProxy = Globals.SelectedProjectProxy;
+            originalManagerID = thisProjectProxy.ProjectManager.ID;
+            originalStage = thisProjectProxy.StageID;
             displaySelectedType();
             displaySelectedStage();
             refreshManagerCombo(false);
@@ -201,7 +190,7 @@ namespace ProjectTile
             // Necessary because the binding won't find the record in the list automatically
             try
             {
-                ClientSummaryRecord selectedClient = ProjectFunctions.GetClientInOptionsList(currentClientID);
+                ClientProxy selectedClient = ProjectFunctions.GetClientInOptionsList(currentClientID);
                 ClientCombo.SelectedIndex = ProjectFunctions.ClientOptionsList.IndexOf(selectedClient);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error selecting current client", generalException); }
@@ -211,7 +200,7 @@ namespace ProjectTile
         {
             try
             {
-                StaffSummaryRecord selectedManager = ProjectFunctions.GetPMInOptionsList(currentManagerID);
+                StaffProxy selectedManager = ProjectFunctions.GetPMInOptionsList(currentManagerID);
                 ManagerCombo.SelectedIndex = ProjectFunctions.PMOptionsList.IndexOf(selectedManager);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error selecting current Project Manager", generalException); }
@@ -221,7 +210,7 @@ namespace ProjectTile
         {
             try
             {
-                ProjectStages selectedStage = ProjectFunctions.GetStageByCode(thisProjectSummary.StageID); // Gets it from FullStageList, so it is picked up
+                ProjectStages selectedStage = ProjectFunctions.GetStageByCode(thisProjectProxy.StageID); // Gets it from FullStageList, so it is picked up
                 StageCombo.SelectedIndex = ProjectFunctions.FullStageList.IndexOf(selectedStage);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error selecting current project stage", generalException); }
@@ -231,7 +220,7 @@ namespace ProjectTile
         {
             try
             {
-                ProjectTypes selectedType = ProjectFunctions.FullTypeList.FirstOrDefault(tl => tl.TypeCode == thisProjectSummary.Type.TypeCode);
+                ProjectTypes selectedType = ProjectFunctions.FullTypeList.FirstOrDefault(tl => tl.TypeCode == thisProjectProxy.Type.TypeCode);
                 TypeCombo.SelectedIndex = ProjectFunctions.FullTypeList.IndexOf(selectedType);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error selecting current project type", generalException); }
@@ -239,7 +228,7 @@ namespace ProjectTile
 
         private void updateProjectStage(int newStageCode)
         {
-            thisProjectSummary.Stage = ProjectFunctions.GetStageByCode(newStageCode);
+            thisProjectProxy.Stage = ProjectFunctions.GetStageByCode(newStageCode);
             displaySelectedStage();
         }
 
@@ -282,7 +271,7 @@ namespace ProjectTile
             try
             {
                 CloseClientLookup();
-                thisProjectSummary.Client = ClientFunctions.SelectedProjectClient;
+                thisProjectProxy.Client = ClientFunctions.SelectedProjectClient;
                 refreshClientCombo();
             }
             catch (Exception generalException) { MessageFunctions.Error("Error processing client selection", generalException); }
@@ -313,13 +302,13 @@ namespace ProjectTile
         {
             if (pageMode == PageFunctions.New) 
             {
-                bool success = ProjectFunctions.SaveNewProject(ref thisProjectSummary);
+                bool success = ProjectFunctions.SaveNewProject(ref thisProjectProxy);
                 if (success) { closeDetailsPage(false, false); }
             }
             else
             {
-                bool managerChanged = (thisProjectSummary.ProjectManager.ID != originalManagerID);
-                bool success = ProjectFunctions.SaveProjectChanges(thisProjectSummary, managerChanged, originalStage);
+                bool managerChanged = (thisProjectProxy.ProjectManager.ID != originalManagerID);
+                bool success = ProjectFunctions.SaveProjectChanges(thisProjectProxy, managerChanged, originalStage);
                 if (success) { closeDetailsPage(false, false); }
             }
         }
@@ -336,7 +325,7 @@ namespace ProjectTile
         {
             if (StageCombo.SelectedItem != null && pageMode != PageFunctions.View)
             {
-                int newStage = thisProjectSummary.StageID;
+                int newStage = thisProjectProxy.StageID;
                 NextButton.IsEnabled = (!ProjectFunctions.IsLastStage(newStage));
             }
         }
@@ -345,7 +334,7 @@ namespace ProjectTile
         {
             try
             {
-                int newStage = thisProjectSummary.StageID + 1;
+                int newStage = thisProjectProxy.StageID + 1;
                 updateProjectStage(newStage);
                 NextButton.IsEnabled = (!ProjectFunctions.IsLastStage(newStage));
             }

@@ -33,7 +33,7 @@ namespace ProjectTile
         bool editProjects = Globals.MyPermissions.Allow("EditProjects");
 
         // Current records //
-        StaffSummaryRecord selectedRecord;
+        StaffProxy selectedRecord;
 
         // ---------------------- //
         // -- Page Management --- //
@@ -114,7 +114,7 @@ namespace ProjectTile
             try
             {
                 int entityFilterID = (pageMode == PageFunctions.Lookup) ? Globals.CurrentEntityID : 0;
-                List<StaffSummaryRecord> gridList = StaffFunctions.GetStaffGridData(activeOnly, nameContains, roleDescription, entityFilterID);
+                List<StaffProxy> gridList = StaffFunctions.GetStaffGridData(activeOnly, nameContains, roleDescription, entityFilterID);
                 StaffDataGrid.ItemsSource = gridList.OrderBy(gl => gl.UserID).OrderBy(gl => gl.StaffName);
  
                 if (selectedStaffID > 0)
@@ -237,7 +237,7 @@ namespace ProjectTile
             {
                 if (StaffDataGrid.SelectedItem != null)
                 {
-                    selectedRecord = (StaffSummaryRecord) StaffDataGrid.SelectedItem;
+                    selectedRecord = (StaffProxy) StaffDataGrid.SelectedItem;
                     selectedStaffID = (selectedRecord == null)? 0 : selectedRecord.ID;
                     pushSelection();
                     toggleActiveButton(selectedRecord.Active);

@@ -1,16 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ProjectTile
 {
@@ -40,13 +33,13 @@ namespace ProjectTile
 
         // ------------- Current records ------------ //
 
-        TeamSummaryRecord selectedTeamRecord = null;
-        TeamSummaryRecord editTeamRecord = null;
+        TeamProxy selectedTeamRecord = null;
+        TeamProxy editTeamRecord = null;
 
         // ------------------ Lists ----------------- //
         
-        List<StaffSummaryRecord> staffDropList;
-        List<StaffSummaryRecord> staffComboList;
+        List<StaffProxy> staffDropList;
+        List<StaffProxy> staffComboList;
 
 
         // ---------------------------------------------------------- //
@@ -118,13 +111,13 @@ namespace ProjectTile
         {
             try
             {                
-                TeamSummaryRecord currentRecord = selectedTeamRecord ?? null;
-                ProjectSummaryRecord currentProjectSummary = (ProjectCombo.SelectedItem != null) ? (ProjectSummaryRecord) ProjectCombo.SelectedItem : Globals.AllProjects;                
+                TeamProxy currentRecord = selectedTeamRecord ?? null;
+                ProjectProxy currentProjectProxy = (ProjectCombo.SelectedItem != null) ? (ProjectProxy) ProjectCombo.SelectedItem : Globals.AllProjects;                
                 Globals.ProjectStatusFilter statusFilter = Globals.SelectedStatusFilter;
                 string projectRoleCode = Globals.SelectedProjectRole.RoleCode;
                 Globals.TeamTimeFilter timeFilter = Globals.SelectedTeamTimeFilter;
 
-                bool success = ProjectFunctions.SetTeamsGridList(statusFilter, projectRoleCode, timeFilter, currentProjectSummary.ProjectID, nameLike, exactName);
+                bool success = ProjectFunctions.SetTeamsGridList(statusFilter, projectRoleCode, timeFilter, currentProjectProxy.ProjectID, nameLike, exactName);
                 if (success)
                 {
                     TeamDataGrid.ItemsSource = ProjectFunctions.TeamsGridList;
@@ -142,7 +135,7 @@ namespace ProjectTile
         {
             try
             {
-                ProjectSummaryRecord currentRecord = (Globals.SelectedProjectSummary != null) ? Globals.SelectedProjectSummary : Globals.DefaultProjectSummary;
+                ProjectProxy currentRecord = (Globals.SelectedProjectProxy != null) ? Globals.SelectedProjectProxy : Globals.DefaultProjectProxy;
                 ProjectFunctions.SetProjectFilterList(Globals.SelectedStatusFilter);
                 ProjectCombo.ItemsSource = ProjectFunctions.ProjectFilterList;
                 selectProject(currentRecord.ProjectID);
@@ -219,7 +212,7 @@ namespace ProjectTile
         {
             try
             {
-                StaffSummaryRecord selectedStaff = (staffID != 0) ? StaffFunctions.GetStaffSummary(staffID) : (StaffSummaryRecord)PossibleNames.SelectedItem;
+                StaffProxy selectedStaff = (staffID != 0) ? StaffFunctions.GetStaffProxy(staffID) : (StaffProxy)PossibleNames.SelectedItem;
                 NameLike.Text = selectedStaff.StaffName;
                 exactName = true;
                 nameFilter();
@@ -322,7 +315,7 @@ namespace ProjectTile
         {
             try
             {
-                if (editing && Globals.SelectedProjectSummary.IsOld)
+                if (editing && Globals.SelectedProjectProxy.IsOld)
                 {
                     MessageFunctions.InvalidMessage("Staff cannot be amended for closed or cancelled projects.", "Project is Closed");
                     return;
@@ -365,9 +358,9 @@ namespace ProjectTile
                 }
                 else
                 {
-                    editTeamRecord = new TeamSummaryRecord();
+                    editTeamRecord = new TeamProxy();
                     this.DataContext = editTeamRecord;
-                    editTeamRecord.Project = ProjectFunctions.GetProject(Globals.SelectedProjectSummary.ProjectID);
+                    editTeamRecord.Project = ProjectFunctions.GetProject(Globals.SelectedProjectProxy.ProjectID);
                     Instructions.Content = "Insert the details as required and then click 'Save' to commit them.";
                     if (Globals.SelectedProjectRole != null && Globals.SelectedProjectRole != Globals.AllProjectRoles) { selectEditRole(Globals.SelectedProjectRole.RoleCode); }
                 }
@@ -387,7 +380,7 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error selecting current project in the list", generalException); }	
         }
 
-        private void selectStaffMember(StaffSummaryRecord staffMember)
+        private void selectStaffMember(StaffProxy staffMember)
         {
             try
             {
@@ -408,8 +401,8 @@ namespace ProjectTile
 
         private bool rolesCheck()
         {
-            if (!projectSelected || Globals.SelectedProjectSummary == null || Globals.SelectedProjectSummary.ProjectID <= 0) { return true; }
-            string missingRoles = ProjectFunctions.FindMissingRoles(Globals.SelectedProjectSummary.ProjectID, false);
+            if (!projectSelected || Globals.SelectedProjectProxy == null || Globals.SelectedProjectProxy.ProjectID <= 0) { return true; }
+            string missingRoles = ProjectFunctions.FindMissingRoles(Globals.SelectedProjectProxy.ProjectID, false);
             if (missingRoles == "") { return true; }
             else { return MessageFunctions.WarningYesNo("The following key roles are missing for this project: " + missingRoles + ". Are you sure you want to leave them vacant? "
                 + "The project will not be able to progress beyond Initiation until these roles are filled.","Ignore Vacant Roles?"); }
@@ -442,7 +435,7 @@ namespace ProjectTile
             try
             {
                 CloseProjectLookup();
-                Globals.SelectedProjectSummary = ProjectFunctions.SelectedTeamProject;
+                Globals.SelectedProjectProxy = ProjectFunctions.SelectedTeamProject;
                 refreshProjectCombo();
                 refreshStatusCombo();
             }
@@ -534,11 +527,11 @@ namespace ProjectTile
             {
                 try
                 {
-                    ProjectSummaryRecord selectedProject = (ProjectSummaryRecord)ProjectCombo.SelectedItem;
+                    ProjectProxy selectedProject = (ProjectProxy)ProjectCombo.SelectedItem;
                     if (selectedProject == Globals.SearchProjects) { OpenProjectLookup(); }
                     else
                     {
-                        Globals.SelectedProjectSummary = selectedProject;
+                        Globals.SelectedProjectProxy = selectedProject;
                         refreshTeamDataGrid();
                         toggleProjectMode(selectedProject != Globals.AllProjects);
                     }
@@ -603,8 +596,8 @@ namespace ProjectTile
             }
             else
             {
-                selectedTeamRecord = (TeamSummaryRecord)TeamDataGrid.SelectedItem;
-                Globals.SelectedProjectSummary = ProjectFunctions.GetProjectSummary(selectedTeamRecord.Project.ID);
+                selectedTeamRecord = (TeamProxy)TeamDataGrid.SelectedItem;
+                Globals.SelectedProjectProxy = ProjectFunctions.GetProjectProxy(selectedTeamRecord.Project.ID);
                 ProjectFunctions.ToggleFavouriteButton(true);
                 ProjectButton.IsEnabled = AmendButton.IsEnabled = true;
                 RemoveButton.IsEnabled = (!selectedTeamRecord.HasKeyRole);
@@ -691,7 +684,7 @@ namespace ProjectTile
 
             if (editTeamRecord.ID > 0)
             {
-                TeamSummaryRecord previousVersion = selectedTeamRecord;
+                TeamProxy previousVersion = selectedTeamRecord;
                 success = ProjectFunctions.SaveProjectTeamChanges(editTeamRecord, previousVersion);
             }
             else

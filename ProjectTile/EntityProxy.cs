@@ -1,7 +1,7 @@
 ﻿namespace ProjectTile
 
 {
-    public class EntitySummaryRecord : Globals
+    public class EntityProxy : Globals
     {      
         public int ID { get; set; }
         public string Name { get; set; }
