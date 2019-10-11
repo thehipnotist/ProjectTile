@@ -268,33 +268,6 @@
     <Compile Include="TilesPage.xaml.cs">
       <DependentUpon>TilesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="vi_ClientStaff.cs">
-      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="vi_ClientsWithAccountManagers.cs">
-      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="vi_ClientsWithProducts.cs">
-      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="vi_ClientTeams.cs">
-      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="vi_OpenProjectProducts.cs">
-      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="vi_OpenProjects.cs">
-      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="vi_ProjectTeams.cs">
-      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="vi_StaffEntities.cs">
-      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="vi_StaffWithRoles.cs">
-      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
-    </Compile>
     <Page Include="FAQPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

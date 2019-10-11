@@ -35,6 +35,8 @@ namespace ProjectTile
         public Nullable<int> DefaultEntity { get; set; }
         public string FullName { get; set; }
         public Nullable<int> MainProject { get; set; }
+        public bool SingleSignon { get; set; }
+        public string OSUser { get; set; }
     
         public virtual ICollection<Clients> Clients { get; set; }
         public virtual Entities Entities { get; set; }

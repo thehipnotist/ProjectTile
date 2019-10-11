@@ -23,6 +23,8 @@ namespace ProjectTile
         // Global/page parameters //
         string pageMode;
         bool pageSuccess = false;
+        string ssoID = "";
+        bool canSSO = false;
 
         // ---------------------- //
         // -- Page Management --- //
@@ -41,6 +43,8 @@ namespace ProjectTile
         {
             UserID.Focus();
             CapsLockLabel.Visibility = Visibility.Hidden;
+            ssoID = LoginFunctions.SingleSignonID();
+            canSSO = (ssoID != "");
 
             try
             {
@@ -56,6 +60,8 @@ namespace ProjectTile
             {
                 try
                 {
+                    SSOLabel.Margin = NewPasswordLabel.Margin;
+                    SSOCheckBox.Margin = NewPassword.Margin;
                     NewPassword.Visibility = Visibility.Hidden;
                     NewPasswordLabel.Visibility = Visibility.Hidden;
                     ConfirmPassword.Visibility = Visibility.Hidden;
@@ -63,9 +69,24 @@ namespace ProjectTile
                     if (Globals.MyStaffID > 0)    // already logged in, aiming to change login
                     {
                         PageHeader.Content = "Log In as a Different User";
-                        Welcome.Content = "Please enter a UserID and password to change your login.";
+                        if (canSSO && ssoID != Globals.MyUserID)
+                        {
+                            Welcome.Content = "Please use single sign-on or enter a UserID and password to change your login.";
+                            SSOCheckBox.IsChecked = true;
+                        }
+                        else 
+                        { 
+                            Welcome.Content = "Please enter a UserID and password to change your login.";
+                            SSOCheckBox.IsEnabled = false;
+                        }
                         RightHeader.Visibility = Visibility.Hidden;
                     }
+                    else if (canSSO) 
+                    { 
+                        SSOCheckBox.IsChecked = true;
+                        Welcome.Content = "Please log in via single sign-on, or un-check the 'Single Sign-on' option and enter a UserID and password.";
+                    }
+                    else { SSOCheckBox.IsEnabled = false; }
                 }
                 catch (Exception generalException)
                 {
@@ -85,6 +106,7 @@ namespace ProjectTile
                     UserID.Text = Globals.MyUserID;
                     RightHeader.Visibility = Visibility.Hidden;
                     PleaseWaitLabel.Content = "Attempting password change - please wait...";
+                    SSOLabel.Visibility = SSOCheckBox.Visibility = Visibility.Hidden;
                 }
                 catch (Exception generalException)
                 {
@@ -120,6 +142,12 @@ namespace ProjectTile
             //MessageBox.Show(pageSuccess.ToString());
         }
 
+        private void toggleSSO(bool useIt)
+        {
+            PasswordLabel.Visibility = Password.Visibility = useIt? Visibility.Hidden : Visibility.Visible;            
+            UserID.Text = useIt ? ssoID : "";
+        }
+
         // ---------------------- //
         // -- Event Management -- //
         // ---------------------- //
@@ -137,7 +165,7 @@ namespace ProjectTile
                 MessageFunctions.InvalidMessage("Please enter your User ID in the 'UserID' text box.", "User ID Required");
                 return;
             }
-            else if (password == "")
+            else if (SSOCheckBox.IsChecked == false && password == "")
             {
                 string strContext = (pageMode == PageFunctions.PassChange) ? "existing " : "";
                 MessageFunctions.InvalidMessage("Please enter your " + strContext + "password in the 'Password' text box.", "Password Required");
@@ -163,7 +191,8 @@ namespace ProjectTile
 
             Action b = new Action (  () =>
                 {
-                    if (!LoginFunctions.CheckPassword(userID, password))
+                    if (pageMode == PageFunctions.LogIn && SSOCheckBox.IsChecked == true && LoginFunctions.SingleSignon(userID)) { pageSuccess = true; }        
+                    else if (!LoginFunctions.CheckPassword(userID, password))
                     {
                         MessageFunctions.InvalidMessage("Incorrect existing username or password. Please check and try again.", "Incorrect Login");
                     }
@@ -218,6 +247,16 @@ namespace ProjectTile
         {
             if (Globals.MyStaffID > 0) { PageFunctions.ShowTilesPage(); }
             else { PageFunctions.CloseApplication(); } // not yet logged in, so close application
+        }
+
+        private void SSOCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            toggleSSO(true);
+        }
+
+        private void SSOCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            toggleSSO(false);
         }
 
     } // class

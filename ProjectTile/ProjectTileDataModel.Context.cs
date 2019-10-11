@@ -45,15 +45,6 @@ namespace ProjectTile
         public virtual DbSet<StaffEntities> StaffEntities { get; set; }
         public virtual DbSet<StaffRoles> StaffRoles { get; set; }
         public virtual DbSet<TablePermissions> TablePermissions { get; set; }
-        public virtual DbSet<vi_ClientStaff> vi_ClientStaff { get; set; }
-        public virtual DbSet<vi_ClientsWithAccountManagers> vi_ClientsWithAccountManagers { get; set; }
-        public virtual DbSet<vi_ClientsWithProducts> vi_ClientsWithProducts { get; set; }
-        public virtual DbSet<vi_ClientTeams> vi_ClientTeams { get; set; }
-        public virtual DbSet<vi_OpenProjectProducts> vi_OpenProjectProducts { get; set; }
-        public virtual DbSet<vi_OpenProjects> vi_OpenProjects { get; set; }
-        public virtual DbSet<vi_ProjectTeams> vi_ProjectTeams { get; set; }
-        public virtual DbSet<vi_StaffEntities> vi_StaffEntities { get; set; }
-        public virtual DbSet<vi_StaffWithRoles> vi_StaffWithRoles { get; set; }
         public virtual DbSet<ErrorLog> ErrorLog { get; set; }
     
         public virtual ObjectResult<cln_GetClientsByAccountManagerID_Result> cln_GetClientsByAccountManagerID(string accountManagerID)
@@ -845,7 +836,7 @@ namespace ProjectTile
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<stf_GetStaffRolesByRoleCode_Result>("stf_GetStaffRolesByRoleCode", roleCodeParameter);
         }
     
-        public virtual int stf_InsertIntoStaff(string firstName, string surname, string roleCode, Nullable<System.DateTime> startDate, Nullable<System.DateTime> leaveDate, string userID, string passwd, byte[] passwordHash, Nullable<bool> active, Nullable<int> defaultEntity, Nullable<int> mainProject)
+        public virtual int stf_InsertIntoStaff(string firstName, string surname, string roleCode, Nullable<System.DateTime> startDate, Nullable<System.DateTime> leaveDate, string userID, string passwd, byte[] passwordHash, Nullable<bool> active, Nullable<int> defaultEntity, Nullable<int> mainProject, Nullable<bool> singleSignon, string oSUser)
         {
             var firstNameParameter = firstName != null ?
                 new ObjectParameter("FirstName", firstName) :
@@ -891,7 +882,15 @@ namespace ProjectTile
                 new ObjectParameter("MainProject", mainProject) :
                 new ObjectParameter("MainProject", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("stf_InsertIntoStaff", firstNameParameter, surnameParameter, roleCodeParameter, startDateParameter, leaveDateParameter, userIDParameter, passwdParameter, passwordHashParameter, activeParameter, defaultEntityParameter, mainProjectParameter);
+            var singleSignonParameter = singleSignon.HasValue ?
+                new ObjectParameter("SingleSignon", singleSignon) :
+                new ObjectParameter("SingleSignon", typeof(bool));
+    
+            var oSUserParameter = oSUser != null ?
+                new ObjectParameter("OSUser", oSUser) :
+                new ObjectParameter("OSUser", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("stf_InsertIntoStaff", firstNameParameter, surnameParameter, roleCodeParameter, startDateParameter, leaveDateParameter, userIDParameter, passwdParameter, passwordHashParameter, activeParameter, defaultEntityParameter, mainProjectParameter, singleSignonParameter, oSUserParameter);
         }
     
         public virtual int stf_InsertIntoStaffEntities(Nullable<int> staffID, Nullable<int> entityID)

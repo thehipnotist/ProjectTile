@@ -42,14 +42,18 @@
                      ToolTip="Enter your User ID here" Text="pjadmin" Style="{DynamicResource PaddedTextBox}"/>
                 <Label x:Name="PasswordLabel" Content="Password" HorizontalAlignment="Left" Height="30" Margin="15,120,0,0" VerticalAlignment="Top" Width="90" FontWeight="Bold"/>
                 <PasswordBox x:Name="Password" HorizontalAlignment="Left" Height="30" Margin="105,120,0,0" VerticalAlignment="Top" Width="180" ToolTip="Enter your password here" 
-                         PasswordChanged="Password_Changed" TabIndex="2" KeyUp="Password_KeyUp" Password="pja" GotFocus="Password_GotFocus" Style="{DynamicResource PaddedPassword}"/>
+                         PasswordChanged="Password_Changed" TabIndex="2" KeyUp="Password_KeyUp" Password="" GotFocus="Password_GotFocus" Style="{DynamicResource PaddedPassword}"/>
+                
                 <Label x:Name="NewPasswordLabel" Content="New Password" HorizontalAlignment="Right" Height="30" Margin="0,75,220,0" VerticalAlignment="Top" Width="100" FontWeight="Bold"/>
                 <PasswordBox x:Name="NewPassword" HorizontalAlignment="Right" Height="30" Margin="0,75,30,0" VerticalAlignment="Top" Width="180" ToolTip="Enter your password here" 
                          PasswordChanged="Password_Changed" TabIndex="2" KeyUp="Password_KeyUp" GotFocus="Password_GotFocus" Style="{DynamicResource PaddedPassword}"/>
-
                 <Label x:Name="ConfirmLabel" Content="Confirm" HorizontalAlignment="Right" Height="30" Margin="0,120,225,0" VerticalAlignment="Top" Width="95" FontWeight="Bold"/>
                 <PasswordBox x:Name="ConfirmPassword" HorizontalAlignment="Right" Height="30" Margin="0,120,30,0" VerticalAlignment="Top" Width="180" ToolTip="Enter your password here" 
                          PasswordChanged="Password_Changed" TabIndex="2" KeyUp="Password_KeyUp" GotFocus="Password_GotFocus" Style="{DynamicResource PaddedPassword}"/>
+                
+                <Label x:Name="SSOLabel" Content="Single Sign-on" HorizontalAlignment="Right" Height="30" Margin="0,165,215,0" VerticalAlignment="Top" Width="95" FontWeight="Bold"/>
+                <CheckBox x:Name="SSOCheckBox" HorizontalAlignment="Right" Height="30" Margin="0,165,30,0" VerticalAlignment="Top" Width="180" FontWeight="Bold" 
+                	VerticalContentAlignment="Center" UseLayoutRounding="False" Style="{DynamicResource RoundedCheckbox}" Checked="SSOCheckBox_Checked" Unchecked="SSOCheckBox_Unchecked"/>
 
                 <Label x:Name="CapsLockLabel" Content="Warning: Caps Lock is on." HorizontalAlignment="Left" Margin="15,15,15,15" VerticalAlignment="Bottom" Width="465" FontWeight="Normal" Height="30" 
                    Foreground="Red"/>

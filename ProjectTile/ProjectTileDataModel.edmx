@@ -180,6 +180,8 @@
           <Property Name="Active" Type="bit" Nullable="false" />
           <Property Name="DefaultEntity" Type="int" />
           <Property Name="MainProject" Type="int" />
+          <Property Name="SingleSignon" Type="bit" Nullable="false" />
+          <Property Name="OSUser" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="StaffEntities">
           <Key>
@@ -207,192 +209,6 @@
           <Property Name="UpdateRows" Type="bit" />
           <Property Name="InsertRows" Type="bit" />
           <Property Name="ChangeStatus" Type="bit" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'ProjectTile.dbo.vi_ClientStaff' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="vi_ClientStaff">
-          <Key>
-            <PropertyRef Name="EntityName" />
-            <PropertyRef Name="ClientCode" />
-            <PropertyRef Name="ClientName" />
-            <PropertyRef Name="ClientActive" />
-            <PropertyRef Name="StaffName" />
-            <PropertyRef Name="StaffActive" />
-          </Key>
-          <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
-          <Property Name="ClientCode" Type="varchar" MaxLength="15" Nullable="false" />
-          <Property Name="ClientName" Type="nvarchar" MaxLength="200" Nullable="false" />
-          <Property Name="ClientActive" Type="bit" Nullable="false" />
-          <Property Name="StaffName" Type="nvarchar" MaxLength="201" Nullable="false" />
-          <Property Name="JobTitle" Type="nvarchar" MaxLength="100" />
-          <Property Name="StaffActive" Type="bit" Nullable="false" />
-          <Property Name="PhoneNumber" Type="varchar" MaxLength="50" />
-          <Property Name="Email" Type="nvarchar" MaxLength="100" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'ProjectTile.dbo.vi_ClientsWithAccountManagers' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="vi_ClientsWithAccountManagers">
-          <Key>
-            <PropertyRef Name="EntityName" />
-            <PropertyRef Name="ID" />
-            <PropertyRef Name="ClientCode" />
-            <PropertyRef Name="ClientName" />
-            <PropertyRef Name="Active" />
-            <PropertyRef Name="AccountManagerName" />
-          </Key>
-          <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
-          <Property Name="ID" Type="int" Nullable="false" />
-          <Property Name="ClientCode" Type="varchar" MaxLength="15" Nullable="false" />
-          <Property Name="ClientName" Type="nvarchar" MaxLength="200" Nullable="false" />
-          <Property Name="Active" Type="bit" Nullable="false" />
-          <Property Name="AccountManagerName" Type="nvarchar" MaxLength="201" Nullable="false" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'ProjectTile.dbo.vi_ClientsWithProducts' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="vi_ClientsWithProducts">
-          <Key>
-            <PropertyRef Name="EntityName" />
-            <PropertyRef Name="ClientCode" />
-            <PropertyRef Name="ClientName" />
-          </Key>
-          <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
-          <Property Name="ClientID" Type="int" />
-          <Property Name="ClientCode" Type="varchar" MaxLength="15" Nullable="false" />
-          <Property Name="ClientName" Type="nvarchar" MaxLength="200" Nullable="false" />
-          <Property Name="ProductID" Type="int" />
-          <Property Name="ProductName" Type="varchar" MaxLength="100" />
-          <Property Name="ProductVersion" Type="decimal" Precision="9" Scale="1" />
-          <Property Name="LatestVersion" Type="decimal" Precision="10" Scale="2" />
-          <Property Name="ProductDescription" Type="nvarchar" MaxLength="300" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'ProjectTile.dbo.vi_ClientTeams' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="vi_ClientTeams">
-          <Key>
-            <PropertyRef Name="EntityName" />
-            <PropertyRef Name="ClientName" />
-            <PropertyRef Name="ProjectName" />
-            <PropertyRef Name="StaffName" />
-            <PropertyRef Name="RoleDescription" />
-          </Key>
-          <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
-          <Property Name="ClientName" Type="nvarchar" MaxLength="200" Nullable="false" />
-          <Property Name="ProjectName" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="StaffName" Type="nvarchar" MaxLength="201" Nullable="false" />
-          <Property Name="JobTitle" Type="nvarchar" MaxLength="100" />
-          <Property Name="RoleDescription" Type="varchar" MaxLength="100" Nullable="false" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'ProjectTile.dbo.vi_OpenProjectProducts' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="vi_OpenProjectProducts">
-          <Key>
-            <PropertyRef Name="ClientCode" />
-            <PropertyRef Name="ClientName" />
-            <PropertyRef Name="ProjectName" />
-            <PropertyRef Name="StageName" />
-            <PropertyRef Name="ProjectStatus" />
-            <PropertyRef Name="NewVersion" />
-            <PropertyRef Name="ClientVersion" />
-          </Key>
-          <Property Name="ProjectCode" Type="varchar" MaxLength="9" />
-          <Property Name="ClientCode" Type="varchar" MaxLength="15" Nullable="false" />
-          <Property Name="ClientName" Type="nvarchar" MaxLength="200" Nullable="false" />
-          <Property Name="TypeName" Type="varchar" MaxLength="100" />
-          <Property Name="ProjectName" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="StageName" Type="varchar" MaxLength="20" Nullable="false" />
-          <Property Name="ProjectStatus" Type="varchar" MaxLength="20" Nullable="false" />
-          <Property Name="ProductName" Type="varchar" MaxLength="100" />
-          <Property Name="OldVersion" Type="decimal" Precision="9" Scale="1" />
-          <Property Name="NewVersion" Type="decimal" Precision="9" Scale="1" Nullable="false" />
-          <Property Name="ClientVersion" Type="decimal" Precision="9" Scale="1" Nullable="false" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'ProjectTile.dbo.vi_OpenProjects' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="vi_OpenProjects">
-          <Key>
-            <PropertyRef Name="EntityName" />
-            <PropertyRef Name="ClientID" />
-            <PropertyRef Name="ClientCode" />
-            <PropertyRef Name="ClientName" />
-            <PropertyRef Name="ProjectName" />
-            <PropertyRef Name="StageCode" />
-            <PropertyRef Name="StageName" />
-            <PropertyRef Name="ProjectStatus" />
-            <PropertyRef Name="ProjectSummary" />
-          </Key>
-          <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
-          <Property Name="ProjectCode" Type="varchar" MaxLength="9" />
-          <Property Name="ClientID" Type="int" Nullable="false" />
-          <Property Name="ClientCode" Type="varchar" MaxLength="15" Nullable="false" />
-          <Property Name="ClientName" Type="nvarchar" MaxLength="200" Nullable="false" />
-          <Property Name="TypeName" Type="varchar" MaxLength="100" />
-          <Property Name="ProjectName" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="StartDate" Type="date" />
-          <Property Name="StageCode" Type="int" Nullable="false" />
-          <Property Name="StageName" Type="varchar" MaxLength="20" Nullable="false" />
-          <Property Name="ProjectStatus" Type="varchar" MaxLength="20" Nullable="false" />
-          <Property Name="ProjectSummary" Type="nvarchar" MaxLength="400" Nullable="false" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'ProjectTile.dbo.vi_ProjectTeams' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="vi_ProjectTeams">
-          <Key>
-            <PropertyRef Name="EntityName" />
-            <PropertyRef Name="ProjectName" />
-            <PropertyRef Name="ClientName" />
-            <PropertyRef Name="StaffName" />
-            <PropertyRef Name="ProjectRoleDescription" />
-            <PropertyRef Name="JobTitle" />
-          </Key>
-          <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
-          <Property Name="ProjectName" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="ClientName" Type="nvarchar" MaxLength="200" Nullable="false" />
-          <Property Name="StaffName" Type="nvarchar" MaxLength="201" Nullable="false" />
-          <Property Name="ProjectRoleCode" Type="varchar" MaxLength="5" />
-          <Property Name="ProjectRoleDescription" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="JobTitle" Type="varchar" MaxLength="100" Nullable="false" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'ProjectTile.dbo.vi_StaffEntities' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="vi_StaffEntities">
-          <Key>
-            <PropertyRef Name="StaffName" />
-            <PropertyRef Name="EntityName" />
-            <PropertyRef Name="EntityDescription" />
-            <PropertyRef Name="DefaultEntity" />
-          </Key>
-          <Property Name="StaffName" Type="nvarchar" MaxLength="201" Nullable="false" />
-          <Property Name="EntityName" Type="varchar" MaxLength="30" Nullable="false" />
-          <Property Name="EntityDescription" Type="nvarchar" MaxLength="100" Nullable="false" />
-          <Property Name="DefaultEntity" Type="int" Nullable="false" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="vi_StaffWithRoles">
-          <Key>
-            <PropertyRef Name="ID" />
-            <PropertyRef Name="FirstName" />
-            <PropertyRef Name="Surname" />
-            <PropertyRef Name="FullName" />
-            <PropertyRef Name="StartDate" />
-            <PropertyRef Name="Active" />
-            <PropertyRef Name="RoleDescription" />
-          </Key>
-          <Property Name="ID" Type="int" Nullable="false" />
-          <Property Name="EmployeeID" Type="varchar" MaxLength="7" />
-          <Property Name="FirstName" Type="nvarchar" MaxLength="100" Nullable="false" />
-          <Property Name="Surname" Type="nvarchar" MaxLength="100" Nullable="false" />
-          <Property Name="FullName" Type="nvarchar" MaxLength="201" Nullable="false" />
-          <Property Name="RoleCode" Type="varchar" MaxLength="5" />
-          <Property Name="StartDate" Type="date" Nullable="false" />
-          <Property Name="LeaveDate" Type="date" />
-          <Property Name="UserID" Type="varchar" MaxLength="50" />
-          <Property Name="Passwd" Type="nvarchar" MaxLength="50" />
-          <Property Name="PasswordHash" Type="binary" MaxLength="64" />
-          <Property Name="Active" Type="bit" Nullable="false" />
-          <Property Name="DefaultEntity" Type="int" />
-          <Property Name="MainProject" Type="int" />
-          <Property Name="RoleDescription" Type="varchar" MaxLength="100" Nullable="false" />
         </EntityType>
         <Association Name="fk_ClientAccountManagerID">
           <End Role="Staff" Type="Self.Staff" Multiplicity="0..1" />
@@ -934,6 +750,8 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <Parameter Name="Active" Type="bit" Mode="In" />
           <Parameter Name="DefaultEntity" Type="int" Mode="In" />
           <Parameter Name="MainProject" Type="int" Mode="In" />
+          <Parameter Name="SingleSignon" Type="bit" Mode="In" />
+          <Parameter Name="OSUser" Type="varchar" Mode="In" />
         </Function>
         <Function Name="stf_InsertIntoStaffEntities" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="StaffID" Type="int" Mode="In" />
@@ -987,121 +805,6 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <EntitySet Name="StaffEntities" EntityType="Self.StaffEntities" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="StaffRoles" EntityType="Self.StaffRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TablePermissions" EntityType="Self.TablePermissions" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="vi_ClientStaff" EntityType="Self.vi_ClientStaff" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [vi_ClientStaff].[EntityName] AS [EntityName], 
-    [vi_ClientStaff].[ClientCode] AS [ClientCode], 
-    [vi_ClientStaff].[ClientName] AS [ClientName], 
-    [vi_ClientStaff].[ClientActive] AS [ClientActive], 
-    [vi_ClientStaff].[StaffName] AS [StaffName], 
-    [vi_ClientStaff].[JobTitle] AS [JobTitle], 
-    [vi_ClientStaff].[StaffActive] AS [StaffActive], 
-    [vi_ClientStaff].[PhoneNumber] AS [PhoneNumber], 
-    [vi_ClientStaff].[Email] AS [Email]
-    FROM [dbo].[vi_ClientStaff] AS [vi_ClientStaff]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="vi_ClientsWithAccountManagers" EntityType="Self.vi_ClientsWithAccountManagers" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [vi_ClientsWithAccountManagers].[EntityName] AS [EntityName], 
-    [vi_ClientsWithAccountManagers].[ID] AS [ID], 
-    [vi_ClientsWithAccountManagers].[ClientCode] AS [ClientCode], 
-    [vi_ClientsWithAccountManagers].[ClientName] AS [ClientName], 
-    [vi_ClientsWithAccountManagers].[Active] AS [Active], 
-    [vi_ClientsWithAccountManagers].[AccountManagerName] AS [AccountManagerName]
-    FROM [dbo].[vi_ClientsWithAccountManagers] AS [vi_ClientsWithAccountManagers]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="vi_ClientsWithProducts" EntityType="Self.vi_ClientsWithProducts" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [vi_ClientsWithProducts].[EntityName] AS [EntityName], 
-    [vi_ClientsWithProducts].[ClientID] AS [ClientID], 
-    [vi_ClientsWithProducts].[ClientCode] AS [ClientCode], 
-    [vi_ClientsWithProducts].[ClientName] AS [ClientName], 
-    [vi_ClientsWithProducts].[ProductID] AS [ProductID], 
-    [vi_ClientsWithProducts].[ProductName] AS [ProductName], 
-    [vi_ClientsWithProducts].[ProductVersion] AS [ProductVersion], 
-    [vi_ClientsWithProducts].[LatestVersion] AS [LatestVersion], 
-    [vi_ClientsWithProducts].[ProductDescription] AS [ProductDescription]
-    FROM [dbo].[vi_ClientsWithProducts] AS [vi_ClientsWithProducts]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="vi_ClientTeams" EntityType="Self.vi_ClientTeams" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [vi_ClientTeams].[EntityName] AS [EntityName], 
-    [vi_ClientTeams].[ClientName] AS [ClientName], 
-    [vi_ClientTeams].[ProjectName] AS [ProjectName], 
-    [vi_ClientTeams].[StaffName] AS [StaffName], 
-    [vi_ClientTeams].[JobTitle] AS [JobTitle], 
-    [vi_ClientTeams].[RoleDescription] AS [RoleDescription]
-    FROM [dbo].[vi_ClientTeams] AS [vi_ClientTeams]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="vi_OpenProjectProducts" EntityType="Self.vi_OpenProjectProducts" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [vi_OpenProjectProducts].[ProjectCode] AS [ProjectCode], 
-    [vi_OpenProjectProducts].[ClientCode] AS [ClientCode], 
-    [vi_OpenProjectProducts].[ClientName] AS [ClientName], 
-    [vi_OpenProjectProducts].[TypeName] AS [TypeName], 
-    [vi_OpenProjectProducts].[ProjectName] AS [ProjectName], 
-    [vi_OpenProjectProducts].[StageName] AS [StageName], 
-    [vi_OpenProjectProducts].[ProjectStatus] AS [ProjectStatus], 
-    [vi_OpenProjectProducts].[ProductName] AS [ProductName], 
-    [vi_OpenProjectProducts].[OldVersion] AS [OldVersion], 
-    [vi_OpenProjectProducts].[NewVersion] AS [NewVersion], 
-    [vi_OpenProjectProducts].[ClientVersion] AS [ClientVersion]
-    FROM [dbo].[vi_OpenProjectProducts] AS [vi_OpenProjectProducts]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="vi_OpenProjects" EntityType="Self.vi_OpenProjects" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [vi_OpenProjects].[EntityName] AS [EntityName], 
-    [vi_OpenProjects].[ProjectCode] AS [ProjectCode], 
-    [vi_OpenProjects].[ClientID] AS [ClientID], 
-    [vi_OpenProjects].[ClientCode] AS [ClientCode], 
-    [vi_OpenProjects].[ClientName] AS [ClientName], 
-    [vi_OpenProjects].[TypeName] AS [TypeName], 
-    [vi_OpenProjects].[ProjectName] AS [ProjectName], 
-    [vi_OpenProjects].[StartDate] AS [StartDate], 
-    [vi_OpenProjects].[StageCode] AS [StageCode], 
-    [vi_OpenProjects].[StageName] AS [StageName], 
-    [vi_OpenProjects].[ProjectStatus] AS [ProjectStatus], 
-    [vi_OpenProjects].[ProjectSummary] AS [ProjectSummary]
-    FROM [dbo].[vi_OpenProjects] AS [vi_OpenProjects]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="vi_ProjectTeams" EntityType="Self.vi_ProjectTeams" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [vi_ProjectTeams].[EntityName] AS [EntityName], 
-    [vi_ProjectTeams].[ProjectName] AS [ProjectName], 
-    [vi_ProjectTeams].[ClientName] AS [ClientName], 
-    [vi_ProjectTeams].[StaffName] AS [StaffName], 
-    [vi_ProjectTeams].[ProjectRoleCode] AS [ProjectRoleCode], 
-    [vi_ProjectTeams].[ProjectRoleDescription] AS [ProjectRoleDescription], 
-    [vi_ProjectTeams].[JobTitle] AS [JobTitle]
-    FROM [dbo].[vi_ProjectTeams] AS [vi_ProjectTeams]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="vi_StaffEntities" EntityType="Self.vi_StaffEntities" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [vi_StaffEntities].[StaffName] AS [StaffName], 
-    [vi_StaffEntities].[EntityName] AS [EntityName], 
-    [vi_StaffEntities].[EntityDescription] AS [EntityDescription], 
-    [vi_StaffEntities].[DefaultEntity] AS [DefaultEntity]
-    FROM [dbo].[vi_StaffEntities] AS [vi_StaffEntities]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="vi_StaffWithRoles" EntityType="Self.vi_StaffWithRoles" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [vi_StaffWithRoles].[ID] AS [ID], 
-    [vi_StaffWithRoles].[EmployeeID] AS [EmployeeID], 
-    [vi_StaffWithRoles].[FirstName] AS [FirstName], 
-    [vi_StaffWithRoles].[Surname] AS [Surname], 
-    [vi_StaffWithRoles].[FullName] AS [FullName], 
-    [vi_StaffWithRoles].[RoleCode] AS [RoleCode], 
-    [vi_StaffWithRoles].[StartDate] AS [StartDate], 
-    [vi_StaffWithRoles].[LeaveDate] AS [LeaveDate], 
-    [vi_StaffWithRoles].[UserID] AS [UserID], 
-    [vi_StaffWithRoles].[Passwd] AS [Passwd], 
-    [vi_StaffWithRoles].[PasswordHash] AS [PasswordHash], 
-    [vi_StaffWithRoles].[Active] AS [Active], 
-    [vi_StaffWithRoles].[DefaultEntity] AS [DefaultEntity], 
-    [vi_StaffWithRoles].[MainProject] AS [MainProject], 
-    [vi_StaffWithRoles].[RoleDescription] AS [RoleDescription]
-    FROM [dbo].[vi_StaffWithRoles] AS [vi_StaffWithRoles]</DefiningQuery>
-          </EntitySet>
           <AssociationSet Name="fk_ClientAccountManagerID" Association="Self.fk_ClientAccountManagerID">
             <End Role="Staff" EntitySet="Staff" />
             <End Role="Clients" EntitySet="Clients" />
@@ -1402,6 +1105,8 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <Property Name="FullName" Type="String" Nullable="false" MaxLength="201" FixedLength="false" Unicode="true" annotation:StoreGeneratedPattern="Computed" />
           <Property Name="MainProject" Type="Int32" />
           <NavigationProperty Name="Projects" Relationship="ProjectTileModel.fk_StaffProjectID" FromRole="Staff" ToRole="Projects" />
+          <Property Name="SingleSignon" Type="Boolean" Nullable="false" />
+          <Property Name="OSUser" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="StaffEntities">
           <Key>
@@ -1434,174 +1139,6 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <Property Name="InsertRows" Type="Boolean" />
           <Property Name="ChangeStatus" Type="Boolean" />
           <NavigationProperty Name="StaffRoles" Relationship="Self.fk_PermissionRoleCode" FromRole="TablePermissions" ToRole="StaffRoles" />
-        </EntityType>
-        <EntityType Name="vi_ClientStaff">
-          <Key>
-            <PropertyRef Name="EntityName" />
-            <PropertyRef Name="ClientCode" />
-            <PropertyRef Name="ClientName" />
-            <PropertyRef Name="StaffName" />
-            <PropertyRef Name="ClientActive" />
-            <PropertyRef Name="StaffActive" />
-          </Key>
-          <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ClientCode" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="StaffName" Type="String" MaxLength="201" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="JobTitle" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="PhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ClientActive" Type="Boolean" Nullable="false" />
-          <Property Name="StaffActive" Type="Boolean" Nullable="false" />
-        </EntityType>
-        <EntityType Name="vi_ClientsWithAccountManagers">
-          <Key>
-            <PropertyRef Name="EntityName" />
-            <PropertyRef Name="ID" />
-            <PropertyRef Name="ClientCode" />
-            <PropertyRef Name="ClientName" />
-            <PropertyRef Name="Active" />
-            <PropertyRef Name="AccountManagerName" />
-          </Key>
-          <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ID" Type="Int32" Nullable="false" />
-          <Property Name="ClientCode" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Active" Type="Boolean" Nullable="false" />
-          <Property Name="AccountManagerName" Type="String" MaxLength="201" FixedLength="false" Unicode="true" Nullable="false" />
-        </EntityType>
-        <EntityType Name="vi_ClientsWithProducts">
-          <Key>
-            <PropertyRef Name="EntityName" />
-            <PropertyRef Name="ClientCode" />
-            <PropertyRef Name="ClientName" />
-          </Key>
-          <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ClientID" Type="Int32" />
-          <Property Name="ClientCode" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ProductID" Type="Int32" />
-          <Property Name="ProductName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="ProductVersion" Type="Decimal" Precision="9" Scale="1" />
-          <Property Name="LatestVersion" Type="Decimal" Precision="10" Scale="2" />
-          <Property Name="ProductDescription" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="vi_ClientTeams">
-          <Key>
-            <PropertyRef Name="EntityName" />
-            <PropertyRef Name="ClientName" />
-            <PropertyRef Name="ProjectName" />
-            <PropertyRef Name="StaffName" />
-            <PropertyRef Name="RoleDescription" />
-          </Key>
-          <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ProjectName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="StaffName" Type="String" MaxLength="201" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="JobTitle" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="RoleDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-        </EntityType>
-        <EntityType Name="vi_OpenProjectProducts">
-          <Key>
-            <PropertyRef Name="ClientCode" />
-            <PropertyRef Name="ClientName" />
-            <PropertyRef Name="ProjectName" />
-            <PropertyRef Name="StageName" />
-            <PropertyRef Name="ProjectStatus" />
-            <PropertyRef Name="NewVersion" />
-            <PropertyRef Name="ClientVersion" />
-          </Key>
-          <Property Name="ProjectCode" Type="String" MaxLength="9" FixedLength="false" Unicode="false" />
-          <Property Name="ClientCode" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="TypeName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="ProjectName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="StageName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ProjectStatus" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ProductName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="OldVersion" Type="Decimal" Precision="9" Scale="1" />
-          <Property Name="NewVersion" Type="Decimal" Precision="9" Scale="1" Nullable="false" />
-          <Property Name="ClientVersion" Type="Decimal" Precision="9" Scale="1" Nullable="false" />
-        </EntityType>
-        <EntityType Name="vi_OpenProjects">
-          <Key>
-            <PropertyRef Name="EntityName" />
-            <PropertyRef Name="ClientID" />
-            <PropertyRef Name="ClientCode" />
-            <PropertyRef Name="ClientName" />
-            <PropertyRef Name="ProjectName" />
-            <PropertyRef Name="StageCode" />
-            <PropertyRef Name="StageName" />
-            <PropertyRef Name="ProjectStatus" />
-            <PropertyRef Name="ProjectSummary" />
-          </Key>
-          <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ProjectCode" Type="String" MaxLength="9" FixedLength="false" Unicode="false" />
-          <Property Name="ClientID" Type="Int32" Nullable="false" />
-          <Property Name="ClientCode" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="TypeName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="ProjectName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="StartDate" Type="DateTime" Precision="0" />
-          <Property Name="StageCode" Type="Int32" Nullable="false" />
-          <Property Name="StageName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ProjectStatus" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ProjectSummary" Type="String" MaxLength="400" FixedLength="false" Unicode="true" Nullable="false" />
-        </EntityType>
-        <EntityType Name="vi_ProjectTeams">
-          <Key>
-            <PropertyRef Name="EntityName" />
-            <PropertyRef Name="ProjectName" />
-            <PropertyRef Name="ClientName" />
-            <PropertyRef Name="StaffName" />
-            <PropertyRef Name="ProjectRoleDescription" />
-            <PropertyRef Name="JobTitle" />
-          </Key>
-          <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ProjectName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="StaffName" Type="String" MaxLength="201" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ProjectRoleCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
-          <Property Name="ProjectRoleDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="JobTitle" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-        </EntityType>
-        <EntityType Name="vi_StaffEntities">
-          <Key>
-            <PropertyRef Name="StaffName" />
-            <PropertyRef Name="EntityName" />
-            <PropertyRef Name="EntityDescription" />
-            <PropertyRef Name="DefaultEntity" />
-          </Key>
-          <Property Name="StaffName" Type="String" MaxLength="201" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="EntityName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="EntityDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="DefaultEntity" Type="Int32" Nullable="false" />
-        </EntityType>
-        <EntityType Name="vi_StaffWithRoles">
-          <Key>
-            <PropertyRef Name="ID" />
-            <PropertyRef Name="FirstName" />
-            <PropertyRef Name="Surname" />
-            <PropertyRef Name="StartDate" />
-            <PropertyRef Name="Active" />
-            <PropertyRef Name="RoleDescription" />
-            <PropertyRef Name="FullName" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" />
-          <Property Name="EmployeeID" Type="String" MaxLength="7" FixedLength="false" Unicode="false" />
-          <Property Name="FirstName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Surname" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="RoleCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
-          <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="LeaveDate" Type="DateTime" Precision="0" />
-          <Property Name="UserID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Passwd" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="PasswordHash" Type="Binary" MaxLength="64" FixedLength="true" />
-          <Property Name="Active" Type="Boolean" Nullable="false" />
-          <Property Name="DefaultEntity" Type="Int32" />
-          <Property Name="RoleDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="FullName" Type="String" Nullable="false" MaxLength="201" FixedLength="false" Unicode="true" />
-          <Property Name="MainProject" Type="Int32" />
         </EntityType>
         <Association Name="fk_ClientProductID">
           <End Role="Products" Type="Self.Products" Multiplicity="0..1" />
@@ -1886,15 +1423,6 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <EntitySet Name="StaffEntities" EntityType="Self.StaffEntities" />
           <EntitySet Name="StaffRoles" EntityType="Self.StaffRoles" />
           <EntitySet Name="TablePermissions" EntityType="Self.TablePermissions" />
-          <EntitySet Name="vi_ClientStaff" EntityType="Self.vi_ClientStaff" />
-          <EntitySet Name="vi_ClientsWithAccountManagers" EntityType="Self.vi_ClientsWithAccountManagers" />
-          <EntitySet Name="vi_ClientsWithProducts" EntityType="Self.vi_ClientsWithProducts" />
-          <EntitySet Name="vi_ClientTeams" EntityType="Self.vi_ClientTeams" />
-          <EntitySet Name="vi_OpenProjectProducts" EntityType="Self.vi_OpenProjectProducts" />
-          <EntitySet Name="vi_OpenProjects" EntityType="Self.vi_OpenProjects" />
-          <EntitySet Name="vi_ProjectTeams" EntityType="Self.vi_ProjectTeams" />
-          <EntitySet Name="vi_StaffEntities" EntityType="Self.vi_StaffEntities" />
-          <EntitySet Name="vi_StaffWithRoles" EntityType="Self.vi_StaffWithRoles" />
           <AssociationSet Name="fk_ClientProductID" Association="Self.fk_ClientProductID">
             <End Role="Products" EntitySet="Products" />
             <End Role="ClientProducts" EntitySet="ClientProducts" />
@@ -2235,6 +1763,8 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
             <Parameter Name="Active" Mode="In" Type="Boolean" />
             <Parameter Name="DefaultEntity" Mode="In" Type="Int32" />
             <Parameter Name="MainProject" Mode="In" Type="Int32" />
+            <Parameter Name="SingleSignon" Mode="In" Type="Boolean" />
+            <Parameter Name="OSUser" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="stf_InsertIntoStaffEntities">
             <Parameter Name="StaffID" Mode="In" Type="Int32" />
@@ -2607,6 +2137,8 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
           <EntitySetMapping Name="Staff">
             <EntityTypeMapping TypeName="ProjectTileModel.Staff">
               <MappingFragment StoreEntitySet="Staff">
+                <ScalarProperty Name="OSUser" ColumnName="OSUser" />
+                <ScalarProperty Name="SingleSignon" ColumnName="SingleSignon" />
                 <ScalarProperty Name="MainProject" ColumnName="MainProject" />
                 <ScalarProperty Name="FullName" ColumnName="FullName" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
@@ -2651,139 +2183,6 @@ warning 6002: The table/view 'ProjectTile.dbo.vi_StaffWithRoles' does not have a
                 <ScalarProperty Name="UpdateRows" ColumnName="UpdateRows" />
                 <ScalarProperty Name="InsertRows" ColumnName="InsertRows" />
                 <ScalarProperty Name="ChangeStatus" ColumnName="ChangeStatus" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="vi_ClientStaff">
-            <EntityTypeMapping TypeName="ProjectTileModel.vi_ClientStaff">
-              <MappingFragment StoreEntitySet="vi_ClientStaff">
-                <ScalarProperty Name="StaffActive" ColumnName="StaffActive" />
-                <ScalarProperty Name="ClientActive" ColumnName="ClientActive" />
-                <ScalarProperty Name="EntityName" ColumnName="EntityName" />
-                <ScalarProperty Name="ClientCode" ColumnName="ClientCode" />
-                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
-                <ScalarProperty Name="StaffName" ColumnName="StaffName" />
-                <ScalarProperty Name="JobTitle" ColumnName="JobTitle" />
-                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="vi_ClientsWithAccountManagers">
-            <EntityTypeMapping TypeName="ProjectTileModel.vi_ClientsWithAccountManagers">
-              <MappingFragment StoreEntitySet="vi_ClientsWithAccountManagers">
-                <ScalarProperty Name="EntityName" ColumnName="EntityName" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="ClientCode" ColumnName="ClientCode" />
-                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
-                <ScalarProperty Name="Active" ColumnName="Active" />
-                <ScalarProperty Name="AccountManagerName" ColumnName="AccountManagerName" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="vi_ClientsWithProducts">
-            <EntityTypeMapping TypeName="ProjectTileModel.vi_ClientsWithProducts">
-              <MappingFragment StoreEntitySet="vi_ClientsWithProducts">
-                <ScalarProperty Name="EntityName" ColumnName="EntityName" />
-                <ScalarProperty Name="ClientID" ColumnName="ClientID" />
-                <ScalarProperty Name="ClientCode" ColumnName="ClientCode" />
-                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
-                <ScalarProperty Name="ProductID" ColumnName="ProductID" />
-                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
-                <ScalarProperty Name="ProductVersion" ColumnName="ProductVersion" />
-                <ScalarProperty Name="LatestVersion" ColumnName="LatestVersion" />
-                <ScalarProperty Name="ProductDescription" ColumnName="ProductDescription" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="vi_ClientTeams">
-            <EntityTypeMapping TypeName="ProjectTileModel.vi_ClientTeams">
-              <MappingFragment StoreEntitySet="vi_ClientTeams">
-                <ScalarProperty Name="EntityName" ColumnName="EntityName" />
-                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
-                <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
-                <ScalarProperty Name="StaffName" ColumnName="StaffName" />
-                <ScalarProperty Name="JobTitle" ColumnName="JobTitle" />
-                <ScalarProperty Name="RoleDescription" ColumnName="RoleDescription" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="vi_OpenProjectProducts">
-            <EntityTypeMapping TypeName="ProjectTileModel.vi_OpenProjectProducts">
-              <MappingFragment StoreEntitySet="vi_OpenProjectProducts">
-                <ScalarProperty Name="ProjectCode" ColumnName="ProjectCode" />
-                <ScalarProperty Name="ClientCode" ColumnName="ClientCode" />
-                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
-                <ScalarProperty Name="TypeName" ColumnName="TypeName" />
-                <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
-                <ScalarProperty Name="StageName" ColumnName="StageName" />
-                <ScalarProperty Name="ProjectStatus" ColumnName="ProjectStatus" />
-                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
-                <ScalarProperty Name="OldVersion" ColumnName="OldVersion" />
-                <ScalarProperty Name="NewVersion" ColumnName="NewVersion" />
-                <ScalarProperty Name="ClientVersion" ColumnName="ClientVersion" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="vi_OpenProjects">
-            <EntityTypeMapping TypeName="ProjectTileModel.vi_OpenProjects">
-              <MappingFragment StoreEntitySet="vi_OpenProjects">
-                <ScalarProperty Name="EntityName" ColumnName="EntityName" />
-                <ScalarProperty Name="ProjectCode" ColumnName="ProjectCode" />
-                <ScalarProperty Name="ClientID" ColumnName="ClientID" />
-                <ScalarProperty Name="ClientCode" ColumnName="ClientCode" />
-                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
-                <ScalarProperty Name="TypeName" ColumnName="TypeName" />
-                <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
-                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
-                <ScalarProperty Name="StageCode" ColumnName="StageCode" />
-                <ScalarProperty Name="StageName" ColumnName="StageName" />
-                <ScalarProperty Name="ProjectStatus" ColumnName="ProjectStatus" />
-                <ScalarProperty Name="ProjectSummary" ColumnName="ProjectSummary" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="vi_ProjectTeams">
-            <EntityTypeMapping TypeName="ProjectTileModel.vi_ProjectTeams">
-              <MappingFragment StoreEntitySet="vi_ProjectTeams">
-                <ScalarProperty Name="EntityName" ColumnName="EntityName" />
-                <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
-                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
-                <ScalarProperty Name="StaffName" ColumnName="StaffName" />
-                <ScalarProperty Name="ProjectRoleCode" ColumnName="ProjectRoleCode" />
-                <ScalarProperty Name="ProjectRoleDescription" ColumnName="ProjectRoleDescription" />
-                <ScalarProperty Name="JobTitle" ColumnName="JobTitle" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="vi_StaffEntities">
-            <EntityTypeMapping TypeName="ProjectTileModel.vi_StaffEntities">
-              <MappingFragment StoreEntitySet="vi_StaffEntities">
-                <ScalarProperty Name="DefaultEntity" ColumnName="DefaultEntity" />
-                <ScalarProperty Name="StaffName" ColumnName="StaffName" />
-                <ScalarProperty Name="EntityName" ColumnName="EntityName" />
-                <ScalarProperty Name="EntityDescription" ColumnName="EntityDescription" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="vi_StaffWithRoles">
-            <EntityTypeMapping TypeName="ProjectTileModel.vi_StaffWithRoles">
-              <MappingFragment StoreEntitySet="vi_StaffWithRoles">
-                <ScalarProperty Name="MainProject" ColumnName="MainProject" />
-                <ScalarProperty Name="FullName" ColumnName="FullName" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
-                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
-                <ScalarProperty Name="Surname" ColumnName="Surname" />
-                <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
-                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
-                <ScalarProperty Name="LeaveDate" ColumnName="LeaveDate" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
-                <ScalarProperty Name="Passwd" ColumnName="Passwd" />
-                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
-                <ScalarProperty Name="Active" ColumnName="Active" />
-                <ScalarProperty Name="DefaultEntity" ColumnName="DefaultEntity" />
-                <ScalarProperty Name="RoleDescription" ColumnName="RoleDescription" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
