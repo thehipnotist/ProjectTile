@@ -667,6 +667,8 @@ BEGIN TRY
 			, DefaultEntity				INT
 				CONSTRAINT fk_StaffEntity FOREIGN KEY REFERENCES dbo.Entities (ID)
 			, MainProject				INT
+			, SingleSignon				BIT				NOT NULL
+			, OSUser					VARCHAR(50)
 			) 
 
 		PRINT 'Created staff table'
@@ -758,33 +760,33 @@ BEGIN TRY
 		-- Poplate the table
 
 		INSERT INTO dbo.Staff (
-							FirstName,	Surname,		RoleCode,	StartDate,		LeaveDate,		UserID,		Passwd,	Active, DefaultEntity)
-			SELECT			'System',	'Admin',		'AD',		'2000-01-01',	NULL,			'pjadmin',	'pja',	1,		1
-			UNION SELECT	'Julie',	'Drench',		'SM',		'2010-01-01',	'2019-08-03',	NULL,		'',		0,		1
-			UNION SELECT	'Michel',	'Jambon',		'SM',		'2010-01-01',	NULL,			NULL,		'',		0,		1
-			UNION SELECT	'Maddie',	'Smidt',		'SM',		'2010-01-01',	NULL,			NULL,		'',		0,		1
-			UNION SELECT	'Benjamin',	'Lumberjack',	'PM',		'2010-01-01',	NULL,			NULL,		'',		0,		1
-			UNION SELECT	'Kayleigh',	'Dawes',		'PM',		'2018-01-01',	'2019-10-15',	NULL,		'',		0,		1
-			UNION SELECT	'Kenny',	'Hendry',		'PM',		'2010-01-01',	NULL,			NULL,		'',		0,		1
-			UNION SELECT	'Gemma',	'Johnson',		'PM',		'2010-01-01',	NULL,			NULL,		'',		0,		1
-			UNION SELECT	'Amit',		'Malawi',		'AM',		'2015-09-30',	NULL,			NULL,		'',		0,		1
-			UNION SELECT	'Sandie',	'Newtown',		'AM',		'2010-01-01',	NULL,			NULL,		'',		0,		1
-			UNION SELECT	'Tim',		'Middleton',	'AM',		'2010-01-01',	NULL,			NULL,		'',		0,		1
-			UNION SELECT	'Olive',	'Coleman',		'AM',		'2010-05-02',	NULL,			NULL,		'',		0,		1
-			UNION SELECT	'Jack',		'Greengage',	'SC',		'2010-01-01',	NULL,			NULL,		'',		0,		1
-			UNION SELECT	'Nellie',	'Harrison',		'SC',		'2012-07-01',	NULL,			NULL,		'',		0,		1
-			UNION SELECT	'Ken',		'Bramall',		'SC',		'2010-01-01',	NULL,			NULL,		'',		0,		1
-			UNION SELECT	'Jessie',	'Higgs',		'AC',		'2010-01-01',	NULL,			NULL,		'',		0,		1
-			UNION SELECT	'Simone',	'Egg',			'AC',		'2010-01-01',	'2018-05-02',	NULL,		'',		0,		1
-			UNION SELECT	'Kelly',	'Goldiman',		'AC',		'2010-01-01',	NULL,			NULL,		'',		0,		1
-			UNION SELECT	'Terry',	'Robins',		'AC',		'2010-01-01',	NULL,			NULL,		'',		0,		1
-			UNION SELECT	'Meena',	'Hyal',			'TM',		'2010-01-01',	NULL,			NULL,		'',		0,		1
-			UNION SELECT	'Len',		'Wisher',		'TM',		'2010-01-01',	NULL,			NULL,		'',		0,		1
-			UNION SELECT	'Emmie',	'Swanson',		'TM',		'2015-10-07',	NULL,			NULL,		'',		0,		1
-			UNION SELECT	'Nev',		'Patil',		'TC',		'2010-01-01',	NULL,			NULL,		'',		0,		1
-			UNION SELECT	'Billy',	'Paper',		'TC',		'2010-01-01',	NULL,			NULL,		'',		0,		1
-			UNION SELECT	'James',	'Bellman',		'TC',		'2010-01-01',	NULL,			NULL,		'',		0,		1
-			UNION SELECT	'Jamelia',	'Jemal',		'TC',		'2010-01-01',	NULL,			NULL,		'',		0,		1
+							FirstName,	Surname,		RoleCode,	StartDate,		LeaveDate,		UserID,		Passwd,	Active, DefaultEntity,	SingleSignon,	OSUser)
+			SELECT			'System',	'Admin',		'AD',		'2000-01-01',	NULL,			'pjadmin',	'E*l3',	1,		1,				1,				SYSTEM_USER
+			UNION SELECT	'Julie',	'Drench',		'SM',		'2010-01-01',	'2019-08-03',	NULL,		'',		0,		1,				0,				''
+			UNION SELECT	'Michel',	'Jambon',		'SM',		'2010-01-01',	NULL,			NULL,		'',		0,		1,				0,				''
+			UNION SELECT	'Maddie',	'Smidt',		'SM',		'2010-01-01',	NULL,			NULL,		'',		0,		1,				0,				''
+			UNION SELECT	'Benjamin',	'Lumberjack',	'PM',		'2010-01-01',	NULL,			NULL,		'',		0,		1,				1,				''
+			UNION SELECT	'Kayleigh',	'Dawes',		'PM',		'2018-01-01',	'2019-10-15',	NULL,		'',		0,		1,				0,				''
+			UNION SELECT	'Kenny',	'Hendry',		'PM',		'2010-01-01',	NULL,			NULL,		'',		0,		1,				0,				''
+			UNION SELECT	'Gemma',	'Johnson',		'PM',		'2010-01-01',	NULL,			NULL,		'',		0,		1,				0,				''
+			UNION SELECT	'Amit',		'Malawi',		'AM',		'2015-09-30',	NULL,			NULL,		'',		0,		1,				1,				''
+			UNION SELECT	'Sandie',	'Newtown',		'AM',		'2010-01-01',	NULL,			NULL,		'',		0,		1,				0,				''
+			UNION SELECT	'Tim',		'Middleton',	'AM',		'2010-01-01',	NULL,			NULL,		'',		0,		1,				0,				''
+			UNION SELECT	'Olive',	'Coleman',		'AM',		'2010-05-02',	NULL,			NULL,		'',		0,		1,				0,				''
+			UNION SELECT	'Jack',		'Greengage',	'SC',		'2010-01-01',	NULL,			NULL,		'',		0,		1,				0,				''
+			UNION SELECT	'Nellie',	'Harrison',		'SC',		'2012-07-01',	NULL,			NULL,		'',		0,		1,				0,				''
+			UNION SELECT	'Ken',		'Bramall',		'SC',		'2010-01-01',	NULL,			NULL,		'',		0,		1,				0,				''
+			UNION SELECT	'Jessie',	'Higgs',		'AC',		'2010-01-01',	NULL,			NULL,		'',		0,		1,				1,				''
+			UNION SELECT	'Simone',	'Egg',			'AC',		'2010-01-01',	'2018-05-02',	NULL,		'',		0,		1,				0,				''
+			UNION SELECT	'Kelly',	'Goldiman',		'AC',		'2010-01-01',	NULL,			NULL,		'',		0,		1,				0,				''
+			UNION SELECT	'Terry',	'Robins',		'AC',		'2010-01-01',	NULL,			NULL,		'',		0,		1,				0,				''
+			UNION SELECT	'Meena',	'Hyal',			'TM',		'2010-01-01',	NULL,			NULL,		'',		0,		1,				0,				''
+			UNION SELECT	'Len',		'Wisher',		'TM',		'2010-01-01',	NULL,			NULL,		'',		0,		1,				0,				''
+			UNION SELECT	'Emmie',	'Swanson',		'TM',		'2015-10-07',	NULL,			NULL,		'',		0,		1,				0,				''
+			UNION SELECT	'Nev',		'Patil',		'TC',		'2010-01-01',	NULL,			NULL,		'',		0,		1,				0,				''
+			UNION SELECT	'Billy',	'Paper',		'TC',		'2010-01-01',	NULL,			NULL,		'',		0,		1,				0,				''
+			UNION SELECT	'James',	'Bellman',		'TC',		'2010-01-01',	NULL,			NULL,		'',		0,		1,				0,				''
+			UNION SELECT	'Jamelia',	'Jemal',		'TC',		'2010-01-01',	NULL,			NULL,		'',		0,		1,				0,				''
 
 		PRINT 'Populated staff table'
 

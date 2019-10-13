@@ -132,41 +132,13 @@
         </RadialGradientBrush>
 
         <!-- Reds -->
-        <Color x:Key="PtColorLogin3" R="255" A="255"/>
-        <SolidColorBrush x:Key="PtBrushLogin3" Color="{StaticResource PtColorLogin3}"/>
-
-        <Color x:Key="PtColorLogin2" R="255" G="91" B="91" A="255"/>
-        <SolidColorBrush x:Key="PtBrushLogin2" Color="{StaticResource PtColorLogin2}"/>
-
-        <Color x:Key="PtColorLogin1" R="255" G="171" B="171" A="255"/>
-        <SolidColorBrush x:Key="PtBrushLogin1" Color="{StaticResource PtColorLogin1}"/>
-
-        <RadialGradientBrush x:Key="PtGradientLogin2">
-            <RadialGradientBrush.GradientStops>
-                <GradientStopCollection>
-                    <GradientStop Color="{StaticResource PtColorLogin2}" Offset="0"/>
-                    <GradientStop Color="{StaticResource PtColorLogin3}" Offset="1"/>
-                </GradientStopCollection>
-            </RadialGradientBrush.GradientStops>
-        </RadialGradientBrush>
-
-        <RadialGradientBrush x:Key="PtGradientLogin1">
-            <RadialGradientBrush.GradientStops>
-                <GradientStopCollection>
-                    <GradientStop Color="{StaticResource PtColorLogin1}" Offset="0"/>
-                    <GradientStop Color="{StaticResource PtColorLogin2}" Offset="1"/>
-                </GradientStopCollection>
-            </RadialGradientBrush.GradientStops>
-        </RadialGradientBrush>
-
-        <!-- Purples -->
-        <Color x:Key="PtColorClient3" R="160" G="0" B="220"  A="255"/>
+        <Color x:Key="PtColorClient3" R="255" A="255"/>
         <SolidColorBrush x:Key="PtBrushClient3" Color="{StaticResource PtColorClient3}"/>
 
-        <Color x:Key="PtColorClient2" R="189" G="77" B="231" A="255"/>
+        <Color x:Key="PtColorClient2" R="255" G="91" B="91" A="255"/>
         <SolidColorBrush x:Key="PtBrushClient2" Color="{StaticResource PtColorClient2}"/>
 
-        <Color x:Key="PtColorClient1" R="217" G="153" B="241" A="255"/>
+        <Color x:Key="PtColorClient1" R="255" G="171" B="171" A="255"/>
         <SolidColorBrush x:Key="PtBrushClient1" Color="{StaticResource PtColorClient1}"/>
 
         <RadialGradientBrush x:Key="PtGradientClient2">
@@ -187,14 +159,14 @@
             </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
 
-        <!-- Blues -->
-        <Color x:Key="PtColorProject3" R="50" G="55" B="255"  A="255"/>
+        <!-- Purples -->
+        <Color x:Key="PtColorProject3" R="160" G="0" B="220"  A="255"/>
         <SolidColorBrush x:Key="PtBrushProject3" Color="{StaticResource PtColorProject3}"/>
 
-        <Color x:Key="PtColorProject2" R="120" G="123" B="255" A="255"/>
+        <Color x:Key="PtColorProject2" R="189" G="77" B="231" A="255"/>
         <SolidColorBrush x:Key="PtBrushProject2" Color="{StaticResource PtColorProject2}"/>
 
-        <Color x:Key="PtColorProject1" R="187" G="189" B="255" A="255"/>
+        <Color x:Key="PtColorProject1" R="217" G="153" B="241" A="255"/>
         <SolidColorBrush x:Key="PtBrushProject1" Color="{StaticResource PtColorProject1}"/>
 
         <RadialGradientBrush x:Key="PtGradientProject2">
@@ -215,14 +187,42 @@
             </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
 
-        <!-- Greys -->
-        <Color x:Key="PtColorHelp3" R="200" G="200" B="200"  A="255"/>
+        <!-- Blues -->
+        <Color x:Key="PtColorAdmin3" R="50" G="55" B="255"  A="255"/>
+        <SolidColorBrush x:Key="PtBrushAdmin3" Color="{StaticResource PtColorAdmin3}"/>
+
+        <Color x:Key="PtColorAdmin2" R="120" G="123" B="255" A="255"/>
+        <SolidColorBrush x:Key="PtBrushAdmin2" Color="{StaticResource PtColorAdmin2}"/>
+
+        <Color x:Key="PtColorAdmin1" R="187" G="189" B="255" A="255"/>
+        <SolidColorBrush x:Key="PtBrushAdmin1" Color="{StaticResource PtColorAdmin1}"/>
+
+        <RadialGradientBrush x:Key="PtGradientAdmin2">
+            <RadialGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="{StaticResource PtColorAdmin2}" Offset="0"/>
+                    <GradientStop Color="{StaticResource PtColorAdmin3}" Offset="1"/>
+                </GradientStopCollection>
+            </RadialGradientBrush.GradientStops>
+        </RadialGradientBrush>
+
+        <RadialGradientBrush x:Key="PtGradientAdmin1">
+            <RadialGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="{StaticResource PtColorAdmin1}" Offset="0"/>
+                    <GradientStop Color="{StaticResource PtColorAdmin2}" Offset="1"/>
+                </GradientStopCollection>
+            </RadialGradientBrush.GradientStops>
+        </RadialGradientBrush>
+
+        <!-- Browns -->
+        <Color x:Key="PtColorHelp3" R="170" G="90" B="50"  A="255"/>
         <SolidColorBrush x:Key="PtBrushHelp3" Color="{StaticResource PtColorHelp3}"/>
 
-        <Color x:Key="PtColorHelp2" R="217" G="217" B="217" A="255"/>
+        <Color x:Key="PtColorHelp2" R="196" G="140" B="112" A="255"/>
         <SolidColorBrush x:Key="PtBrushHelp2" Color="{StaticResource PtColorHelp2}"/>
 
-        <Color x:Key="PtColorHelp1" R="233" G="233" B="241" A="233"/>
+        <Color x:Key="PtColorHelp1" R="221" G="189" B="173" A="255"/>
         <SolidColorBrush x:Key="PtBrushHelp1" Color="{StaticResource PtColorHelp1}"/>
 
         <RadialGradientBrush x:Key="PtGradientHelp2">
@@ -239,6 +239,34 @@
                 <GradientStopCollection>
                     <GradientStop Color="{StaticResource PtColorHelp1}" Offset="0"/>
                     <GradientStop Color="{StaticResource PtColorHelp2}" Offset="1"/>
+                </GradientStopCollection>
+            </RadialGradientBrush.GradientStops>
+        </RadialGradientBrush>        
+        
+        <!-- Greys -->
+        <Color x:Key="PtColorLogin3" R="200" G="200" B="200"  A="255"/>
+        <SolidColorBrush x:Key="PtBrushLogin3" Color="{StaticResource PtColorLogin3}"/>
+
+        <Color x:Key="PtColorLogin2" R="217" G="217" B="217" A="255"/>
+        <SolidColorBrush x:Key="PtBrushLogin2" Color="{StaticResource PtColorLogin2}"/>
+
+        <Color x:Key="PtColorLogin1" R="233" G="233" B="241" A="233"/>
+        <SolidColorBrush x:Key="PtBrushLogin1" Color="{StaticResource PtColorLogin1}"/>
+
+        <RadialGradientBrush x:Key="PtGradientLogin2">
+            <RadialGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="{StaticResource PtColorLogin2}" Offset="0"/>
+                    <GradientStop Color="{StaticResource PtColorLogin3}" Offset="1"/>
+                </GradientStopCollection>
+            </RadialGradientBrush.GradientStops>
+        </RadialGradientBrush>
+
+        <RadialGradientBrush x:Key="PtGradientLogin1">
+            <RadialGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="{StaticResource PtColorLogin1}" Offset="0"/>
+                    <GradientStop Color="{StaticResource PtColorLogin2}" Offset="1"/>
                 </GradientStopCollection>
             </RadialGradientBrush.GradientStops>
         </RadialGradientBrush>
@@ -262,10 +290,12 @@
         <ToolTip x:Key="ProjectTip" Content="Projects are initiatives to implement, upgrade or improve software, usually with and on behalf of clients"/>
         <ToolTip x:Key="ExitTip" Content="Leave the ProjectTile application"/>
         <ToolTip x:Key="HelpTip" Content="Find out more about ProjectTile"/>
+        <ToolTip x:Key="AdminTip" Content="Overall ProjectTile system administration"/>        
 
         <!-- Images -->
         <BitmapImage x:Key="AboutIcon" UriSource="StatusAnnotations_Information_32xLG.png"/>
         <BitmapImage x:Key="AddIcon" UriSource="112_Plus_Grey_24x24_72.png"/>
+        <BitmapImage x:Key="AdminIcon" UriSource="Gear.png"/>
         <BitmapImage x:Key="AmendIcon" UriSource="Rename.png"/>
         <BitmapImage x:Key="AssistIcon" UriSource="1508_QuestionMarkRed.png"/>
         <BitmapImage x:Key="BackIcon" UriSource="112_LeftArrowLong_Grey_24x24_72.png"/>

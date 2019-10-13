@@ -62,10 +62,13 @@
                 <MenuItem x:Name="ProjectContact" Header="Project (Client) Contacts" FontWeight="Normal" Background="{StaticResource PtBrushClient1}" Foreground="Black" Click="ProjectContact_Click"/>
                 <MenuItem x:Name="ProjectProduct" Header="Project Products" FontWeight="Normal" Background="{StaticResource PtBrushProduct1}" Foreground="Black" Click="ProjectProduct_Click"/>
             </MenuItem>
+            <MenuItem x:Name="AdminMenu" Header="_Admin" FontWeight="Bold" ToolTip="{StaticResource AdminTip}" BorderBrush="{x:Null}"
+                      Padding="6,0,6,0" HorizontalContentAlignment="Center" Background ="{StaticResource PtBrushBackgroundBlue}" Foreground="{StaticResource PtBrushAdmin3}" HorizontalAlignment="Left">
+            </MenuItem>
         </Menu>
 
         <Menu x:Name="RightMenu" Height="20" HorizontalAlignment="Right" VerticalAlignment="Top" Background="{x:Null}" Visibility="Visible" VerticalContentAlignment="Center" 
-              Margin="0,5,5,0" FontFamily="Yu Gothic" Foreground="White" Grid.Column="1">
+              Margin="0,5,5,0" FontFamily="Yu Gothic" Foreground="White" Grid.Column="1">           
             <MenuItem x:Name="LoginMenu" Header="_Login" FontWeight="Bold" ToolTip="{StaticResource LoginTip}" BorderBrush="{x:Null}"
                       Padding="6,0,6,0" HorizontalContentAlignment="Center" Background ="{StaticResource PtBrushBackgroundBlue}" Foreground="{StaticResource PtBrushLogin3}" HorizontalAlignment="Left">
                 <MenuItem x:Name="ChangeLogin" Header="Change Login" Click="LoginMenu_Login_Click" FontWeight="Normal" Background="{StaticResource PtBrushLogin1}" Foreground="Black"/>

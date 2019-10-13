@@ -77,17 +77,17 @@
                     GotFocus="buttonGotFocus" LostFocus="buttonLostFocus" Click="button_Click" ToolTip="{DynamicResource HelpTip}" Grid.Column="2" Style="{DynamicResource TileStyle}">
                 <Label Style="{DynamicResource TileLabelStyle}" Background="{DynamicResource PtGradientHelp2}">
                     <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Image Source="{DynamicResource HelpIcon}" Height="20" Width="20" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                        <Image Source="{DynamicResource HelpIcon}" Height="20" Width="20" VerticalAlignment="Top" HorizontalAlignment="Left"  Margin="2,2,0,0"/>
                         <TextBlock x:Name="HelpText" TextAlignment="Center" TextWrapping="Wrap" Text="Help" Foreground="White" VerticalAlignment="Center" Margin="2,0,2,0"/>
                     </Grid>
                 </Label>
             </Button>
-            <Button x:Name="ClientButton" Margin="0,255,0,0" FontWeight="Bold" Background="{DynamicResource PtBrushClient2}" MouseEnter="buttonMouseOver" MouseLeave="buttonMouseOut" 
-                    GotFocus="buttonGotFocus" LostFocus="buttonLostFocus" Click="button_Click" ToolTip="{DynamicResource ClientTip}" Grid.Column="2" Style="{DynamicResource TileStyle}">
-                <Label Style="{DynamicResource TileLabelStyle}" Background="{DynamicResource PtGradientClient2}">
+            <Button x:Name="AdminButton" Margin="0,255,0,0" FontWeight="Bold" Background="{DynamicResource PtBrushAdmin2}" MouseEnter="buttonMouseOver" MouseLeave="buttonMouseOut" 
+                    GotFocus="buttonGotFocus" LostFocus="buttonLostFocus" Click="button_Click" ToolTip="{DynamicResource AdminTip}" Grid.Column="2" Style="{DynamicResource TileStyle}">
+                <Label Style="{DynamicResource TileLabelStyle}" Background="{DynamicResource PtGradientAdmin2}">
                     <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Image Source="{DynamicResource ClientIcon}" Height="20" Width="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="2,2,0,0"/>
-                        <TextBlock x:Name="ClientText" TextAlignment="Center" TextWrapping="Wrap" Text="Clients" Foreground="White" VerticalAlignment="Center" Margin="2,0,2,0"/>
+                        <Image Source="{DynamicResource AdminIcon}" Height="20" Width="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="2,2,0,0"/>
+                        <TextBlock x:Name="AdminText" TextAlignment="Center" TextWrapping="Wrap" Text="Admin" Foreground="White" VerticalAlignment="Center" Margin="2,0,2,0"/>
                     </Grid>
                 </Label>
             </Button>
@@ -95,16 +95,25 @@
                     GotFocus="buttonGotFocus" LostFocus="buttonLostFocus" Click="button_Click" ToolTip="{DynamicResource ProjectTip}" Grid.Column="2" Style="{DynamicResource TileStyle}">
                 <Label Style="{DynamicResource TileLabelStyle}" Background="{DynamicResource PtGradientProject2}">
                     <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Image Source="{DynamicResource ProjectIcon}" Height="20" Width="20" VerticalAlignment="Top" Margin="2,2,0,0"/>
+                        <Image Source="{DynamicResource ProjectIcon}" Height="20" Width="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="2,2,0,0"/>
                         <TextBlock x:Name="ProjectText" TextAlignment="Center" TextWrapping="Wrap" Text="Projects" Foreground="White" VerticalAlignment="Center" Margin="2,0,2,0"/>
                     </Grid>
                 </Label>
             </Button>
+            <Button x:Name="ClientButton" Margin="330,255,0,0" FontWeight="Bold" Background="{DynamicResource PtBrushClient2}" MouseEnter="buttonMouseOver" MouseLeave="buttonMouseOut" 
+                    GotFocus="buttonGotFocus" LostFocus="buttonLostFocus" Click="button_Click" ToolTip="{DynamicResource ClientTip}" Grid.Column="2" Style="{DynamicResource TileStyle}">
+                <Label Style="{DynamicResource TileLabelStyle}" Background="{DynamicResource PtGradientClient2}">
+                    <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Image Source="{DynamicResource ClientIcon}" Height="20" Width="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="2,2,0,0"/>
+                        <TextBlock x:Name="ClientText" TextAlignment="Center" TextWrapping="Wrap" Text="Clients" Foreground="White" VerticalAlignment="Center" Margin="2,0,2,0"/>
+                    </Grid>
+                </Label>
+            </Button>            
             <Button x:Name="LoginButton" Margin="495,255,0,0" FontWeight="Bold" Background="{DynamicResource PtBrushLogin2}" MouseEnter="buttonMouseOver" MouseLeave="buttonMouseOut" 
                     GotFocus="buttonGotFocus" LostFocus="buttonLostFocus" Click="button_Click" ToolTip="{DynamicResource LoginTip}" Grid.Column="2" Style="{DynamicResource TileStyle}">
                 <Label Style="{DynamicResource TileLabelStyle}" Background="{DynamicResource PtGradientLogin2}">
                     <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Image Source="{DynamicResource LoginIcon}" Height="20" Width="20" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                        <Image Source="{DynamicResource LoginIcon}" Height="20" Width="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="2,2,0,0"/>
                         <TextBlock x:Name="LoginText" TextAlignment="Center" TextWrapping="Wrap" Text="Login" Foreground="White" VerticalAlignment="Center" Margin="2,0,2,0"/>
                     </Grid>
                 </Label>
@@ -147,7 +156,7 @@
                 </Label>
             </Button>
 
-            <Button x:Name="StaffButton_View" Margin="285,90,0,0" Background="{DynamicResource PtBrushStaff1}" MouseLeave="buttonMouseOut" 
+            <Button x:Name="StaffButton_View" Margin="45,90,0,0" Background="{DynamicResource PtBrushStaff1}" MouseLeave="buttonMouseOut" 
                         Visibility="Hidden" Click="StaffButton_View_Click" Grid.Column="2" Style="{DynamicResource TileStyle}">
                 <Label  Background="{DynamicResource PtGradientStaff1}" Style="{DynamicResource TileLabelStyle2}">
                     <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -174,7 +183,7 @@
                     </Grid>
                 </Label>
             </Button>
-            <Button x:Name="StaffButton_Entities" Margin="45,90,0,0" Background="{DynamicResource PtBrushEntity2}" MouseLeave="buttonMouseOut" 
+            <Button x:Name="StaffButton_Entities" Margin="285,90,0,0" Background="{DynamicResource PtBrushEntity2}" MouseLeave="buttonMouseOut" 
                         Visibility="Hidden" Click="StaffButton_Entities_Click" Grid.Column="2" Style="{DynamicResource TileStyle}">
                 <Label  Background="{DynamicResource PtGradientStaff1}" Style="{DynamicResource TileLabelStyle2}">
                     <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -259,7 +268,7 @@
                 </Label>
             </Button>
 
-            <Button x:Name="ClientButton_View" Margin="120,255,0,0" Background="{DynamicResource PtBrushClient1}" MouseLeave="buttonMouseOut" 
+            <Button x:Name="ClientButton_View" Margin="210,255,0,0" Background="{DynamicResource PtBrushClient1}" MouseLeave="buttonMouseOut" 
                         Grid.Column="2" Click="ClientButton_View_Click" Visibility="Hidden" Style="{DynamicResource TileStyle}">
                 <Label  Background="{DynamicResource PtGradientClient1}" Style="{DynamicResource TileLabelStyle}">
                     <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -268,7 +277,7 @@
                     </Grid>
                 </Label>
             </Button>
-            <Button x:Name="ClientButton_New" Margin="0,135,0,0" Background="{DynamicResource PtBrushClient1}" MouseLeave="buttonMouseOut" 
+            <Button x:Name="ClientButton_New" Margin="330,135,0,0" Background="{DynamicResource PtBrushClient1}" MouseLeave="buttonMouseOut" 
                         Grid.Column="2" Visibility="Hidden" Click="ClientButton_New_Click" Style="{DynamicResource TileStyle}">
                 <Label  Background="{DynamicResource PtGradientClient1}"  Style="{DynamicResource TileLabelStyle}">
                     <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -277,7 +286,7 @@
                     </Grid>
                 </Label>
             </Button>
-            <Button x:Name="ClientButton_Amend" Margin="0,15,0,0" Background="{DynamicResource PtBrushClient1}" MouseLeave="buttonMouseOut" 
+            <Button x:Name="ClientButton_Amend" Margin="330,15,0,0" Background="{DynamicResource PtBrushClient1}" MouseLeave="buttonMouseOut" 
                         Grid.Column="2" Visibility="Hidden" Click="ClientButton_Amend_Click" Style="{DynamicResource TileStyle}">
                 <Label  Background="{DynamicResource PtGradientClient1}"  Style="{DynamicResource TileLabelStyle}">
                     <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -286,7 +295,7 @@
                     </Grid>
                 </Label>
             </Button>
-            <Button x:Name="ClientButton_Contact" Margin="240,255,0,0" Background="{DynamicResource PtBrushClient1}" MouseLeave="buttonMouseOut" 
+            <Button x:Name="ClientButton_Contact" Margin="450,255,0,0" Background="{DynamicResource PtBrushClient1}" MouseLeave="buttonMouseOut" 
                         Grid.Column="2" Visibility="Hidden" Click="ClientButton_Contact_Click" Style="{DynamicResource TileStyle}">
                 <Label  Background="{DynamicResource PtGradientClient1}" Style="{DynamicResource TileLabelStyle}">
                     <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -295,7 +304,7 @@
                     </Grid>
                 </Label>
             </Button>
-            <Button x:Name="ClientButton_Product" Margin="0,375,0,0" Background="{DynamicResource PtBrushProduct2}" MouseLeave="buttonMouseOut" 
+            <Button x:Name="ClientButton_Product" Margin="330,375,0,0" Background="{DynamicResource PtBrushProduct2}" MouseLeave="buttonMouseOut" 
                         Grid.Column="2" Visibility="Hidden" Click="ClientButton_Product_Click" Style="{DynamicResource TileStyle}">
                 <Label  Background="{DynamicResource PtGradientClient1}" 
                            Style="{DynamicResource TileLabelStyle}">
@@ -333,7 +342,7 @@
                     </Grid>
                 </Label>
             </Button>
-            <Button x:Name="ProjectButton_Staff" Margin="165,375,0,0" Background="{DynamicResource PtBrushStaff1}" MouseLeave="buttonMouseOut" 
+            <Button x:Name="ProjectButton_Staff" Margin="285,255,0,0" Background="{DynamicResource PtBrushStaff1}" MouseLeave="buttonMouseOut" 
                         Grid.Column="2" Visibility="Hidden" Click="ProjectButton_Staff_Click" Style="{DynamicResource TileStyle}">
                 <Label  Background="{DynamicResource PtGradientProject1}" Style="{DynamicResource TileLabelStyle}">
                     <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -351,7 +360,7 @@
                     </Grid>
                 </Label>
             </Button>
-            <Button x:Name="ProjectButton_Product" Margin="285,255,0,0" Background="{DynamicResource PtBrushProduct2}" MouseLeave="buttonMouseOut" 
+            <Button x:Name="ProjectButton_Product" Margin="165,375,0,0" Background="{DynamicResource PtBrushProduct2}" MouseLeave="buttonMouseOut" 
                         Grid.Column="2" Visibility="Hidden" Click="ProjectButton_Product_Click" Style="{DynamicResource TileStyle}">
                 <Label  Background="{DynamicResource PtGradientProject1}" Style="{DynamicResource TileLabelStyle}">
                     <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
