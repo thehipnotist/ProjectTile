@@ -335,7 +335,8 @@ namespace ProjectTile
             }
         }
 
-        public static int SaveStaffDetails(int staffID, string firstName, string surname, string roleDesc, DateTime? start, DateTime? leave, string userID, string passwd, bool active, string defaultEnt)
+        public static int SaveStaffDetails(int staffID, string firstName, string surname, string roleDesc, DateTime? start, DateTime? leave, string userID, string passwd, 
+            bool active, string defaultEnt, bool canSSO, string networkUser)
         {
             string errorMessage = "";
             bool addEntity = false;
@@ -352,6 +353,7 @@ namespace ProjectTile
             else if (leave < start) { errorMessage = "The user's start date cannot be after their leave date.|Invalid Date Combination"; } 
             else if (defaultEnt == "") { errorMessage = "Please select the staff member's default Entity from the drop-down list. Ask your system administrator if unsure.|No Entity Selected"; }
             else if (roleDesc == "") { errorMessage = "Please select the staff member's role from the drop-down list. Ask your system administrator if unsure what to choose.|No Role Selected"; }
+            else if (canSSO && networkUser == "") { errorMessage = "Please provide a Domain UserID for this user if they will use single sign-on.|No Network Username"; }           
 
             if (errorMessage != "")
             {
@@ -391,6 +393,8 @@ namespace ProjectTile
                                 newStaff.LeaveDate = leave;
                                 newStaff.DefaultEntity = defaultEntityID;
                                 newStaff.Active = active;
+                                newStaff.SingleSignon = canSSO;
+                                newStaff.OSUser = networkUser;
                             }
                             catch (Exception generalException)
                             {
@@ -458,6 +462,8 @@ namespace ProjectTile
                                 if (selectedStaff.StartDate != (DateTime)start) { selectedStaff.StartDate = (DateTime)start; }
                                 if (selectedStaff.LeaveDate != leave) { selectedStaff.LeaveDate = leave; }
                                 if (selectedStaff.Active != active) { selectedStaff.Active = active; }
+                                selectedStaff.SingleSignon = canSSO;
+                                selectedStaff.OSUser = networkUser;
                             }
                             catch (Exception generalException)
                             {

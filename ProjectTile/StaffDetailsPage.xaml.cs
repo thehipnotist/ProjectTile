@@ -85,6 +85,8 @@ namespace ProjectTile
                         if (thisStaffMember.LeaveDate != null) { LeaveDate.SelectedDate = thisStaffMember.LeaveDate; }
                         EntityCombo.SelectedItem = EntityFunctions.GetEntityName((int) thisStaffMember.DefaultEntity);
                         ActiveCheckBox.IsChecked = thisStaffMember.Active;
+                        SSOCheckBox.IsChecked = thisStaffMember.SingleSignon;
+                        DomainUser.Text = thisStaffMember.OSUser;
                     }
 
                     catch (Exception generalException) 
@@ -196,7 +198,7 @@ namespace ProjectTile
                 }
 
                 int returnID = StaffFunctions.SaveStaffDetails(selectedStaffID, FirstName.Text, Surname.Text, roleDescription, StartDate.SelectedDate, LeaveDate.SelectedDate,
-                    UserID.Text, passwd, active, defaultEntityName);
+                    UserID.Text, passwd, active, defaultEntityName, (SSOCheckBox.IsChecked == true), DomainUser.Text);
 
                 if (returnID > 0)
                 {
