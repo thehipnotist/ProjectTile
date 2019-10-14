@@ -9,6 +9,7 @@ namespace ProjectTile
     {
         public static bool FirstLoad = true;
         private static string domainUser = Environment.UserDomainName + "\\" + Environment.UserName;
+        
         //Password functions
 
         public static bool CheckPassword(string userID, string password)
@@ -64,6 +65,30 @@ namespace ProjectTile
             }
         }
 
+        public static bool HasSingleSignon(string userID)
+        {
+            try
+            {                
+                ProjectTileSqlDatabase defaultPtDb = SqlServerConnection.DefaultPtDbConnection();
+                using (defaultPtDb)
+                {
+                    Staff thisUser = defaultPtDb.Staff.FirstOrDefault(s => s.UserID == userID);
+                    if (thisUser == null) { return false; }
+                    else return (thisUser.SingleSignon && thisUser.OSUser != "" && thisUser.Active );
+                }
+            }
+            catch (SqlException sqlException)
+            {
+                MessageFunctions.Error("Error accessing the database", sqlException);
+                return false;
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error checking for single sign-on capability", generalException);
+                return false;
+            }
+        }
+
         public static bool SingleSignon(string userID)
         {
             Staff thisUser = null;
@@ -76,42 +101,40 @@ namespace ProjectTile
                 using (defaultPtDb)
                 {
                     thisUser = defaultPtDb.Staff.FirstOrDefault(s => s.UserID == userID);
-                    if (thisUser == null)
-                    {
-                        MessageFunctions.InvalidMessage("No matching user found with UserID " + userID + ".", "Invalid UserID");
-                        return false;
-                    }
-                    else if (thisUser.SingleSignon && domainUser == thisUser.OSUser) 
-                    {                        
-                        char[] validChars = Enumerable.Range('A', 26)
-                            .Concat(Enumerable.Range('a', 26))
-                            .Concat(Enumerable.Range('0', 10))
-                            .Select(i => (char)i)
-                            .ToArray();
-
-                        byte[] randomNumber = new byte[64 + 1];                        
-                        RNGCryptoServiceProvider crypto = new RNGCryptoServiceProvider();
-                        using (crypto)
-                        {
-                            crypto.GetBytes(randomNumber);
-                            int length = 32 + (int)(32 * (randomNumber[0] / (double)byte.MaxValue));
-                            newPassword = new string(randomNumber
-                                .Skip(1)
-                                .Take(length)
-                                .Select(b => (int) ((validChars.Length - 1) * (b / (double) byte.MaxValue)))
-                                .Select(i => validChars[i])
-                                .ToArray()
-                            );
-                            newPassword = newPassword.Substring(0, Math.Min(newPassword.Length, 20));
-                            crypto.Dispose();
-                        }
-                        thisUser.Passwd = newPassword;
-                        defaultPtDb.SaveChanges();
-                        AttemptLogin(userID, newPassword);
-                        return true;
-                    }
-                    else { return false; }
                 }
+                if (thisUser == null)
+                {
+                    MessageFunctions.InvalidMessage("No matching user found with UserID " + userID + ".", "Invalid UserID");
+                    return false;
+                }
+                else if (thisUser.SingleSignon && domainUser == thisUser.OSUser) 
+                {                        
+                    char[] validChars = Enumerable.Range('A', 26)
+                        .Concat(Enumerable.Range('a', 26))
+                        .Concat(Enumerable.Range('0', 10))
+                        .Select(i => (char)i)
+                        .ToArray();
+
+                    byte[] randomNumber = new byte[64 + 1];                        
+                    RNGCryptoServiceProvider crypto = new RNGCryptoServiceProvider();
+                    using (crypto)
+                    {
+                        crypto.GetBytes(randomNumber);
+                        int length = 32 + (int)(32 * (randomNumber[0] / (double)byte.MaxValue));
+                        newPassword = new string(randomNumber
+                            .Skip(1)
+                            .Take(length)
+                            .Select(b => (int) ((validChars.Length - 1) * (b / (double) byte.MaxValue)))
+                            .Select(i => validChars[i])
+                            .ToArray()
+                        );
+                        newPassword = newPassword.Substring(0, Math.Min(newPassword.Length, 20));
+                        crypto.Dispose();
+                    }
+                    AttemptLogin(userID, newPassword); // AttemptLogin will now handle the password change if needed
+                    return true;
+                }
+                else { return false; }                
             }
             catch (SqlException sqlException)
             {
@@ -122,6 +145,26 @@ namespace ProjectTile
             {
                 MessageFunctions.Error("Error finding matching staff member", generalException);
                 return false;
+            }
+        }
+
+        private static void changeDatabasePassword(string userID, string newPassword)
+        {
+            try
+            {
+                ProjectTileSqlDatabase defaultPtDb = SqlServerConnection.DefaultPtDbConnection();
+                using (defaultPtDb)
+                {                    
+                    defaultPtDb.stf_ChangeDatabasePassword(userID, newPassword);
+                }
+            }
+            catch (SqlException sqlException)
+            {
+                MessageFunctions.Error("Error accessing the database", sqlException);
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error updating database password to handle single sign-on", generalException);
             }
         }
 
@@ -248,7 +291,7 @@ namespace ProjectTile
             {
                 int entityID;
                 string databaseLogin = DbUserPrefix + userID;
-
+                if (HasSingleSignon(userID)) { changeDatabasePassword(userID, password); } // Changes only the back-end password, to set a new temp password for SSO or reset to the stored one for non-SSO
                 ProjectTileSqlDatabase userPtDb = SqlServerConnection.UserPtDbConnection(databaseLogin, password);
                 using (userPtDb)
                 {
@@ -263,7 +306,6 @@ namespace ProjectTile
                         else if (thisUser.StartDate > DateTime.Now) { MessageFunctions.InvalidMessage("User has not yet started. Please contact your system administrator.", "Not Current User"); }
                         else { LogIn(thisUser, currentEntity); }
                     }
-
                     return true;
                 }
             }

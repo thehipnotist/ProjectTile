@@ -13,16 +13,16 @@
         <EntityTypeShape EntityType="ProjectTileModel.ClientTeams" Width="1.5" PointX="7.5" PointY="15.5" IsExpanded="true" />
         <EntityTypeShape EntityType="ProjectTileModel.Entities" Width="1.5" PointX="0.75" PointY="12" IsExpanded="true" />
         <EntityTypeShape EntityType="ProjectTileModel.Products" Width="1.5" PointX="6" PointY="4" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.ProjectProducts" Width="1.5" PointX="10.5" PointY="12" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.ProjectRoles" Width="1.5" PointX="5.25" PointY="8.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.ProjectProducts" Width="1.5" PointX="7.5" PointY="8" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.ProjectRoles" Width="1.5" PointX="10.5" PointY="7.375" IsExpanded="true" />
         <EntityTypeShape EntityType="ProjectTileModel.Projects" Width="1.5" PointX="5.25" PointY="11" IsExpanded="true" />
         <EntityTypeShape EntityType="ProjectTileModel.ProjectStages" Width="1.5" PointX="3" PointY="16.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.ProjectTeams" Width="1.5" PointX="7.5" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.ProjectTeams" Width="1.5" PointX="12.75" PointY="11.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ProjectTileModel.ProjectTypes" Width="1.5" PointX="3" PointY="8.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.Staff" Width="1.5" PointX="10.5" PointY="5.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.StaffEntities" Width="1.5" PointX="12.75" PointY="8.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.Staff" Width="1.5" PointX="10.5" PointY="10.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.StaffEntities" Width="1.5" PointX="15.75" PointY="12.125" IsExpanded="true" />
         <EntityTypeShape EntityType="ProjectTileModel.StaffRoles" Width="1.5" PointX="8.25" PointY="4.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.TablePermissions" Width="1.5" PointX="10.5" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.TablePermissions" Width="1.5" PointX="10.5" PointY="3.25" IsExpanded="true" />
         <AssociationConnector Association="ProjectTileModel.fk_ClientProductID" ManuallyRouted="false" />
         <AssociationConnector Association="ProjectTileModel.fk_ProductClientID" ManuallyRouted="false" />
         <AssociationConnector Association="ProjectTileModel.fk_ClientAccountManagerID" ManuallyRouted="false" />

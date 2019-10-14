@@ -54,7 +54,9 @@
                 <Label x:Name="SSOLabel" Content="Single Sign-on" HorizontalAlignment="Right" Height="30" Margin="0,75,215,0" VerticalAlignment="Top" Width="100" FontWeight="Bold"/>
                 <CheckBox x:Name="SSOCheckBox" HorizontalAlignment="Right" Height="30" Margin="0,75,30,0" VerticalAlignment="Top" Width="180" FontWeight="Bold" 
                 	VerticalContentAlignment="Center" UseLayoutRounding="False" Style="{DynamicResource RoundedCheckbox}" Checked="SSOCheckBox_Checked" Unchecked="SSOCheckBox_Unchecked"/>
-
+                
+                <TextBlock x:Name="SSONote" Text="" HorizontalAlignment="Left" Margin="15,15,15,120" VerticalAlignment="Bottom" Width="625" FontWeight="Normal" Height="60" Padding="5" 
+                           TextWrapping="WrapWithOverflow"/>
                 <Label x:Name="CapsLockLabel" Content="Warning: Caps Lock is on." HorizontalAlignment="Left" Margin="15,15,15,15" VerticalAlignment="Bottom" Width="465" FontWeight="Normal" Height="30" 
                    Foreground="Red"/>
             </Grid>

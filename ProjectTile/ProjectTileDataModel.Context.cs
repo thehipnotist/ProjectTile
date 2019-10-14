@@ -999,5 +999,18 @@ namespace ProjectTile
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("err_InsertIntoErrorLog", customMessageParameter, exceptionMessageParameter, exceptionTypeParameter, targetSiteParameter, loggedAtParameter, loggedByParameter, innerExceptionParameter);
         }
+    
+        public virtual int stf_ChangeDatabasePassword(string userID, string passwd)
+        {
+            var userIDParameter = userID != null ?
+                new ObjectParameter("UserID", userID) :
+                new ObjectParameter("UserID", typeof(string));
+    
+            var passwdParameter = passwd != null ?
+                new ObjectParameter("Passwd", passwd) :
+                new ObjectParameter("Passwd", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("stf_ChangeDatabasePassword", userIDParameter, passwdParameter);
+        }
     }
 }

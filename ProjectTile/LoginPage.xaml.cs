@@ -105,7 +105,9 @@ namespace ProjectTile
                         else
                         {
                             Welcome.Content = "Please enter a UserID and password to change your login.";
+                            SSOCheckBox.IsChecked = false;
                             SSOCheckBox.IsEnabled = false;
+                            PasswordLabel.Visibility = Password.Visibility = Visibility.Visible;
                         }
                         RightHeader.Visibility = Visibility.Hidden;
                     }
@@ -114,7 +116,11 @@ namespace ProjectTile
                         SSOCheckBox.IsChecked = true;
                         Welcome.Content = "Please log in via single sign-on, or un-check the 'Single Sign-on' option and enter a UserID and password.";
                     }
-                    else { SSOCheckBox.IsEnabled = false; }
+                    else 
+                    { 
+                        SSOCheckBox.IsEnabled = false;
+                        PasswordLabel.Visibility = Password.Visibility = Visibility.Visible;
+                    }
                 }
             catch (Exception generalException) { MessageFunctions.Error("Error setting initial login view", generalException); }       
             }
@@ -135,6 +141,11 @@ namespace ProjectTile
                     RightHeader.Visibility = Visibility.Hidden;
                     PleaseWaitLabel.Content = 
                     SSOLabel.Visibility = SSOCheckBox.Visibility = Visibility.Hidden;
+                    if (LoginFunctions.HasSingleSignon(Globals.MyUserID))
+                    {
+                        SSONote.Text = "Note that your account currently has Single Sign-on, which allows direct login (without entering a password) when logged into the "
+                            + "operating system as yourself, so a ProjectTile password is not normally required.";
+                    }
                 }
                 catch (Exception generalException)
                 {

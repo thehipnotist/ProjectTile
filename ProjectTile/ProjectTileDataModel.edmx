@@ -725,6 +725,10 @@
           <Parameter Name="InsertRows" Type="bit" Mode="In" />
           <Parameter Name="ChangeStatus" Type="bit" Mode="In" />
         </Function>
+        <Function Name="stf_ChangeDatabasePassword" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserID" Type="varchar" Mode="In" />
+          <Parameter Name="Passwd" Type="nvarchar" Mode="In" />
+        </Function>
         <Function Name="stf_CheckHashedPassword" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="UserID" Type="varchar" Mode="In" />
           <Parameter Name="Passwd" Type="nvarchar" Mode="In" />
@@ -1803,6 +1807,10 @@
             <End Role="Projects" EntitySet="Projects" />
             <End Role="Staff" EntitySet="Staff" />
           </AssociationSet>
+          <FunctionImport Name="stf_ChangeDatabasePassword">
+            <Parameter Name="UserID" Mode="In" Type="String" />
+            <Parameter Name="Passwd" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
         <ComplexType Name="cln_GetClientsByAccountManagerID_Result">
           <Property Type="Int32" Name="ID" Nullable="false" />
@@ -2460,6 +2468,7 @@
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="err_InsertIntoErrorLog" FunctionName="ProjectTileModel.Store.err_InsertIntoErrorLog" />
+          <FunctionImportMapping FunctionImportName="stf_ChangeDatabasePassword" FunctionName="ProjectTileModel.Store.stf_ChangeDatabasePassword" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

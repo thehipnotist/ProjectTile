@@ -82,6 +82,22 @@ END;
 GO
 PRINT 'Created procedure to create a standard database user'
 
+-- Procedure to change a user's database password --
+GO
+CREATE PROC stf_ChangeDatabasePassword
+	@UserID VARCHAR(50), @Passwd NVARCHAR(50)
+AS
+BEGIN
+	DECLARE @SQL NVARCHAR(MAX)
+
+	SET @SQL = 'ALTER USER ProT_' + @UserID + ' WITH PASSWORD = ''' + @Passwd + ''''
+	--PRINT (@SQL)
+	EXEC (@SQL)
+END;
+
+GO
+PRINT 'Created procedure to alter database user''s password'
+
 -- Function to get the hashed password
 GO
 CREATE FUNCTION dbo.udf_GetHashedPassword (@Passwd NVARCHAR(50)) 
@@ -119,14 +135,14 @@ END;
 GO
 PRINT 'Created password hash test procedure'
 
--- Create a master SQL-only user who can change logins in SQL --
-CREATE USER ProT_PasswordAdmin WITH PASSWORD = 'Rumplestiltskin'
-EXEC sp_addrolemember @rolename = 'db_securityadmin', @membername = 'ProT_PasswordAdmin'
-EXEC sp_addrolemember @rolename = 'db_datareader', @membername = 'ProT_PasswordAdmin'
-EXEC sp_addrolemember @rolename = 'db_datawriter', @membername = 'ProT_PasswordAdmin'
-EXEC sp_addrolemember @rolename = 'db_owner', @membername = 'ProT_PasswordAdmin'
+---- Create a master SQL-only user who can change logins in SQL --
+--CREATE USER ProT_PasswordAdmin WITH PASSWORD = 'Rumplestiltskin'
+--EXEC sp_addrolemember @rolename = 'db_securityadmin', @membername = 'ProT_PasswordAdmin'
+--EXEC sp_addrolemember @rolename = 'db_datareader', @membername = 'ProT_PasswordAdmin'
+--EXEC sp_addrolemember @rolename = 'db_datawriter', @membername = 'ProT_PasswordAdmin'
+--EXEC sp_addrolemember @rolename = 'db_owner', @membername = 'ProT_PasswordAdmin'
 
-PRINT 'Created master user'
+--PRINT 'Created master user'
 
 -- Audit table --
 
