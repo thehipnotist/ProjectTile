@@ -1106,6 +1106,12 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error retrieving full list of client team members", generalException); }
         }
 
+        public static ProjectContactProxy GetProjectContact(int projectContactID)
+        {
+            SetFullContactsList();
+            return FullContactsList.FirstOrDefault(fcl => fcl.ID == projectContactID);
+        }
+        
         public static List<Projects> projectsRequiringContacts()
         {
             try

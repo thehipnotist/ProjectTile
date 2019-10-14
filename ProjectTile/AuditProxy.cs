@@ -10,8 +10,21 @@ namespace ProjectTile
         private const string clientProducts = "ClientProducts";
         private const string clients = "Clients";
         private const string clientStaff = "ClientStaff";
-        
-        
+        private const string clientTeamRoles = "ClientTeamRoles";
+        private const string clientTeams = "ClientTeams";
+        private const string entities = "Entities";
+        private const string products = "Products";
+        private const string projectProducts = "ProjectProducts";
+        private const string projectRoles = "ProjectRoles";
+        private const string projects = "Projects";
+        private const string projectStages = "ProjectStages";
+        private const string projectTeams = "ProjectTeams";
+        private const string projectTypes = "ProjectTypes";
+        private const string staff = "Staff";
+        private const string staffEntities = "StaffEntities";
+        private const string staffRoles = "StaffRoles";
+        private const string tablePermissions = "TablePermissions";
+
         public int ID { get; set; }
         public string ActionType { get; set; }
         public Staff User { get; set; }
@@ -53,6 +66,24 @@ namespace ProjectTile
                 else { return null; }
             }
         }
+
+        public ClientTeamRoles ClientTeamRole
+        {
+            get
+            {
+                if (TableName == clientTeamRoles) { return ProjectFunctions.GetClientRole(PrimaryValue); }
+                else { return null; }
+            }
+        }
+
+        public ProjectContactProxy ClientTeam
+        {
+            get
+            {
+                if (TableName == clientTeams) { return ProjectFunctions.GetProjectContact(RecordID); }
+                else { return null; }
+            }
+        }
         
         public int ClientID
         {
@@ -66,6 +97,8 @@ namespace ProjectTile
                         return Client.ID;
                     case clientStaff:
                         return ClientStaff.ClientID;
+                    case clientTeams:
+                        return ClientTeam.ClientID;
                     default: 
                         return 0;
                 }
@@ -79,6 +112,7 @@ namespace ProjectTile
                 switch (TableName)
                 {
                     case clientProducts:
+                    case clientTeams:
                         return ClientFunctions.GetClientByID(ClientID);
                     case clients:
                         return ClientFunctions.GetClientByID(RecordID);
@@ -87,6 +121,15 @@ namespace ProjectTile
                     default: 
                         return null;
                 }
+            }
+        }
+
+        public Products Product
+        {
+            get
+            {
+                if (TableName == products) { return ProductFunctions.GetProductByID(RecordID); }
+                else { return null; }
             }
         }
 
@@ -99,10 +142,21 @@ namespace ProjectTile
                     case clientProducts:
                     case clients:
                     case clientStaff:
+                    case clientTeams:
                         return Client.EntityID;
+                    case entities:
+                        return RecordID;
                     default:
                         return 0;
                 }
+            }
+        }
+
+        public Entities Entity
+        {
+            get
+            {
+                return EntityFunctions.GetEntity(EntityID);
             }
         }
 
@@ -117,7 +171,15 @@ namespace ProjectTile
                     case clients:
                         return Client.ClientName;
                     case clientStaff:
-                        return ClientStaff.ContactName + " at " + Client.ClientName; 
+                        return ClientStaff.ContactName + " at " + Client.ClientName;
+                    case clientTeamRoles:
+                        return ClientTeamRole.RoleDescription;
+                    case clientTeams:
+                        return ClientTeam.Contact.ContactName + " on " + ClientTeam.Project.ProjectCode;
+                    case entities:
+                        return Entity.EntityName;
+                    case products:
+                        return Product.ProductName;
                     default: 
                         return ""; 
                 }
