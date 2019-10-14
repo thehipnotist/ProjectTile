@@ -35,9 +35,9 @@ namespace ProjectTile
         {
             try
             {
+                HideMessage();
                 subscribeToDelegates();
-                PageFunctions.ShowLoginPage(PageFunctions.LogIn);
-                MessageFunctions.InfoMessage("Please enter your login credentials.", "Welcome to ProjectTile");
+                PageFunctions.ShowLoginPage(PageFunctions.LogIn);                
             }
             catch (Exception generalException) { MessageFunctions.Error("Error loading page", generalException); }
         }
