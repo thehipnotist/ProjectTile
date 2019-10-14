@@ -39,7 +39,7 @@
 
                 <Label x:Name="UserIDLabel" Content="UserID" HorizontalAlignment="Left" Height="30" Margin="15,75,0,0" VerticalAlignment="Top" Width="90" FontWeight="Bold"/>
                 <TextBox x:Name="UserID" HorizontalAlignment="Left" Height="30" Margin="105,75,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" TabIndex="1" 
-                     ToolTip="Enter your User ID here" Text="" Style="{DynamicResource PaddedTextBox}"/>
+                     ToolTip="Enter your User ID here" Text="" Style="{DynamicResource PaddedTextBox}" LostFocus="UserID_LostFocus"/>
                 <Label x:Name="PasswordLabel" Content="Password" HorizontalAlignment="Left" Height="30" Margin="15,120,0,0" VerticalAlignment="Top" Width="90" FontWeight="Bold" Visibility="Hidden"/>
                 <PasswordBox x:Name="Password" HorizontalAlignment="Left" Height="30" Margin="105,120,0,0" VerticalAlignment="Top" Width="180" ToolTip="Enter your password here" 
                          PasswordChanged="Password_Changed" TabIndex="2" KeyUp="Password_KeyUp" Password="" GotFocus="Password_GotFocus" Style="{DynamicResource PaddedPassword}" Visibility="Hidden"/>

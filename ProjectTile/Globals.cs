@@ -36,6 +36,7 @@ namespace ProjectTile
         public const string SearchRecords = "<Search...>";
         public const int NoID = -1;
         public const string AllCodes = "!!";
+        public const string PleaseSelect = "<Please select...>";
 
         public static Entities AllEntities = new Entities { ID = 0, EntityName = AllRecords, EntityDescription = AllRecords };
         public static ProjectProxy SearchProjects = new ProjectProxy { ProjectID = -1, ProjectCode = SearchRecords, ProjectName = SearchRecords };
@@ -45,6 +46,7 @@ namespace ProjectTile
         public static StaffProxy AllPMs = new StaffProxy { ID = 0, FirstName = AllRecords, Surname = "", Active = false };
         public static ProjectRoles AllProjectRoles = new ProjectRoles { RoleCode = AllCodes, RoleDescription = AllRecords };
         public static ClientTeamRoles AllClientRoles = new ClientTeamRoles { RoleCode = AllCodes, RoleDescription = AllRecords };
+        public static StaffProxy AllStaff = new StaffProxy { ID = 0, FirstName = AllRecords, Surname = "", Active = true, UserID = AllCodes };
 
         // Project roles
         public const string AccountManagerCode = "AM";
@@ -120,6 +122,7 @@ namespace ProjectTile
         public static DateTime OneMonthAgo = Today.AddMonths(-1);
         public static DateTime StartOfTime = Today.AddYears(-999);
         public static DateTime InfiniteDate = Today.AddYears(999);
+        public static DateTime StartOfMonth = new DateTime(Today.Year, Today.Month, 1);
 
         // Shared methods
         public static void ResetProductParameters()

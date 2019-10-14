@@ -166,8 +166,17 @@ namespace ProjectTile
 
         private void toggleSSO(bool useIt)
         {
-            PasswordLabel.Visibility = Password.Visibility = useIt? Visibility.Hidden : Visibility.Visible;            
-            UserID.Text = useIt ? ssoID : "";
+            PasswordLabel.Visibility = Password.Visibility = useIt? Visibility.Hidden : Visibility.Visible;
+            if (useIt) { UserID.Text = ssoID; }
+            else if (UserID.Text == ssoID) 
+            { 
+                UserID.Text = "";
+                UserID.Focus();
+            }
+            else
+            {
+                Password.Focus();
+            }
         }
 
         private void manageCommit(string userID, string password)
@@ -289,6 +298,14 @@ namespace ProjectTile
         private void SSOCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             toggleSSO(false);
+        }
+
+        private void UserID_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (pageMode == PageFunctions.LogIn)
+            {
+                SSOCheckBox.IsChecked = (canSSO && UserID.Text == ssoID);
+            }
         }
 
     } // class

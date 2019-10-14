@@ -1018,6 +1018,19 @@ namespace ProjectTile
             }		
         }
 
+        public static ClientProductProxy GetClientProductProxy(int clientProductID) 
+        {
+            try
+            {
+                return ClientsWithProduct(false, 0).FirstOrDefault(cwp => cwp.ID == clientProductID);
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error finding a client product record with ID " + clientProductID.ToString(), generalException);
+                return null;
+            }
+        }
+
         public static List<ClientProductProxy> ClientsWithProduct(bool activeOnly, int productID)
         {
             try

@@ -64,6 +64,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AdminFunctions.cs" />
+    <Compile Include="AuditPage.xaml.cs">
+      <DependentUpon>AuditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AuditProxy.cs" />
     <Compile Include="ProjectContactProxy.cs" />
     <Compile Include="FAQPage.xaml.cs">
       <DependentUpon>FAQPage.xaml</DependentUpon>
@@ -273,6 +278,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ClientContactPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="AuditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -538,6 +547,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Gear.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ProofingTools_32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="error.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -231,6 +231,11 @@ namespace ProjectTile
             ChangePage("FAQPage.xaml?Mode=View");
         }
 
+        public static void ShowAuditPage()
+        {
+            ChangePage("AuditPage.xaml?Mode=View");
+        }
+
         // Page initialisation //
         public static string pageParameter(Page currentPage, string paramName)
         {

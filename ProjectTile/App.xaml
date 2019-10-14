@@ -309,6 +309,7 @@
         <BitmapImage x:Key="AddIcon" UriSource="112_Plus_Grey_24x24_72.png"/>
         <BitmapImage x:Key="AdminIcon" UriSource="Gear.png"/>
         <BitmapImage x:Key="AmendIcon" UriSource="Rename.png"/>
+        <BitmapImage x:Key="AuditIcon" UriSource="ProofingTools_32.png"/>
         <BitmapImage x:Key="AssistIcon" UriSource="1508_QuestionMarkRed.png"/>
         <BitmapImage x:Key="BackIcon" UriSource="112_LeftArrowLong_Grey_24x24_72.png"/>
         <BitmapImage x:Key="CancelIcon" UriSource="1385_Disable_24x24_72.png"/>
@@ -321,6 +322,7 @@
         <BitmapImage x:Key="DisableIcon" UriSource="CheckMixed.bmp"/>
         <BitmapImage x:Key="EnableIcon" UriSource="base_checkboxes.png"/>
         <BitmapImage x:Key="EntitiesIcon" UriSource="base_globe_32.png"/>
+        <BitmapImage x:Key="ErrorIcon" UriSource="error.png"/>
         <BitmapImage x:Key="ExitIcon" UriSource="112_ArrowReturnRight_Blue_24x24_72 (2).png"/>
         <BitmapImage x:Key="FAQIcon" UriSource="PendingRequest_32x32_72.png"/>
         <BitmapImage x:Key="FavouriteIcon" UriSource="FavoriteStar_FrontFacing_24x24_72.png"/>

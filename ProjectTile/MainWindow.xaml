@@ -64,6 +64,7 @@
             </MenuItem>
             <MenuItem x:Name="AdminMenu" Header="_Admin" FontWeight="Bold" ToolTip="{StaticResource AdminTip}" BorderBrush="{x:Null}"
                       Padding="6,0,6,0" HorizontalContentAlignment="Center" Background ="{StaticResource PtBrushBackgroundBlue}" Foreground="{StaticResource PtBrushAdmin3}" HorizontalAlignment="Left">
+                <MenuItem x:Name="AuditLog" Header="Audit Log (Change History)" FontWeight="Normal" Background="{StaticResource PtBrushAdmin1}" Foreground="Black" Click="AuditLog_Click"/>
             </MenuItem>
         </Menu>
 

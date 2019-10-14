@@ -34,6 +34,7 @@ namespace ProjectTile
         List<Button> clientButtons = new List<Button>();
         List<Button> projectButtons = new List<Button>();
         List<Button> helpButtons = new List<Button>();
+        List<Button> adminButtons = new List<Button>();
 
         // ---------------------- //
         // -- Page Management --- //
@@ -83,6 +84,7 @@ namespace ProjectTile
                 mainButtons.Add(ClientButton);
                 mainButtons.Add(ProjectButton);
                 mainButtons.Add(HelpButton);
+                mainButtons.Add(AdminButton);
 
                 entityButtons.Add(EntityButton_Change);
                 entityButtons.Add(EntityButton_Default);
@@ -126,6 +128,8 @@ namespace ProjectTile
                 helpButtons.Add(HelpButton_About);
                 helpButtons.Add(HelpButton_FAQ);
 
+                if (myPermissions.Allow("ViewAuditEntries")) { adminButtons.Add(AdminButton_Audit); }
+
                 if (staffButtons.Count == 0) 
                 { 
                     StaffButton.IsEnabled = false;
@@ -145,6 +149,11 @@ namespace ProjectTile
                 {
                     ProjectButton.IsEnabled = false;
                     ProjectText.Text = ProjectText.Text + "\n (Disabled)";
+                }
+                if (adminButtons.Count == 0)
+                {
+                    AdminButton.IsEnabled = false;
+                    AdminText.Text = AdminText.Text + "\n (Disabled)";
                 }
 
             }
@@ -199,8 +208,7 @@ namespace ProjectTile
                     else if (thisButton.Name == "ClientButton") { toggleChildButtons(true, ref clientButtons); }
                     else if (thisButton.Name == "ProjectButton") { toggleChildButtons(true, ref projectButtons); }
                     else if (thisButton.Name == "HelpButton") { toggleChildButtons(true, ref helpButtons); }
-                    // More to come...
-
+                    else if (thisButton.Name == "AdminButton") { toggleChildButtons(true, ref adminButtons); }
                 }
                 catch
                 {
@@ -431,6 +439,11 @@ namespace ProjectTile
         private void HelpButton_FAQ_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowFAQPage();
+        }
+
+        private void AdminButton_Audit_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowAuditPage();
         }
         
     } // class

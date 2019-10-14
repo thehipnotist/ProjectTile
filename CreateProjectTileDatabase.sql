@@ -587,6 +587,19 @@ BEGIN TRY
 
 		PRINT 'Populated table permissions table for staff roles'	-- This will be further populated as tables are added
 
+		INSERT INTO dbo.TablePermissions (
+							TableName,			RoleCode,	ViewTable,	UpdateRows,	InsertRows, ChangeStatus)
+			SELECT			'AuditEntries',		'AD',		1,			0,			0,			0
+			UNION SELECT	'AuditEntries',		'SM',		1,			0,			0,			0
+			UNION SELECT	'AuditEntries',		'PM',		1,			0,			0,			0
+			UNION SELECT	'AuditEntries',		'AM',		0,			0,			0,			0
+			UNION SELECT	'AuditEntries',		'SC',		0,			0,			0,			0
+			UNION SELECT	'AuditEntries',		'AC',		0,			0,			0,			0
+			UNION SELECT	'AuditEntries',		'TM',		0,			0,			0,			0
+			UNION SELECT	'AuditEntries',		'TC',		0,			0,			0,			0
+
+		PRINT 'Populated table permissions table for audit log entries'
+
 		EXEC [dbo].[usp_CreateGetProcedure] 
 			@TableName = 'TablePermissions'
 			, @IDColumn = 'ID'
@@ -2149,6 +2162,19 @@ BEGIN TRY
 			)
 	
 		PRINT 'Created error log table'
+
+		INSERT INTO dbo.TablePermissions (
+							TableName,			RoleCode,	ViewTable,	UpdateRows,	InsertRows, ChangeStatus)
+			SELECT			'ErrorLog',			'AD',		1,			0,			0,			0
+			UNION SELECT	'ErrorLog',			'SM',		1,			0,			0,			0
+			UNION SELECT	'ErrorLog',			'PM',		1,			0,			0,			0
+			UNION SELECT	'ErrorLog',			'AM',		0,			0,			0,			0
+			UNION SELECT	'ErrorLog',			'SC',		0,			0,			0,			0
+			UNION SELECT	'ErrorLog',			'AC',		0,			0,			0,			0
+			UNION SELECT	'ErrorLog',			'TM',		0,			0,			0,			0
+			UNION SELECT	'ErrorLog',			'TC',		0,			0,			0,			0
+
+		PRINT 'Populated table permissions table for error log entries'
 
 		EXEC [dbo].[usp_CreateGetProcedure] 
 			@TableName = 'ErrorLog'

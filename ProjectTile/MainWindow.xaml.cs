@@ -87,10 +87,13 @@ namespace ProjectTile
                 ProjectContact.Visibility = myPermissions.ShowOrCollapse("ViewClientTeams");
                 ProjectProduct.Visibility = myPermissions.ShowOrCollapse("ViewProjectProducts");
 
+                AuditLog.Visibility = myPermissions.ShowOrCollapse("ViewAuditEntries");
+
                 StaffMenu.IsEnabled = subMenuItemsVisible(StaffMenu);
                 ProductMenu.IsEnabled = subMenuItemsVisible(ProductMenu);
                 ClientMenu.IsEnabled = subMenuItemsVisible(ClientMenu);
                 ProjectMenu.IsEnabled = subMenuItemsVisible(ProjectMenu);
+                AdminMenu.IsEnabled = subMenuItemsVisible(AdminMenu);
 
             }
             catch (Exception generalException) { MessageFunctions.Error("Error setting menu permissions", generalException); }
@@ -434,6 +437,11 @@ namespace ProjectTile
             {
                 ProjectFunctions.OpenFavourite();
             }
+        }
+
+        private void AuditLog_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowAuditPage();
         }
 
 
