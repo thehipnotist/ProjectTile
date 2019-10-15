@@ -49,6 +49,31 @@ namespace ProjectTile
             }
         }
 
+        public string GetDeletedValue(string columnName)
+        {
+            return AdminFunctions.GetDeletedValue(this, columnName);
+        }
+
+        public int GetDeletedID(string columnName)
+        {
+            try
+            {
+                string foundValue = GetDeletedValue(columnName);
+                if (foundValue != "")
+                {
+                    int foundID = 0;
+                    Int32.TryParse(foundValue, out foundID);
+                    return foundID;
+                }
+                else { return 0; }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving deleted ID for column " + columnName, generalException);
+                return 0;
+            }
+        }
+
         public ClientProductProxy ClientProduct
         {
             get
@@ -63,6 +88,15 @@ namespace ProjectTile
             get
             {
                 if (TableName == clientStaff && !AType.Equals("D")) { return ClientFunctions.GetContactProxy(RecordID); }
+                else if (TableName == clientTeams)
+                {
+                    if (!AType.Equals("D") && ClientTeam != null) { return ClientTeam.Contact; }
+                    else
+                    {
+                        int clientStaffID = GetDeletedID("ClientStaffID");
+                        return (clientStaffID <= 0) ? null : ClientFunctions.GetContactProxy(clientStaffID);
+                    }
+                }
                 else { return null; }
             }
         }
@@ -143,9 +177,25 @@ namespace ProjectTile
         {
             get
             {
-                if (TableName == staffRoles && !AType.Equals("D")) { return StaffFunctions.GetRole(PrimaryValue); }
-                else if (TableName == tablePermissions && !AType.Equals("D")) { return StaffFunctions.GetRole(TablePermission.RoleCode); }
-                else { return null; }
+                try
+                {
+                    if (TableName == staffRoles && !AType.Equals("D")) { return StaffFunctions.GetRole(PrimaryValue); }
+                    else if (TableName == tablePermissions)
+                    {
+                        if (!AType.Equals("D") && TablePermission != null) { return StaffFunctions.GetRole(TablePermission.RoleCode); }
+                        else
+                        {
+                            string roleCode = GetDeletedValue("RoleCode");
+                            return (roleCode == "") ? null : StaffFunctions.GetRole(roleCode);
+                        }
+                    }
+                    else { return null; }
+                }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error retrieving staff role details", generalException);
+                    return null;
+                }
             }
         }
 
@@ -162,25 +212,33 @@ namespace ProjectTile
         {
             get
             {
-                if (!AType.Equals("D"))
+                try
                 {
-                    switch (TableName)
+                    if (!AType.Equals("D"))
                     {
-                        case clientProducts:
-                            return ClientProduct.ClientID;
-                        case clients:
-                            return Client.ID;
-                        case clientStaff:
-                            return ClientStaff.ClientID;
-                        case clientTeams:
-                            return ClientTeam.ClientID;
-                        case projectProducts:
-                            return (Project.ClientID ?? 0);
-                        default:
-                            return 0;
+                        switch (TableName)
+                        {
+                            case clientProducts:
+                                return (ClientProduct == null)? 0 : ClientProduct.ClientID;
+                            case clients:
+                                return Client.ID;
+                            case clientStaff:
+                                return (ClientStaff == null) ? 0 : ClientStaff.ClientID;
+                            case clientTeams:
+                                return (ClientTeam == null) ? 0 : ClientTeam.ClientID;
+                            case projectProducts:
+                                return (Project == null) ? 0 : Project.ClientID ?? 0;
+                            default:
+                                return 0;
+                        }
                     }
+                    else { return GetDeletedID("ClientID"); }
                 }
-                else { return 0; }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error retrieving Client ID for audit record", generalException);
+                    return 0;
+                }		
             }
         }
 
@@ -188,24 +246,23 @@ namespace ProjectTile
         {
             get
             {
-                if (!AType.Equals("D"))
+                try
                 {
                     switch (TableName)
                     {
                         case clientProducts:
                         case clientTeams:
-                            return ClientFunctions.GetClientByID(ClientID);
-                        case clients:
-                            return ClientFunctions.GetClientByID(RecordID);
-                        case clientStaff:
-                            return ClientStaff.Client;
                         case projects:
                             return (ClientID > 0) ? ClientFunctions.GetClientByID(ClientID) : null;
+                        case clients:
+                            return (!AType.Equals("D"))? ClientFunctions.GetClientByID(RecordID) : null;
+                        case clientStaff:
+                            return (ClientStaff != null)? ClientStaff.Client : null;
                         default:
                             return null;
                     }
                 }
-                else { return null; }
+                catch { return null; }
             }
         }
 
@@ -213,9 +270,34 @@ namespace ProjectTile
         {
             get
             {
-                if (TableName == products && !AType.Equals("D")) { return ProductFunctions.GetProductByID(RecordID); }
-                else if (TableName == projectProducts && !AType.Equals("D")) { return ProjectProduct.Product; }
-                else { return null; }
+                try
+                {
+                    if (TableName == products && !AType.Equals("D")) { return ProductFunctions.GetProductByID(RecordID); }
+                    else if (TableName == clientProducts)
+                    {
+                        if (!AType.Equals("D") && ClientProduct != null) { return ProductFunctions.GetProductByID(ClientProduct.ProductID); }
+                        else
+                        {
+                            int productID = GetDeletedID("ProductID");
+                            return (productID > 0) ? ProductFunctions.GetProductByID(productID) : null;
+                        }
+                    }
+                    else if (TableName == projectProducts)
+                    {
+                        if (!AType.Equals("D") && ProjectProduct != null) { return ProjectProduct.Product; }
+                        else
+                        {
+                            int productID = GetDeletedID("ProductID");
+                            return (productID > 0) ? ProductFunctions.GetProductByID(productID) : null;
+                        }
+                    }
+                    else { return null; }
+                }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error retrieving product details for audit record", generalException);
+                    return null;
+                }		
             }
         }
 
@@ -223,23 +305,35 @@ namespace ProjectTile
         {
             get
             {
-                if (!AType.Equals("D"))
-                {
-                    switch (TableName)
+                try
+                { 
+                    if (!AType.Equals("D"))
                     {
-                        case clientTeams:
-                            return ClientTeam.Project;
-                        case projectProducts:
-                            return ProjectProduct.Project;
-                        case projects:
-                            return ProjectFunctions.GetProject(RecordID);
-                        case projectTeams:
-                            return ProjectTeam.Project;
-                        default:
-                            return null;
+                        switch (TableName)
+                        {
+                            case clientTeams:
+                                return (ClientTeam == null) ? null : ClientTeam.Project;
+                            case projectProducts:
+                                return (ProjectProduct == null) ? null : ProjectProduct.Project;
+                            case projects:
+                                return ProjectFunctions.GetProject(RecordID);
+                            case projectTeams:
+                                return (ProjectTeam == null) ? null : ProjectTeam.Project;
+                            default:
+                                return null;
+                        }
+                    }
+                    else
+                    {
+                        int projectID = GetDeletedID("ProjectID");
+                        return (projectID > 0) ? ProjectFunctions.GetProject(projectID) : null;
                     }
                 }
-                else { return null; }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error retrieving project details for audit record", generalException);
+                    return null;
+                }	
             }
         }
 
@@ -247,9 +341,34 @@ namespace ProjectTile
         {
             get
             {
-                if (TableName == staff && !AType.Equals("D")) { return StaffFunctions.GetStaffMember(RecordID); }
-                else if (TableName == staffEntities && !AType.Equals("D")) { return StaffFunctions.GetStaffMember((int)StaffEntity.StaffID); }
-                else { return null; }
+                try
+                {
+                    if (TableName == staff && !AType.Equals("D")) { return StaffFunctions.GetStaffMember(RecordID); }
+                    else if (TableName == staffEntities)
+                    {
+                        if (!AType.Equals("D") && StaffEntity != null) { return StaffFunctions.GetStaffMember((int)StaffEntity.StaffID); }
+                        else
+                        {
+                            int staffID = GetDeletedID("StaffID");
+                            return (staffID > 0) ? StaffFunctions.GetStaffMember(staffID) : null;
+                        }
+                    }
+                    else if (TableName == projectTeams)
+                    {
+                        if (!AType.Equals("D") && ProjectTeam != null) { return StaffFunctions.GetStaffMember((int)ProjectTeam.StaffID); }
+                        else
+                        {
+                            int staffID = GetDeletedID("StaffID");
+                            return (staffID > 0) ? StaffFunctions.GetStaffMember(staffID) : null;
+                        }
+                    }
+                    else { return null; }
+                }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error retrieving staff details for audit record", generalException);
+                    return null;
+                }	
             }
         }
 
@@ -257,88 +376,100 @@ namespace ProjectTile
         {
             get
             {
-                if (!AType.Equals("D"))
+                try
                 {
-                    switch (TableName)
+                    if (!AType.Equals("D"))
                     {
-                        case clientProducts:
-                        case clients:
-                        case clientStaff:
-                        case clientTeams:
-                            return Client.EntityID;
-                        case entities:
-                            return RecordID;
-                        case projectProducts:
-                        case projects:
-                        case projectTeams:
-                            return Project.EntityID;
-                        case staff:
-                            return (EntityFunctions.AllowedEntityIDs(StaffMember.ID).Contains(CurrentEntityID)) ? CurrentEntityID : (int) StaffMember.DefaultEntity;
-                        case staffEntities:
-                            return (int)StaffEntity.EntityID;
-                        default:
-                            return 0;
+                        switch (TableName)
+                        {
+                            case clientProducts:
+                            case clients:
+                            case clientStaff:
+                            case clientTeams:
+                                return (Client == null) ? NoID : Client.EntityID;
+                            case entities:
+                                return RecordID;
+                            case projectProducts:
+                            case projects:
+                            case projectTeams:
+                                return (Project == null) ? NoID : Project.EntityID;
+                            case staff:
+                                if (StaffMember == null) { return NoID; }
+                                else { return (EntityFunctions.AllowedEntityIDs(StaffMember.ID).Contains(CurrentEntityID)) ? CurrentEntityID : (int)StaffMember.DefaultEntity; }
+                            case staffEntities:
+                                return (StaffEntity == null) ? NoID : (int)StaffEntity.EntityID;
+                            default:
+                                return 0;
+                        }
                     }
+                    else { return GetDeletedID("EntityID"); }
                 }
-                else { return 0; }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error retrieving Entity ID for audit record", generalException);
+                    return 0;
+                }	
             }
         }
 
         public Entities Entity
         {
-            get
-            {
-                return (EntityID > 0)? EntityFunctions.GetEntity(EntityID) : null;
-            }
+            get { return (EntityID > 0)? EntityFunctions.GetEntity(EntityID) : null; }
         }
 
         public string RecordDescription 
         {
             get
             {
-                if (!AType.Equals("D"))
+                try
                 {
                     switch (TableName)
                     {
                         case clientProducts:
-                            return ClientProduct.ProductName + " for " + Client.ClientName;
+                            return Product.ProductName + " for " + Client.ClientName;
                         case clients:
-                            return Client.ClientName;
+                            return (AType.Equals("D"))? GetDeletedValue("ClientName") : Client.ClientName;
                         case clientStaff:
-                            return ClientStaff.ContactName + " at " + Client.ClientName;
+                            return ((AType.Equals("D")) ? GetDeletedValue("FirstName") + " " + GetDeletedValue("Surname") : ClientStaff.ContactName) + " at " + Client.ClientName;
                         case clientTeamRoles:
-                            return ClientTeamRole.RoleDescription;
+                            return (AType.Equals("D")) ? GetDeletedValue("RoleDescription") : ClientTeamRole.RoleDescription;
                         case clientTeams:
-                            return ClientTeam.Contact.ContactName + " on " + Project.ProjectCode;
+                            return ClientStaff.ContactName + " on " + Project.ProjectCode;
                         case entities:
-                            return Entity.EntityName;
+                            return (AType.Equals("D")) ? GetDeletedValue("EntityName") : Entity.EntityName;
                         case products:
-                            return Product.ProductName;
+                            return (AType.Equals("D")) ? GetDeletedValue("ProductName") : Product.ProductName;
                         case projectProducts:
                             return Product.ProductName + " in " + Project.ProjectCode;
                         case projectRoles:
-                            return ProjectRole.RoleDescription;
+                            return (AType.Equals("D")) ? GetDeletedValue("RoleDescription") : ProjectRole.RoleDescription;
                         case projects:
-                            return Project.ProjectCode;
+                            return (AType.Equals("D")) ? GetDeletedValue("ProjectCode") : Project.ProjectCode;
                         case projectStages:
-                            return ProjectStage.StageName;
+                            return (AType.Equals("D")) ? GetDeletedValue("StageName") : ProjectStage.StageName;
                         case projectTeams:
-                            return ProjectTeam.StaffMember.StaffName + " on " + Project.ProjectCode;
+                            return StaffMember.FullName + " on " + Project.ProjectCode;
                         case projectTypes:
-                            return ProjectType.TypeName;
+                            return (AType.Equals("D")) ? GetDeletedValue("TypeName") : ProjectType.TypeName;
                         case staff:
-                            return StaffMember.FullName + ((StaffMember.UserID != "") ? " (" + StaffMember.UserID + ")" : "");
+                            string fullName = (AType.Equals("D")) ? GetDeletedValue("FullName") : StaffMember.FullName;
+                            string userID = (AType.Equals("D")) ? GetDeletedValue("UserID") : StaffMember.UserID;
+                            return fullName + ((userID != "") ? " (" + userID + ")" : "");
                         case staffEntities:
                             return StaffMember.FullName + " in " + Entity.EntityName;
                         case staffRoles:
-                            return StaffRole.RoleDescription;
+                            return (AType.Equals("D")) ? GetDeletedValue("RoleDescription") : StaffRole.RoleDescription;
                         case tablePermissions:
-                            return StaffRole.RoleDescription + " with " + TablePermission.TableName;
+                            return StaffRole.RoleDescription + " with " + ((AType.Equals("D")) ? GetDeletedValue("TableName") : TablePermission.TableName);
                         default:
                             return "";
                     }
                 }
-                else { return ""; }
+                catch //(Exception generalException)
+                {
+                    //MessageFunctions.Error("Error retrieving description for audit record", generalException);
+                    return "";
+                }	
             }
         }
         

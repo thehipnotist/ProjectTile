@@ -632,12 +632,7 @@ namespace ProjectTile
             try
             {
                 List<ContactProxy> allContacts = ContactGridList(contactContains: "", activeOnly: false, clientID: clientID, includeJob: false);
-                if (allContacts.Exists(ase => ase.ID == contactID)) { return allContacts.First(ase => ase.ID == contactID); }
-                else
-                {
-                    MessageFunctions.Error("Error retrieving summary data for contact with ID " + contactID.ToString() + ": no matching record found.", null);
-                    return null;
-                }
+                return allContacts.FirstOrDefault(ase => ase.ID == contactID);
             }
             catch (Exception generalException)
             {

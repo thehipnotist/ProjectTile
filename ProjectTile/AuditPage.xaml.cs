@@ -76,6 +76,7 @@ namespace ProjectTile
             FromDate.Focus();
             ToDate.Focus();
             TableCombo.Focus();
+            MessageFunctions.InfoMessage("Only records within or relevant to the current Entity (" + Globals.CurrentEntityName + ") are displayed.", "Please note:");
         }
 
 
@@ -104,10 +105,8 @@ namespace ProjectTile
         private void refreshAuditDataGrid()
         {
             try
-            {
-                MessageFunctions.InfoMessage(fromDate.ToString() + " " + toDate.ToString() + " " + tableName + " " + changeBy.UserID, "Testing");
-                
-                auditGridList = AdminFunctions.LogEntries(fromDate, toDate, tableName, changeBy.UserID);
+            {                
+                auditGridList = AdminFunctions.DisplayLogEntries(fromDate, toDate, tableName, changeBy.UserID);
                 AuditDataGrid.ItemsSource = auditGridList;
             }
             catch (Exception generalException) { MessageFunctions.Error("Error displaying audit data", generalException); }	

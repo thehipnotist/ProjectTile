@@ -27,7 +27,7 @@ namespace ProjectTile
 
         // ------------- Data retrieval ------------- // 	
 	
-        public static List<AuditProxy> LogEntries(DateTime fromDate, DateTime toDate, string tableName, string userID)
+        public static List<AuditProxy> AllLogEntries(DateTime fromDate, DateTime toDate, string tableName, string userID)
         {
             DateTime maxTime = toDate.AddDays(1);
             
@@ -67,6 +67,20 @@ namespace ProjectTile
             }	
         }
 
+        public static List<AuditProxy> DisplayLogEntries(DateTime fromDate, DateTime toDate, string tableName, string userID)
+        {
+            try
+            {
+                List<AuditProxy> allEntries = AllLogEntries(fromDate, toDate, tableName, userID);
+                return allEntries.Where(ae => ae.EntityID == CurrentEntityID || ae.EntityID == 0).ToList();
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error filtering log entries by Entity", generalException);
+                return null;
+            }	
+        }
+
         public static List<string> LogTables()
         {
             try
@@ -99,7 +113,40 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.Error("Error ...", generalException);
+                MessageFunctions.Error("Error retrieving table permission details", generalException);
+                return null;
+            }
+        }
+
+        public static string GetDeletedValue(AuditProxy entry, string columnName)
+        {            
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    DateTime changeTime = (DateTime) entry.ChangeTime;
+                    DateTime earliest = changeTime.AddMinutes(-1);
+                    DateTime latest = changeTime.AddMinutes(1);
+                    
+                    List<AuditEntries> matchingEntries = existingPtDb.AuditEntries.Where(ae =>
+                        ae.TableName == entry.TableName
+                        && ae.PrimaryValue == entry.PrimaryValue
+                        && ae.UserName == entry.UserName
+                        && ae.ChangeTime >= earliest && ae.ChangeTime <= latest
+                        && ae.ActionType == entry.ActionType                        
+                        ).ToList();
+
+                    if (matchingEntries.Exists(me => me.ChangeColumn == columnName))
+                    {
+                        return matchingEntries.Where(me => me.ChangeColumn == columnName).Select(me => me.OldValue).FirstOrDefault();
+                    }
+                    else { return ""; }
+				}
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving details of deletion", generalException);
                 return null;
             }
         }
