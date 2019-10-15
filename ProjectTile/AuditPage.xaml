@@ -63,7 +63,6 @@
                              FontFamily="Segoe UI" HorizontalScrollBarVisibility="Visible">
                     <DataGrid.Columns>
                         <DataGridTextColumn x:Name="DateColumn" Binding="{Binding ChangeTime, StringFormat=dd/MM/yyyy}" ClipboardContentBinding="{x:Null}" Header="Date"/>
-<!--                        <DataGridTextColumn x:Name="TableColumn" Binding="{Binding TableName}" ClipboardContentBinding="{x:Null}" Header="Table"/> -->
                         <DataGridTextColumn x:Name="UserIDColumn" Binding="{Binding UserName}" ClipboardContentBinding="{x:Null}" Header="UserID"/>
                         <DataGridTextColumn x:Name="StaffNameColumn" Binding="{Binding User.FullName}" ClipboardContentBinding="{x:Null}" Header="Staff Name" Width="*"/>
                         <DataGridTextColumn x:Name="TypeColumn" Binding="{Binding AType}" ClipboardContentBinding="{x:Null}" Header="Type"/>

@@ -122,6 +122,8 @@ namespace ProjectTile
         {            
             try
             {
+                //if (entry.ChangeColumn == columnName) { return entry.OldValue; }
+                
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
@@ -132,8 +134,8 @@ namespace ProjectTile
                     List<AuditEntries> matchingEntries = existingPtDb.AuditEntries.Where(ae =>
                         ae.TableName == entry.TableName
                         && ae.PrimaryValue == entry.PrimaryValue
-                        && ae.UserName == entry.UserName
-                        && ae.ChangeTime >= earliest && ae.ChangeTime <= latest
+                        && ae.UserName.Replace(DbUserPrefix, "") == entry.UserName
+                        &&  ae.ChangeTime >= earliest && ae.ChangeTime <= latest
                         && ae.ActionType == entry.ActionType                        
                         ).ToList();
 
