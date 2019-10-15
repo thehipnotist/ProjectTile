@@ -337,7 +337,7 @@ namespace ProjectTile
 
         public static void CompleteLogIn()
         {
-            MessageFunctions.CancelInfoMessage();
+            MessageFunctions.CancelInfoAlert();
             PageFunctions.MenuSecurity();
             Globals.FavouriteProjectID = StaffFunctions.MainProjectID(MyStaffID);
             PageFunctions.ToggleMainMenus(true);

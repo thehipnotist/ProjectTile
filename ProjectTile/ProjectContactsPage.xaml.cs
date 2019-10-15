@@ -79,7 +79,7 @@ namespace ProjectTile
             if (contactID > 0) { chooseContactName(contactID); }
             this.DataContext = editTeamRecord;
             toggleBackButton();
-            MessageFunctions.InfoMessage("Current key roles are bold. Future roles are blue, and past ones are grey; otherwise, Live (open) projects are green.", "Grid formatting:");
+            MessageFunctions.InfoAlert("Current key roles are bold. Future roles are blue, and past ones are grey; otherwise, Live (open) projects are green.", "Grid formatting:");
         }
 
         // ---------------------------------------------------------- //
@@ -218,7 +218,7 @@ namespace ProjectTile
                 {
                     Globals.SelectedClient = null;
                     PageHeader.Content = defaultHeader;
-                    if (!projectSelected) { MessageFunctions.CancelInfoMessage(); }
+                    if (!projectSelected) { MessageFunctions.CancelInfoAlert(); }
                 }
                 else
                 {
@@ -227,7 +227,7 @@ namespace ProjectTile
                     PageHeader.Content = defaultHeader + " for Client " + client.ClientCode + " (" + client.ClientName + ")";                    
                     if (!projectSelected)
                     {
-                        MessageFunctions.InfoMessage("This effectively sets the current client to " + client.ClientName + " until the name filter is changed/cleared "
+                        MessageFunctions.InfoAlert("This effectively sets the current client to " + client.ClientName + " until the name filter is changed/cleared "
                             + " or a different project is selected (the projects drop-down list is unaffected)", "Client " + client.ClientCode + " selected");
                     }
                 }
@@ -316,7 +316,7 @@ namespace ProjectTile
             toggleProjectColumns();
             if (specificProject && canEditTeams)
             {
-                MessageFunctions.InfoMessage(keyRoles + " are key roles that must be filled throughout the project. However, existing records can be "
+                MessageFunctions.InfoAlert(keyRoles + " are key roles that must be filled throughout the project. However, existing records can be "
                 + " amended to replace unwanted entries.", "Please note:");
             }
         }

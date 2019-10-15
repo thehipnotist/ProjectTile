@@ -388,7 +388,7 @@ namespace ProjectTile
                         savedInEntity = " in Entity '" + EntityFunctions.GetEntityName(selectedEntityID) + "'" + contactsCopied + ". Switch to that Entity if you need to work with the new record";
                     }
 
-                    MessageFunctions.SuccessMessage("New client '" + ClientName.Text + "' saved successfully" + savedInEntity + ".", "Client Created");
+                    MessageFunctions.SuccessAlert("New client '" + ClientName.Text + "' saved successfully" + savedInEntity + ".", "Client Created");
                     if (pageMode == PageFunctions.Amend)
                     {
                         resetAmendPage(accountManagerName);
@@ -416,7 +416,7 @@ namespace ProjectTile
             {
                 if (success)
                 {
-                    MessageFunctions.SuccessMessage("Your changes have been saved successfully.", "Client Amended");
+                    MessageFunctions.SuccessAlert("Your changes have been saved successfully.", "Client Amended");
                     resetAmendPage(accountManagerName);  // This is not necessarily done for us by the Account Managers list
                     refreshClientGrid();
                 }

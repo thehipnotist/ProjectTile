@@ -204,10 +204,10 @@ namespace ProjectTile
                 {
                     if (selectedStaffID == 0) 
                     { 
-                        MessageFunctions.SuccessMessage("New staff member created successfully.", "Staff details saved");
+                        MessageFunctions.SuccessAlert("New staff member created successfully.", "Staff details saved");
                         selectedStaffID = returnID;
                     }
-                    else { MessageFunctions.SuccessMessage("Changes saved successfully.", "Staff member amended"); }
+                    else { MessageFunctions.SuccessAlert("Changes saved successfully.", "Staff member amended"); }
                     StaffFunctions.ReturnToStaffPage(selectedStaffID);
                 }
             }

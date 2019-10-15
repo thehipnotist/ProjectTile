@@ -65,10 +65,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AdminFunctions.cs" />
+    <Compile Include="ErrorPage.xaml.cs">
+      <DependentUpon>ErrorPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AuditPage.xaml.cs">
       <DependentUpon>AuditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="AuditProxy.cs" />
+    <Compile Include="ErrorProxy.cs" />
     <Compile Include="ProjectContactProxy.cs" />
     <Compile Include="FAQPage.xaml.cs">
       <DependentUpon>FAQPage.xaml</DependentUpon>
@@ -273,6 +277,10 @@
     <Compile Include="TilesPage.xaml.cs">
       <DependentUpon>TilesPage.xaml</DependentUpon>
     </Compile>
+    <Page Include="ErrorPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="FAQPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

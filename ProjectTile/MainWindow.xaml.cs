@@ -88,6 +88,7 @@ namespace ProjectTile
                 ProjectProduct.Visibility = myPermissions.ShowOrCollapse("ViewProjectProducts");
 
                 AuditLog.Visibility = myPermissions.ShowOrCollapse("ViewAuditEntries");
+                ErrorLog.Visibility = myPermissions.ShowOrCollapse("ViewErrorLog");
 
                 StaffMenu.IsEnabled = subMenuItemsVisible(StaffMenu);
                 ProductMenu.IsEnabled = subMenuItemsVisible(ProductMenu);
@@ -442,6 +443,11 @@ namespace ProjectTile
         private void AuditLog_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowAuditPage();
+        }
+
+        private void ErrorLog_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowErrorPage();
         }
 
 

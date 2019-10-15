@@ -115,13 +115,13 @@ namespace ProjectTile
                     {
                         SSOCheckBox.IsChecked = true;
                         Welcome.Content = "Please log in via single sign-on, or un-check the 'Single Sign-on' option and enter a UserID and password.";
-                        MessageFunctions.InfoMessage("Please log in to the system.", "Welcome to ProjectTile");
+                        MessageFunctions.InfoAlert("Please log in to the system.", "Welcome to ProjectTile");
                     }
                     else 
                     { 
                         SSOCheckBox.IsEnabled = false;
                         PasswordLabel.Visibility = Password.Visibility = Visibility.Visible;
-                        MessageFunctions.InfoMessage("Please enter your login credentials.", "Welcome to ProjectTile");
+                        MessageFunctions.InfoAlert("Please enter your login credentials.", "Welcome to ProjectTile");
                     }
                 }
             catch (Exception generalException) { MessageFunctions.Error("Error setting initial login view", generalException); }       
@@ -215,7 +215,7 @@ namespace ProjectTile
                 bool success = LoginFunctions.ChangeLoginDetails(Globals.MyStaffID, userID, NewPassword.Password, ConfirmPassword.Password);
                 if (success)
                 {
-                    MessageFunctions.SuccessMessage("Your password has been changed successfully.", "Password Changed");
+                    MessageFunctions.SuccessAlert("Your password has been changed successfully.", "Password Changed");
                     pageSuccess = true;
                 }
             }

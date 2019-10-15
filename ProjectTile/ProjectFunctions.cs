@@ -391,7 +391,7 @@ namespace ProjectTile
                         }
                     }
                     FavouriteProjectID = SelectedProjectProxy.ProjectID;
-                    MessageFunctions.SuccessMessage("Project " + SelectedProjectProxy.ProjectCode + " has been set as your main project.", "Main Project selected");
+                    MessageFunctions.SuccessAlert("Project " + SelectedProjectProxy.ProjectCode + " has been set as your main project.", "Main Project selected");
                     return true;
                 }
                 catch (Exception generalException)
@@ -1891,7 +1891,7 @@ namespace ProjectTile
                     existingPtDb.ProjectTeams.Add(addPM);
                     existingPtDb.SaveChanges();
                     
-                    MessageFunctions.SuccessMessage("New project saved successfully. You can now add products and project team members.", "Project Created");
+                    MessageFunctions.SuccessAlert("New project saved successfully. You can now add products and project team members.", "Project Created");
                     return true;
                 }
             }
@@ -2026,7 +2026,7 @@ namespace ProjectTile
                     if (completion) { congratulations = " Congratulations on completing the project."; }
                     else if (goLive) { congratulations = " Congratulations on going Live.";  }
                     
-                    MessageFunctions.SuccessMessage("Project amendments saved successfully." + congratulations, "Changes Saved");
+                    MessageFunctions.SuccessAlert("Project amendments saved successfully." + congratulations, "Changes Saved");
                     return true;
                 }
             }
@@ -2123,7 +2123,7 @@ namespace ProjectTile
                     currentVersion.ConvertToProjectTeam(ref thisTeam);
                     if (currentVersion.HasKeyRole) { updateOtherInstances(currentVersion); }
                     existingPtDb.SaveChanges();
-                    MessageFunctions.SuccessMessage("Your changes have been saved successfully.", "Team Membership Amended");
+                    MessageFunctions.SuccessAlert("Your changes have been saved successfully.", "Team Membership Amended");
                     return true;
                 }
             }
@@ -2148,7 +2148,7 @@ namespace ProjectTile
                     existingPtDb.ProjectTeams.Add(thisTeam);
                     if (newRecord.HasKeyRole) { updateOtherInstances(newRecord); }
                     existingPtDb.SaveChanges();
-                    MessageFunctions.SuccessMessage("New project team member added successfully.", "Team Member Added");
+                    MessageFunctions.SuccessAlert("New project team member added successfully.", "Team Member Added");
                     return thisTeam.ID;
                 }
             }
@@ -2174,7 +2174,7 @@ namespace ProjectTile
                     ProjectTeams thisTeam = existingPtDb.ProjectTeams.Where(pt => pt.ID == unwantedRecord.ID).FirstOrDefault();                              
                     existingPtDb.ProjectTeams.Remove(thisTeam);
                     existingPtDb.SaveChanges();
-                    MessageFunctions.SuccessMessage("Team member removed successfully.", "Team Member Removed");
+                    MessageFunctions.SuccessAlert("Team member removed successfully.", "Team Member Removed");
                     return true;
                 }
             }
@@ -2271,7 +2271,7 @@ namespace ProjectTile
                     currentVersion.ConvertToClientTeam(ref thisTeam);
                     if (currentVersion.HasKeyRole) { updateOtherClientInstances(currentVersion); }
                     existingPtDb.SaveChanges();
-                    MessageFunctions.SuccessMessage("Your changes have been saved successfully.", "Team Membership Amended");
+                    MessageFunctions.SuccessAlert("Your changes have been saved successfully.", "Team Membership Amended");
                     return true;
                 }
             }
@@ -2296,7 +2296,7 @@ namespace ProjectTile
                     existingPtDb.ClientTeams.Add(thisTeam);
                     if (newRecord.HasKeyRole) { updateOtherClientInstances(newRecord); }
                     existingPtDb.SaveChanges();
-                    MessageFunctions.SuccessMessage("New client team member added successfully.", "Team Member Added");
+                    MessageFunctions.SuccessAlert("New client team member added successfully.", "Team Member Added");
                     return thisTeam.ID;
                 }
             }
@@ -2322,7 +2322,7 @@ namespace ProjectTile
                     ClientTeams thisTeam = existingPtDb.ClientTeams.Where(ct => ct.ID == unwantedRecord.ID).FirstOrDefault();
                     existingPtDb.ClientTeams.Remove(thisTeam);
                     existingPtDb.SaveChanges();
-                    MessageFunctions.SuccessMessage("Team member removed successfully.", "Team Member Removed");
+                    MessageFunctions.SuccessAlert("Team member removed successfully.", "Team Member Removed");
                     return true;
                 }
             }

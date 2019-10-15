@@ -78,7 +78,7 @@ namespace ProjectTile
             if (staffID > 0) { chooseStaffName(staffID); }
             this.DataContext = editTeamRecord;
             toggleBackButton();
-            MessageFunctions.InfoMessage("Current key roles are bold. Future roles are blue, and past ones are grey; otherwise, Live (open) projects are green.", "Grid formatting:");
+            MessageFunctions.InfoAlert("Current key roles are bold. Future roles are blue, and past ones are grey; otherwise, Live (open) projects are green.", "Grid formatting:");
         }
 
         // ---------------------------------------------------------- //
@@ -281,7 +281,7 @@ namespace ProjectTile
             toggleProjectColumns();
             if (specificProject && canEditTeams)
             {
-                MessageFunctions.InfoMessage(keyRoles + " are key roles that must be filled throughout the project. However, existing records can be "
+                MessageFunctions.InfoAlert(keyRoles + " are key roles that must be filled throughout the project. However, existing records can be "
                 + " amended to replace unwanted entries.", "Please note:");
             }
         }

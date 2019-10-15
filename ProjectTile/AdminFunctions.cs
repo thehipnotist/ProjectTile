@@ -19,6 +19,8 @@ namespace ProjectTile
 
         // ------------------ Lists ----------------- //
 
+        public static List<ErrorProxy> ErrorLogEntries = null;
+
         // ---------------------------------------------------------- //
         // -------------------- Page Management --------------------- //
         // ---------------------------------------------------------- //
@@ -29,8 +31,7 @@ namespace ProjectTile
 	
         public static List<AuditProxy> AllLogEntries(DateTime fromDate, DateTime toDate, string tableName, string userID)
         {
-            DateTime maxTime = toDate.AddDays(1);
-            
+            DateTime maxTime = toDate.AddDays(1);         
             try
             {
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
@@ -153,8 +154,62 @@ namespace ProjectTile
             }
         }
 
+        public static void SetErrorLogEntries(DateTime fromDate, DateTime toDate, string type, string userID)
+        {
+            DateTime maxTime = toDate.AddDays(1);
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    List<ErrorProxy> allErrors = (from el in existingPtDb.ErrorLog
+                            join s in existingPtDb.Staff on el.LoggedBy equals s.UserID
+                                into GroupJoin from ss in GroupJoin.DefaultIfEmpty()
+                            where el.LoggedAt >= fromDate && el.LoggedAt <= maxTime
+                                && (type == AllRecords || el.ExceptionType.Replace("System.", "") == type)
+                                && (userID == "" || userID == AllCodes || userID == el.LoggedBy.Replace(DbUserPrefix, ""))
+                            select new ErrorProxy 
+                            {
+//                                ID = el.ID,
+                                CustomMessage = el.CustomMessage,
+                                ExceptionMessage = el.ExceptionMessage,
+                                ExceptionType = el.ExceptionType,
+                                TargetSite = el.TargetSite,
+                                LoggedAt = (DateTime) el.LoggedAt,
+                                LoggedBy = el.LoggedBy,
+                                User = ss ?? null,
+                                InnerException = el.InnerException
+                            }                            
+                            ).Distinct().ToList();
+
+                    foreach(ErrorProxy error in allErrors)
+                    {
+                        DateTime dt = error.LoggedAt;
+                        error.LoggedAt = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, 0);
+                    }
+
+                    ErrorLogEntries = allErrors.Distinct().ToList();
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving error log entries", generalException);
+            }
+        }
+
+        public static List<string> ErrorTypes()
+        {
+            if (ErrorLogEntries == null) { SetErrorLogEntries(StartOfTime, Today, AllRecords, AllCodes); }
+            List<string> types = ErrorLogEntries.OrderBy(ele => ele.ShortType).Select(ele => ele.ShortType).Distinct().ToList();
+            types.Add(AllRecords);
+            return types;
+        }
 
         // -------------- Data updates -------------- // 
+
+
+
+
 
 
 

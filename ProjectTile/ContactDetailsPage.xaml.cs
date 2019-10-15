@@ -116,7 +116,7 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error creating new contact record", generalException); }
             if (newID > 0)
             {
-                MessageFunctions.SuccessMessage("New contact '" + FirstName.Text + " " + Surname.Text + "' saved successfully.", "Contact Created");
+                MessageFunctions.SuccessAlert("New contact '" + FirstName.Text + " " + Surname.Text + "' saved successfully.", "Contact Created");
                 selectedContactID = newID;
                 goBack();
             }
@@ -133,7 +133,7 @@ namespace ProjectTile
             {
                 if (success)
                 {
-                    MessageFunctions.SuccessMessage("Your changes have been saved successfully.", "Contact Amended");
+                    MessageFunctions.SuccessAlert("Your changes have been saved successfully.", "Contact Amended");
                     goBack();
                 }
             }

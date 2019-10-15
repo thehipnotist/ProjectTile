@@ -185,7 +185,7 @@ namespace ProjectTile
                 if (makeDefault) 
                 {
                     SetDefaultEntity(ref selectedEntity);
-                    MessageFunctions.SuccessMessage("Your default Entity has now been set to '" + selectedEntity.EntityName + "'.", "Default Entity Changed");
+                    MessageFunctions.SuccessAlert("Your default Entity has now been set to '" + selectedEntity.EntityName + "'.", "Default Entity Changed");
                 }
                 PageFunctions.ShowTilesPage();
             }
@@ -269,7 +269,7 @@ namespace ProjectTile
 
                             if (makeDefault) { SetDefaultEntity(ref newEntity); }
 
-                            MessageFunctions.SuccessMessage("Entity '" + entityName + "' has been created" + switched, "New Entity Created");
+                            MessageFunctions.SuccessAlert("Entity '" + entityName + "' has been created" + switched, "New Entity Created");
                             PageFunctions.ShowTilesPage();
                         }
                         catch (SqlException sqlException)
@@ -340,7 +340,7 @@ namespace ProjectTile
                             changeDbEntity.EntityDescription = entityDescription;
                             existingPtDb.SaveChanges();
 
-                            MessageFunctions.SuccessMessage("Entity '" + originalName + "' has been amended" + nameChange + ".", "Entity Amended");
+                            MessageFunctions.SuccessAlert("Entity '" + originalName + "' has been amended" + nameChange + ".", "Entity Amended");
                             if (changeDbEntity.ID == CurrentEntityID) { UpdateCurrentEntity(ref changeDbEntity); }
                             if (changeDbEntity.ID == MyDefaultEntityID) { UpdateMyDefaultEntity(ref changeDbEntity); }
                             PageFunctions.ShowTilesPage();
@@ -413,7 +413,7 @@ namespace ProjectTile
                     string notCurrent = "";
                     if (displayName != CurrentEntityName) { notCurrent = " Note that you are still currently connected to '" + CurrentEntityName + "'."; }
 
-                    MessageFunctions.SuccessMessage("Your default Entity has now been set to '" + displayName + "'." + notCurrent, "Default Entity Changed");
+                    MessageFunctions.SuccessAlert("Your default Entity has now been set to '" + displayName + "'." + notCurrent, "Default Entity Changed");
                     PageFunctions.UpdateDetailsBlock();
                     PageFunctions.ShowTilesPage();
                 }

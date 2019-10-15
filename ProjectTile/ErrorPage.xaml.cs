@@ -15,9 +15,9 @@ using System.Windows.Shapes;
 namespace ProjectTile
 {
     /// <summary>
-    /// Interaction logic for AuditPage.xaml
+    /// Interaction logic for ErrorPage.xaml
     /// </summary>
-    public partial class AuditPage : Page
+    public partial class ErrorPage : Page
     {
         // ---------------------------------------------------------- //
         // -------------------- Global Variables -------------------- //
@@ -32,17 +32,17 @@ namespace ProjectTile
 
         DateTime fromDate = Globals.InfiniteDate;
         DateTime toDate = Globals.StartOfTime;
-        string tableName = "";
-        StaffProxy changeBy = Globals.AllStaff;
+        string typeName = "";
+        StaffProxy loggedBy = Globals.AllStaff;
 
         // ------------- Current records ------------ //
 
-
+        ErrorProxy selectedError = null;
 
         // ------------------ Lists ----------------- //
-        List<string> tableNames = null;
+        List<string> typeNames = null;
         List<StaffProxy> staffComboList;
-        List<AuditProxy> auditGridList;
+        List<ErrorProxy> errorGridList;
 
         // ---------------------------------------------------------- //
         // -------------------- Page Management --------------------- //
@@ -50,7 +50,7 @@ namespace ProjectTile
 
         // ---------- Initialize and Load ----------- //
 
-        public AuditPage()
+        public ErrorPage()
         {
             InitializeComponent();
             Style = (Style)FindResource(typeof(Page));
@@ -71,12 +71,11 @@ namespace ProjectTile
 
             FromDate.SelectedDate = fromDate = Globals.StartOfMonth;
             ToDate.SelectedDate = toDate = Globals.Today;
-            refreshTableNames();
+            refreshTypeNames();
             refreshStaffCombo();
             FromDate.Focus();
             ToDate.Focus();
-            TableCombo.Focus();
-            MessageFunctions.InfoAlert("Only records within or relevant to the current Entity (" + Globals.CurrentEntityName + ") are displayed.", "Please note:");
+            TypeCombo.Focus();
         }
 
 
@@ -87,11 +86,11 @@ namespace ProjectTile
 
         // ------------- Data retrieval ------------- // 		
 
-        private void refreshTableNames()
+        private void refreshTypeNames()
         {
-            tableNames = AdminFunctions.LogTables();
-            TableCombo.ItemsSource = tableNames;
-            TableCombo.SelectedItem = Globals.PleaseSelect;
+            typeNames = AdminFunctions.ErrorTypes();
+            TypeCombo.ItemsSource = typeNames;
+            TypeCombo.SelectedItem = Globals.AllRecords;
         }
 
         private void refreshStaffCombo()
@@ -102,14 +101,15 @@ namespace ProjectTile
             StaffCombo.SelectedItem = Globals.AllStaff;
         }
 
-        private void refreshAuditDataGrid()
+        private void refreshErrorDataGrid()
         {
             try
             {                
-                auditGridList = AdminFunctions.DisplayLogEntries(fromDate, toDate, tableName, changeBy.UserID);
-                AuditDataGrid.ItemsSource = auditGridList;
+                AdminFunctions.SetErrorLogEntries(fromDate, toDate, typeName, loggedBy.UserID);
+                errorGridList = AdminFunctions.ErrorLogEntries;
+                ErrorDataGrid.ItemsSource = errorGridList;
             }
-            catch (Exception generalException) { MessageFunctions.Error("Error displaying audit data", generalException); }	
+            catch (Exception generalException) { MessageFunctions.Error("Error displaying error data", generalException); }	
         }
 
         // -------------- Data updates -------------- // 
@@ -118,7 +118,10 @@ namespace ProjectTile
 
         // --------- Other/shared functions --------- // 
 
-
+        private void toggleInnerButton(bool enable)
+        {
+            InnerButton.IsEnabled = enable;
+        }
 
         // ---------- Links to other pages ---------- //		
 
@@ -142,49 +145,59 @@ namespace ProjectTile
             PageFunctions.ShowTilesPage();
         }
 
-        private void AuditDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ErrorDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            if (ErrorDataGrid.SelectedItem == null) { toggleInnerButton(false); }
+            else
+            {
+                selectedError = (ErrorProxy)ErrorDataGrid.SelectedItem;
+                toggleInnerButton(selectedError.InnerException != "");
+            }
         }
 
         private void StaffCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (StaffCombo.SelectedItem != null)
             {
-                changeBy = (StaffProxy)StaffCombo.SelectedItem;
-                refreshAuditDataGrid();
+                loggedBy = (StaffProxy)StaffCombo.SelectedItem;
+                refreshErrorDataGrid();
             }                
         }
 
-        private void TableCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void TypeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (TableCombo.SelectedItem != null)
+            if (TypeCombo.SelectedItem != null)
             {
-                tableName = (string) TableCombo.SelectedValue;
-                refreshAuditDataGrid();
+                typeName = (string) TypeCombo.SelectedValue;
+                refreshErrorDataGrid();
             }
         }
 
         private void FromDate_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (FromDate.SelectedDate != null)
-            {
-                fromDate = (DateTime)FromDate.SelectedDate;
+            if (FromDate.SelectedDate != null) 
+            { 
+                fromDate = (DateTime) FromDate.SelectedDate;
                 if (toDate != null && toDate < fromDate) { ToDate.SelectedDate = fromDate; }
             }
             else { fromDate = Globals.InfiniteDate; }
-            refreshAuditDataGrid();
+            refreshErrorDataGrid();
         }
 
         private void ToDate_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (ToDate.SelectedDate != null)
-            {
+            if (ToDate.SelectedDate != null) 
+            { 
                 toDate = (DateTime)ToDate.SelectedDate;
                 if (fromDate != null && fromDate > toDate) { FromDate.SelectedDate = toDate; }
             }
             else { toDate = Globals.StartOfTime; }
-            refreshAuditDataGrid();
+            refreshErrorDataGrid();
+        }
+
+        private void InnerButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageFunctions.InfoBox(selectedError.InnerException, "Inner Exception");
         }
 
     } // class

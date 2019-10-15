@@ -379,6 +379,15 @@
                     </Grid>
                 </Label>
             </Button>
+            <Button x:Name="AdminButton_Error" Margin="0,135,0,0" Background="{DynamicResource PtBrushAdmin1}" MouseLeave="buttonMouseOut" 
+                        Grid.Column="2" Visibility="Hidden" Click="AdminButton_Error_Click" Style="{DynamicResource TileStyle}">
+                <Label  Background="{DynamicResource PtGradientAdmin1}" Style="{DynamicResource TileLabelStyle}">
+                    <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Image Source="{DynamicResource ErrorIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Error Log" VerticalAlignment="Center" Margin="2,0,2,0"/>
+                    </Grid>
+                </Label>
+            </Button>            
 
         </Grid>
 

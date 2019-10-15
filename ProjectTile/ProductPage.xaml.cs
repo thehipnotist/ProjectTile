@@ -247,7 +247,7 @@ namespace ProjectTile
                     bool success = ProductFunctions.AmendProduct(selectedProduct.ID, ProductName.Text, Description.Text, Version.Text);
                     if (success) 
                     { 
-                        MessageFunctions.SuccessMessage("Your changes have been saved successfully.", "Product Amended");
+                        MessageFunctions.SuccessAlert("Your changes have been saved successfully.", "Product Amended");
                         refreshProductGrid();
                         amendmentSetup(); 
                     }
@@ -261,14 +261,14 @@ namespace ProjectTile
                         refreshProductGrid();
                         if (pageMode == PageFunctions.Amend) 
                         { 
-                            MessageFunctions.SuccessMessage("New product '" + ProductName.Text + "' saved successfully.", "Product Created");
+                            MessageFunctions.SuccessAlert("New product '" + ProductName.Text + "' saved successfully.", "Product Created");
                             amendmentSetup();
                             ProductGrid.SelectedValue = gridList.First(s => s.ID == newID);
                             ProductGrid.ScrollIntoView(ProductGrid.SelectedItem);
                         }
                         else 
                         {
-                            MessageFunctions.SuccessMessage("New product '" + ProductName.Text + "' saved successfully. You can create further products using the 'Add Another' button.", "Product Created");
+                            MessageFunctions.SuccessAlert("New product '" + ProductName.Text + "' saved successfully. You can create further products using the 'Add Another' button.", "Product Created");
                             ProductName.IsEnabled = Description.IsEnabled = Version.IsEnabled = false;
                             editMode = false;
                             CommitButton.IsEnabled = false;

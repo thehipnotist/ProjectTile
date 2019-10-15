@@ -81,17 +81,22 @@ namespace ProjectTile
             }
         }
 
-        public static void SuccessMessage(string message, string caption)
+        public static void SuccessAlert(string message, string caption)
         {
             PageFunctions.DisplayMessage(message, caption, 10, true);
         }
 
-        public static void InfoMessage(string message, string caption)
+        public static void InfoAlert(string message, string caption)
         {
             PageFunctions.DisplayMessage(message, caption, 10, false);
         }
 
-        public static void CancelInfoMessage()
+        public static void InfoBox(string message, string caption)
+        {
+            MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        public static void CancelInfoAlert()
         {
             if (InfoMessageDisplaying) { PageFunctions.HideMessage(); }
         }

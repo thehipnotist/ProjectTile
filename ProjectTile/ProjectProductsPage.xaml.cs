@@ -283,14 +283,14 @@ namespace ProjectTile
                 else
                 {
                     FromLabel.Content = "Available Products for " + Globals.SelectedProjectProxy.Client.ClientName;
-                    MessageFunctions.InfoMessage("Only products owned by " + Globals.SelectedProjectProxy.Client.ClientName
+                    MessageFunctions.InfoAlert("Only products owned by " + Globals.SelectedProjectProxy.Client.ClientName
                         + " are displayed. Use the 'Client Projects' button to add any missing products to the client.", "Please note:");
                 }
             }
             else
             {
                 FromLabel.Content = "Available Projects";
-                MessageFunctions.InfoMessage("Only projects for clients who have product " + selectedProduct.ProductName + " (and internal projects) "
+                MessageFunctions.InfoAlert("Only projects for clients who have product " + selectedProduct.ProductName + " (and internal projects) "
                     + "are displayed, and only non-Live open projects can be added or removed.", "Please note:");
             }
         }
@@ -533,7 +533,7 @@ namespace ProjectTile
                         thisProduct = ClientFunctions.ClientsWithProduct(false, thisRecord.ProductID).FirstOrDefault(cwp => cwp.ClientID == thisRecord.ClientID);
                         if (thisProduct == null)
                         {
-                            MessageFunctions.InfoMessage("No client product record found for client " + thisRecord.ClientName() + " with product " + thisRecord.ProductName 
+                            MessageFunctions.InfoAlert("No client product record found for client " + thisRecord.ClientName() + " with product " + thisRecord.ProductName 
                                 + ". A 'dummy' record will be used instead.", null);
                             thisProduct = ProjectFunctions.DummyClientProduct(thisRecord.Product);
                         }
@@ -564,7 +564,7 @@ namespace ProjectTile
         {
             ProjectFunctions.ClearAnyChanges();
             selectedProjectProduct = null;
-            MessageFunctions.CancelInfoMessage();
+            MessageFunctions.CancelInfoAlert();
         }
 
         private void toggleActiveOnly(bool isChecked)
@@ -852,7 +852,7 @@ namespace ProjectTile
             bool success = (editMode == ByProject) ? ProjectFunctions.SaveProjectProductChanges(Globals.SelectedProjectProxy.ProjectID) : ProjectFunctions.SaveProductProjectChanges(selectedProductID);
             if (success)
             {
-                MessageFunctions.SuccessMessage("Your changes have been saved successfully. You can make further changes, go back to the previous screen, or close the current page.", "Changes Saved");
+                MessageFunctions.SuccessAlert("Your changes have been saved successfully. You can make further changes, go back to the previous screen, or close the current page.", "Changes Saved");
                 CommitButton.IsEnabled = false;
             }
         }

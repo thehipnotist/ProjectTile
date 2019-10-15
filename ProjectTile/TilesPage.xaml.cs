@@ -129,6 +129,7 @@ namespace ProjectTile
                 helpButtons.Add(HelpButton_FAQ);
 
                 if (myPermissions.Allow("ViewAuditEntries")) { adminButtons.Add(AdminButton_Audit); }
+                if (myPermissions.Allow("ViewErrorLog")) { adminButtons.Add(AdminButton_Error); }
 
                 if (staffButtons.Count == 0) 
                 { 
@@ -444,6 +445,11 @@ namespace ProjectTile
         private void AdminButton_Audit_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowAuditPage();
+        }
+
+        private void AdminButton_Error_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowErrorPage();
         }
         
     } // class
