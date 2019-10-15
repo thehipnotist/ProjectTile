@@ -87,6 +87,24 @@ namespace ProjectTile
             }	 
         }
 
+        public static TablePermissions GetPermission(int recordID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return existingPtDb.TablePermissions.FirstOrDefault(tp => tp.ID == recordID);
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error ...", generalException);
+                return null;
+            }
+        }
+
+
         // -------------- Data updates -------------- // 
 
 

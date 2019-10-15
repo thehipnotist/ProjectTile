@@ -496,6 +496,23 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error retrieving list of project types", generalException); }
         }
 
+        public static ProjectTypes GetProjectType(string typeCode)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return existingPtDb.ProjectTypes.FirstOrDefault(pt => pt.TypeCode == typeCode);
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving project type matching code '" + typeCode + "'", generalException);
+                return null;
+            }
+        }
+
         public static ProjectTypes GetTypeFromName(string typeName)
         {
             try
@@ -805,6 +822,12 @@ namespace ProjectTile
                 MessageFunctions.Error("Error retrieving project team members to display", generalException);
                 return false;
             }
+        }
+
+        public static TeamProxy GetProjectTeam(int projectTeamID)
+        {
+            SetFullTeamsList();
+            return FullTeamsList.FirstOrDefault(ftl => ftl.ID == projectTeamID);
         }
 
         public static bool IsInTimeFilter(TeamTimeFilter timeFilter, DateTime? fromDate, DateTime? toDate)
@@ -1435,6 +1458,11 @@ namespace ProjectTile
                 MessageFunctions.Error("Error listing products for project ID " + projectID.ToString(), generalException);
                 return null;
             }
+        }
+
+        public static ProjectProductProxy GetProjectProduct(int projectProductID)
+        {
+            return ProjectsWithProduct(false, 0).FirstOrDefault(pwp => pwp.ID == projectProductID);
         }
 
         public static ClientProductProxy DummyClientProduct(Products thisProduct) // For internal projects, where there is no client

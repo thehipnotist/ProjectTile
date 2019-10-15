@@ -603,6 +603,23 @@ namespace ProjectTile
             }
         }
 
+        public static StaffEntities GetStaffEntity(int staffEntityID)
+        {
+            ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+            using (existingPtDb)
+            {
+                try
+                {
+                    return existingPtDb.StaffEntities.FirstOrDefault(se => se.ID == staffEntityID);
+                }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error retrieving staff Entity link record with ID " + staffEntityID, generalException);
+                    return null;
+                }
+            }
+        }
+
         public static List<StaffProxySmall> StaffInEntity(bool activeOnly, int entityID)
         {
             ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
@@ -1140,6 +1157,23 @@ namespace ProjectTile
                     MessageFunctions.Error("Error listing staff roles", generalException);
                     return null;
                 }
+            }
+        }
+
+        public static StaffRoles GetRole(string roleCode)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return existingPtDb.StaffRoles.FirstOrDefault(sr => sr.RoleCode == roleCode);
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving role details", generalException);
+                return null;
             }
         }
 

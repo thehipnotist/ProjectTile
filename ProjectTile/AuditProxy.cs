@@ -53,7 +53,7 @@ namespace ProjectTile
         {
             get
             {
-                if (TableName == clientProducts) {return ClientFunctions.GetClientProductProxy(RecordID); }
+                if (TableName == clientProducts && !AType.Equals("D")) { return ClientFunctions.GetClientProductProxy(RecordID); }
                 else { return null; }
             }
         }
@@ -62,7 +62,7 @@ namespace ProjectTile
         {
             get
             {
-                if (TableName == clientStaff) { return ClientFunctions.GetContactProxy(RecordID); }
+                if (TableName == clientStaff && !AType.Equals("D")) { return ClientFunctions.GetContactProxy(RecordID); }
                 else { return null; }
             }
         }
@@ -71,7 +71,7 @@ namespace ProjectTile
         {
             get
             {
-                if (TableName == clientTeamRoles) { return ProjectFunctions.GetClientRole(PrimaryValue); }
+                if (TableName == clientTeamRoles && !AType.Equals("D")) { return ProjectFunctions.GetClientRole(PrimaryValue); }
                 else { return null; }
             }
         }
@@ -80,28 +80,107 @@ namespace ProjectTile
         {
             get
             {
-                if (TableName == clientTeams) { return ProjectFunctions.GetProjectContact(RecordID); }
+                if (TableName == clientTeams && !AType.Equals("D")) { return ProjectFunctions.GetProjectContact(RecordID); }
                 else { return null; }
             }
         }
         
+        public ProjectProductProxy ProjectProduct
+        {
+            get
+            {
+                if (TableName == projectProducts && !AType.Equals("D")) { return ProjectFunctions.GetProjectProduct(RecordID); }
+                else { return null; }
+            }
+        }
+
+        public ProjectRoles ProjectRole
+        {
+            get
+            {
+                if (TableName == projectRoles && !AType.Equals("D")) { return ProjectFunctions.GetInternalRole(PrimaryValue); }
+                else { return null; }
+            }
+        }
+
+        public ProjectStages ProjectStage
+        {
+            get
+            {
+                if (TableName == projectStages && !AType.Equals("D")) { return ProjectFunctions.GetStageByCode(RecordID); }
+                else { return null; }
+            }
+        }
+
+        public TeamProxy ProjectTeam
+        {
+            get
+            {
+                if (TableName == projectTeams && !AType.Equals("D")) { return ProjectFunctions.GetProjectTeam(RecordID); }
+                else { return null; }
+            }
+        }
+
+        public ProjectTypes ProjectType
+        {
+            get
+            {
+                if (TableName == projectTypes && !AType.Equals("D")) { return ProjectFunctions.GetProjectType(PrimaryValue); }
+                else { return null; }
+            }
+        }
+
+        public StaffEntities StaffEntity
+        {
+            get
+            {
+                if (TableName == staffEntities && !AType.Equals("D")) { return StaffFunctions.GetStaffEntity(RecordID); }
+                else { return null; }
+            }
+        }
+
+        public StaffRoles StaffRole
+        {
+            get
+            {
+                if (TableName == staffRoles && !AType.Equals("D")) { return StaffFunctions.GetRole(PrimaryValue); }
+                else if (TableName == tablePermissions && !AType.Equals("D")) { return StaffFunctions.GetRole(TablePermission.RoleCode); }
+                else { return null; }
+            }
+        }
+
+        public TablePermissions TablePermission
+        {
+            get
+            {
+                if (TableName == tablePermissions && !AType.Equals("D")) { return AdminFunctions.GetPermission(RecordID) ; }
+                else { return null; }
+            }
+        }
+
         public int ClientID
         {
             get
             {
-                switch (TableName)
+                if (!AType.Equals("D"))
                 {
-                    case clientProducts:
-                        return ClientProduct.ClientID;
-                    case clients:                        
-                        return Client.ID;
-                    case clientStaff:
-                        return ClientStaff.ClientID;
-                    case clientTeams:
-                        return ClientTeam.ClientID;
-                    default: 
-                        return 0;
+                    switch (TableName)
+                    {
+                        case clientProducts:
+                            return ClientProduct.ClientID;
+                        case clients:
+                            return Client.ID;
+                        case clientStaff:
+                            return ClientStaff.ClientID;
+                        case clientTeams:
+                            return ClientTeam.ClientID;
+                        case projectProducts:
+                            return (Project.ClientID ?? 0);
+                        default:
+                            return 0;
+                    }
                 }
+                else { return 0; }
             }
         }
 
@@ -109,18 +188,24 @@ namespace ProjectTile
         {
             get
             {
-                switch (TableName)
+                if (!AType.Equals("D"))
                 {
-                    case clientProducts:
-                    case clientTeams:
-                        return ClientFunctions.GetClientByID(ClientID);
-                    case clients:
-                        return ClientFunctions.GetClientByID(RecordID);
-                    case clientStaff:
-                        return ClientStaff.Client;
-                    default: 
-                        return null;
+                    switch (TableName)
+                    {
+                        case clientProducts:
+                        case clientTeams:
+                            return ClientFunctions.GetClientByID(ClientID);
+                        case clients:
+                            return ClientFunctions.GetClientByID(RecordID);
+                        case clientStaff:
+                            return ClientStaff.Client;
+                        case projects:
+                            return (ClientID > 0) ? ClientFunctions.GetClientByID(ClientID) : null;
+                        default:
+                            return null;
+                    }
                 }
+                else { return null; }
             }
         }
 
@@ -128,7 +213,42 @@ namespace ProjectTile
         {
             get
             {
-                if (TableName == products) { return ProductFunctions.GetProductByID(RecordID); }
+                if (TableName == products && !AType.Equals("D")) { return ProductFunctions.GetProductByID(RecordID); }
+                else if (TableName == projectProducts && !AType.Equals("D")) { return ProjectProduct.Product; }
+                else { return null; }
+            }
+        }
+
+        public Projects Project
+        {
+            get
+            {
+                if (!AType.Equals("D"))
+                {
+                    switch (TableName)
+                    {
+                        case clientTeams:
+                            return ClientTeam.Project;
+                        case projectProducts:
+                            return ProjectProduct.Project;
+                        case projects:
+                            return ProjectFunctions.GetProject(RecordID);
+                        case projectTeams:
+                            return ProjectTeam.Project;
+                        default:
+                            return null;
+                    }
+                }
+                else { return null; }
+            }
+        }
+
+        public Staff StaffMember
+        {
+            get
+            {
+                if (TableName == staff && !AType.Equals("D")) { return StaffFunctions.GetStaffMember(RecordID); }
+                else if (TableName == staffEntities && !AType.Equals("D")) { return StaffFunctions.GetStaffMember((int)StaffEntity.StaffID); }
                 else { return null; }
             }
         }
@@ -137,18 +257,30 @@ namespace ProjectTile
         {
             get
             {
-                switch (TableName)
+                if (!AType.Equals("D"))
                 {
-                    case clientProducts:
-                    case clients:
-                    case clientStaff:
-                    case clientTeams:
-                        return Client.EntityID;
-                    case entities:
-                        return RecordID;
-                    default:
-                        return 0;
+                    switch (TableName)
+                    {
+                        case clientProducts:
+                        case clients:
+                        case clientStaff:
+                        case clientTeams:
+                            return Client.EntityID;
+                        case entities:
+                            return RecordID;
+                        case projectProducts:
+                        case projects:
+                        case projectTeams:
+                            return Project.EntityID;
+                        case staff:
+                            return (EntityFunctions.AllowedEntityIDs(StaffMember.ID).Contains(CurrentEntityID)) ? CurrentEntityID : (int) StaffMember.DefaultEntity;
+                        case staffEntities:
+                            return (int)StaffEntity.EntityID;
+                        default:
+                            return 0;
+                    }
                 }
+                else { return 0; }
             }
         }
 
@@ -156,36 +288,60 @@ namespace ProjectTile
         {
             get
             {
-                return EntityFunctions.GetEntity(EntityID);
+                return (EntityID > 0)? EntityFunctions.GetEntity(EntityID) : null;
             }
         }
 
         public string RecordDescription 
         {
             get
-            { 
-                switch (TableName)
+            {
+                if (!AType.Equals("D"))
                 {
-                    case clientProducts: 
-                        return ClientProduct.ProductName + " for " + Client.ClientName;
-                    case clients:
-                        return Client.ClientName;
-                    case clientStaff:
-                        return ClientStaff.ContactName + " at " + Client.ClientName;
-                    case clientTeamRoles:
-                        return ClientTeamRole.RoleDescription;
-                    case clientTeams:
-                        return ClientTeam.Contact.ContactName + " on " + ClientTeam.Project.ProjectCode;
-                    case entities:
-                        return Entity.EntityName;
-                    case products:
-                        return Product.ProductName;
-                    default: 
-                        return ""; 
+                    switch (TableName)
+                    {
+                        case clientProducts:
+                            return ClientProduct.ProductName + " for " + Client.ClientName;
+                        case clients:
+                            return Client.ClientName;
+                        case clientStaff:
+                            return ClientStaff.ContactName + " at " + Client.ClientName;
+                        case clientTeamRoles:
+                            return ClientTeamRole.RoleDescription;
+                        case clientTeams:
+                            return ClientTeam.Contact.ContactName + " on " + Project.ProjectCode;
+                        case entities:
+                            return Entity.EntityName;
+                        case products:
+                            return Product.ProductName;
+                        case projectProducts:
+                            return Product.ProductName + " in " + Project.ProjectCode;
+                        case projectRoles:
+                            return ProjectRole.RoleDescription;
+                        case projects:
+                            return Project.ProjectCode;
+                        case projectStages:
+                            return ProjectStage.StageName;
+                        case projectTeams:
+                            return ProjectTeam.StaffMember.StaffName + " on " + Project.ProjectCode;
+                        case projectTypes:
+                            return ProjectType.TypeName;
+                        case staff:
+                            return StaffMember.FullName + ((StaffMember.UserID != "") ? " (" + StaffMember.UserID + ")" : "");
+                        case staffEntities:
+                            return StaffMember.FullName + " in " + Entity.EntityName;
+                        case staffRoles:
+                            return StaffRole.RoleDescription;
+                        case tablePermissions:
+                            return StaffRole.RoleDescription + " with " + TablePermission.TableName;
+                        default:
+                            return "";
+                    }
                 }
+                else { return ""; }
             }
         }
         
         
-    }
-}
+    } // class
+} // namespace
