@@ -48,8 +48,6 @@ namespace ProjectTile
                     PageFunctions.ShowTilesPage();    
                 }
 
-                EntityList.ItemsSource = EntityFunctions.EntityNameList(Globals.MyStaffID, false);
-
                 if (pageMode == PageFunctions.Switch)
                 {
                     PageHeader.Content = "Change Current Entity";
@@ -57,11 +55,12 @@ namespace ProjectTile
                     Instructions.Content = "Pick an Entity from the list to change to it.";
                     EntityName.Visibility = Visibility.Hidden;
                     SwitchToCheckBox.Visibility = Visibility.Hidden;
-                    //MakeDefaultCheckBox.Margin = SwitchToCheckBox.Margin;
                     EntityDescription.IsEnabled = false;
                     EntityList.Margin = EntityName.Margin;
                     CommitButtonText.Text = "Change";
                     ChangeNameLabel.Visibility = Visibility.Hidden;
+                    EntityList.ItemsSource = EntityFunctions.EntityNameList(Globals.MyStaffID, false, Globals.CurrentEntityID);
+                    if (EntityList.Items.Count == 1) { EntityList.SelectedIndex = 0; }
                 }
                 else if (pageMode == PageFunctions.New)
                 {
@@ -80,9 +79,8 @@ namespace ProjectTile
                     Thickness nameMargin = EntityName.Margin;
                     EntityName.Margin = EntityList.Margin;
                     EntityList.Margin = nameMargin;
-                    //nameMargin.Left = 420;
-                    //EntityName.Margin = nameMargin;
                     CommitButtonText.Text = "Amend";
+                    EntityList.ItemsSource = EntityFunctions.EntityNameList(Globals.MyStaffID, false);
                 }
                 else if (pageMode == PageFunctions.Default) 
                 {
@@ -98,12 +96,14 @@ namespace ProjectTile
                     EntityList.Margin = EntityName.Margin;
                     CommitButtonText.Text = "Set Default";
                     ChangeNameLabel.Visibility = Visibility.Hidden;
-               
-                    try
+                    EntityList.ItemsSource = EntityFunctions.EntityNameList(Globals.MyStaffID, false, Globals.MyDefaultEntityID);
+
+                    if (Globals.MyDefaultEntityID != Globals.CurrentEntityID)
                     {
-                        EntityList.SelectedItem = Globals.CurrentEntityName;
+                        try { EntityList.SelectedItem = Globals.CurrentEntityName; }
+                        catch (Exception generalException) { MessageFunctions.Error("Error setting current entity", generalException); }
                     }
-                    catch (Exception generalException) { MessageFunctions.Error("Error setting current entity", generalException); }
+                    else { if (EntityList.Items.Count == 1) { EntityList.SelectedIndex = 0; } }
                 
                 }
                 else // Not sure

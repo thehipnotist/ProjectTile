@@ -68,11 +68,11 @@ namespace ProjectTile
             }
         }        
         
-        public static string[] EntityNameList(int thisUserID, bool includeAll)
+        public static string[] EntityNameList(int thisUserID, bool includeAll, int excludeID = 0)
         {
             try
             {
-                int[] entityIDs = AllowedEntityIDs(thisUserID);
+                int[] entityIDs = AllowedEntityIDs(thisUserID).Where(aei => !aei.Equals(excludeID)).ToArray();
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
