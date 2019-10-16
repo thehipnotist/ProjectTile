@@ -322,7 +322,7 @@
         <BitmapImage x:Key="DisableIcon" UriSource="CheckMixed.bmp"/>
         <BitmapImage x:Key="EnableIcon" UriSource="base_checkboxes.png"/>
         <BitmapImage x:Key="EntitiesIcon" UriSource="base_globe_32.png"/>
-        <BitmapImage x:Key="ErrorIcon" UriSource="error.png"/>
+        <BitmapImage x:Key="ErrorIcon" UriSource="109_AllAnnotations_Error_24x24_72.png"/>
         <BitmapImage x:Key="ExitIcon" UriSource="112_ArrowReturnRight_Blue_24x24_72 (2).png"/>
         <BitmapImage x:Key="FAQIcon" UriSource="PendingRequest_32x32_72.png"/>
         <BitmapImage x:Key="FavouriteIcon" UriSource="FavoriteStar_FrontFacing_24x24_72.png"/>

@@ -64,7 +64,7 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn x:Name="DateColumn" Binding="{Binding LoggedAt, StringFormat=dd/MM/yyyy HH:mm}" ClipboardContentBinding="{x:Null}" Header="Date"/>
                         <DataGridTextColumn x:Name="UserIDColumn" Binding="{Binding LoggedBy}" ClipboardContentBinding="{x:Null}" Header="UserID"/>
-                        <DataGridTextColumn x:Name="StaffNameColumn" Binding="{Binding StaffName}" ClipboardContentBinding="{x:Null}" Header="Staff Name" Width="*"/>
+                        <DataGridTextColumn x:Name="StaffNameColumn" Binding="{Binding StaffName}" ClipboardContentBinding="{x:Null}" Header="Staff Name"/>
                         <DataGridTextColumn x:Name="TypeColumn" Binding="{Binding ShortType}" ClipboardContentBinding="{x:Null}" Header="Type"/>
                         <DataGridTextColumn x:Name="CustomColumn" Binding="{Binding CustomMessage}" ClipboardContentBinding="{x:Null}" Header="Custom Message"/>
                         <DataGridTextColumn x:Name="ErrorColumn" Binding="{Binding ExceptionMessage}" ClipboardContentBinding="{x:Null}" Header="System Error"/>

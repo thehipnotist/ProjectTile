@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 
@@ -162,7 +163,7 @@ namespace ProjectTile
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    List<ErrorProxy> allErrors = (from el in existingPtDb.ErrorLog
+                    ErrorLogEntries = (from el in existingPtDb.ErrorLog
                             join s in existingPtDb.Staff on el.LoggedBy equals s.UserID
                                 into GroupJoin from ss in GroupJoin.DefaultIfEmpty()
                             where el.LoggedAt >= fromDate && el.LoggedAt <= maxTime
@@ -175,20 +176,37 @@ namespace ProjectTile
                                 ExceptionMessage = el.ExceptionMessage,
                                 ExceptionType = el.ExceptionType,
                                 TargetSite = el.TargetSite,
-                                LoggedAt = (DateTime) el.LoggedAt,
+                                LoggedAt = DbFunctions.CreateDateTime( // Have to do this 'long hand' to make sure we get distinct results
+                                    ((DateTime)el.LoggedAt).Year,
+                                    ((DateTime)el.LoggedAt).Month,
+                                    ((DateTime)el.LoggedAt).Day,
+                                    ((DateTime)el.LoggedAt).Hour,
+                                    ((DateTime)el.LoggedAt).Minute,
+                                    0),
                                 LoggedBy = el.LoggedBy,
                                 User = ss ?? null,
                                 InnerException = el.InnerException
                             }                            
                             ).Distinct().ToList();
 
-                    foreach(ErrorProxy error in allErrors)
-                    {
-                        DateTime dt = error.LoggedAt;
-                        error.LoggedAt = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, 0);
-                    }
+                    //foreach (ErrorProxy el in allErrors)
+                    //{
+                    //    DateTime dt = el.LoggedAt;
+                    //    el.LoggedAt = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, 0);
+                    //}
 
-                    ErrorLogEntries = allErrors.Distinct().ToList();
+                    //ErrorLogEntries = allErrors.Select(ae => new ErrorProxy 
+                    //{
+                    //    CustomMessage = ae.CustomMessage,
+                    //    ExceptionMessage = ae.ExceptionMessage,
+                    //    ExceptionType = ae.ExceptionType,
+                    //    TargetSite = ae.TargetSite,
+                    //    LoggedAt = ae.LoggedAt,
+                    //    LoggedBy = ae.LoggedBy,
+                    //    User = ae.User,
+                    //    InnerException = ae.InnerException
+                    //}        
+                    //).Distinct().ToList();
                 }
             }
             catch (Exception generalException)

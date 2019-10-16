@@ -7,12 +7,12 @@ namespace ProjectTile
 {
     public class ErrorProxy : Globals
     {
-        public int ID { get; set; }
+        //public int ID { get; set; }
         public string CustomMessage { get; set; }
         public string ExceptionMessage { get; set; }
         public string ExceptionType { get; set; }
         public string TargetSite { get; set; }
-        public DateTime LoggedAt { get; set; }
+        public DateTime? LoggedAt { get; set; }
         public string LoggedBy { get; set; }
         public Staff User { get; set; }
         public string InnerException { get; set; }
