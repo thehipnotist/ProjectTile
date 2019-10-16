@@ -56,7 +56,7 @@ namespace ProjectTile
 
             addTileQuestions();
             addFunctionalityQuestions();
-
+            addDevelopmentQuestions();
 
             
         }
@@ -121,7 +121,33 @@ namespace ProjectTile
         private void addFunctionalityQuestions()
         {
             addHeader("General Functionality Questions");
-            addQuestion("Question", "Answer");
+            addQuestion("Why doesn't this include some standard Project Management functionality?", "The purpose of ProjectTile was to learn and demonstrate coding "
+                + "skills, not to show my knowledge of Project Management. With infinite spare time I would add more functionality, but this is not designed as a "
+                + "commercial application. I had to stop developing somewhere!");
+            addQuestion("What is a key role?", "It is a project role that should always be filled during the project, and by only one person at a time - this avoids "
+                + "ambiguity or gaps when working with the project, e.g. creating project documents that name the important personnel. This applies to the internal "
+                + "Project Sponsor and Project Manager, for example - and the same roles for a client, if one is involved.");
+            addQuestion("How do I manage (internal or client) project teams, when I can't overlap or delete key roles, or leave gaps?", "The functionality is designed "
+                + "so that you can always get the result you need, though you may have to amend existing records first. For example, to effectively clear an existing record, "
+                + "you can either amend it (change person) or create a new one that effectively replaces it (starts earlier and ends later, or at the same time). "
+                + "If completely stuck, create a new record that lasts the full project duration so it clears all other records, then you can add others if needed "
+                + "that last for part of the timespan, and the existing record will be truncated appropriately for them to fit.");
+        }
+
+        private void addDevelopmentQuestions()
+        {
+            addHeader("Development Questions");
+            addQuestion("Did you write it all yourself?", "Very nearly (apart from code generated automatically by Visual Studio, naturally). Of course as this was "
+                + "a learning exercise, I followed examples from books, websites etc., but I would rewrite any code in my own way to make sure I understood it rather "
+                + "than simply directly 'lifting' the text. The one exception is the use of RNGCryptoServiceProvider with byte variables (to generate temporary "
+                + "passwords for SSO users) where I followed an example from a forum very closely.");
+            addQuestion("Did you try to follow MVVM principles?", "Not directly, as it didn't seem to fit well with the class structure created by the Entity Framework. "
+                + "Also, I wanted to make the code reasonably 'portable' so that the business logic could (in theory) be plugged into a non-WPF application."
+                + "I have used some of the binding techniques and followed some of the suggested structure, but haven't tried to fully implement MVVM."
+                + "Hopefully I can pick this up in future with some further guidance.");
+            addQuestion("Why doesn't this use the latest technology?", "I decided to build something that should work even on older machines, so that anyone can try it. "
+                + "Sometimes that has meant disregarding the latest solutions as they wouldn't work in my version of C# or .NET, e.g. some asynchronous display "
+                + "methods and using string interpolation.");
         }
 
 

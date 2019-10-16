@@ -21,7 +21,7 @@
         </Grid.RowDefinitions>
 
         <Image x:Name="HeaderImage" Source="{DynamicResource HelpIcon}" Grid.Row="0" Grid.Column="1" Margin="0,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
-        <Image x:Name="HeaderImage2" Source="{DynamicResource AboutIcon}" Grid.Row="0" Grid.Column="1" Margin="25,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
+        <Image x:Name="HeaderImage2" Source="{DynamicResource AboutIcon}" Grid.Row="0" Grid.Column="1" Margin="26,6,0,0" VerticalAlignment="Top" Width="19" Height="19"  HorizontalAlignment="Left"/>
         <Label x:Name="PageHeader" Content="About ProjectTile" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="605" FontWeight="Bold" Background="{x:Null}" Margin="50,0,0,0" 
                Foreground="White" Grid.Row="0" Grid.Column="1"/>
         <Border MinHeight="400" MinWidth="655" Height="Auto" Width="Auto" Margin="0,0,0,0" BorderBrush="{StaticResource PtBrushHelp3}" Style="{DynamicResource SectionBorder}" Grid.Row="1" 
@@ -30,22 +30,29 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="{Binding ElementName=MiddleRow, Path=ActualHeight}" MinHeight="400"/>
                 </Grid.RowDefinitions>
-                <TextBlock x:Name="MainText" HorizontalAlignment="Left" MinHeight="370" Margin="15,15,15,15" TextWrapping="Wrap" VerticalAlignment="Top" Width="625" Padding="5" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                    <TextBlock.Inlines>
-                        <TextBlock FontWeight="Bold" Text="Background"/>
-                        <LineBreak/>
-                        <TextBlock Text="{Binding Path=BackgroundText, Mode=OneWay}" TextWrapping="Wrap"/>
-                        <LineBreak/><LineBreak/>
-                        <TextBlock FontWeight="Bold" Text="The ProjectTile System"/>
-                        <LineBreak/>
-                        <TextBlock Text="{Binding Path=SystemText, Mode=OneWay}" TextWrapping="Wrap"/>
-                        <LineBreak/>
-                        <LineBreak/>
-                        <TextBlock FontWeight="Bold" Text="Acknowledgements"/>
-                        <LineBreak/>
-                        <TextBlock Text="{Binding Path=AcknowledgementsText, Mode=OneWay}" TextWrapping="Wrap"/>                        
-                    </TextBlock.Inlines>
-                </TextBlock>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="15,15,15,15">
+                    <TextBlock x:Name="MainText" HorizontalAlignment="Left" MinHeight="370" TextWrapping="Wrap" VerticalAlignment="Top" Width="625" Padding="5,5,20,5" 
+                               ScrollViewer.VerticalScrollBarVisibility="Visible">
+                        <TextBlock.Inlines>
+                            <TextBlock FontWeight="Bold" Text="ProjectTile v1.00"/>
+                            <LineBreak/>
+                            <TextBlock Text="{Binding Path=VersionText, Mode=OneWay}" TextWrapping="Wrap"/>
+                            <LineBreak/><LineBreak/>
+                            <TextBlock FontWeight="Bold" Text="Background"/>
+                            <LineBreak/>
+                            <TextBlock Text="{Binding Path=BackgroundText, Mode=OneWay}" TextWrapping="Wrap"/>
+                            <LineBreak/><LineBreak/>
+                            <TextBlock FontWeight="Bold" Text="The ProjectTile System"/>
+                            <LineBreak/>
+                            <TextBlock Text="{Binding Path=SystemText, Mode=OneWay}" TextWrapping="Wrap"/>
+                            <LineBreak/>
+                            <LineBreak/>
+                            <TextBlock FontWeight="Bold" Text="Acknowledgements"/>
+                            <LineBreak/>
+                            <TextBlock Text="{Binding Path=AcknowledgementsText, Mode=OneWay}" TextWrapping="Wrap"/>                        
+                        </TextBlock.Inlines>
+                    </TextBlock>
+                </ScrollViewer>
             </Grid>
         </Border>
         <Border Height="60" Margin="0,0,0,15" BorderBrush="{StaticResource PtBrushHelp3}" MinWidth="655" Style="{DynamicResource SectionBorder}" Grid.Row="2" Grid.Column="1" Width="Auto" 

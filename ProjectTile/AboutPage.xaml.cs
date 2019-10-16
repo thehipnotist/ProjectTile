@@ -18,6 +18,17 @@ namespace ProjectTile
         string newLine = "\n";
         public event PropertyChangedEventHandler PropertyChanged;
 
+        string versionText = "";
+        public string VersionText
+        {
+            get { return versionText; }
+            set
+            {
+                versionText = value;
+                OnPropertyChanged("VersionText");
+            }
+        }
+
         string backgroundText = "";
         public string BackgroundText
         {
@@ -72,6 +83,8 @@ namespace ProjectTile
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            VersionText = "This version is written in Visual C# 2013 and SQL Server 2014. It requires Windows with .NET 4.5 or above and a SQL Server instance (2012 or above).";
+            
             BackgroundText = "ProjectTile was created by Mark Adrian Johnson in 2019 to learn and demonstrate his programming skills."
                 + newLine + "The front end is written in Visual C# with WPF forms. The back end is a scripted SQL Server database."
                 + newLine + "All of the code will be made available on GitHub soon.";
@@ -84,7 +97,7 @@ namespace ProjectTile
 
             AcknowledgementsText = "Many thanks to all of the people on various forums (StackOverflow, Microsoft etc.) who had previously asked questions that I needed to ask, to the people "
                 + " who took the time to answer, and - most of all - to the ones who gave the answers I needed."
-                + newLine + "Also thanks to the lovely Monica Sudiwala for her patience, and for keeping me sane.";
+                + newLine + "Also thanks to the lovely Monica Sudiwala for her patience as I wrote this, and for keeping me sane.";
 
         }
 
