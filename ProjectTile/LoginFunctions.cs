@@ -326,7 +326,7 @@ namespace ProjectTile
         public static void LogIn(Staff thisUser, Entities thisEntity)
         {
             MyStaffRecord = thisUser;
-            MayName = thisUser.FullName;
+            MyName = thisUser.FullName;
             MyStaffID = thisUser.ID;
             MyUserID = thisUser.UserID;
 

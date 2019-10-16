@@ -8,7 +8,7 @@ namespace ProjectTile
         // Current login and security details
         public static Staff MyStaffRecord;
         public static int MyStaffID;
-        public static string MayName = "";
+        public static string MyName = "";
         public static string MyUserID;
         
         public static int CurrentEntityID;
