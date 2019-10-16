@@ -16,7 +16,7 @@ namespace ProjectTile
 
         private CancellationTokenSource cancelMessageTokenSource = null;
         private bool setFavouriteMode = false;
-        TableSecurity myPermissions;
+        TableSecurity myPermissions;        
         
         // ---------------------- //
         // -- Page Management --- //
@@ -26,7 +26,8 @@ namespace ProjectTile
         public MainWindow()
         {
             InitializeComponent();
-            Style = (Style)FindResource(typeof(Window));
+            Style = (Style)FindResource(typeof(Window));            
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledException);
             ToggleMainMenus(false);
             ToggleSideButtons(false);            
         }
@@ -112,14 +113,8 @@ namespace ProjectTile
         
         public void ToggleMainMenus(bool show)
         {
-            if (show)
-            {
-                MainMenu.Visibility = LoginMenu.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                MainMenu.Visibility = LoginMenu.Visibility = Visibility.Hidden;
-            }
+            if (show) { MainMenu.Visibility = LoginMenu.Visibility = Visibility.Visible; }
+            else { MainMenu.Visibility = LoginMenu.Visibility = Visibility.Hidden; }
         }
 
         // ---------------------- //
@@ -253,6 +248,11 @@ namespace ProjectTile
         // ---------------------- //  
 
         // Control-specific events //
+        static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            MessageFunctions.Error("An unhandled exception occurred", e.ExceptionObject as Exception);
+        }
+        
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (!ConfirmClosure()) { e.Cancel = true; } // Cancel closure if not sure
