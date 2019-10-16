@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Threading;
+using System.Windows.Documents;
 
 namespace ProjectTile
 {
@@ -126,12 +127,30 @@ namespace ProjectTile
         {
             try
             {
-                DetailsBlock.Text =
-                    "UserID: " + Globals.MyUserID + "\n"
-                    + "Name: " + Globals.MayName + "\n"
-                    + "\n"
-                    + "Entity: " + Globals.CurrentEntityName + "\n"
-                    + "Default: " + Globals.MyDefaultEntityName;
+                Run userIDRun = new Run(Globals.MyUserID);
+                userIDRun.FontWeight = FontWeights.Bold;
+                Hyperlink userIDLink = new Hyperlink(userIDRun);
+                userIDLink.Click += LoginMenu_Login_Click;
+
+                Run currentEntityRun = new Run(Globals.CurrentEntityName);
+                currentEntityRun.FontWeight = FontWeights.Bold;
+                Hyperlink currentEntityLink = new Hyperlink(currentEntityRun);
+                currentEntityLink.Click += ChangeEntity_Click;
+
+                Run defaultEntityRun = new Run(Globals.MyDefaultEntityName);
+                defaultEntityRun.FontWeight = FontWeights.Bold;
+                Hyperlink defaultEntityLink = new Hyperlink(defaultEntityRun);
+                defaultEntityLink.Click += DefaultEntity_Click;
+
+                DetailsBlock.Inlines.Clear();
+                DetailsBlock.Inlines.Add("UserID: ");
+                DetailsBlock.Inlines.Add(userIDLink);
+                DetailsBlock.Inlines.Add("\n" + "Name: " + Globals.MyName + "\n\n");
+
+                DetailsBlock.Inlines.Add("Entity: ");
+                DetailsBlock.Inlines.Add(currentEntityLink);
+                DetailsBlock.Inlines.Add("\n"+ "Default: ");
+                DetailsBlock.Inlines.Add(defaultEntityLink);
             }
             catch (Exception generalException)
             {

@@ -87,7 +87,7 @@
         </Menu>
 
         <TextBlock x:Name="DetailsBlock" HorizontalAlignment="Right" Height="{Binding ActualHeight, ElementName=Main}" Margin="0,65,4,-10" TextWrapping="Wrap" VerticalAlignment="Top" Width="145" 
-                   Background="{StaticResource PtBrushHeaderBlue}" TextAlignment="Right" Padding="10,5,8,5" Foreground="White" MinWidth="145" MinHeight="500" 
+                   Background="{StaticResource PtBrushHeaderBlue}" TextAlignment="Right" Padding="10,5,8,5" Foreground="White" MinWidth="145" MinHeight="500" FontWeight="Normal"
                    MaxWidth="145" Focusable="True" Grid.Column="2" Grid.RowSpan="2"/>
 
         <Button x:Name="FavouriteButton" HorizontalAlignment="Center" Height="30" Margin="18,0,17,75" VerticalAlignment="Bottom" Width="110" 
