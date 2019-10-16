@@ -1434,6 +1434,165 @@ BEGIN TRY
 
 		PRINT 'Created a view of open projects with key details'
 
+		---------------------------
+		-- Project Stage History --
+		---------------------------
+
+		CREATE TABLE dbo.StageHistory (
+			ID							INT				IDENTITY(1,1)	PRIMARY KEY
+			, ProjectID					INT				NOT NULL
+				CONSTRAINT fk_StageProject FOREIGN KEY REFERENCES dbo.Projects(ID)
+			, StageCode					INT				NOT NULL
+				CONSTRAINT fk_HistoryStage FOREIGN KEY REFERENCES dbo.ProjectStages(StageCode)
+			, TargetDate				DATE			
+			, AchievedDate				DATE
+		)
+
+		PRINT 'Created stage history table'
+
+		INSERT INTO dbo.TablePermissions (
+							TableName,			RoleCode,	ViewTable,	UpdateRows,	InsertRows, ChangeStatus)
+			SELECT			'StageHistory',		'AD',		1,			1,			1,			0
+			UNION SELECT	'StageHistory',		'SM',		1,			0,			1,			0
+			UNION SELECT	'StageHistory',		'PM',		1,			1,			1,			0
+			UNION SELECT	'StageHistory',		'AM',		1,			0,			0,			0
+			UNION SELECT	'StageHistory',		'SC',		1,			0,			0,			0
+			UNION SELECT	'StageHistory',		'AC',		1,			0,			0,			0
+			UNION SELECT	'StageHistory',		'TM',		1,			0,			0,			0
+			UNION SELECT	'StageHistory',		'TC',		1,			0,			0,			0
+
+		PRINT 'Populated table permissions table for stage history'
+
+		EXEC dbo.usp_CreateAuditTrigger @TableName = 'StageHistory', @PrimaryColumn = 'ID'
+
+		PRINT 'Created audit trigger for stage history'
+
+		INSERT INTO dbo.StageHistory (
+							ProjectID,																						StageCode,	TargetDate,		AchievedDate)
+			SELECT			(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Implementation'),				0,			'2019-06-01',	'2019-06-01'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Implementation'),				1,			'2019-06-12',	'2019-06-13'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Implementation'),				2,			'2019-06-26',	'2019-06-29'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Implementation'),				3,			'2019-07-03',	'2019-07-06'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Implementation'),				4,			'2019-07-11',	'2019-07-15'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Implementation'),				5,			'2019-08-29',	'2019-09-10'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Implementation'),				6,			'2019-09-05',	'2019-09-17'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Implementation'),				7,			'2019-09-09',	'2019-09-21'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),							0,			'2019-05-12',	'2019-05-12'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),							1,			'2019-05-14',	'2019-05-14'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),							2,			'2019-05-16',	'2019-05-16'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),							3,			'2019-05-18',	'2019-05-17'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),							4,			'2019-05-19',	'2019-05-18'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),							5,			'2019-05-28',	'2019-05-28'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),							6,			'2019-05-29',	'2019-05-29'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),							7,			'2019-05-30',	'2019-05-30'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),							8,			'2019-06-06',	'2019-06-07'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),							9,			'2019-06-08',	'2019-06-09'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),							10,			'2019-06-09',	'2019-06-10'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'BankIT 1.0 Take-On'),							11,			'2019-06-10',	'2019-06-11'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),		0,			'2019-03-22',	'2019-03-22'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),		1,			'2019-03-27',	'2019-03-28'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),		2,			'2019-04-03',	'2019-04-04'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),		3,			'2019-04-06',	'2019-04-07'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),		4,			'2019-04-10',	'2019-04-11'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),		5,			'2019-05-02',	'2019-05-04'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),		6,			'2019-05-06',	'2019-05-08'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),		7,			'2019-05-08',	'2019-05-10'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),		8,			'2019-05-27',	'2019-05-26'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),		9,			'2019-06-01',	'2019-05-30'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),		10,			'2019-06-04',	'2019-06-02'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),		11,			'2019-06-06',	'2019-06-03'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 and Accountible 5.3 Upgrade'),		12,			'2019-06-19',	'2019-06-16'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Rebuild'),							0,			'2019-06-01',	'2019-06-01'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Rebuild'),							1,			'2019-06-05',	'2019-06-06'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Rebuild'),							2,			'2019-06-11',	'2019-06-13'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Rebuild'),							3,			'2019-06-14',	'2019-06-16'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Rebuild'),							4,			'2019-06-17',	'2019-06-19'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.5 Upgrade'),					0,			'2019-04-15',	'2019-04-15'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.5 Upgrade'),					1,			'2019-04-21',	'2019-04-21'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.5 Upgrade'),					2,			'2019-04-27',	'2019-04-29'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.5 Upgrade'),					3,			'2019-05-01',	'2019-05-02'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.5 Upgrade'),					4,			'2019-05-05',	'2019-05-06'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.5 Upgrade'),					5,			'2019-05-29',	'2019-06-04'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.5 Upgrade'),					6,			'2019-06-02',	'2019-06-07'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.5 Upgrade'),					7,			'2019-06-04',	'2019-06-09'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.5 Upgrade'),					8,			'2019-06-25',	'2019-07-02'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.5 Upgrade'),					9,			'2019-06-30',	'2019-07-08'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.5 Upgrade'),					10,			'2019-07-04',	'2019-07-11'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.5 Upgrade'),					11,			'2019-07-05',	'2019-07-12'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'PeoplePower 1.5 Upgrade'),					12,			'2019-07-19',	'2019-07-26'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Upgrade and Rebuild'),		0,			'2019-06-19',	'2019-06-19'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Upgrade and Rebuild'),		1,			'2019-06-26',	'2019-06-27'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Upgrade and Rebuild'),		2,			'2019-07-05',	'2019-07-05'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Upgrade and Rebuild'),		3,			'2019-07-09',	'2019-07-10'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Upgrade and Rebuild'),		4,			'2019-07-14',	'2019-07-15'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Upgrade and Rebuild'),		5,			'2019-08-14',	'2019-08-11'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Accountible 5.3 Upgrade and Rebuild'),		6,			'2019-08-18',	'2019-08-15'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Add Warehousing to Inventistry 3.4'),			0,			'2019-03-11',	'2019-03-11'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Add Warehousing to Inventistry 3.4'),			1,			'2019-03-15',	'2019-03-16'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Add Warehousing to Inventistry 3.4'),			2,			'2019-03-20',	'2019-03-21'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Add Warehousing to Inventistry 3.4'),			3,			'2019-03-22',	'2019-03-23'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Add Warehousing to Inventistry 3.4'),			4,			'2019-03-25',	'2019-03-25'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Add Warehousing to Inventistry 3.4'),			5,			'2019-04-11',	'2019-04-11'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Add Warehousing to Inventistry 3.4'),			6,			'2019-04-13',	'2019-04-14'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Add Warehousing to Inventistry 3.4'),			7,			'2019-04-15',	'2019-04-15'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Add Warehousing to Inventistry 3.4'),			8,			'2019-04-29',	'2019-04-28'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Add Warehousing to Inventistry 3.4'),			9,			'2019-05-03',	'2019-05-02'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),							0,			'2019-01-09',	'2019-01-09'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),							1,			'2019-01-12',	'2019-01-12'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),							2,			'2019-01-17',	'2019-01-16'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),							3,			'2019-01-19',	'2019-01-19'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),							4,			'2019-01-22',	'2019-01-22'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),							5,			'2019-02-06',	'2019-02-09'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),							6,			'2019-02-08',	'2019-02-11'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),							7,			'2019-02-09',	'2019-02-13'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),							8,			'2019-02-22',	'2019-02-25'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),							9,			'2019-02-26',	'2019-02-28'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),							10,			'2019-02-28',	'2019-03-03'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),							11,			'2019-03-01',	'2019-03-04'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),							12,			'2019-03-10',	'2019-03-14'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),							13,			'2019-03-11',	'2019-03-15'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'FlogIT 2.0 Upgrade'),							14,			'2019-03-12',	'2019-03-16'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Prepare BankIT 2.1'),							0,			'2019-07-30',	'2019-07-30'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Prepare BankIT 2.1'),							1,			'2019-08-01',	'2019-08-01'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Prepare BankIT 2.1'),							2,			'2019-08-04',	'2019-08-03'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Prepare BankIT 2.1'),							3,			'2019-08-05',	'2019-08-04'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Prepare BankIT 2.1'),							4,			'2019-08-07',	'2019-08-06'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Prepare BankIT 2.1'),							5,			'2019-08-16',	'2019-08-17'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Prepare BankIT 2.1'),							6,			'2019-08-18',	'2019-08-19'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Prepare BankIT 2.1'),							7,			'2019-08-19',	'2019-08-20'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Prepare BankIT 2.1'),							8,			'2019-08-27',	'2019-08-29'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Prepare BankIT 2.1'),							9,			'2019-08-29',	'2019-08-31'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Prepare BankIT 2.1'),							10,			'2019-08-30',	'2019-09-01'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Prepare BankIT 2.1'),							11,			'2019-08-31',	'2019-09-02'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Prepare BankIT 2.1'),							12,			'2019-09-05',	'2019-09-08'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Prepare BankIT 2.1'),							13,			'2019-09-06',	'2019-09-09'
+			UNION SELECT	(SELECT ID FROM dbo.Projects WHERE ProjectName = 'Prepare BankIT 2.1'),							14,			'2019-09-07',	'2019-09-09'																																																																																																				
+
+		PRINT 'Populated stage history table'
+
+		EXEC [dbo].[usp_CreateGetProcedure] 
+			@TableName = 'StageHistory'
+			, @IDColumn = 'ID'
+			, @Prefix = 'prj'
+
+		EXEC [dbo].[usp_CreateUpdateProcedure] 
+			@TableName = 'StageHistory'
+			, @IDColumn = 'ID'
+			, @UpdateColumn = 'TargetDate'
+			, @Prefix = 'prj'
+
+		EXEC [dbo].[usp_CreateUpdateProcedure] 
+			@TableName = 'StageHistory'
+			, @IDColumn = 'ID'
+			, @UpdateColumn = 'AchievedDate'
+			, @Prefix = 'prj'
+
+		EXEC [dbo].[usp_CreateInsertProcedure] 
+			@TableName = 'StageHistory'
+			, @Prefix = 'prj'
+
+		PRINT 'Created standard procedures for stage history table'
+
 		-----------------
 		-- Project Products --
 		-----------------
@@ -2145,6 +2304,133 @@ BEGIN TRY
 				INNER JOIN dbo.Projects pj ON ct.ProjectID = pj.ID')
 
 		PRINT 'Created view of client teams'
+
+		-------------
+		-- Actions --
+		-------------
+
+		CREATE TABLE dbo.Actions (
+			ID							INT				IDENTITY(1,1)	PRIMARY KEY
+			, ActionCode				VARCHAR(20)		NOT NULL
+			, ProjectID					INT				NOT NULL
+				CONSTRAINT fk_ActionProjectID FOREIGN KEY REFERENCES dbo.Projects (ID)
+			, LoggedDate				DATE			NOT NULL
+			, TargetDate				DATE			NOT NULL
+			, UpdatedDate				DATE
+			, ShortDescription			VARCHAR(50)		NOT NULL
+			, StatusCode				BIT
+			, LoggedBy					INT
+				CONSTRAINT fk_ActionLoggedBy FOREIGN KEY REFERENCES dbo.ProjectTeams (ID)							
+			, InternalOwner				INT						
+			, ClientOwner				INT
+			, Notes						VARCHAR(200)
+			, StagePrerequisite			INT				NULL
+				CONSTRAINT fk_PrerequisiteStage FOREIGN KEY REFERENCES dbo.ProjectStages (StageCode)
+		)
+
+		PRINT 'Created actions table'
+
+		INSERT INTO dbo.TablePermissions (
+							TableName,			RoleCode,	ViewTable,	UpdateRows,	InsertRows, ChangeStatus)
+			SELECT			'Actions',			'AD',		1,			1,			1,			1
+			UNION SELECT	'Actions',			'SM',		1,			1,			1,			1
+			UNION SELECT	'Actions',			'PM',		1,			1,			0,			1
+			UNION SELECT	'Actions',			'AM',		1,			0,			1,			0
+			UNION SELECT	'Actions',			'SC',		1,			1,			1,			0
+			UNION SELECT	'Actions',			'AC',		1,			0,			0,			0
+			UNION SELECT	'Actions',			'TM',		1,			0,			1,			0
+			UNION SELECT	'Actions',			'TC',		1,			0,			0,			0
+
+		PRINT 'Populated table permissions table for actions'
+
+		-- Ensure each action code is unique to each project
+		
+		CREATE UNIQUE NONCLUSTERED INDEX ix_Action_Unique_Per_Project
+		ON dbo.Actions(ActionCode, ProjectID)
+
+		PRINT 'Created index on actions to ensure codes are unique to each project'
+		
+		-- Create a function-based constraint to make sure the action has a valid owner
+
+		EXEC ('CREATE FUNCTION dbo.udf_CheckActionOwner (@ProjectID AS INT, @InternalOwner AS INT, @ClientOwner AS INT)
+		RETURNS INT
+		AS BEGIN
+			RETURN (SELECT CASE WHEN @InternalOwner IS NULL
+				THEN CASE @ClientOwner
+					WHEN NULL THEN 0
+					ELSE 
+						CASE WHEN EXISTS (SELECT * FROM dbo.ClientTeams WHERE ProjectID = @ProjectID AND ClientStaffID = @ClientOwner)
+							THEN 1
+						ELSE 0
+					END
+				END
+				ELSE CASE @InternalOwner
+					WHEN NULL THEN 0
+					ELSE 
+						CASE WHEN EXISTS (SELECT * FROM dbo.ProjectTeams WHERE ProjectID = @ProjectID AND StaffID = @InternalOwner)
+							THEN 1
+						ELSE 0
+					END
+				END
+			END)
+		END')
+
+		ALTER TABLE dbo.Actions
+		ADD CONSTRAINT ck_ActionOwner
+		CHECK (dbo.udf_CheckActionOwner(ProjectID, InternalOwner, ClientOwner) = 1)
+
+		PRINT 'Created function-based constraint on actions to ensure the owner is valid'
+
+		EXEC dbo.usp_CreateAuditTrigger @TableName = 'Actions', @PrimaryColumn = 'ID'
+
+		PRINT 'Created audit trigger for actions'
+
+
+
+
+
+
+
+
+
+
+
+
+
+		EXEC [dbo].[usp_CreateGetProcedure] 
+			@TableName = 'Actions'
+			, @IDColumn = 'ID'
+			, @Prefix = 'prj'
+
+		EXEC [dbo].[usp_CreateUpdateProcedure] 
+			@TableName = 'Actions'
+			, @IDColumn = 'ID'
+			, @UpdateColumn = 'TargetDate'
+			, @Prefix = 'prj'
+
+		EXEC [dbo].[usp_CreateUpdateProcedure] 
+			@TableName = 'Actions'
+			, @IDColumn = 'ID'
+			, @UpdateColumn = 'StatusCode'
+			, @Prefix = 'prj'
+
+		EXEC [dbo].[usp_CreateUpdateProcedure] 
+			@TableName = 'Actions'
+			, @IDColumn = 'ID'
+			, @UpdateColumn = 'UpdatedDate'
+			, @Prefix = 'prj'
+
+		EXEC [dbo].[usp_CreateUpdateProcedure] 
+			@TableName = 'Notes'
+			, @IDColumn = 'ID'
+			, @UpdateColumn = 'Status'
+			, @Prefix = 'prj'
+
+		EXEC [dbo].[usp_CreateInsertProcedure] 
+			@TableName = 'Actions'
+			, @Prefix = 'prj'
+
+		PRINT 'Created standard procedures for actions table'
 
 		---------------
 		-- Error Log --
