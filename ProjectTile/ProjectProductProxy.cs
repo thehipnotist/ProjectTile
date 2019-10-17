@@ -80,7 +80,7 @@ namespace ProjectTile
         public ProjectStages Stage()
         {
             if (Project == null) { return null; }
-            return ProjectFunctions.GetStageByCode(Project.StageCode);
+            return ProjectFunctions.GetStageByID(Project.StageID);
         }
 
         public string ClientName()

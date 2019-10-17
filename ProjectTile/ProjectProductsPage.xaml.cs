@@ -92,7 +92,7 @@ namespace ProjectTile
                 ProjectCombo.IsEnabled = false; // Cannot easily recreate the same selection list
                 refreshProjectDataGrid(); // Ensure the record we want is listed, though
                 viewProductsByProject();
-                ActiveOnlyCheckBox.IsChecked = (Globals.SelectedProjectProxy.StageID < Globals.LiveStage);
+                ActiveOnlyCheckBox.IsChecked = (Globals.SelectedProjectProxy.StageNumber < Globals.LiveStage);
             }
             else
             {
@@ -218,7 +218,7 @@ namespace ProjectTile
                 //toggleClientProductButton();
                 OldVersion.Text = NewVersion.Text = "";
 
-                if (pageMode == PageFunctions.View || (editMode == ByProject && Globals.SelectedProjectProxy.StageID >= Globals.LiveStage))
+                if (pageMode == PageFunctions.View || (editMode == ByProject && Globals.SelectedProjectProxy.StageNumber >= Globals.LiveStage))
                 {
                     FromLabel.Visibility = AddButton.Visibility = RemoveButton.Visibility = Visibility.Hidden;
                     ToLabel.Visibility = Visibility.Visible;
@@ -230,7 +230,7 @@ namespace ProjectTile
                     }
                     else
                     {
-                        Instructions.Content = "This page is read-only as the project is " + ProjectFunctions.GetStageByCode(Globals.SelectedProjectProxy.StageID).StageName + ".";
+                        Instructions.Content = "This page is read-only as the project is " + ProjectFunctions.GetStageByID(Globals.SelectedProjectProxy.StageID).StageName + ".";
                         ProjectCombo.IsEnabled = false;
                     }                
                 }
@@ -390,7 +390,7 @@ namespace ProjectTile
                     foreach (var selectedRow in ProjectFrom.SelectedItems)
                     {
                         Projects selection = (Projects)selectedRow;
-                        if (selection.StageCode >= Globals.LiveStage)
+                        if (ProjectFunctions.GetStageNumber(selection.StageID) >= Globals.LiveStage)
                         {
                             showAddButton = false;
                             break;
@@ -414,7 +414,7 @@ namespace ProjectTile
                 else if (productSelected) { selectedProjectProduct = (ProjectProductProxy)ProductTo.SelectedItem; }
                 else { selectedProjectProduct = null; }
 
-                if (selectedProjectProduct != null && selectedProjectProduct.Stage().StageCode < Globals.LiveStage)
+                if (selectedProjectProduct != null && selectedProjectProduct.Stage().StageNumber < Globals.LiveStage)
                 {
                     OldVersion.Text = selectedProjectProduct.OldVersion.ToString("#0.0");
                     NewVersion.Text = selectedProjectProduct.NewVersion.ToString("#0.0");

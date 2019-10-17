@@ -13,7 +13,7 @@ namespace ProjectTile
 
         public ProjectStages Stage
         {
-            get { return (Project == null)? null : ProjectFunctions.GetStageByCode(Project.StageCode); }
+            get { return (Project == null)? null : ProjectFunctions.GetStageByID(Project.StageID); }
         }
 
         public DateTime EffectiveFrom

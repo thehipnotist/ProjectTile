@@ -17,13 +17,18 @@ namespace ProjectTile
         public ProjectStages()
         {
             this.Projects = new HashSet<Projects>();
+            this.StageHistory = new HashSet<StageHistory>();
+            this.SuggestedActions = new HashSet<SuggestedActions>();
         }
     
-        public int StageCode { get; set; }
+        public int ID { get; set; }
+        public int StageNumber { get; set; }
         public string StageName { get; set; }
         public string StageDescription { get; set; }
         public string ProjectStatus { get; set; }
     
         public virtual ICollection<Projects> Projects { get; set; }
+        public virtual ICollection<StageHistory> StageHistory { get; set; }
+        public virtual ICollection<SuggestedActions> SuggestedActions { get; set; }
     }
 }

@@ -16,10 +16,12 @@ namespace ProjectTile
     {
         public Projects()
         {
+            this.Actions = new HashSet<Actions>();
             this.ClientTeams = new HashSet<ClientTeams>();
             this.ProjectProducts = new HashSet<ProjectProducts>();
-            this.ProjectTeams = new HashSet<ProjectTeams>();
             this.Staff = new HashSet<Staff>();
+            this.StageHistory = new HashSet<StageHistory>();
+            this.ProjectTeams = new HashSet<ProjectTeams>();
         }
     
         public int ID { get; set; }
@@ -29,16 +31,18 @@ namespace ProjectTile
         public string ProjectName { get; set; }
         public Nullable<int> ClientID { get; set; }
         public Nullable<System.DateTime> StartDate { get; set; }
-        public int StageCode { get; set; }
+        public int StageID { get; set; }
         public string ProjectSummary { get; set; }
     
+        public virtual ICollection<Actions> Actions { get; set; }
         public virtual Clients Clients { get; set; }
         public virtual ICollection<ClientTeams> ClientTeams { get; set; }
         public virtual Entities Entities { get; set; }
         public virtual ICollection<ProjectProducts> ProjectProducts { get; set; }
         public virtual ProjectStages ProjectStages { get; set; }
         public virtual ProjectTypes ProjectTypes { get; set; }
-        public virtual ICollection<ProjectTeams> ProjectTeams { get; set; }
         public virtual ICollection<Staff> Staff { get; set; }
+        public virtual ICollection<StageHistory> StageHistory { get; set; }
+        public virtual ICollection<ProjectTeams> ProjectTeams { get; set; }
     }
 }

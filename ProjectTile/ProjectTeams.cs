@@ -14,6 +14,11 @@ namespace ProjectTile
     
     public partial class ProjectTeams
     {
+        public ProjectTeams()
+        {
+            this.Actions = new HashSet<Actions>();
+        }
+    
         public int ID { get; set; }
         public int ProjectID { get; set; }
         public int StaffID { get; set; }
@@ -21,6 +26,7 @@ namespace ProjectTile
         public Nullable<System.DateTime> FromDate { get; set; }
         public Nullable<System.DateTime> ToDate { get; set; }
     
+        public virtual ICollection<Actions> Actions { get; set; }
         public virtual ProjectRoles ProjectRoles { get; set; }
         public virtual Projects Projects { get; set; }
         public virtual Staff Staff { get; set; }

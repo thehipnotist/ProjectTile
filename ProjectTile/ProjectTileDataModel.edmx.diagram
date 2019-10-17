@@ -4,25 +4,31 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="6871e4861d00444db38f7d8b32477fed" Name="Diagram1">
+      <Diagram DiagramId="1ebd3904ff8f45b29ff0462cfed2392c" Name="Diagram1">
+        <EntityTypeShape EntityType="ProjectTileModel.Actions" Width="1.5" PointX="10.5" PointY="17.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ProjectTileModel.AuditEntries" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.ClientProducts" Width="1.5" PointX="8.25" PointY="12" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.Clients" Width="1.5" PointX="3" PointY="11.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.ClientStaff" Width="1.5" PointX="5.25" PointY="19.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.ClientTeamRoles" Width="1.5" PointX="5.25" PointY="16.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.ClientTeams" Width="1.5" PointX="7.5" PointY="15.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.Entities" Width="1.5" PointX="0.75" PointY="12" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.Products" Width="1.5" PointX="6" PointY="4" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.ProjectProducts" Width="1.5" PointX="7.5" PointY="8" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.ProjectRoles" Width="1.5" PointX="10.5" PointY="7.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.Projects" Width="1.5" PointX="5.25" PointY="11" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.ProjectStages" Width="1.5" PointX="3" PointY="16.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.ProjectTeams" Width="1.5" PointX="12.75" PointY="11.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.ProjectTypes" Width="1.5" PointX="3" PointY="8.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.Staff" Width="1.5" PointX="10.5" PointY="10.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.StaffEntities" Width="1.5" PointX="15.75" PointY="12.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.StaffRoles" Width="1.5" PointX="8.25" PointY="4.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectTileModel.TablePermissions" Width="1.5" PointX="10.5" PointY="3.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.ClientProducts" Width="1.5" PointX="5.25" PointY="14.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.Clients" Width="1.5" PointX="3" PointY="14.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.ClientStaff" Width="1.5" PointX="5.25" PointY="22.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.ClientTeamRoles" Width="1.5" PointX="11.25" PointY="22.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.ClientTeams" Width="1.5" PointX="13.5" PointY="18.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.Entities" Width="1.5" PointX="0.75" PointY="14.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.ErrorLog" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.Products" Width="1.5" PointX="3" PointY="10.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.ProjectProducts" Width="1.5" PointX="10.5" PointY="14.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.ProjectRoles" Width="1.5" PointX="10.5" PointY="5.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.Projects" Width="1.5" PointX="8.25" PointY="13.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.ProjectStages" Width="1.5" PointX="6" PointY="11.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.ProjectTeams" Width="1.5" PointX="12.75" PointY="10.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.ProjectTypes" Width="1.5" PointX="6" PointY="18.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.Staff" Width="1.5" PointX="10.5" PointY="8.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.StaffEntities" Width="1.5" PointX="15.75" PointY="11.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.StaffRoles" Width="1.5" PointX="8.25" PointY="6.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.StageHistory" Width="1.5" PointX="13.5" PointY="14.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.SuggestedActions" Width="1.5" PointX="8.25" PointY="19.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectTileModel.TablePermissions" Width="1.5" PointX="10.5" PointY="1.5" IsExpanded="true" />
+        <AssociationConnector Association="ProjectTileModel.fk_ActionLoggedBy" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectTileModel.fk_ActionProjectID" ManuallyRouted="false" />
         <AssociationConnector Association="ProjectTileModel.fk_ClientProductID" ManuallyRouted="false" />
         <AssociationConnector Association="ProjectTileModel.fk_ProductClientID" ManuallyRouted="false" />
         <AssociationConnector Association="ProjectTileModel.fk_ClientAccountManagerID" ManuallyRouted="false" />
@@ -38,15 +44,17 @@
         <AssociationConnector Association="ProjectTileModel.fk_ProjectProductID" ManuallyRouted="false" />
         <AssociationConnector Association="ProjectTileModel.fk_ProductProjectID" ManuallyRouted="false" />
         <AssociationConnector Association="ProjectTileModel.fk_TeamRoleCode" ManuallyRouted="false" />
-        <AssociationConnector Association="ProjectTileModel.fk_ProjectStageCode" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectTileModel.fk_ProjectStageID" ManuallyRouted="false" />
         <AssociationConnector Association="ProjectTileModel.fk_ProjectTypeCode" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectTileModel.fk_StaffProjectID" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectTileModel.fk_StageProject" ManuallyRouted="false" />
         <AssociationConnector Association="ProjectTileModel.fk_TeamProjectID" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectTileModel.fk_HistoryStage" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectTileModel.fk_PrerequisiteStage" ManuallyRouted="false" />
         <AssociationConnector Association="ProjectTileModel.fk_TeamStaffID" ManuallyRouted="false" />
         <AssociationConnector Association="ProjectTileModel.fk_EntityStaffID" ManuallyRouted="false" />
         <AssociationConnector Association="ProjectTileModel.fk_StaffRoleCode" ManuallyRouted="false" />
         <AssociationConnector Association="ProjectTileModel.fk_PermissionRoleCode" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="ProjectTileModel.ErrorLog" Width="1.5" PointX="2.75" PointY="0.75" />
-        <AssociationConnector Association="ProjectTileModel.fk_StaffProjectID" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

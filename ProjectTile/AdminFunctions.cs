@@ -169,6 +169,7 @@ namespace ProjectTile
                             where el.LoggedAt >= fromDate && el.LoggedAt <= maxTime
                                 && (type == AllRecords || el.ExceptionType.Replace("System.", "") == type)
                                 && (userID == "" || userID == AllCodes || userID == el.LoggedBy.Replace(DbUserPrefix, ""))
+                            orderby (DateTime) el.LoggedAt descending
                             select new ErrorProxy 
                             {
 //                                ID = el.ID,

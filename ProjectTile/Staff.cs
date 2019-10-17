@@ -25,6 +25,7 @@ namespace ProjectTile
         public string EmployeeID { get; set; }
         public string FirstName { get; set; }
         public string Surname { get; set; }
+        public string FullName { get; set; }
         public string RoleCode { get; set; }
         public System.DateTime StartDate { get; set; }
         public Nullable<System.DateTime> LeaveDate { get; set; }
@@ -33,16 +34,15 @@ namespace ProjectTile
         public byte[] PasswordHash { get; set; }
         public bool Active { get; set; }
         public Nullable<int> DefaultEntity { get; set; }
-        public string FullName { get; set; }
         public Nullable<int> MainProject { get; set; }
         public bool SingleSignon { get; set; }
         public string OSUser { get; set; }
     
         public virtual ICollection<Clients> Clients { get; set; }
         public virtual Entities Entities { get; set; }
+        public virtual Projects Projects { get; set; }
         public virtual ICollection<ProjectTeams> ProjectTeams { get; set; }
         public virtual ICollection<StaffEntities> StaffEntities { get; set; }
         public virtual StaffRoles StaffRoles { get; set; }
-        public virtual Projects Projects { get; set; }
     }
 }

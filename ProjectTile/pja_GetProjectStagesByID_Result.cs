@@ -11,9 +11,10 @@ namespace ProjectTile
 {
     using System;
     
-    public partial class pja_GetProjectStagesByStageCode_Result
+    public partial class pja_GetProjectStagesByID_Result
     {
-        public int StageCode { get; set; }
+        public int ID { get; set; }
+        public int StageNumber { get; set; }
         public string StageName { get; set; }
         public string StageDescription { get; set; }
         public string ProjectStatus { get; set; }

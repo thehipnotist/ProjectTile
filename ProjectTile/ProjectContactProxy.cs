@@ -16,7 +16,7 @@ namespace ProjectTile
 
         public ProjectStages Stage
         {
-            get { return ProjectFunctions.GetStageByCode(Project.StageCode); }
+            get { return ProjectFunctions.GetStageByID(Project.StageID); }
         }
 
         public DateTime EffectiveFrom

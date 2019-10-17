@@ -4,7 +4,25 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="ProjectTileModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="ProjectTileModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Actions">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ActionCode" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="ProjectID" Type="int" Nullable="false" />
+          <Property Name="LoggedDate" Type="date" Nullable="false" />
+          <Property Name="TargetDate" Type="date" />
+          <Property Name="UpdatedDate" Type="date" />
+          <Property Name="ShortDescription" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="StatusCode" Type="bit" />
+          <Property Name="LoggedBy" Type="int" />
+          <Property Name="InternalOwner" Type="int" />
+          <Property Name="ClientOwner" Type="int" />
+          <Property Name="Notes" Type="varchar" MaxLength="200" />
+          <Property Name="StageID" Type="int" />
+        </EntityType>
         <EntityType Name="AuditEntries">
           <Key>
             <PropertyRef Name="ID" />
@@ -131,14 +149,15 @@
           <Property Name="ProjectName" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="ClientID" Type="int" />
           <Property Name="StartDate" Type="date" />
-          <Property Name="StageCode" Type="int" Nullable="false" />
+          <Property Name="StageID" Type="int" Nullable="false" />
           <Property Name="ProjectSummary" Type="nvarchar" MaxLength="400" Nullable="false" />
         </EntityType>
         <EntityType Name="ProjectStages">
           <Key>
-            <PropertyRef Name="StageCode" />
+            <PropertyRef Name="ID" />
           </Key>
-          <Property Name="StageCode" Type="int" Nullable="false" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StageNumber" Type="int" Nullable="false" />
           <Property Name="StageName" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="StageDescription" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="ProjectStatus" Type="varchar" MaxLength="20" Nullable="false" />
@@ -198,6 +217,37 @@
           <Property Name="RoleCode" Type="varchar" MaxLength="5" Nullable="false" />
           <Property Name="RoleDescription" Type="varchar" MaxLength="100" Nullable="false" />
         </EntityType>
+        <EntityType Name="StageHistory">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProjectID" Type="int" Nullable="false" />
+          <Property Name="StageID" Type="int" Nullable="false" />
+          <Property Name="TargetDate" Type="date" />
+          <Property Name="AchievedDate" Type="date" />
+        </EntityType>
+        <EntityType Name="SuggestedActions">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ShortDescription" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="InternalRole" Type="varchar" MaxLength="5" Nullable="false" />
+          <Property Name="ClientRole" Type="varchar" MaxLength="5" />
+          <Property Name="Notes" Type="varchar" MaxLength="200" />
+          <Property Name="StageID" Type="int" />
+          <Property Name="TargetDuration" Type="decimal" Precision="16" Scale="2" />
+          <Property Name="S_NS" Type="bit" />
+          <Property Name="S_AS" Type="bit" />
+          <Property Name="S_RB" Type="bit" />
+          <Property Name="S_UG" Type="bit" />
+          <Property Name="S_UR" Type="bit" />
+          <Property Name="S_RS" Type="bit" />
+          <Property Name="S_AF" Type="bit" />
+          <Property Name="S_TO" Type="bit" />
+          <Property Name="S_IP" Type="bit" />
+        </EntityType>
         <EntityType Name="TablePermissions">
           <Key>
             <PropertyRef Name="ID" />
@@ -210,6 +260,30 @@
           <Property Name="InsertRows" Type="bit" />
           <Property Name="ChangeStatus" Type="bit" />
         </EntityType>
+        <Association Name="fk_ActionLoggedBy">
+          <End Role="ProjectTeams" Type="Self.ProjectTeams" Multiplicity="0..1" />
+          <End Role="Actions" Type="Self.Actions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectTeams">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Actions">
+              <PropertyRef Name="LoggedBy" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ActionProjectID">
+          <End Role="Projects" Type="Self.Projects" Multiplicity="1" />
+          <End Role="Actions" Type="Self.Actions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Actions">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="fk_ClientAccountManagerID">
           <End Role="Staff" Type="Self.Staff" Multiplicity="0..1" />
           <End Role="Clients" Type="Self.Clients" Multiplicity="*" />
@@ -294,6 +368,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="fk_HistoryStage">
+          <End Role="ProjectStages" Type="Self.ProjectStages" Multiplicity="1" />
+          <End Role="StageHistory" Type="Self.StageHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectStages">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="StageHistory">
+              <PropertyRef Name="StageID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="fk_PermissionRoleCode">
           <End Role="StaffRoles" Type="Self.StaffRoles" Multiplicity="0..1" />
           <End Role="TablePermissions" Type="Self.TablePermissions" Multiplicity="*" />
@@ -303,6 +389,18 @@
             </Principal>
             <Dependent Role="TablePermissions">
               <PropertyRef Name="RoleCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_PrerequisiteStage">
+          <End Role="ProjectStages" Type="Self.ProjectStages" Multiplicity="0..1" />
+          <End Role="SuggestedActions" Type="Self.SuggestedActions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectStages">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SuggestedActions">
+              <PropertyRef Name="StageID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -366,15 +464,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="fk_ProjectStageCode">
+        <Association Name="fk_ProjectStageID">
           <End Role="ProjectStages" Type="Self.ProjectStages" Multiplicity="1" />
           <End Role="Projects" Type="Self.Projects" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="ProjectStages">
-              <PropertyRef Name="StageCode" />
+              <PropertyRef Name="ID" />
             </Principal>
             <Dependent Role="Projects">
-              <PropertyRef Name="StageCode" />
+              <PropertyRef Name="StageID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -447,6 +545,18 @@
             </Principal>
             <Dependent Role="Staff">
               <PropertyRef Name="RoleCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_StageProject">
+          <End Role="Projects" Type="Self.Projects" Multiplicity="1" />
+          <End Role="StageHistory" Type="Self.StageHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="StageHistory">
+              <PropertyRef Name="ProjectID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -573,8 +683,8 @@
         <Function Name="pja_GetProjectRolesByRoleCode" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="RoleCode" Type="varchar" Mode="In" />
         </Function>
-        <Function Name="pja_GetProjectStagesByStageCode" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="StageCode" Type="varchar" Mode="In" />
+        <Function Name="pja_GetProjectStagesByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
         </Function>
         <Function Name="pja_InsertIntoClientTeamRoles" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="RoleCode" Type="varchar" Mode="In" />
@@ -585,7 +695,7 @@
           <Parameter Name="RoleDescription" Type="varchar" Mode="In" />
         </Function>
         <Function Name="pja_InsertIntoProjectStages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="StageCode" Type="int" Mode="In" />
+          <Parameter Name="StageNumber" Type="int" Mode="In" />
           <Parameter Name="StageName" Type="varchar" Mode="In" />
           <Parameter Name="StageDescription" Type="nvarchar" Mode="In" />
           <Parameter Name="ProjectStatus" Type="varchar" Mode="In" />
@@ -604,8 +714,12 @@
           <Parameter Name="RoleDescription" Type="varchar" Mode="In" />
         </Function>
         <Function Name="pja_UpdateStageDescriptionInProjectStages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="StageCode" Type="varchar" Mode="In" />
+          <Parameter Name="ID" Type="varchar" Mode="In" />
           <Parameter Name="StageDescription" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="pja_UpdateStageNumberInProjectStages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="StageNumber" Type="varchar" Mode="In" />
         </Function>
         <Function Name="pja_UpdateTypeDescriptionInProjectTypes" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="TypeName" Type="varchar" Mode="In" />
@@ -630,6 +744,9 @@
           <Parameter Name="ID" Type="varchar" Mode="In" />
           <Parameter Name="LatestVersion" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="prj_GetActionsByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="prj_GetClientTeamsByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID" Type="varchar" Mode="In" />
         </Function>
@@ -644,6 +761,23 @@
         </Function>
         <Function Name="prj_GetProjectTeamsByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_GetStageHistoryByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_InsertIntoActions" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ActionCode" Type="varchar" Mode="In" />
+          <Parameter Name="ProjectID" Type="int" Mode="In" />
+          <Parameter Name="LoggedDate" Type="date" Mode="In" />
+          <Parameter Name="TargetDate" Type="date" Mode="In" />
+          <Parameter Name="UpdatedDate" Type="date" Mode="In" />
+          <Parameter Name="ShortDescription" Type="varchar" Mode="In" />
+          <Parameter Name="StatusCode" Type="bit" Mode="In" />
+          <Parameter Name="LoggedBy" Type="int" Mode="In" />
+          <Parameter Name="InternalOwner" Type="int" Mode="In" />
+          <Parameter Name="ClientOwner" Type="int" Mode="In" />
+          <Parameter Name="Notes" Type="varchar" Mode="In" />
+          <Parameter Name="StageID" Type="int" Mode="In" />
         </Function>
         <Function Name="prj_InsertIntoClientTeams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ProjectID" Type="int" Mode="In" />
@@ -664,7 +798,7 @@
           <Parameter Name="ProjectName" Type="varchar" Mode="In" />
           <Parameter Name="ClientID" Type="int" Mode="In" />
           <Parameter Name="StartDate" Type="date" Mode="In" />
-          <Parameter Name="StageCode" Type="int" Mode="In" />
+          <Parameter Name="StageID" Type="int" Mode="In" />
           <Parameter Name="ProjectSummary" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="prj_InsertIntoProjectTeams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
@@ -673,6 +807,16 @@
           <Parameter Name="ProjectRoleCode" Type="varchar" Mode="In" />
           <Parameter Name="FromDate" Type="date" Mode="In" />
           <Parameter Name="ToDate" Type="date" Mode="In" />
+        </Function>
+        <Function Name="prj_InsertIntoStageHistory" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ProjectID" Type="int" Mode="In" />
+          <Parameter Name="StageID" Type="int" Mode="In" />
+          <Parameter Name="TargetDate" Type="date" Mode="In" />
+          <Parameter Name="AchievedDate" Type="date" Mode="In" />
+        </Function>
+        <Function Name="prj_UpdateAchievedDateInStageHistory" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="AchievedDate" Type="varchar" Mode="In" />
         </Function>
         <Function Name="prj_UpdateClientStaffIDInClientTeams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID" Type="varchar" Mode="In" />
@@ -706,6 +850,22 @@
           <Parameter Name="ID" Type="varchar" Mode="In" />
           <Parameter Name="StaffID" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="prj_UpdateStatusCodeInActions" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="StatusCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_UpdateStatusInNotes" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="Status" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_UpdateTargetDateInActions" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="TargetDate" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_UpdateTargetDateInStageHistory" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="TargetDate" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="prj_UpdateToDateInClientTeams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID" Type="varchar" Mode="In" />
           <Parameter Name="ToDate" Type="varchar" Mode="In" />
@@ -713,6 +873,10 @@
         <Function Name="prj_UpdateToDateInProjectTeams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID" Type="varchar" Mode="In" />
           <Parameter Name="ToDate" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_UpdateUpdatedDateInActions" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="UpdatedDate" Type="varchar" Mode="In" />
         </Function>
         <Function Name="sec_GetTablePermissionsByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID" Type="varchar" Mode="In" />
@@ -777,19 +941,8 @@
           <Parameter Name="RoleCode" Type="varchar" Mode="In" />
           <Parameter Name="RoleDescription" Type="varchar" Mode="In" />
         </Function>
-        <Function Name="udf_CheckClientEntity" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
-          <Parameter Name="ClientID" Type="int" Mode="In" />
-          <Parameter Name="EntityID" Type="int" Mode="In" />
-          <Parameter Name="TypeCode" Type="varchar" Mode="In" />
-        </Function>
-        <Function Name="udf_CheckClientStaffMember" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
-          <Parameter Name="ProjectID" Type="int" Mode="In" />
-          <Parameter Name="ClientStaffID" Type="int" Mode="In" />
-        </Function>
-        <Function Name="udf_GetHashedPassword" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="binary">
-          <Parameter Name="Passwd" Type="nvarchar" Mode="In" />
-        </Function>
         <EntityContainer Name="ProjectTileModelStoreContainer">
+          <EntitySet Name="Actions" EntityType="Self.Actions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AuditEntries" EntityType="Self.AuditEntries" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ClientProducts" EntityType="Self.ClientProducts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Clients" EntityType="Self.Clients" Schema="dbo" store:Type="Tables" />
@@ -808,7 +961,17 @@
           <EntitySet Name="Staff" EntityType="Self.Staff" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="StaffEntities" EntityType="Self.StaffEntities" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="StaffRoles" EntityType="Self.StaffRoles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="StageHistory" EntityType="Self.StageHistory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SuggestedActions" EntityType="Self.SuggestedActions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TablePermissions" EntityType="Self.TablePermissions" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="fk_ActionLoggedBy" Association="Self.fk_ActionLoggedBy">
+            <End Role="ProjectTeams" EntitySet="ProjectTeams" />
+            <End Role="Actions" EntitySet="Actions" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ActionProjectID" Association="Self.fk_ActionProjectID">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="Actions" EntitySet="Actions" />
+          </AssociationSet>
           <AssociationSet Name="fk_ClientAccountManagerID" Association="Self.fk_ClientAccountManagerID">
             <End Role="Staff" EntitySet="Staff" />
             <End Role="Clients" EntitySet="Clients" />
@@ -837,9 +1000,17 @@
             <End Role="Staff" EntitySet="Staff" />
             <End Role="StaffEntities" EntitySet="StaffEntities" />
           </AssociationSet>
+          <AssociationSet Name="fk_HistoryStage" Association="Self.fk_HistoryStage">
+            <End Role="ProjectStages" EntitySet="ProjectStages" />
+            <End Role="StageHistory" EntitySet="StageHistory" />
+          </AssociationSet>
           <AssociationSet Name="fk_PermissionRoleCode" Association="Self.fk_PermissionRoleCode">
             <End Role="StaffRoles" EntitySet="StaffRoles" />
             <End Role="TablePermissions" EntitySet="TablePermissions" />
+          </AssociationSet>
+          <AssociationSet Name="fk_PrerequisiteStage" Association="Self.fk_PrerequisiteStage">
+            <End Role="ProjectStages" EntitySet="ProjectStages" />
+            <End Role="SuggestedActions" EntitySet="SuggestedActions" />
           </AssociationSet>
           <AssociationSet Name="fk_ProductClientID" Association="Self.fk_ProductClientID">
             <End Role="Clients" EntitySet="Clients" />
@@ -861,7 +1032,7 @@
             <End Role="Products" EntitySet="Products" />
             <End Role="ProjectProducts" EntitySet="ProjectProducts" />
           </AssociationSet>
-          <AssociationSet Name="fk_ProjectStageCode" Association="Self.fk_ProjectStageCode">
+          <AssociationSet Name="fk_ProjectStageID" Association="Self.fk_ProjectStageID">
             <End Role="ProjectStages" EntitySet="ProjectStages" />
             <End Role="Projects" EntitySet="Projects" />
           </AssociationSet>
@@ -889,6 +1060,10 @@
             <End Role="StaffRoles" EntitySet="StaffRoles" />
             <End Role="Staff" EntitySet="Staff" />
           </AssociationSet>
+          <AssociationSet Name="fk_StageProject" Association="Self.fk_StageProject">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="StageHistory" EntitySet="StageHistory" />
+          </AssociationSet>
           <AssociationSet Name="fk_TeamProjectID" Association="Self.fk_TeamProjectID">
             <End Role="Projects" EntitySet="Projects" />
             <End Role="ProjectTeams" EntitySet="ProjectTeams" />
@@ -902,10 +1077,31 @@
             <End Role="ProjectTeams" EntitySet="ProjectTeams" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ProjectTileModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Actions">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ActionCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ProjectID" Type="Int32" Nullable="false" />
+          <Property Name="LoggedDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="TargetDate" Type="DateTime" Precision="0" />
+          <Property Name="UpdatedDate" Type="DateTime" Precision="0" />
+          <Property Name="ShortDescription" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="StatusCode" Type="Boolean" />
+          <Property Name="LoggedBy" Type="Int32" />
+          <Property Name="InternalOwner" Type="Int32" />
+          <Property Name="ClientOwner" Type="Int32" />
+          <Property Name="Notes" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="StageID" Type="Int32" />
+          <NavigationProperty Name="ProjectTeams" Relationship="Self.fk_ActionLoggedBy" FromRole="Actions" ToRole="ProjectTeams" />
+          <NavigationProperty Name="Projects" Relationship="Self.fk_ActionProjectID" FromRole="Actions" ToRole="Projects" />
+        </EntityType>
         <EntityType Name="AuditEntries">
           <Key>
             <PropertyRef Name="ID" />
@@ -957,13 +1153,13 @@
           <Property Name="ClientID" Type="Int32" Nullable="false" />
           <Property Name="FirstName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Surname" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FullName" Type="String" MaxLength="201" FixedLength="false" Unicode="true" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
           <Property Name="JobTitle" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="PhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Active" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Clients" Relationship="Self.fk_StaffClientID" FromRole="ClientStaff" ToRole="Clients" />
           <NavigationProperty Name="ClientTeams" Relationship="Self.fk_ClientTeamStaffID" FromRole="ClientStaff" ToRole="ClientTeams" />
-          <Property Name="FullName" Type="String" Nullable="false" MaxLength="201" FixedLength="false" Unicode="true" annotation:StoreGeneratedPattern="Computed" />
         </EntityType>
         <EntityType Name="ClientTeamRoles">
           <Key>
@@ -998,6 +1194,19 @@
           <NavigationProperty Name="Projects" Relationship="Self.fk_ProjectEntityID" FromRole="Entities" ToRole="Projects" />
           <NavigationProperty Name="Staff" Relationship="Self.fk_StaffEntity" FromRole="Entities" ToRole="Staff" />
           <NavigationProperty Name="StaffEntities" Relationship="Self.fk_StaffEntityID" FromRole="Entities" ToRole="StaffEntities" />
+        </EntityType>
+        <EntityType Name="ErrorLog">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomMessage" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="ExceptionMessage" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ExceptionType" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="TargetSite" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="LoggedAt" Type="DateTime" Precision="3" />
+          <Property Name="LoggedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="InnerException" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Products">
           <Key>
@@ -1041,26 +1250,31 @@
           <Property Name="ProjectName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="ClientID" Type="Int32" />
           <Property Name="StartDate" Type="DateTime" Precision="0" />
-          <Property Name="StageCode" Type="Int32" Nullable="false" />
+          <Property Name="StageID" Type="Int32" Nullable="false" />
           <Property Name="ProjectSummary" Type="String" MaxLength="400" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Actions" Relationship="Self.fk_ActionProjectID" FromRole="Projects" ToRole="Actions" />
           <NavigationProperty Name="Clients" Relationship="Self.fk_ProjectClientID" FromRole="Projects" ToRole="Clients" />
           <NavigationProperty Name="ClientTeams" Relationship="Self.fk_ClientTeamProjectID" FromRole="Projects" ToRole="ClientTeams" />
           <NavigationProperty Name="Entities" Relationship="Self.fk_ProjectEntityID" FromRole="Projects" ToRole="Entities" />
           <NavigationProperty Name="ProjectProducts" Relationship="Self.fk_ProductProjectID" FromRole="Projects" ToRole="ProjectProducts" />
-          <NavigationProperty Name="ProjectStages" Relationship="Self.fk_ProjectStageCode" FromRole="Projects" ToRole="ProjectStages" />
+          <NavigationProperty Name="ProjectStages" Relationship="Self.fk_ProjectStageID" FromRole="Projects" ToRole="ProjectStages" />
           <NavigationProperty Name="ProjectTypes" Relationship="Self.fk_ProjectTypeCode" FromRole="Projects" ToRole="ProjectTypes" />
+          <NavigationProperty Name="Staff" Relationship="Self.fk_StaffProjectID" FromRole="Projects" ToRole="Staff" />
+          <NavigationProperty Name="StageHistory" Relationship="Self.fk_StageProject" FromRole="Projects" ToRole="StageHistory" />
           <NavigationProperty Name="ProjectTeams" Relationship="Self.fk_TeamProjectID" FromRole="Projects" ToRole="ProjectTeams" />
-          <NavigationProperty Name="Staff" Relationship="ProjectTileModel.fk_StaffProjectID" FromRole="Projects" ToRole="Staff" />
         </EntityType>
         <EntityType Name="ProjectStages">
           <Key>
-            <PropertyRef Name="StageCode" />
+            <PropertyRef Name="ID" />
           </Key>
-          <Property Name="StageCode" Type="Int32" Nullable="false" />
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StageNumber" Type="Int32" Nullable="false" />
           <Property Name="StageName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="StageDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="ProjectStatus" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="Projects" Relationship="Self.fk_ProjectStageCode" FromRole="ProjectStages" ToRole="Projects" />
+          <NavigationProperty Name="Projects" Relationship="Self.fk_ProjectStageID" FromRole="ProjectStages" ToRole="Projects" />
+          <NavigationProperty Name="StageHistory" Relationship="Self.fk_HistoryStage" FromRole="ProjectStages" ToRole="StageHistory" />
+          <NavigationProperty Name="SuggestedActions" Relationship="Self.fk_PrerequisiteStage" FromRole="ProjectStages" ToRole="SuggestedActions" />
         </EntityType>
         <EntityType Name="ProjectTeams">
           <Key>
@@ -1072,6 +1286,7 @@
           <Property Name="ProjectRoleCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
           <Property Name="FromDate" Type="DateTime" Precision="0" />
           <Property Name="ToDate" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="Actions" Relationship="Self.fk_ActionLoggedBy" FromRole="ProjectTeams" ToRole="Actions" />
           <NavigationProperty Name="ProjectRoles" Relationship="Self.fk_TeamRoleCode" FromRole="ProjectTeams" ToRole="ProjectRoles" />
           <NavigationProperty Name="Projects" Relationship="Self.fk_TeamProjectID" FromRole="ProjectTeams" ToRole="Projects" />
           <NavigationProperty Name="Staff" Relationship="Self.fk_TeamStaffID" FromRole="ProjectTeams" ToRole="Staff" />
@@ -1093,6 +1308,7 @@
           <Property Name="EmployeeID" Type="String" MaxLength="7" FixedLength="false" Unicode="false" annotation:StoreGeneratedPattern="Computed" />
           <Property Name="FirstName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Surname" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FullName" Type="String" MaxLength="201" FixedLength="false" Unicode="true" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
           <Property Name="RoleCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
           <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="LeaveDate" Type="DateTime" Precision="0" />
@@ -1101,16 +1317,15 @@
           <Property Name="PasswordHash" Type="Binary" MaxLength="64" FixedLength="true" />
           <Property Name="Active" Type="Boolean" Nullable="false" />
           <Property Name="DefaultEntity" Type="Int32" />
+          <Property Name="MainProject" Type="Int32" />
+          <Property Name="SingleSignon" Type="Boolean" Nullable="false" />
+          <Property Name="OSUser" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Clients" Relationship="Self.fk_ClientAccountManagerID" FromRole="Staff" ToRole="Clients" />
           <NavigationProperty Name="Entities" Relationship="Self.fk_StaffEntity" FromRole="Staff" ToRole="Entities" />
+          <NavigationProperty Name="Projects" Relationship="Self.fk_StaffProjectID" FromRole="Staff" ToRole="Projects" />
           <NavigationProperty Name="ProjectTeams" Relationship="Self.fk_TeamStaffID" FromRole="Staff" ToRole="ProjectTeams" />
           <NavigationProperty Name="StaffEntities" Relationship="Self.fk_EntityStaffID" FromRole="Staff" ToRole="StaffEntities" />
           <NavigationProperty Name="StaffRoles" Relationship="Self.fk_StaffRoleCode" FromRole="Staff" ToRole="StaffRoles" />
-          <Property Name="FullName" Type="String" Nullable="false" MaxLength="201" FixedLength="false" Unicode="true" annotation:StoreGeneratedPattern="Computed" />
-          <Property Name="MainProject" Type="Int32" />
-          <NavigationProperty Name="Projects" Relationship="ProjectTileModel.fk_StaffProjectID" FromRole="Staff" ToRole="Projects" />
-          <Property Name="SingleSignon" Type="Boolean" Nullable="false" />
-          <Property Name="OSUser" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="StaffEntities">
           <Key>
@@ -1131,6 +1346,40 @@
           <NavigationProperty Name="Staff" Relationship="Self.fk_StaffRoleCode" FromRole="StaffRoles" ToRole="Staff" />
           <NavigationProperty Name="TablePermissions" Relationship="Self.fk_PermissionRoleCode" FromRole="StaffRoles" ToRole="TablePermissions" />
         </EntityType>
+        <EntityType Name="StageHistory">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProjectID" Type="Int32" Nullable="false" />
+          <Property Name="StageID" Type="Int32" Nullable="false" />
+          <Property Name="TargetDate" Type="DateTime" Precision="0" />
+          <Property Name="AchievedDate" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="Projects" Relationship="Self.fk_StageProject" FromRole="StageHistory" ToRole="Projects" />
+          <NavigationProperty Name="ProjectStages" Relationship="Self.fk_HistoryStage" FromRole="StageHistory" ToRole="ProjectStages" />
+        </EntityType>
+        <EntityType Name="SuggestedActions">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ShortDescription" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="InternalRole" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ClientRole" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="Notes" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="StageID" Type="Int32" />
+          <Property Name="TargetDuration" Type="Decimal" Precision="16" Scale="2" />
+          <Property Name="S_NS" Type="Boolean" />
+          <Property Name="S_AS" Type="Boolean" />
+          <Property Name="S_RB" Type="Boolean" />
+          <Property Name="S_UG" Type="Boolean" />
+          <Property Name="S_UR" Type="Boolean" />
+          <Property Name="S_RS" Type="Boolean" />
+          <Property Name="S_AF" Type="Boolean" />
+          <Property Name="S_TO" Type="Boolean" />
+          <Property Name="S_IP" Type="Boolean" />
+          <NavigationProperty Name="ProjectStages" Relationship="Self.fk_PrerequisiteStage" FromRole="SuggestedActions" ToRole="ProjectStages" />
+        </EntityType>
         <EntityType Name="TablePermissions">
           <Key>
             <PropertyRef Name="ID" />
@@ -1144,6 +1393,30 @@
           <Property Name="ChangeStatus" Type="Boolean" />
           <NavigationProperty Name="StaffRoles" Relationship="Self.fk_PermissionRoleCode" FromRole="TablePermissions" ToRole="StaffRoles" />
         </EntityType>
+        <Association Name="fk_ActionLoggedBy">
+          <End Role="ProjectTeams" Type="Self.ProjectTeams" Multiplicity="0..1" />
+          <End Role="Actions" Type="Self.Actions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectTeams">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Actions">
+              <PropertyRef Name="LoggedBy" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_ActionProjectID">
+          <End Role="Projects" Type="Self.Projects" Multiplicity="1" />
+          <End Role="Actions" Type="Self.Actions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Actions">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="fk_ClientProductID">
           <End Role="Products" Type="Self.Products" Multiplicity="0..1" />
           <End Role="ClientProducts" Type="Self.ClientProducts" Multiplicity="*" />
@@ -1324,15 +1597,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="fk_ProjectStageCode">
+        <Association Name="fk_ProjectStageID">
           <End Role="ProjectStages" Type="Self.ProjectStages" Multiplicity="1" />
           <End Role="Projects" Type="Self.Projects" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="ProjectStages">
-              <PropertyRef Name="StageCode" />
+              <PropertyRef Name="ID" />
             </Principal>
             <Dependent Role="Projects">
-              <PropertyRef Name="StageCode" />
+              <PropertyRef Name="StageID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1348,6 +1621,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="fk_StaffProjectID">
+          <End Role="Projects" Type="Self.Projects" Multiplicity="0..1" />
+          <End Role="Staff" Type="Self.Staff" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Staff">
+              <PropertyRef Name="MainProject" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_StageProject">
+          <End Role="Projects" Type="Self.Projects" Multiplicity="1" />
+          <End Role="StageHistory" Type="Self.StageHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="StageHistory">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="fk_TeamProjectID">
           <End Role="Projects" Type="Self.Projects" Multiplicity="1" />
           <End Role="ProjectTeams" Type="Self.ProjectTeams" Multiplicity="*" />
@@ -1357,6 +1654,30 @@
             </Principal>
             <Dependent Role="ProjectTeams">
               <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_HistoryStage">
+          <End Role="ProjectStages" Type="Self.ProjectStages" Multiplicity="1" />
+          <End Role="StageHistory" Type="Self.StageHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectStages">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="StageHistory">
+              <PropertyRef Name="StageID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_PrerequisiteStage">
+          <End Role="ProjectStages" Type="Self.ProjectStages" Multiplicity="0..1" />
+          <End Role="SuggestedActions" Type="Self.SuggestedActions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectStages">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SuggestedActions">
+              <PropertyRef Name="StageID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1409,6 +1730,7 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="ProjectTileSqlDatabase" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Actions" EntityType="Self.Actions" />
           <EntitySet Name="AuditEntries" EntityType="Self.AuditEntries" />
           <EntitySet Name="ClientProducts" EntityType="Self.ClientProducts" />
           <EntitySet Name="Clients" EntityType="Self.Clients" />
@@ -1416,6 +1738,7 @@
           <EntitySet Name="ClientTeamRoles" EntityType="Self.ClientTeamRoles" />
           <EntitySet Name="ClientTeams" EntityType="Self.ClientTeams" />
           <EntitySet Name="Entities" EntityType="Self.Entities" />
+          <EntitySet Name="ErrorLog" EntityType="Self.ErrorLog" />
           <EntitySet Name="Products" EntityType="Self.Products" />
           <EntitySet Name="ProjectProducts" EntityType="Self.ProjectProducts" />
           <EntitySet Name="ProjectRoles" EntityType="Self.ProjectRoles" />
@@ -1426,7 +1749,17 @@
           <EntitySet Name="Staff" EntityType="Self.Staff" />
           <EntitySet Name="StaffEntities" EntityType="Self.StaffEntities" />
           <EntitySet Name="StaffRoles" EntityType="Self.StaffRoles" />
+          <EntitySet Name="StageHistory" EntityType="Self.StageHistory" />
+          <EntitySet Name="SuggestedActions" EntityType="Self.SuggestedActions" />
           <EntitySet Name="TablePermissions" EntityType="Self.TablePermissions" />
+          <AssociationSet Name="fk_ActionLoggedBy" Association="Self.fk_ActionLoggedBy">
+            <End Role="ProjectTeams" EntitySet="ProjectTeams" />
+            <End Role="Actions" EntitySet="Actions" />
+          </AssociationSet>
+          <AssociationSet Name="fk_ActionProjectID" Association="Self.fk_ActionProjectID">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="Actions" EntitySet="Actions" />
+          </AssociationSet>
           <AssociationSet Name="fk_ClientProductID" Association="Self.fk_ClientProductID">
             <End Role="Products" EntitySet="Products" />
             <End Role="ClientProducts" EntitySet="ClientProducts" />
@@ -1487,7 +1820,7 @@
             <End Role="ProjectRoles" EntitySet="ProjectRoles" />
             <End Role="ProjectTeams" EntitySet="ProjectTeams" />
           </AssociationSet>
-          <AssociationSet Name="fk_ProjectStageCode" Association="Self.fk_ProjectStageCode">
+          <AssociationSet Name="fk_ProjectStageID" Association="Self.fk_ProjectStageID">
             <End Role="ProjectStages" EntitySet="ProjectStages" />
             <End Role="Projects" EntitySet="Projects" />
           </AssociationSet>
@@ -1495,9 +1828,25 @@
             <End Role="ProjectTypes" EntitySet="ProjectTypes" />
             <End Role="Projects" EntitySet="Projects" />
           </AssociationSet>
+          <AssociationSet Name="fk_StaffProjectID" Association="Self.fk_StaffProjectID">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="Staff" EntitySet="Staff" />
+          </AssociationSet>
+          <AssociationSet Name="fk_StageProject" Association="Self.fk_StageProject">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="StageHistory" EntitySet="StageHistory" />
+          </AssociationSet>
           <AssociationSet Name="fk_TeamProjectID" Association="Self.fk_TeamProjectID">
             <End Role="Projects" EntitySet="Projects" />
             <End Role="ProjectTeams" EntitySet="ProjectTeams" />
+          </AssociationSet>
+          <AssociationSet Name="fk_HistoryStage" Association="Self.fk_HistoryStage">
+            <End Role="ProjectStages" EntitySet="ProjectStages" />
+            <End Role="StageHistory" EntitySet="StageHistory" />
+          </AssociationSet>
+          <AssociationSet Name="fk_PrerequisiteStage" Association="Self.fk_PrerequisiteStage">
+            <End Role="ProjectStages" EntitySet="ProjectStages" />
+            <End Role="SuggestedActions" EntitySet="SuggestedActions" />
           </AssociationSet>
           <AssociationSet Name="fk_TeamStaffID" Association="Self.fk_TeamStaffID">
             <End Role="Staff" EntitySet="Staff" />
@@ -1516,16 +1865,16 @@
             <End Role="TablePermissions" EntitySet="TablePermissions" />
           </AssociationSet>
           <FunctionImport Name="cln_GetClientsByAccountManagerID" ReturnType="Collection(ProjectTileModel.cln_GetClientsByAccountManagerID_Result)">
-          <Parameter Name="AccountManagerID" Mode="In" Type="String" />
+            <Parameter Name="AccountManagerID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="cln_GetClientsByClientCode" ReturnType="Collection(ProjectTileModel.cln_GetClientsByClientCode_Result)">
-          <Parameter Name="ClientCode" Mode="In" Type="String" />
+            <Parameter Name="ClientCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="cln_GetClientsByID" ReturnType="Collection(ProjectTileModel.cln_GetClientsByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="cln_GetClientStaffByID" ReturnType="Collection(ProjectTileModel.cln_GetClientStaffByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="cln_InsertIntoClientProducts">
             <Parameter Name="ClientID" Mode="In" Type="Int32" />
@@ -1570,7 +1919,7 @@
             <Parameter Name="Surname" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="ent_GetEntitiesByID" ReturnType="Collection(ProjectTileModel.ent_GetEntitiesByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="ent_InsertIntoEntities">
             <Parameter Name="EntityName" Mode="In" Type="String" />
@@ -1584,14 +1933,26 @@
             <Parameter Name="ID" Mode="In" Type="String" />
             <Parameter Name="EntityName" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="err_GetErrorLogByID" ReturnType="Collection(ProjectTileModel.err_GetErrorLogByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="err_InsertIntoErrorLog">
+            <Parameter Name="CustomMessage" Mode="In" Type="String" />
+            <Parameter Name="ExceptionMessage" Mode="In" Type="String" />
+            <Parameter Name="ExceptionType" Mode="In" Type="String" />
+            <Parameter Name="TargetSite" Mode="In" Type="String" />
+            <Parameter Name="LoggedAt" Mode="In" Type="DateTime" />
+            <Parameter Name="LoggedBy" Mode="In" Type="String" />
+            <Parameter Name="InnerException" Mode="In" Type="String" />
+          </FunctionImport>
           <FunctionImport Name="pja_GetClientTeamRolesByRoleCode" ReturnType="Collection(ProjectTileModel.pja_GetClientTeamRolesByRoleCode_Result)">
-          <Parameter Name="RoleCode" Mode="In" Type="String" />
+            <Parameter Name="RoleCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="pja_GetProjectRolesByRoleCode" ReturnType="Collection(ProjectTileModel.pja_GetProjectRolesByRoleCode_Result)">
-          <Parameter Name="RoleCode" Mode="In" Type="String" />
+            <Parameter Name="RoleCode" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="pja_GetProjectStagesByStageCode" ReturnType="Collection(ProjectTileModel.pja_GetProjectStagesByStageCode_Result)">
-          <Parameter Name="StageCode" Mode="In" Type="String" />
+          <FunctionImport Name="pja_GetProjectStagesByID" ReturnType="Collection(ProjectTileModel.pja_GetProjectStagesByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="pja_InsertIntoClientTeamRoles">
             <Parameter Name="RoleCode" Mode="In" Type="String" />
@@ -1602,7 +1963,7 @@
             <Parameter Name="RoleDescription" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="pja_InsertIntoProjectStages">
-            <Parameter Name="StageCode" Mode="In" Type="Int32" />
+            <Parameter Name="StageNumber" Mode="In" Type="Int32" />
             <Parameter Name="StageName" Mode="In" Type="String" />
             <Parameter Name="StageDescription" Mode="In" Type="String" />
             <Parameter Name="ProjectStatus" Mode="In" Type="String" />
@@ -1621,8 +1982,12 @@
             <Parameter Name="RoleDescription" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="pja_UpdateStageDescriptionInProjectStages">
-            <Parameter Name="StageCode" Mode="In" Type="String" />
+            <Parameter Name="ID" Mode="In" Type="String" />
             <Parameter Name="StageDescription" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="pja_UpdateStageNumberInProjectStages">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="StageNumber" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="pja_UpdateTypeDescriptionInProjectTypes">
             <Parameter Name="TypeName" Mode="In" Type="String" />
@@ -1633,10 +1998,10 @@
             <Parameter Name="TypeName" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prd_GetProductsByID" ReturnType="Collection(ProjectTileModel.prd_GetProductsByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prd_GetProductsByProductName" ReturnType="Collection(ProjectTileModel.prd_GetProductsByProductName_Result)">
-          <Parameter Name="ProductName" Mode="In" Type="String" />
+            <Parameter Name="ProductName" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prd_InsertIntoProducts">
             <Parameter Name="ProductName" Mode="In" Type="String" />
@@ -1647,20 +2012,40 @@
             <Parameter Name="ID" Mode="In" Type="String" />
             <Parameter Name="LatestVersion" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="prj_GetActionsByID" ReturnType="Collection(ProjectTileModel.prj_GetActionsByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
+          </FunctionImport>
           <FunctionImport Name="prj_GetClientTeamsByID" ReturnType="Collection(ProjectTileModel.prj_GetClientTeamsByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_GetNewVersionByID">
-          <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_GetOldVersionByID">
-          <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_GetProjectsByID" ReturnType="Collection(ProjectTileModel.prj_GetProjectsByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_GetProjectTeamsByID" ReturnType="Collection(ProjectTileModel.prj_GetProjectTeamsByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="ID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prj_GetStageHistoryByID" ReturnType="Collection(ProjectTileModel.prj_GetStageHistoryByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prj_InsertIntoActions">
+            <Parameter Name="ActionCode" Mode="In" Type="String" />
+            <Parameter Name="ProjectID" Mode="In" Type="Int32" />
+            <Parameter Name="LoggedDate" Mode="In" Type="DateTime" />
+            <Parameter Name="TargetDate" Mode="In" Type="DateTime" />
+            <Parameter Name="UpdatedDate" Mode="In" Type="DateTime" />
+            <Parameter Name="ShortDescription" Mode="In" Type="String" />
+            <Parameter Name="StatusCode" Mode="In" Type="Boolean" />
+            <Parameter Name="LoggedBy" Mode="In" Type="Int32" />
+            <Parameter Name="InternalOwner" Mode="In" Type="Int32" />
+            <Parameter Name="ClientOwner" Mode="In" Type="Int32" />
+            <Parameter Name="Notes" Mode="In" Type="String" />
+            <Parameter Name="StageID" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="prj_InsertIntoClientTeams">
             <Parameter Name="ProjectID" Mode="In" Type="Int32" />
@@ -1681,7 +2066,7 @@
             <Parameter Name="ProjectName" Mode="In" Type="String" />
             <Parameter Name="ClientID" Mode="In" Type="Int32" />
             <Parameter Name="StartDate" Mode="In" Type="DateTime" />
-            <Parameter Name="StageCode" Mode="In" Type="Int32" />
+            <Parameter Name="StageID" Mode="In" Type="Int32" />
             <Parameter Name="ProjectSummary" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_InsertIntoProjectTeams">
@@ -1690,6 +2075,16 @@
             <Parameter Name="ProjectRoleCode" Mode="In" Type="String" />
             <Parameter Name="FromDate" Mode="In" Type="DateTime" />
             <Parameter Name="ToDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="prj_InsertIntoStageHistory">
+            <Parameter Name="ProjectID" Mode="In" Type="Int32" />
+            <Parameter Name="StageID" Mode="In" Type="Int32" />
+            <Parameter Name="TargetDate" Mode="In" Type="DateTime" />
+            <Parameter Name="AchievedDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="prj_UpdateAchievedDateInStageHistory">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="AchievedDate" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_UpdateClientStaffIDInClientTeams">
             <Parameter Name="ID" Mode="In" Type="String" />
@@ -1723,6 +2118,22 @@
             <Parameter Name="ID" Mode="In" Type="String" />
             <Parameter Name="StaffID" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="prj_UpdateStatusCodeInActions">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="StatusCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prj_UpdateStatusInNotes">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="Status" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prj_UpdateTargetDateInActions">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="TargetDate" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="prj_UpdateTargetDateInStageHistory">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="TargetDate" Mode="In" Type="String" />
+          </FunctionImport>
           <FunctionImport Name="prj_UpdateToDateInClientTeams">
             <Parameter Name="ID" Mode="In" Type="String" />
             <Parameter Name="ToDate" Mode="In" Type="String" />
@@ -1731,8 +2142,12 @@
             <Parameter Name="ID" Mode="In" Type="String" />
             <Parameter Name="ToDate" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="prj_UpdateUpdatedDateInActions">
+            <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="UpdatedDate" Mode="In" Type="String" />
+          </FunctionImport>
           <FunctionImport Name="sec_GetTablePermissionsByID" ReturnType="Collection(ProjectTileModel.sec_GetTablePermissionsByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="sec_InsertIntoTablePermissions">
             <Parameter Name="TableName" Mode="In" Type="String" />
@@ -1742,18 +2157,22 @@
             <Parameter Name="InsertRows" Mode="In" Type="Boolean" />
             <Parameter Name="ChangeStatus" Mode="In" Type="Boolean" />
           </FunctionImport>
+          <FunctionImport Name="stf_ChangeDatabasePassword">
+            <Parameter Name="UserID" Mode="In" Type="String" />
+            <Parameter Name="Passwd" Mode="In" Type="String" />
+          </FunctionImport>
           <FunctionImport Name="stf_CheckHashedPassword" ReturnType="Collection(Boolean)">
             <Parameter Name="UserID" Mode="In" Type="String" />
             <Parameter Name="Passwd" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="stf_GetStaffByID" ReturnType="Collection(ProjectTileModel.stf_GetStaffByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="stf_GetStaffByRoleCode" ReturnType="Collection(ProjectTileModel.stf_GetStaffByRoleCode_Result)">
-          <Parameter Name="RoleCode" Mode="In" Type="String" />
+            <Parameter Name="RoleCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="stf_GetStaffRolesByRoleCode" ReturnType="Collection(ProjectTileModel.stf_GetStaffRolesByRoleCode_Result)">
-          <Parameter Name="RoleCode" Mode="In" Type="String" />
+            <Parameter Name="RoleCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="stf_InsertIntoStaff">
             <Parameter Name="FirstName" Mode="In" Type="String" />
@@ -1790,27 +2209,6 @@
             <Parameter Name="RoleCode" Mode="In" Type="String" />
             <Parameter Name="RoleDescription" Mode="In" Type="String" />
           </FunctionImport>
-          <EntitySet Name="ErrorLog" EntityType="ProjectTileModel.ErrorLog" />
-          <FunctionImport Name="err_GetErrorLogByID" ReturnType="Collection(ProjectTileModel.err_GetErrorLogByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
-          </FunctionImport>
-          <FunctionImport Name="err_InsertIntoErrorLog">
-            <Parameter Name="CustomMessage" Mode="In" Type="String" />
-            <Parameter Name="ExceptionMessage" Mode="In" Type="String" />
-            <Parameter Name="ExceptionType" Mode="In" Type="String" />
-            <Parameter Name="TargetSite" Mode="In" Type="String" />
-            <Parameter Name="LoggedAt" Mode="In" Type="DateTime" />
-            <Parameter Name="LoggedBy" Mode="In" Type="String" />
-            <Parameter Name="InnerException" Mode="In" Type="String" />
-          </FunctionImport>
-          <AssociationSet Name="fk_StaffProjectID" Association="ProjectTileModel.fk_StaffProjectID">
-            <End Role="Projects" EntitySet="Projects" />
-            <End Role="Staff" EntitySet="Staff" />
-          </AssociationSet>
-          <FunctionImport Name="stf_ChangeDatabasePassword">
-            <Parameter Name="UserID" Mode="In" Type="String" />
-            <Parameter Name="Passwd" Mode="In" Type="String" />
-          </FunctionImport>
         </EntityContainer>
         <ComplexType Name="cln_GetClientsByAccountManagerID_Result">
           <Property Type="Int32" Name="ID" Nullable="false" />
@@ -1841,6 +2239,7 @@
           <Property Type="Int32" Name="ClientID" Nullable="false" />
           <Property Type="String" Name="FirstName" Nullable="false" MaxLength="100" />
           <Property Type="String" Name="Surname" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="FullName" Nullable="false" MaxLength="201" />
           <Property Type="String" Name="JobTitle" Nullable="true" MaxLength="100" />
           <Property Type="String" Name="PhoneNumber" Nullable="true" MaxLength="50" />
           <Property Type="String" Name="Email" Nullable="true" MaxLength="100" />
@@ -1851,6 +2250,16 @@
           <Property Type="String" Name="EntityName" Nullable="false" MaxLength="30" />
           <Property Type="String" Name="EntityDescription" Nullable="false" MaxLength="100" />
         </ComplexType>
+        <ComplexType Name="err_GetErrorLogByID_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="CustomMessage" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="ExceptionMessage" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="ExceptionType" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="TargetSite" Nullable="true" MaxLength="500" />
+          <Property Type="DateTime" Name="LoggedAt" Nullable="true" Precision="23" />
+          <Property Type="String" Name="LoggedBy" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="InnerException" Nullable="true" />
+        </ComplexType>
         <ComplexType Name="pja_GetClientTeamRolesByRoleCode_Result">
           <Property Type="String" Name="RoleCode" Nullable="false" MaxLength="5" />
           <Property Type="String" Name="RoleDescription" Nullable="false" MaxLength="100" />
@@ -1859,8 +2268,9 @@
           <Property Type="String" Name="RoleCode" Nullable="false" MaxLength="5" />
           <Property Type="String" Name="RoleDescription" Nullable="false" MaxLength="100" />
         </ComplexType>
-        <ComplexType Name="pja_GetProjectStagesByStageCode_Result">
-          <Property Type="Int32" Name="StageCode" Nullable="false" />
+        <ComplexType Name="pja_GetProjectStagesByID_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="Int32" Name="StageNumber" Nullable="false" />
           <Property Type="String" Name="StageName" Nullable="false" MaxLength="20" />
           <Property Type="String" Name="StageDescription" Nullable="false" MaxLength="100" />
           <Property Type="String" Name="ProjectStatus" Nullable="false" MaxLength="20" />
@@ -1876,6 +2286,21 @@
           <Property Type="String" Name="ProductName" Nullable="true" MaxLength="100" />
           <Property Type="Decimal" Name="LatestVersion" Nullable="true" Precision="10" Scale="2" />
           <Property Type="String" Name="ProductDescription" Nullable="true" MaxLength="300" />
+        </ComplexType>
+        <ComplexType Name="prj_GetActionsByID_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="ActionCode" Nullable="false" MaxLength="20" />
+          <Property Type="Int32" Name="ProjectID" Nullable="false" />
+          <Property Type="DateTime" Name="LoggedDate" Nullable="false" />
+          <Property Type="DateTime" Name="TargetDate" Nullable="true" />
+          <Property Type="DateTime" Name="UpdatedDate" Nullable="true" />
+          <Property Type="String" Name="ShortDescription" Nullable="false" MaxLength="50" />
+          <Property Type="Boolean" Name="StatusCode" Nullable="true" />
+          <Property Type="Int32" Name="LoggedBy" Nullable="true" />
+          <Property Type="Int32" Name="InternalOwner" Nullable="true" />
+          <Property Type="Int32" Name="ClientOwner" Nullable="true" />
+          <Property Type="String" Name="Notes" Nullable="true" MaxLength="200" />
+          <Property Type="Int32" Name="StageID" Nullable="true" />
         </ComplexType>
         <ComplexType Name="prj_GetClientTeamsByID_Result">
           <Property Type="Int32" Name="ID" Nullable="false" />
@@ -1893,7 +2318,7 @@
           <Property Type="String" Name="ProjectName" Nullable="false" MaxLength="100" />
           <Property Type="Int32" Name="ClientID" Nullable="true" />
           <Property Type="DateTime" Name="StartDate" Nullable="true" />
-          <Property Type="Int32" Name="StageCode" Nullable="false" />
+          <Property Type="Int32" Name="StageID" Nullable="false" />
           <Property Type="String" Name="ProjectSummary" Nullable="false" MaxLength="400" />
         </ComplexType>
         <ComplexType Name="prj_GetProjectTeamsByID_Result">
@@ -1903,6 +2328,13 @@
           <Property Type="String" Name="ProjectRoleCode" Nullable="true" MaxLength="5" />
           <Property Type="DateTime" Name="FromDate" Nullable="true" />
           <Property Type="DateTime" Name="ToDate" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="prj_GetStageHistoryByID_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="Int32" Name="ProjectID" Nullable="false" />
+          <Property Type="Int32" Name="StageID" Nullable="false" />
+          <Property Type="DateTime" Name="TargetDate" Nullable="true" />
+          <Property Type="DateTime" Name="AchievedDate" Nullable="true" />
         </ComplexType>
         <ComplexType Name="sec_GetTablePermissionsByID_Result">
           <Property Type="Int32" Name="ID" Nullable="false" />
@@ -1918,6 +2350,7 @@
           <Property Type="String" Name="EmployeeID" Nullable="true" MaxLength="7" />
           <Property Type="String" Name="FirstName" Nullable="false" MaxLength="100" />
           <Property Type="String" Name="Surname" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="FullName" Nullable="false" MaxLength="201" />
           <Property Type="String" Name="RoleCode" Nullable="true" MaxLength="5" />
           <Property Type="DateTime" Name="StartDate" Nullable="false" />
           <Property Type="DateTime" Name="LeaveDate" Nullable="true" />
@@ -1926,12 +2359,16 @@
           <Property Type="Binary" Name="PasswordHash" Nullable="true" MaxLength="64" />
           <Property Type="Boolean" Name="Active" Nullable="false" />
           <Property Type="Int32" Name="DefaultEntity" Nullable="true" />
+          <Property Type="Int32" Name="MainProject" Nullable="true" />
+          <Property Type="Boolean" Name="SingleSignon" Nullable="false" />
+          <Property Type="String" Name="OSUser" Nullable="true" MaxLength="50" />
         </ComplexType>
         <ComplexType Name="stf_GetStaffByRoleCode_Result">
           <Property Type="Int32" Name="ID" Nullable="false" />
           <Property Type="String" Name="EmployeeID" Nullable="true" MaxLength="7" />
           <Property Type="String" Name="FirstName" Nullable="false" MaxLength="100" />
           <Property Type="String" Name="Surname" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="FullName" Nullable="false" MaxLength="201" />
           <Property Type="String" Name="RoleCode" Nullable="true" MaxLength="5" />
           <Property Type="DateTime" Name="StartDate" Nullable="false" />
           <Property Type="DateTime" Name="LeaveDate" Nullable="true" />
@@ -1940,50 +2377,39 @@
           <Property Type="Binary" Name="PasswordHash" Nullable="true" MaxLength="64" />
           <Property Type="Boolean" Name="Active" Nullable="false" />
           <Property Type="Int32" Name="DefaultEntity" Nullable="true" />
+          <Property Type="Int32" Name="MainProject" Nullable="true" />
+          <Property Type="Boolean" Name="SingleSignon" Nullable="false" />
+          <Property Type="String" Name="OSUser" Nullable="true" MaxLength="50" />
         </ComplexType>
         <ComplexType Name="stf_GetStaffRolesByRoleCode_Result">
           <Property Type="String" Name="RoleCode" Nullable="false" MaxLength="5" />
           <Property Type="String" Name="RoleDescription" Nullable="false" MaxLength="100" />
         </ComplexType>
-        <EntityType Name="ErrorLog">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CustomMessage" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="ExceptionMessage" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="LoggedAt" Type="DateTime" Precision="3" />
-          <Property Name="LoggedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="InnerException" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ExceptionType" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="TargetSite" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <ComplexType Name="err_GetErrorLogByID_Result">
-          <Property Type="Int32" Name="ID" Nullable="false" />
-          <Property Type="String" Name="CustomMessage" Nullable="true" MaxLength="200" />
-          <Property Type="String" Name="ExceptionMessage" Nullable="true" MaxLength="500" />
-          <Property Type="DateTime" Name="LoggedAt" Nullable="true" Precision="23" />
-          <Property Type="String" Name="LoggedBy" Nullable="true" MaxLength="100" />
-          <Property Type="String" Name="InnerException" Nullable="true" />
-        </ComplexType>
-        <Association Name="fk_StaffProjectID">
-          <End Type="ProjectTileModel.Projects" Role="Projects" Multiplicity="0..1" />
-          <End Type="ProjectTileModel.Staff" Role="Staff" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Projects">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Staff">
-              <PropertyRef Name="MainProject" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="ProjectTileModelStoreContainer" CdmEntityContainer="ProjectTileSqlDatabase">
+          <EntitySetMapping Name="Actions">
+            <EntityTypeMapping TypeName="ProjectTileModel.Actions">
+              <MappingFragment StoreEntitySet="Actions">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ActionCode" ColumnName="ActionCode" />
+                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+                <ScalarProperty Name="LoggedDate" ColumnName="LoggedDate" />
+                <ScalarProperty Name="TargetDate" ColumnName="TargetDate" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="ShortDescription" ColumnName="ShortDescription" />
+                <ScalarProperty Name="StatusCode" ColumnName="StatusCode" />
+                <ScalarProperty Name="LoggedBy" ColumnName="LoggedBy" />
+                <ScalarProperty Name="InternalOwner" ColumnName="InternalOwner" />
+                <ScalarProperty Name="ClientOwner" ColumnName="ClientOwner" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="StageID" ColumnName="StageID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="AuditEntries">
             <EntityTypeMapping TypeName="ProjectTileModel.AuditEntries">
               <MappingFragment StoreEntitySet="AuditEntries">
@@ -2026,11 +2452,11 @@
           <EntitySetMapping Name="ClientStaff">
             <EntityTypeMapping TypeName="ProjectTileModel.ClientStaff">
               <MappingFragment StoreEntitySet="ClientStaff">
-                <ScalarProperty Name="FullName" ColumnName="FullName" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ClientID" ColumnName="ClientID" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
                 <ScalarProperty Name="Surname" ColumnName="Surname" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
                 <ScalarProperty Name="JobTitle" ColumnName="JobTitle" />
                 <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
@@ -2064,6 +2490,20 @@
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="EntityName" ColumnName="EntityName" />
                 <ScalarProperty Name="EntityDescription" ColumnName="EntityDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ErrorLog">
+            <EntityTypeMapping TypeName="ProjectTileModel.ErrorLog">
+              <MappingFragment StoreEntitySet="ErrorLog">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="CustomMessage" ColumnName="CustomMessage" />
+                <ScalarProperty Name="ExceptionMessage" ColumnName="ExceptionMessage" />
+                <ScalarProperty Name="ExceptionType" ColumnName="ExceptionType" />
+                <ScalarProperty Name="TargetSite" ColumnName="TargetSite" />
+                <ScalarProperty Name="LoggedAt" ColumnName="LoggedAt" />
+                <ScalarProperty Name="LoggedBy" ColumnName="LoggedBy" />
+                <ScalarProperty Name="InnerException" ColumnName="InnerException" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2106,7 +2546,7 @@
                 <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
                 <ScalarProperty Name="ClientID" ColumnName="ClientID" />
                 <ScalarProperty Name="StartDate" ColumnName="StartDate" />
-                <ScalarProperty Name="StageCode" ColumnName="StageCode" />
+                <ScalarProperty Name="StageID" ColumnName="StageID" />
                 <ScalarProperty Name="ProjectSummary" ColumnName="ProjectSummary" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -2114,7 +2554,8 @@
           <EntitySetMapping Name="ProjectStages">
             <EntityTypeMapping TypeName="ProjectTileModel.ProjectStages">
               <MappingFragment StoreEntitySet="ProjectStages">
-                <ScalarProperty Name="StageCode" ColumnName="StageCode" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="StageNumber" ColumnName="StageNumber" />
                 <ScalarProperty Name="StageName" ColumnName="StageName" />
                 <ScalarProperty Name="StageDescription" ColumnName="StageDescription" />
                 <ScalarProperty Name="ProjectStatus" ColumnName="ProjectStatus" />
@@ -2145,14 +2586,11 @@
           <EntitySetMapping Name="Staff">
             <EntityTypeMapping TypeName="ProjectTileModel.Staff">
               <MappingFragment StoreEntitySet="Staff">
-                <ScalarProperty Name="OSUser" ColumnName="OSUser" />
-                <ScalarProperty Name="SingleSignon" ColumnName="SingleSignon" />
-                <ScalarProperty Name="MainProject" ColumnName="MainProject" />
-                <ScalarProperty Name="FullName" ColumnName="FullName" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
                 <ScalarProperty Name="Surname" ColumnName="Surname" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
                 <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
                 <ScalarProperty Name="StartDate" ColumnName="StartDate" />
                 <ScalarProperty Name="LeaveDate" ColumnName="LeaveDate" />
@@ -2161,6 +2599,9 @@
                 <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
                 <ScalarProperty Name="Active" ColumnName="Active" />
                 <ScalarProperty Name="DefaultEntity" ColumnName="DefaultEntity" />
+                <ScalarProperty Name="MainProject" ColumnName="MainProject" />
+                <ScalarProperty Name="SingleSignon" ColumnName="SingleSignon" />
+                <ScalarProperty Name="OSUser" ColumnName="OSUser" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2178,6 +2619,39 @@
               <MappingFragment StoreEntitySet="StaffRoles">
                 <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
                 <ScalarProperty Name="RoleDescription" ColumnName="RoleDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StageHistory">
+            <EntityTypeMapping TypeName="ProjectTileModel.StageHistory">
+              <MappingFragment StoreEntitySet="StageHistory">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+                <ScalarProperty Name="StageID" ColumnName="StageID" />
+                <ScalarProperty Name="TargetDate" ColumnName="TargetDate" />
+                <ScalarProperty Name="AchievedDate" ColumnName="AchievedDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SuggestedActions">
+            <EntityTypeMapping TypeName="ProjectTileModel.SuggestedActions">
+              <MappingFragment StoreEntitySet="SuggestedActions">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ShortDescription" ColumnName="ShortDescription" />
+                <ScalarProperty Name="InternalRole" ColumnName="InternalRole" />
+                <ScalarProperty Name="ClientRole" ColumnName="ClientRole" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="StageID" ColumnName="StageID" />
+                <ScalarProperty Name="TargetDuration" ColumnName="TargetDuration" />
+                <ScalarProperty Name="S_NS" ColumnName="S_NS" />
+                <ScalarProperty Name="S_AS" ColumnName="S_AS" />
+                <ScalarProperty Name="S_RB" ColumnName="S_RB" />
+                <ScalarProperty Name="S_UG" ColumnName="S_UG" />
+                <ScalarProperty Name="S_UR" ColumnName="S_UR" />
+                <ScalarProperty Name="S_RS" ColumnName="S_RS" />
+                <ScalarProperty Name="S_AF" ColumnName="S_AF" />
+                <ScalarProperty Name="S_TO" ColumnName="S_TO" />
+                <ScalarProperty Name="S_IP" ColumnName="S_IP" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2237,6 +2711,7 @@
                 <ScalarProperty Name="ClientID" ColumnName="ClientID" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
                 <ScalarProperty Name="Surname" ColumnName="Surname" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
                 <ScalarProperty Name="JobTitle" ColumnName="JobTitle" />
                 <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
@@ -2264,6 +2739,21 @@
           <FunctionImportMapping FunctionImportName="ent_InsertIntoEntities" FunctionName="ProjectTileModel.Store.ent_InsertIntoEntities" />
           <FunctionImportMapping FunctionImportName="ent_UpdateEntityDescriptionInEntities" FunctionName="ProjectTileModel.Store.ent_UpdateEntityDescriptionInEntities" />
           <FunctionImportMapping FunctionImportName="ent_UpdateEntityNameInEntities" FunctionName="ProjectTileModel.Store.ent_UpdateEntityNameInEntities" />
+          <FunctionImportMapping FunctionImportName="err_GetErrorLogByID" FunctionName="ProjectTileModel.Store.err_GetErrorLogByID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProjectTileModel.err_GetErrorLogByID_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="CustomMessage" ColumnName="CustomMessage" />
+                <ScalarProperty Name="ExceptionMessage" ColumnName="ExceptionMessage" />
+                <ScalarProperty Name="ExceptionType" ColumnName="ExceptionType" />
+                <ScalarProperty Name="TargetSite" ColumnName="TargetSite" />
+                <ScalarProperty Name="LoggedAt" ColumnName="LoggedAt" />
+                <ScalarProperty Name="LoggedBy" ColumnName="LoggedBy" />
+                <ScalarProperty Name="InnerException" ColumnName="InnerException" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="err_InsertIntoErrorLog" FunctionName="ProjectTileModel.Store.err_InsertIntoErrorLog" />
           <FunctionImportMapping FunctionImportName="pja_GetClientTeamRolesByRoleCode" FunctionName="ProjectTileModel.Store.pja_GetClientTeamRolesByRoleCode">
             <ResultMapping>
               <ComplexTypeMapping TypeName="ProjectTileModel.pja_GetClientTeamRolesByRoleCode_Result">
@@ -2280,10 +2770,11 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="pja_GetProjectStagesByStageCode" FunctionName="ProjectTileModel.Store.pja_GetProjectStagesByStageCode">
+          <FunctionImportMapping FunctionImportName="pja_GetProjectStagesByID" FunctionName="ProjectTileModel.Store.pja_GetProjectStagesByID">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.pja_GetProjectStagesByStageCode_Result">
-                <ScalarProperty Name="StageCode" ColumnName="StageCode" />
+              <ComplexTypeMapping TypeName="ProjectTileModel.pja_GetProjectStagesByID_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="StageNumber" ColumnName="StageNumber" />
                 <ScalarProperty Name="StageName" ColumnName="StageName" />
                 <ScalarProperty Name="StageDescription" ColumnName="StageDescription" />
                 <ScalarProperty Name="ProjectStatus" ColumnName="ProjectStatus" />
@@ -2297,6 +2788,7 @@
           <FunctionImportMapping FunctionImportName="pja_UpdateRoleDescriptionInClientTeamRoles" FunctionName="ProjectTileModel.Store.pja_UpdateRoleDescriptionInClientTeamRoles" />
           <FunctionImportMapping FunctionImportName="pja_UpdateRoleDescriptionInProjectRoles" FunctionName="ProjectTileModel.Store.pja_UpdateRoleDescriptionInProjectRoles" />
           <FunctionImportMapping FunctionImportName="pja_UpdateStageDescriptionInProjectStages" FunctionName="ProjectTileModel.Store.pja_UpdateStageDescriptionInProjectStages" />
+          <FunctionImportMapping FunctionImportName="pja_UpdateStageNumberInProjectStages" FunctionName="ProjectTileModel.Store.pja_UpdateStageNumberInProjectStages" />
           <FunctionImportMapping FunctionImportName="pja_UpdateTypeDescriptionInProjectTypes" FunctionName="ProjectTileModel.Store.pja_UpdateTypeDescriptionInProjectTypes" />
           <FunctionImportMapping FunctionImportName="pja_UpdateTypeNameInProjectTypes" FunctionName="ProjectTileModel.Store.pja_UpdateTypeNameInProjectTypes" />
           <FunctionImportMapping FunctionImportName="prd_GetProductsByID" FunctionName="ProjectTileModel.Store.prd_GetProductsByID">
@@ -2321,6 +2813,25 @@
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="prd_InsertIntoProducts" FunctionName="ProjectTileModel.Store.prd_InsertIntoProducts" />
           <FunctionImportMapping FunctionImportName="prd_UpdateLatestVersionInProducts" FunctionName="ProjectTileModel.Store.prd_UpdateLatestVersionInProducts" />
+          <FunctionImportMapping FunctionImportName="prj_GetActionsByID" FunctionName="ProjectTileModel.Store.prj_GetActionsByID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProjectTileModel.prj_GetActionsByID_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ActionCode" ColumnName="ActionCode" />
+                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+                <ScalarProperty Name="LoggedDate" ColumnName="LoggedDate" />
+                <ScalarProperty Name="TargetDate" ColumnName="TargetDate" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="ShortDescription" ColumnName="ShortDescription" />
+                <ScalarProperty Name="StatusCode" ColumnName="StatusCode" />
+                <ScalarProperty Name="LoggedBy" ColumnName="LoggedBy" />
+                <ScalarProperty Name="InternalOwner" ColumnName="InternalOwner" />
+                <ScalarProperty Name="ClientOwner" ColumnName="ClientOwner" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="StageID" ColumnName="StageID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="prj_GetClientTeamsByID" FunctionName="ProjectTileModel.Store.prj_GetClientTeamsByID">
             <ResultMapping>
               <ComplexTypeMapping TypeName="ProjectTileModel.prj_GetClientTeamsByID_Result">
@@ -2345,7 +2856,7 @@
                 <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
                 <ScalarProperty Name="ClientID" ColumnName="ClientID" />
                 <ScalarProperty Name="StartDate" ColumnName="StartDate" />
-                <ScalarProperty Name="StageCode" ColumnName="StageCode" />
+                <ScalarProperty Name="StageID" ColumnName="StageID" />
                 <ScalarProperty Name="ProjectSummary" ColumnName="ProjectSummary" />
               </ComplexTypeMapping>
             </ResultMapping>
@@ -2362,10 +2873,24 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="prj_GetStageHistoryByID" FunctionName="ProjectTileModel.Store.prj_GetStageHistoryByID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ProjectTileModel.prj_GetStageHistoryByID_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+                <ScalarProperty Name="StageID" ColumnName="StageID" />
+                <ScalarProperty Name="TargetDate" ColumnName="TargetDate" />
+                <ScalarProperty Name="AchievedDate" ColumnName="AchievedDate" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="prj_InsertIntoActions" FunctionName="ProjectTileModel.Store.prj_InsertIntoActions" />
           <FunctionImportMapping FunctionImportName="prj_InsertIntoClientTeams" FunctionName="ProjectTileModel.Store.prj_InsertIntoClientTeams" />
           <FunctionImportMapping FunctionImportName="prj_InsertIntoProjectProducts" FunctionName="ProjectTileModel.Store.prj_InsertIntoProjectProducts" />
           <FunctionImportMapping FunctionImportName="prj_InsertIntoProjects" FunctionName="ProjectTileModel.Store.prj_InsertIntoProjects" />
           <FunctionImportMapping FunctionImportName="prj_InsertIntoProjectTeams" FunctionName="ProjectTileModel.Store.prj_InsertIntoProjectTeams" />
+          <FunctionImportMapping FunctionImportName="prj_InsertIntoStageHistory" FunctionName="ProjectTileModel.Store.prj_InsertIntoStageHistory" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateAchievedDateInStageHistory" FunctionName="ProjectTileModel.Store.prj_UpdateAchievedDateInStageHistory" />
           <FunctionImportMapping FunctionImportName="prj_UpdateClientStaffIDInClientTeams" FunctionName="ProjectTileModel.Store.prj_UpdateClientStaffIDInClientTeams" />
           <FunctionImportMapping FunctionImportName="prj_UpdateClientTeamRoleCodeInClientTeams" FunctionName="ProjectTileModel.Store.prj_UpdateClientTeamRoleCodeInClientTeams" />
           <FunctionImportMapping FunctionImportName="prj_UpdateNewVersionInProjectProducts" FunctionName="ProjectTileModel.Store.prj_UpdateNewVersionInProjectProducts" />
@@ -2374,8 +2899,13 @@
           <FunctionImportMapping FunctionImportName="prj_UpdateProjectRoleCodeInProjectTeams" FunctionName="ProjectTileModel.Store.prj_UpdateProjectRoleCodeInProjectTeams" />
           <FunctionImportMapping FunctionImportName="prj_UpdateProjectSummaryInProjects" FunctionName="ProjectTileModel.Store.prj_UpdateProjectSummaryInProjects" />
           <FunctionImportMapping FunctionImportName="prj_UpdateStaffIDInProjectTeams" FunctionName="ProjectTileModel.Store.prj_UpdateStaffIDInProjectTeams" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateStatusCodeInActions" FunctionName="ProjectTileModel.Store.prj_UpdateStatusCodeInActions" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateStatusInNotes" FunctionName="ProjectTileModel.Store.prj_UpdateStatusInNotes" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateTargetDateInActions" FunctionName="ProjectTileModel.Store.prj_UpdateTargetDateInActions" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateTargetDateInStageHistory" FunctionName="ProjectTileModel.Store.prj_UpdateTargetDateInStageHistory" />
           <FunctionImportMapping FunctionImportName="prj_UpdateToDateInClientTeams" FunctionName="ProjectTileModel.Store.prj_UpdateToDateInClientTeams" />
           <FunctionImportMapping FunctionImportName="prj_UpdateToDateInProjectTeams" FunctionName="ProjectTileModel.Store.prj_UpdateToDateInProjectTeams" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateUpdatedDateInActions" FunctionName="ProjectTileModel.Store.prj_UpdateUpdatedDateInActions" />
           <FunctionImportMapping FunctionImportName="sec_GetTablePermissionsByID" FunctionName="ProjectTileModel.Store.sec_GetTablePermissionsByID">
             <ResultMapping>
               <ComplexTypeMapping TypeName="ProjectTileModel.sec_GetTablePermissionsByID_Result">
@@ -2390,6 +2920,7 @@
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="sec_InsertIntoTablePermissions" FunctionName="ProjectTileModel.Store.sec_InsertIntoTablePermissions" />
+          <FunctionImportMapping FunctionImportName="stf_ChangeDatabasePassword" FunctionName="ProjectTileModel.Store.stf_ChangeDatabasePassword" />
           <FunctionImportMapping FunctionImportName="stf_CheckHashedPassword" FunctionName="ProjectTileModel.Store.stf_CheckHashedPassword" />
           <FunctionImportMapping FunctionImportName="stf_GetStaffByID" FunctionName="ProjectTileModel.Store.stf_GetStaffByID">
             <ResultMapping>
@@ -2398,6 +2929,7 @@
                 <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
                 <ScalarProperty Name="Surname" ColumnName="Surname" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
                 <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
                 <ScalarProperty Name="StartDate" ColumnName="StartDate" />
                 <ScalarProperty Name="LeaveDate" ColumnName="LeaveDate" />
@@ -2406,6 +2938,9 @@
                 <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
                 <ScalarProperty Name="Active" ColumnName="Active" />
                 <ScalarProperty Name="DefaultEntity" ColumnName="DefaultEntity" />
+                <ScalarProperty Name="MainProject" ColumnName="MainProject" />
+                <ScalarProperty Name="SingleSignon" ColumnName="SingleSignon" />
+                <ScalarProperty Name="OSUser" ColumnName="OSUser" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -2416,6 +2951,7 @@
                 <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
                 <ScalarProperty Name="Surname" ColumnName="Surname" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
                 <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
                 <ScalarProperty Name="StartDate" ColumnName="StartDate" />
                 <ScalarProperty Name="LeaveDate" ColumnName="LeaveDate" />
@@ -2424,6 +2960,9 @@
                 <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
                 <ScalarProperty Name="Active" ColumnName="Active" />
                 <ScalarProperty Name="DefaultEntity" ColumnName="DefaultEntity" />
+                <ScalarProperty Name="MainProject" ColumnName="MainProject" />
+                <ScalarProperty Name="SingleSignon" ColumnName="SingleSignon" />
+                <ScalarProperty Name="OSUser" ColumnName="OSUser" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -2441,34 +2980,6 @@
           <FunctionImportMapping FunctionImportName="stf_UpdateLeaveDateInStaff" FunctionName="ProjectTileModel.Store.stf_UpdateLeaveDateInStaff" />
           <FunctionImportMapping FunctionImportName="stf_UpdateRoleCodeInStaff" FunctionName="ProjectTileModel.Store.stf_UpdateRoleCodeInStaff" />
           <FunctionImportMapping FunctionImportName="stf_UpdateRoleDescriptionInStaffRoles" FunctionName="ProjectTileModel.Store.stf_UpdateRoleDescriptionInStaffRoles" />
-          <EntitySetMapping Name="ErrorLog">
-            <EntityTypeMapping TypeName="ProjectTileModel.ErrorLog">
-              <MappingFragment StoreEntitySet="ErrorLog">
-                <ScalarProperty Name="TargetSite" ColumnName="TargetSite" />
-                <ScalarProperty Name="ExceptionType" ColumnName="ExceptionType" />
-                <ScalarProperty Name="InnerException" ColumnName="InnerException" />
-                <ScalarProperty Name="LoggedBy" ColumnName="LoggedBy" />
-                <ScalarProperty Name="LoggedAt" ColumnName="LoggedAt" />
-                <ScalarProperty Name="ExceptionMessage" ColumnName="ExceptionMessage" />
-                <ScalarProperty Name="CustomMessage" ColumnName="CustomMessage" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="err_GetErrorLogByID" FunctionName="ProjectTileModel.Store.err_GetErrorLogByID">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.err_GetErrorLogByID_Result">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="CustomMessage" ColumnName="CustomMessage" />
-                <ScalarProperty Name="ExceptionMessage" ColumnName="ExceptionMessage" />
-                <ScalarProperty Name="LoggedAt" ColumnName="LoggedAt" />
-                <ScalarProperty Name="LoggedBy" ColumnName="LoggedBy" />
-                <ScalarProperty Name="InnerException" ColumnName="InnerException" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="err_InsertIntoErrorLog" FunctionName="ProjectTileModel.Store.err_InsertIntoErrorLog" />
-          <FunctionImportMapping FunctionImportName="stf_ChangeDatabasePassword" FunctionName="ProjectTileModel.Store.stf_ChangeDatabasePassword" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

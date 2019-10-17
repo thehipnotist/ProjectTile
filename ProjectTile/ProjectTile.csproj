@@ -64,43 +64,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AdminFunctions.cs" />
-    <Compile Include="ErrorPage.xaml.cs">
-      <DependentUpon>ErrorPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="AuditPage.xaml.cs">
-      <DependentUpon>AuditPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="AuditProxy.cs" />
-    <Compile Include="ErrorProxy.cs" />
-    <Compile Include="ProjectContactProxy.cs" />
-    <Compile Include="FAQPage.xaml.cs">
-      <DependentUpon>FAQPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="AuditEntries.cs">
+    <Compile Include="Actions.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="ClientFunctions.cs" />
-    <Compile Include="ProjectProductsPage.xaml.cs">
-      <DependentUpon>ProjectProductsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ProjectProductProxy.cs" />
-    <Compile Include="ProjectContactsPage.xaml.cs">
-      <DependentUpon>ProjectContactsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="TeamProxy.cs" />
-    <Compile Include="ClientProxy.cs" />
-    <Compile Include="ClientContactPage.xaml.cs">
-      <DependentUpon>ClientContactPage.xaml</DependentUpon>
+    <Compile Include="AdminFunctions.cs" />
+    <Compile Include="AuditEntries.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="ClientProducts.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Globals.cs" />
-    <Compile Include="ProjectTeamsPage.xaml.cs">
-      <DependentUpon>ProjectTeamsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ProjectProxy.cs" />
     <Compile Include="Clients.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
@@ -128,50 +101,22 @@
     <Compile Include="Entities.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="EntityProxy.cs" />
-    <Compile Include="EntityFunctions.cs" />
-    <Compile Include="EntityPage.xaml.cs">
-      <DependentUpon>EntityPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ent_GetEntitiesByID_Result.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="ErrorLog.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="ErrorPage.xaml.cs">
+      <DependentUpon>ErrorPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AuditPage.xaml.cs">
+      <DependentUpon>AuditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AuditProxy.cs" />
+    <Compile Include="ErrorProxy.cs" />
     <Compile Include="err_GetErrorLogByID_Result.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="LoginPage.xaml.cs">
-      <DependentUpon>LoginPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="MessageFunctions.cs" />
-    <Compile Include="PageFunctions.cs" />
-    <Compile Include="ClientPage.xaml.cs">
-      <DependentUpon>ClientPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="AboutPage.xaml.cs">
-      <DependentUpon>AboutPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="PageTemplate.xaml.cs">
-      <DependentUpon>PageTemplate.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ProductFunctions.cs" />
-    <Compile Include="ProductPage.xaml.cs">
-      <DependentUpon>ProductPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ContactDetailsPage.xaml.cs">
-      <DependentUpon>ContactDetailsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ClientProductsPage.xaml.cs">
-      <DependentUpon>ClientProductsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ProjectFunctions.cs" />
-    <Compile Include="ProjectDetailsPage.xaml.cs">
-      <DependentUpon>ProjectDetailsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="StaffEntitiesPage.xaml.cs">
-      <DependentUpon>StaffEntitiesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="pja_GetClientTeamRolesByRoleCode_Result.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
@@ -179,13 +124,16 @@
     <Compile Include="pja_GetProjectRolesByRoleCode_Result.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="pja_GetProjectStagesByStageCode_Result.cs">
+    <Compile Include="pja_GetProjectStagesByID_Result.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="prd_GetProductsByID_Result.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="prd_GetProductsByProductName_Result.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="prj_GetActionsByID_Result.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="prj_GetClientTeamsByID_Result.cs">
@@ -197,11 +145,26 @@
     <Compile Include="prj_GetProjectTeamsByID_Result.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="prj_GetStageHistoryByID_Result.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Products.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="ProjectContactProxy.cs" />
+    <Compile Include="FAQPage.xaml.cs">
+      <DependentUpon>FAQPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ClientFunctions.cs" />
     <Compile Include="ProjectProducts.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectProductsPage.xaml.cs">
+      <DependentUpon>ProjectProductsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectProductProxy.cs" />
+    <Compile Include="ProjectContactsPage.xaml.cs">
+      <DependentUpon>ProjectContactsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ProjectRoles.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
@@ -236,31 +199,18 @@
     <Compile Include="sec_GetTablePermissionsByID_Result.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="SqlServerConnection.cs" />
     <Compile Include="Staff.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="ProjectPage.xaml.cs">
-      <DependentUpon>ProjectPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="StaffDetailsPage.xaml.cs">
-      <DependentUpon>StaffDetailsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="StaffEntities.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="LoginFunctions.cs" />
-    <Compile Include="StaffFunctions.cs" />
-    <Compile Include="ContactProxy.cs" />
-    <Compile Include="StaffProxy.cs" />
-    <Compile Include="StaffPage.xaml.cs">
-      <DependentUpon>StaffPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="StaffRoles.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="ClientProductProxy.cs" />
-    <Compile Include="StaffProxySmall.cs" />
+    <Compile Include="StageHistory.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="stf_GetStaffByID_Result.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
@@ -270,9 +220,74 @@
     <Compile Include="stf_GetStaffRolesByRoleCode_Result.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="SuggestedActions.cs">
+      <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="TablePermissions.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="TeamProxy.cs" />
+    <Compile Include="ClientProxy.cs" />
+    <Compile Include="ClientContactPage.xaml.cs">
+      <DependentUpon>ClientContactPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Globals.cs" />
+    <Compile Include="ProjectTeamsPage.xaml.cs">
+      <DependentUpon>ProjectTeamsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectProxy.cs" />
+    <Compile Include="EntityProxy.cs" />
+    <Compile Include="EntityFunctions.cs" />
+    <Compile Include="EntityPage.xaml.cs">
+      <DependentUpon>EntityPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LoginPage.xaml.cs">
+      <DependentUpon>LoginPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MessageFunctions.cs" />
+    <Compile Include="PageFunctions.cs" />
+    <Compile Include="ClientPage.xaml.cs">
+      <DependentUpon>ClientPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AboutPage.xaml.cs">
+      <DependentUpon>AboutPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PageTemplate.xaml.cs">
+      <DependentUpon>PageTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ProductFunctions.cs" />
+    <Compile Include="ProductPage.xaml.cs">
+      <DependentUpon>ProductPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ContactDetailsPage.xaml.cs">
+      <DependentUpon>ContactDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ClientProductsPage.xaml.cs">
+      <DependentUpon>ClientProductsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectFunctions.cs" />
+    <Compile Include="ProjectDetailsPage.xaml.cs">
+      <DependentUpon>ProjectDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StaffEntitiesPage.xaml.cs">
+      <DependentUpon>StaffEntitiesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SqlServerConnection.cs" />
+    <Compile Include="ProjectPage.xaml.cs">
+      <DependentUpon>ProjectPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StaffDetailsPage.xaml.cs">
+      <DependentUpon>StaffDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LoginFunctions.cs" />
+    <Compile Include="StaffFunctions.cs" />
+    <Compile Include="ContactProxy.cs" />
+    <Compile Include="StaffProxy.cs" />
+    <Compile Include="StaffPage.xaml.cs">
+      <DependentUpon>StaffPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ClientProductProxy.cs" />
+    <Compile Include="StaffProxySmall.cs" />
     <Compile Include="TableSecurity.cs" />
     <Compile Include="TilesPage.xaml.cs">
       <DependentUpon>TilesPage.xaml</DependentUpon>

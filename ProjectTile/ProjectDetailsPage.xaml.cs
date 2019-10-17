@@ -19,7 +19,7 @@ namespace ProjectTile
         string pageMode;
         bool fromProjectPage = (Globals.ProjectSourcePage != Globals.TilesPageName);
         int originalManagerID = 0;
-        int originalStage = 0;
+        int originalStageNumber = 0;
 
         // ------------ Current variables ----------- //
 
@@ -176,7 +176,7 @@ namespace ProjectTile
         {
             thisProjectProxy = Globals.SelectedProjectProxy;
             originalManagerID = thisProjectProxy.ProjectManager.ID;
-            originalStage = thisProjectProxy.StageID;
+            originalStageNumber = thisProjectProxy.StageNumber;
             displaySelectedType();
             displaySelectedStage();
             refreshManagerCombo(false);
@@ -210,7 +210,7 @@ namespace ProjectTile
         {
             try
             {
-                ProjectStages selectedStage = ProjectFunctions.GetStageByCode(thisProjectProxy.StageID); // Gets it from FullStageList, so it is picked up
+                ProjectStages selectedStage = ProjectFunctions.GetStageByID(thisProjectProxy.StageID); // Gets it from FullStageList, so it is picked up
                 StageCombo.SelectedIndex = ProjectFunctions.FullStageList.IndexOf(selectedStage);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error selecting current project stage", generalException); }
@@ -226,9 +226,9 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error selecting current project type", generalException); }
         }
 
-        private void updateProjectStage(int newStageCode)
+        private void updateProjectStage(int newStageNumber)
         {
-            thisProjectProxy.Stage = ProjectFunctions.GetStageByCode(newStageCode);
+            thisProjectProxy.Stage = ProjectFunctions.GetStageByNumber(newStageNumber);
             displaySelectedStage();
         }
 
@@ -308,7 +308,7 @@ namespace ProjectTile
             else
             {
                 bool managerChanged = (thisProjectProxy.ProjectManager.ID != originalManagerID);
-                bool success = ProjectFunctions.SaveProjectChanges(thisProjectProxy, managerChanged, originalStage);
+                bool success = ProjectFunctions.SaveProjectChanges(thisProjectProxy, managerChanged, originalStageNumber);
                 if (success) { closeDetailsPage(false, false); }
             }
         }
@@ -325,7 +325,7 @@ namespace ProjectTile
         {
             if (StageCombo.SelectedItem != null && pageMode != PageFunctions.View)
             {
-                int newStage = thisProjectProxy.StageID;
+                int newStage = thisProjectProxy.StageNumber;
                 NextButton.IsEnabled = (!ProjectFunctions.IsLastStage(newStage));
             }
         }
@@ -334,7 +334,7 @@ namespace ProjectTile
         {
             try
             {
-                int newStage = thisProjectProxy.StageID + 1;
+                int newStage = thisProjectProxy.StageNumber + 1;
                 updateProjectStage(newStage);
                 NextButton.IsEnabled = (!ProjectFunctions.IsLastStage(newStage));
             }

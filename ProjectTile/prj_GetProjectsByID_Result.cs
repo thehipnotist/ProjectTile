@@ -20,7 +20,7 @@ namespace ProjectTile
         public string ProjectName { get; set; }
         public Nullable<int> ClientID { get; set; }
         public Nullable<System.DateTime> StartDate { get; set; }
-        public int StageCode { get; set; }
+        public int StageID { get; set; }
         public string ProjectSummary { get; set; }
     }
 }

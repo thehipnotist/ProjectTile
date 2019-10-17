@@ -70,7 +70,7 @@ namespace ProjectTile
     
         public bool IsCancelled
         {
-            get { return (stage == null)? false : (stage.StageCode == CancelledStage); }
+            get { return (stage == null)? false : (stage.StageNumber == CancelledStage); }
         }
 
         public bool IsOld
@@ -90,7 +90,12 @@ namespace ProjectTile
 
         public int StageID
         {
-            get { return (stage == null)? 0 : stage.StageCode; }
+            get { return (stage == null)? 0 : stage.ID; }
+        }
+
+        public int StageNumber
+        {
+            get { return (stage == null) ? 0 : stage.StageNumber; }
         }
 
         public string CodeName
@@ -108,7 +113,7 @@ namespace ProjectTile
                 project.TypeCode = Type.TypeCode;
                 project.ProjectName = ProjectName;
                 project.StartDate = StartDate;
-                project.StageCode = Stage.StageCode;
+                project.StageID = Stage.ID;
                 project.ProjectSummary = ProjectSummary;
                 if (Client.ID != NoID) { project.ClientID = Client.ID; } // 'No client' is null in the database)
 

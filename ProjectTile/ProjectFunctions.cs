@@ -158,10 +158,10 @@ namespace ProjectTile
                 using (existingPtDb)
                 {
                     projectList = (from pj in existingPtDb.Projects
-                                   join ps in existingPtDb.ProjectStages on pj.StageCode equals ps.StageCode
+                                   join ps in existingPtDb.ProjectStages on pj.StageID equals ps.ID
                                    join t in existingPtDb.ProjectTypes on pj.TypeCode equals t.TypeCode
                                    where pj.EntityID == CurrentEntityID
-                                   orderby (new { ps.StageCode, pj.StartDate })
+                                   orderby (new { ps.StageNumber, pj.StartDate })
                                    select new ProjectProxy
                                    {
                                        ProjectID = pj.ID,
@@ -194,12 +194,12 @@ namespace ProjectTile
 
         public static bool IsInFilter(ProjectStatusFilter inStatus, ProjectStages stageRecord)
         {
-            int stage = stageRecord.StageCode;
+            int stageNumber = stageRecord.StageNumber;
             string status = stageRecord.ProjectStatus;
             
             return ( inStatus == ProjectStatusFilter.All
-                || (inStatus == ProjectStatusFilter.Current && stage < CompletedStage)
-                || (inStatus == ProjectStatusFilter.Open && stage >= StartStage && stage < CompletedStage)
+                || (inStatus == ProjectStatusFilter.Current && stageNumber < CompletedStage)
+                || (inStatus == ProjectStatusFilter.Open && stageNumber >= StartStage && stageNumber < CompletedStage)
                 || (inStatus == ProjectStatusFilter.InProgress && status == InProgressStatus)
                 || (inStatus == ProjectStatusFilter.Closed && status == ClosedStatus) );
         }
@@ -432,42 +432,81 @@ namespace ProjectTile
                 using (existingPtDb)
                 {
                     FullStageList = (from ps in existingPtDb.ProjectStages
-                                     orderby ps.StageCode
+                                     orderby ps.StageNumber
                                      select (ProjectStages)ps).ToList();
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error retrieving list of project stages", generalException); }
         }
 
-        public static ProjectStages GetStageByCode(int stageCode)
+        public static ProjectStages GetStageByNumber(int stageNumber)
         {
             try
             {
                 SetFullStageList();
-                ProjectStages thisStage = FullStageList.FirstOrDefault(tl => tl.StageCode == stageCode);
+                ProjectStages thisStage = FullStageList.FirstOrDefault(tl => tl.StageNumber == stageNumber);
                 if (thisStage != null) { return thisStage; }
                 else 
                 { 
-                    MessageFunctions.Error("Error retrieving project stage with code " + stageCode.ToString() + ": no matching stage exists.", null);
+                    MessageFunctions.Error("Error retrieving project stage with number " + stageNumber.ToString() + ": no matching stage exists.", null);
                     return null;
                 }
             }
             catch (Exception generalException) 
             { 
-                MessageFunctions.Error("Error retrieving project stage with code " + stageCode.ToString(), generalException);
+                MessageFunctions.Error("Error retrieving project stage with number " + stageNumber.ToString(), generalException);
                 return null;
             }
         }
 
-        public static bool IsLastStage(int stageCode)
+        public static ProjectStages GetStageByID(int stageID)
         {
             try
             {
-                if (stageCode == CancelledStage) { return true; }
+                SetFullStageList();
+                ProjectStages thisStage = FullStageList.FirstOrDefault(tl => tl.ID == stageID);
+                if (thisStage != null) { return thisStage; }
+                else
+                {
+                    MessageFunctions.Error("Error retrieving project stage with ID " + stageID.ToString() + ": no matching stage exists.", null);
+                    return null;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving project stage with ID " + stageID.ToString(), generalException);
+                return null;
+            }
+        }
+
+        public static int GetStageNumber(int stageID)
+        {
+            try
+            {
+                ProjectStages thisStage = GetStageByID(stageID);
+                if (thisStage != null) { return thisStage.StageNumber; }
+                else
+                {
+                    MessageFunctions.Error("Error retrieving project stage number with ID " + stageID.ToString() + ": no matching stage exists.", null);
+                    return 0;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving project stage with ID " + stageID.ToString(), generalException);
+                return 0;
+            }
+        }
+
+        public static bool IsLastStage(int stageNumber)
+        {
+            try
+            {
+                if (stageNumber == CancelledStage) { return true; }
                 
                 SetFullStageList();
-                int lastStageCode = FullStageList.Where(tl => tl.StageCode != CancelledStage).OrderByDescending(fsl => fsl.StageCode).FirstOrDefault().StageCode;
-                if (lastStageCode > 0) { return (stageCode == lastStageCode); }
+                int lastStageNumber = FullStageList.Where(tl => tl.StageNumber != CancelledStage).OrderByDescending(fsl => fsl.StageNumber).FirstOrDefault().StageNumber;
+                if (lastStageNumber > 0) { return (stageNumber == lastStageNumber); }
                 else
                 {
                     MessageFunctions.Error("Error comparing to the last project stage: could not identify the last stage.", null);
@@ -1213,7 +1252,7 @@ namespace ProjectTile
                     List<Projects> additionalProjects = projectsRequiringContacts();
                     foreach (Projects p in additionalProjects)
                     {
-                        ProjectStages stage = GetStageByCode(p.StageCode);
+                        ProjectStages stage = GetStageByID(p.StageID);
                         if (IsInFilter(inStatus, stage))
                         {
                             ProjectContactProxy dummy = DummyContact(p);
@@ -1342,15 +1381,16 @@ namespace ProjectTile
                 using (existingPtDb)
                 {
                     List<int> projectIDList =
-                        (from pj in existingPtDb.Projects 
+                        (from pj in existingPtDb.Projects
+                                join ps in existingPtDb.ProjectStages on pj.StageID equals ps.ID
                                 join pp in existingPtDb.ProjectProducts on pj.ID equals pp.ProjectID
                                     into GroupJoin from spp in GroupJoin.DefaultIfEmpty()
                                 //join pd in existingPtDb.Products on pp.ProductID equals pd.ID
                             where (pj.EntityID == entityID
-                                && (!activeOnly || pj.StageCode < LiveStage)
+                                && (!activeOnly || ps.StageNumber < LiveStage)
                                 && (nameContains == "" || pj.ProjectName.Contains(nameContains))
                                 && (productID == 0 || spp.ProductID == productID))
-                            orderby (new { pj.StageCode, pj.StartDate })
+                            orderby (new { ps.StageNumber, pj.StartDate })
                             select pj.ID).ToList();
 
                     SetFullProjectList();
@@ -1375,8 +1415,9 @@ namespace ProjectTile
                         (from pd in existingPtDb.Products
                          join pp in existingPtDb.ProjectProducts on pd.ID equals pp.ProductID
                          join pj in existingPtDb.Projects on pp.ProjectID equals pj.ID
+                         join ps in existingPtDb.ProjectStages on pj.StageID equals ps.ID
                          where (productID == 0 || (productID > 0 && pd.ID == productID)) 
-                            && (!activeOnly || pj.StageCode < LiveStage) 
+                            && (!activeOnly || ps.StageNumber < LiveStage) 
                             && pj.EntityID == CurrentEntityID
                          orderby pj.ProjectName
                          select new ProjectProductProxy
@@ -1409,9 +1450,10 @@ namespace ProjectTile
                 using (existingPtDb)
                 {
                     return (from pj in existingPtDb.Projects
+                            join ps in existingPtDb.ProjectStages on pj.StageID equals ps.ID
                             join cp in existingPtDb.ClientProducts on pj.ClientID equals cp.ClientID
                                 into GroupJoin from scp in GroupJoin.DefaultIfEmpty()
-                            where (!activeOnly || pj.StageCode < LiveStage) 
+                            where (!activeOnly || ps.StageNumber < LiveStage) 
                                 && !projectIDsWithProduct.Contains(pj.ID) && pj.EntityID == CurrentEntityID
                                 && (pj.ClientID == null || pj.ClientID <= 0 || pj.ClientID == scp.ClientID)
                                 && (scp == null || scp.ProductID == productID)
@@ -1626,8 +1668,8 @@ namespace ProjectTile
                 int countLinkedContacts = 0;
                 int countLiveClientProducts = 0;
                 string type = (proxy.Type == null) ? "" : proxy.Type.TypeCode;
-                int stage = (proxy.Stage != null) ? proxy.StageID : -1;
-                bool isUnderway = (stage > StartStage && !proxy.IsCancelled);
+                int stageNumber = (proxy.Stage != null) ? proxy.StageNumber : -1;
+                bool isUnderway = (stageNumber > StartStage && !proxy.IsCancelled);
                 Projects existingProjectRecord = null;
                 ClientProxy client = proxy.Client ?? null;
                 bool clientAdded = false;
@@ -1788,10 +1830,10 @@ namespace ProjectTile
 
                 try
                 {
-                    int originalStage = (existingProjectRecord == null) ? 0 : existingProjectRecord.StageCode;
-                    bool goLive = IsGoLive(originalStage, stage);
+                    int originalStage = (existingProjectRecord == null) ? 0 : ProjectFunctions.GetStageNumber(existingProjectRecord.StageID);
+                    bool goLive = IsGoLive(originalStage, stageNumber);
                     string goLiveQuery = goLive? "This will set the project to Live, and update all linked products appropriately." : "";
-                    bool reversal = goLive? false : IsLiveReversal(originalStage, stage);
+                    bool reversal = goLive? false : IsLiveReversal(originalStage, stageNumber);
                     string reversalQuery = reversal? "This will reverse the 'Go-Live' action, and all status and version changes to linked products." : "";
                     
                     if (managerChanged && proxy.ProjectManager.RoleCode != ProjectManagerCode)
@@ -1802,9 +1844,9 @@ namespace ProjectTile
                     if (proxy.StartDate > DateTime.Today.AddYears(1)) { queryDetails = queryDetails + "\n" + "The project also starts more than a year in the future."; }
                     if ((existingProjectRecord == null || existingProjectRecord.StartDate == null || existingProjectRecord.StartDate > proxy.StartDate)
                         && proxy.StartDate < DateTime.Today.AddYears(-1)) { queryDetails = queryDetails + "\n" + "The project also starts more than a year in the past."; }
-                    if (originalStage > stage && !reversal) // Live reversals are handled separately
+                    if (originalStage > stageNumber && !reversal) // Live reversals are handled separately
                     { queryDetails = queryDetails + "\n" + "The new stage is also less advanced than the previous one."; }
-                    if (!proxy.IsNew && stage - originalStage > 4 && !proxy.IsCancelled) { queryDetails = queryDetails + "\n" + "The project has moved through several stages."; }
+                    if (!proxy.IsNew && stageNumber - originalStage > 4 && !proxy.IsCancelled) { queryDetails = queryDetails + "\n" + "The project has moved through several stages."; }
                     if (!proxy.IsInternal)
                     {
                         if (countLiveClientProducts == 0 && type != NewSiteCode && type != AddSystemCode)
@@ -1830,7 +1872,7 @@ namespace ProjectTile
                         
                         return MessageFunctions.WarningYesNo(queryMessage);
                     }
-                    else if (proxy.IsCancelled && existingProjectRecord != null && existingProjectRecord.StageCode != CancelledStage)
+                    else if (proxy.IsCancelled && existingProjectRecord != null && ProjectFunctions.GetStageNumber(existingProjectRecord.StageID) != CancelledStage)
                     {
                         queryMessage = "Are you sure you wish to cancel this project?";
                         return MessageFunctions.ConfirmOKCancel(queryMessage);

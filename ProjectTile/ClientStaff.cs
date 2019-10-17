@@ -23,11 +23,11 @@ namespace ProjectTile
         public int ClientID { get; set; }
         public string FirstName { get; set; }
         public string Surname { get; set; }
+        public string FullName { get; set; }
         public string JobTitle { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
         public bool Active { get; set; }
-        public string FullName { get; set; }
     
         public virtual Clients Clients { get; set; }
         public virtual ICollection<ClientTeams> ClientTeams { get; set; }

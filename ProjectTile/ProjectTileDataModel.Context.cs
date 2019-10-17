@@ -27,6 +27,7 @@ namespace ProjectTile
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<Actions> Actions { get; set; }
         public virtual DbSet<AuditEntries> AuditEntries { get; set; }
         public virtual DbSet<ClientProducts> ClientProducts { get; set; }
         public virtual DbSet<Clients> Clients { get; set; }
@@ -34,6 +35,7 @@ namespace ProjectTile
         public virtual DbSet<ClientTeamRoles> ClientTeamRoles { get; set; }
         public virtual DbSet<ClientTeams> ClientTeams { get; set; }
         public virtual DbSet<Entities> Entities { get; set; }
+        public virtual DbSet<ErrorLog> ErrorLog { get; set; }
         public virtual DbSet<Products> Products { get; set; }
         public virtual DbSet<ProjectProducts> ProjectProducts { get; set; }
         public virtual DbSet<ProjectRoles> ProjectRoles { get; set; }
@@ -44,8 +46,9 @@ namespace ProjectTile
         public virtual DbSet<Staff> Staff { get; set; }
         public virtual DbSet<StaffEntities> StaffEntities { get; set; }
         public virtual DbSet<StaffRoles> StaffRoles { get; set; }
+        public virtual DbSet<StageHistory> StageHistory { get; set; }
+        public virtual DbSet<SuggestedActions> SuggestedActions { get; set; }
         public virtual DbSet<TablePermissions> TablePermissions { get; set; }
-        public virtual DbSet<ErrorLog> ErrorLog { get; set; }
     
         public virtual ObjectResult<cln_GetClientsByAccountManagerID_Result> cln_GetClientsByAccountManagerID(string accountManagerID)
         {
@@ -275,6 +278,48 @@ namespace ProjectTile
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ent_UpdateEntityNameInEntities", iDParameter, entityNameParameter);
         }
     
+        public virtual ObjectResult<err_GetErrorLogByID_Result> err_GetErrorLogByID(string iD)
+        {
+            var iDParameter = iD != null ?
+                new ObjectParameter("ID", iD) :
+                new ObjectParameter("ID", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<err_GetErrorLogByID_Result>("err_GetErrorLogByID", iDParameter);
+        }
+    
+        public virtual int err_InsertIntoErrorLog(string customMessage, string exceptionMessage, string exceptionType, string targetSite, Nullable<System.DateTime> loggedAt, string loggedBy, string innerException)
+        {
+            var customMessageParameter = customMessage != null ?
+                new ObjectParameter("CustomMessage", customMessage) :
+                new ObjectParameter("CustomMessage", typeof(string));
+    
+            var exceptionMessageParameter = exceptionMessage != null ?
+                new ObjectParameter("ExceptionMessage", exceptionMessage) :
+                new ObjectParameter("ExceptionMessage", typeof(string));
+    
+            var exceptionTypeParameter = exceptionType != null ?
+                new ObjectParameter("ExceptionType", exceptionType) :
+                new ObjectParameter("ExceptionType", typeof(string));
+    
+            var targetSiteParameter = targetSite != null ?
+                new ObjectParameter("TargetSite", targetSite) :
+                new ObjectParameter("TargetSite", typeof(string));
+    
+            var loggedAtParameter = loggedAt.HasValue ?
+                new ObjectParameter("LoggedAt", loggedAt) :
+                new ObjectParameter("LoggedAt", typeof(System.DateTime));
+    
+            var loggedByParameter = loggedBy != null ?
+                new ObjectParameter("LoggedBy", loggedBy) :
+                new ObjectParameter("LoggedBy", typeof(string));
+    
+            var innerExceptionParameter = innerException != null ?
+                new ObjectParameter("InnerException", innerException) :
+                new ObjectParameter("InnerException", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("err_InsertIntoErrorLog", customMessageParameter, exceptionMessageParameter, exceptionTypeParameter, targetSiteParameter, loggedAtParameter, loggedByParameter, innerExceptionParameter);
+        }
+    
         public virtual ObjectResult<pja_GetClientTeamRolesByRoleCode_Result> pja_GetClientTeamRolesByRoleCode(string roleCode)
         {
             var roleCodeParameter = roleCode != null ?
@@ -293,13 +338,13 @@ namespace ProjectTile
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<pja_GetProjectRolesByRoleCode_Result>("pja_GetProjectRolesByRoleCode", roleCodeParameter);
         }
     
-        public virtual ObjectResult<pja_GetProjectStagesByStageCode_Result> pja_GetProjectStagesByStageCode(string stageCode)
+        public virtual ObjectResult<pja_GetProjectStagesByID_Result> pja_GetProjectStagesByID(string iD)
         {
-            var stageCodeParameter = stageCode != null ?
-                new ObjectParameter("StageCode", stageCode) :
-                new ObjectParameter("StageCode", typeof(string));
+            var iDParameter = iD != null ?
+                new ObjectParameter("ID", iD) :
+                new ObjectParameter("ID", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<pja_GetProjectStagesByStageCode_Result>("pja_GetProjectStagesByStageCode", stageCodeParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<pja_GetProjectStagesByID_Result>("pja_GetProjectStagesByID", iDParameter);
         }
     
         public virtual int pja_InsertIntoClientTeamRoles(string roleCode, string roleDescription)
@@ -328,11 +373,11 @@ namespace ProjectTile
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("pja_InsertIntoProjectRoles", roleCodeParameter, roleDescriptionParameter);
         }
     
-        public virtual int pja_InsertIntoProjectStages(Nullable<int> stageCode, string stageName, string stageDescription, string projectStatus)
+        public virtual int pja_InsertIntoProjectStages(Nullable<int> stageNumber, string stageName, string stageDescription, string projectStatus)
         {
-            var stageCodeParameter = stageCode.HasValue ?
-                new ObjectParameter("StageCode", stageCode) :
-                new ObjectParameter("StageCode", typeof(int));
+            var stageNumberParameter = stageNumber.HasValue ?
+                new ObjectParameter("StageNumber", stageNumber) :
+                new ObjectParameter("StageNumber", typeof(int));
     
             var stageNameParameter = stageName != null ?
                 new ObjectParameter("StageName", stageName) :
@@ -346,7 +391,7 @@ namespace ProjectTile
                 new ObjectParameter("ProjectStatus", projectStatus) :
                 new ObjectParameter("ProjectStatus", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("pja_InsertIntoProjectStages", stageCodeParameter, stageNameParameter, stageDescriptionParameter, projectStatusParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("pja_InsertIntoProjectStages", stageNumberParameter, stageNameParameter, stageDescriptionParameter, projectStatusParameter);
         }
     
         public virtual int pja_InsertIntoProjectTypes(string typeCode, string typeName, string typeDescription)
@@ -392,17 +437,30 @@ namespace ProjectTile
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("pja_UpdateRoleDescriptionInProjectRoles", roleCodeParameter, roleDescriptionParameter);
         }
     
-        public virtual int pja_UpdateStageDescriptionInProjectStages(string stageCode, string stageDescription)
+        public virtual int pja_UpdateStageDescriptionInProjectStages(string iD, string stageDescription)
         {
-            var stageCodeParameter = stageCode != null ?
-                new ObjectParameter("StageCode", stageCode) :
-                new ObjectParameter("StageCode", typeof(string));
+            var iDParameter = iD != null ?
+                new ObjectParameter("ID", iD) :
+                new ObjectParameter("ID", typeof(string));
     
             var stageDescriptionParameter = stageDescription != null ?
                 new ObjectParameter("StageDescription", stageDescription) :
                 new ObjectParameter("StageDescription", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("pja_UpdateStageDescriptionInProjectStages", stageCodeParameter, stageDescriptionParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("pja_UpdateStageDescriptionInProjectStages", iDParameter, stageDescriptionParameter);
+        }
+    
+        public virtual int pja_UpdateStageNumberInProjectStages(string iD, string stageNumber)
+        {
+            var iDParameter = iD != null ?
+                new ObjectParameter("ID", iD) :
+                new ObjectParameter("ID", typeof(string));
+    
+            var stageNumberParameter = stageNumber != null ?
+                new ObjectParameter("StageNumber", stageNumber) :
+                new ObjectParameter("StageNumber", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("pja_UpdateStageNumberInProjectStages", iDParameter, stageNumberParameter);
         }
     
         public virtual int pja_UpdateTypeDescriptionInProjectTypes(string typeName, string typeDescription)
@@ -479,6 +537,15 @@ namespace ProjectTile
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prd_UpdateLatestVersionInProducts", iDParameter, latestVersionParameter);
         }
     
+        public virtual ObjectResult<prj_GetActionsByID_Result> prj_GetActionsByID(string iD)
+        {
+            var iDParameter = iD != null ?
+                new ObjectParameter("ID", iD) :
+                new ObjectParameter("ID", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<prj_GetActionsByID_Result>("prj_GetActionsByID", iDParameter);
+        }
+    
         public virtual ObjectResult<prj_GetClientTeamsByID_Result> prj_GetClientTeamsByID(string iD)
         {
             var iDParameter = iD != null ?
@@ -522,6 +589,68 @@ namespace ProjectTile
                 new ObjectParameter("ID", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<prj_GetProjectTeamsByID_Result>("prj_GetProjectTeamsByID", iDParameter);
+        }
+    
+        public virtual ObjectResult<prj_GetStageHistoryByID_Result> prj_GetStageHistoryByID(string iD)
+        {
+            var iDParameter = iD != null ?
+                new ObjectParameter("ID", iD) :
+                new ObjectParameter("ID", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<prj_GetStageHistoryByID_Result>("prj_GetStageHistoryByID", iDParameter);
+        }
+    
+        public virtual int prj_InsertIntoActions(string actionCode, Nullable<int> projectID, Nullable<System.DateTime> loggedDate, Nullable<System.DateTime> targetDate, Nullable<System.DateTime> updatedDate, string shortDescription, Nullable<bool> statusCode, Nullable<int> loggedBy, Nullable<int> internalOwner, Nullable<int> clientOwner, string notes, Nullable<int> stageID)
+        {
+            var actionCodeParameter = actionCode != null ?
+                new ObjectParameter("ActionCode", actionCode) :
+                new ObjectParameter("ActionCode", typeof(string));
+    
+            var projectIDParameter = projectID.HasValue ?
+                new ObjectParameter("ProjectID", projectID) :
+                new ObjectParameter("ProjectID", typeof(int));
+    
+            var loggedDateParameter = loggedDate.HasValue ?
+                new ObjectParameter("LoggedDate", loggedDate) :
+                new ObjectParameter("LoggedDate", typeof(System.DateTime));
+    
+            var targetDateParameter = targetDate.HasValue ?
+                new ObjectParameter("TargetDate", targetDate) :
+                new ObjectParameter("TargetDate", typeof(System.DateTime));
+    
+            var updatedDateParameter = updatedDate.HasValue ?
+                new ObjectParameter("UpdatedDate", updatedDate) :
+                new ObjectParameter("UpdatedDate", typeof(System.DateTime));
+    
+            var shortDescriptionParameter = shortDescription != null ?
+                new ObjectParameter("ShortDescription", shortDescription) :
+                new ObjectParameter("ShortDescription", typeof(string));
+    
+            var statusCodeParameter = statusCode.HasValue ?
+                new ObjectParameter("StatusCode", statusCode) :
+                new ObjectParameter("StatusCode", typeof(bool));
+    
+            var loggedByParameter = loggedBy.HasValue ?
+                new ObjectParameter("LoggedBy", loggedBy) :
+                new ObjectParameter("LoggedBy", typeof(int));
+    
+            var internalOwnerParameter = internalOwner.HasValue ?
+                new ObjectParameter("InternalOwner", internalOwner) :
+                new ObjectParameter("InternalOwner", typeof(int));
+    
+            var clientOwnerParameter = clientOwner.HasValue ?
+                new ObjectParameter("ClientOwner", clientOwner) :
+                new ObjectParameter("ClientOwner", typeof(int));
+    
+            var notesParameter = notes != null ?
+                new ObjectParameter("Notes", notes) :
+                new ObjectParameter("Notes", typeof(string));
+    
+            var stageIDParameter = stageID.HasValue ?
+                new ObjectParameter("StageID", stageID) :
+                new ObjectParameter("StageID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_InsertIntoActions", actionCodeParameter, projectIDParameter, loggedDateParameter, targetDateParameter, updatedDateParameter, shortDescriptionParameter, statusCodeParameter, loggedByParameter, internalOwnerParameter, clientOwnerParameter, notesParameter, stageIDParameter);
         }
     
         public virtual int prj_InsertIntoClientTeams(Nullable<int> projectID, Nullable<int> clientStaffID, string clientTeamRoleCode, Nullable<System.DateTime> fromDate, Nullable<System.DateTime> toDate)
@@ -570,7 +699,7 @@ namespace ProjectTile
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_InsertIntoProjectProducts", projectIDParameter, productIDParameter, oldVersionParameter, newVersionParameter);
         }
     
-        public virtual int prj_InsertIntoProjects(Nullable<int> entityID, string typeCode, string projectName, Nullable<int> clientID, Nullable<System.DateTime> startDate, Nullable<int> stageCode, string projectSummary)
+        public virtual int prj_InsertIntoProjects(Nullable<int> entityID, string typeCode, string projectName, Nullable<int> clientID, Nullable<System.DateTime> startDate, Nullable<int> stageID, string projectSummary)
         {
             var entityIDParameter = entityID.HasValue ?
                 new ObjectParameter("EntityID", entityID) :
@@ -592,15 +721,15 @@ namespace ProjectTile
                 new ObjectParameter("StartDate", startDate) :
                 new ObjectParameter("StartDate", typeof(System.DateTime));
     
-            var stageCodeParameter = stageCode.HasValue ?
-                new ObjectParameter("StageCode", stageCode) :
-                new ObjectParameter("StageCode", typeof(int));
+            var stageIDParameter = stageID.HasValue ?
+                new ObjectParameter("StageID", stageID) :
+                new ObjectParameter("StageID", typeof(int));
     
             var projectSummaryParameter = projectSummary != null ?
                 new ObjectParameter("ProjectSummary", projectSummary) :
                 new ObjectParameter("ProjectSummary", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_InsertIntoProjects", entityIDParameter, typeCodeParameter, projectNameParameter, clientIDParameter, startDateParameter, stageCodeParameter, projectSummaryParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_InsertIntoProjects", entityIDParameter, typeCodeParameter, projectNameParameter, clientIDParameter, startDateParameter, stageIDParameter, projectSummaryParameter);
         }
     
         public virtual int prj_InsertIntoProjectTeams(Nullable<int> projectID, Nullable<int> staffID, string projectRoleCode, Nullable<System.DateTime> fromDate, Nullable<System.DateTime> toDate)
@@ -626,6 +755,40 @@ namespace ProjectTile
                 new ObjectParameter("ToDate", typeof(System.DateTime));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_InsertIntoProjectTeams", projectIDParameter, staffIDParameter, projectRoleCodeParameter, fromDateParameter, toDateParameter);
+        }
+    
+        public virtual int prj_InsertIntoStageHistory(Nullable<int> projectID, Nullable<int> stageID, Nullable<System.DateTime> targetDate, Nullable<System.DateTime> achievedDate)
+        {
+            var projectIDParameter = projectID.HasValue ?
+                new ObjectParameter("ProjectID", projectID) :
+                new ObjectParameter("ProjectID", typeof(int));
+    
+            var stageIDParameter = stageID.HasValue ?
+                new ObjectParameter("StageID", stageID) :
+                new ObjectParameter("StageID", typeof(int));
+    
+            var targetDateParameter = targetDate.HasValue ?
+                new ObjectParameter("TargetDate", targetDate) :
+                new ObjectParameter("TargetDate", typeof(System.DateTime));
+    
+            var achievedDateParameter = achievedDate.HasValue ?
+                new ObjectParameter("AchievedDate", achievedDate) :
+                new ObjectParameter("AchievedDate", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_InsertIntoStageHistory", projectIDParameter, stageIDParameter, targetDateParameter, achievedDateParameter);
+        }
+    
+        public virtual int prj_UpdateAchievedDateInStageHistory(string iD, string achievedDate)
+        {
+            var iDParameter = iD != null ?
+                new ObjectParameter("ID", iD) :
+                new ObjectParameter("ID", typeof(string));
+    
+            var achievedDateParameter = achievedDate != null ?
+                new ObjectParameter("AchievedDate", achievedDate) :
+                new ObjectParameter("AchievedDate", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_UpdateAchievedDateInStageHistory", iDParameter, achievedDateParameter);
         }
     
         public virtual int prj_UpdateClientStaffIDInClientTeams(string iD, string clientStaffID)
@@ -732,6 +895,58 @@ namespace ProjectTile
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_UpdateStaffIDInProjectTeams", iDParameter, staffIDParameter);
         }
     
+        public virtual int prj_UpdateStatusCodeInActions(string iD, string statusCode)
+        {
+            var iDParameter = iD != null ?
+                new ObjectParameter("ID", iD) :
+                new ObjectParameter("ID", typeof(string));
+    
+            var statusCodeParameter = statusCode != null ?
+                new ObjectParameter("StatusCode", statusCode) :
+                new ObjectParameter("StatusCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_UpdateStatusCodeInActions", iDParameter, statusCodeParameter);
+        }
+    
+        public virtual int prj_UpdateStatusInNotes(string iD, string status)
+        {
+            var iDParameter = iD != null ?
+                new ObjectParameter("ID", iD) :
+                new ObjectParameter("ID", typeof(string));
+    
+            var statusParameter = status != null ?
+                new ObjectParameter("Status", status) :
+                new ObjectParameter("Status", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_UpdateStatusInNotes", iDParameter, statusParameter);
+        }
+    
+        public virtual int prj_UpdateTargetDateInActions(string iD, string targetDate)
+        {
+            var iDParameter = iD != null ?
+                new ObjectParameter("ID", iD) :
+                new ObjectParameter("ID", typeof(string));
+    
+            var targetDateParameter = targetDate != null ?
+                new ObjectParameter("TargetDate", targetDate) :
+                new ObjectParameter("TargetDate", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_UpdateTargetDateInActions", iDParameter, targetDateParameter);
+        }
+    
+        public virtual int prj_UpdateTargetDateInStageHistory(string iD, string targetDate)
+        {
+            var iDParameter = iD != null ?
+                new ObjectParameter("ID", iD) :
+                new ObjectParameter("ID", typeof(string));
+    
+            var targetDateParameter = targetDate != null ?
+                new ObjectParameter("TargetDate", targetDate) :
+                new ObjectParameter("TargetDate", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_UpdateTargetDateInStageHistory", iDParameter, targetDateParameter);
+        }
+    
         public virtual int prj_UpdateToDateInClientTeams(string iD, string toDate)
         {
             var iDParameter = iD != null ?
@@ -756,6 +971,19 @@ namespace ProjectTile
                 new ObjectParameter("ToDate", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_UpdateToDateInProjectTeams", iDParameter, toDateParameter);
+        }
+    
+        public virtual int prj_UpdateUpdatedDateInActions(string iD, string updatedDate)
+        {
+            var iDParameter = iD != null ?
+                new ObjectParameter("ID", iD) :
+                new ObjectParameter("ID", typeof(string));
+    
+            var updatedDateParameter = updatedDate != null ?
+                new ObjectParameter("UpdatedDate", updatedDate) :
+                new ObjectParameter("UpdatedDate", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_UpdateUpdatedDateInActions", iDParameter, updatedDateParameter);
         }
     
         public virtual ObjectResult<sec_GetTablePermissionsByID_Result> sec_GetTablePermissionsByID(string iD)
@@ -794,6 +1022,19 @@ namespace ProjectTile
                 new ObjectParameter("ChangeStatus", typeof(bool));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sec_InsertIntoTablePermissions", tableNameParameter, roleCodeParameter, viewTableParameter, updateRowsParameter, insertRowsParameter, changeStatusParameter);
+        }
+    
+        public virtual int stf_ChangeDatabasePassword(string userID, string passwd)
+        {
+            var userIDParameter = userID != null ?
+                new ObjectParameter("UserID", userID) :
+                new ObjectParameter("UserID", typeof(string));
+    
+            var passwdParameter = passwd != null ?
+                new ObjectParameter("Passwd", passwd) :
+                new ObjectParameter("Passwd", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("stf_ChangeDatabasePassword", userIDParameter, passwdParameter);
         }
     
         public virtual ObjectResult<Nullable<bool>> stf_CheckHashedPassword(string userID, string passwd)
@@ -956,61 +1197,6 @@ namespace ProjectTile
                 new ObjectParameter("RoleDescription", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("stf_UpdateRoleDescriptionInStaffRoles", roleCodeParameter, roleDescriptionParameter);
-        }
-    
-        public virtual ObjectResult<err_GetErrorLogByID_Result> err_GetErrorLogByID(string iD)
-        {
-            var iDParameter = iD != null ?
-                new ObjectParameter("ID", iD) :
-                new ObjectParameter("ID", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<err_GetErrorLogByID_Result>("err_GetErrorLogByID", iDParameter);
-        }
-    
-        public virtual int err_InsertIntoErrorLog(string customMessage, string exceptionMessage, string exceptionType, string targetSite, Nullable<System.DateTime> loggedAt, string loggedBy, string innerException)
-        {
-            var customMessageParameter = customMessage != null ?
-                new ObjectParameter("CustomMessage", customMessage) :
-                new ObjectParameter("CustomMessage", typeof(string));
-    
-            var exceptionMessageParameter = exceptionMessage != null ?
-                new ObjectParameter("ExceptionMessage", exceptionMessage) :
-                new ObjectParameter("ExceptionMessage", typeof(string));
-    
-            var exceptionTypeParameter = exceptionType != null ?
-                new ObjectParameter("ExceptionType", exceptionType) :
-                new ObjectParameter("ExceptionType", typeof(string));
-    
-            var targetSiteParameter = targetSite != null ?
-                new ObjectParameter("TargetSite", targetSite) :
-                new ObjectParameter("TargetSite", typeof(string));
-    
-            var loggedAtParameter = loggedAt.HasValue ?
-                new ObjectParameter("LoggedAt", loggedAt) :
-                new ObjectParameter("LoggedAt", typeof(System.DateTime));
-    
-            var loggedByParameter = loggedBy != null ?
-                new ObjectParameter("LoggedBy", loggedBy) :
-                new ObjectParameter("LoggedBy", typeof(string));
-    
-            var innerExceptionParameter = innerException != null ?
-                new ObjectParameter("InnerException", innerException) :
-                new ObjectParameter("InnerException", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("err_InsertIntoErrorLog", customMessageParameter, exceptionMessageParameter, exceptionTypeParameter, targetSiteParameter, loggedAtParameter, loggedByParameter, innerExceptionParameter);
-        }
-    
-        public virtual int stf_ChangeDatabasePassword(string userID, string passwd)
-        {
-            var userIDParameter = userID != null ?
-                new ObjectParameter("UserID", userID) :
-                new ObjectParameter("UserID", typeof(string));
-    
-            var passwdParameter = passwd != null ?
-                new ObjectParameter("Passwd", passwd) :
-                new ObjectParameter("Passwd", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("stf_ChangeDatabasePassword", userIDParameter, passwdParameter);
         }
     }
 }

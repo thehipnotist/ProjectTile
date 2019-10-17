@@ -173,7 +173,7 @@ namespace ProjectTile
             {
                 if (entityID == 0) { entityID = CurrentEntityID; }
                 
-                List<StaffProxy> allStaffinEntity = GetStaffGridData(activeOnly: true, nameContains: "", roleDescription: AllRecords, entityID: CurrentEntityID);
+                List<StaffProxy> allStaffinEntity = GetStaffGridData(activeOnly: false, nameContains: "", roleDescription: AllRecords, entityID: CurrentEntityID);
                 if (allStaffinEntity.Exists(ase => ase.ID == staffID)) { return allStaffinEntity.First(ase => ase.ID == staffID); }
                 else
                 {

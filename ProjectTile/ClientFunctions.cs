@@ -636,7 +636,7 @@ namespace ProjectTile
             }
             catch (Exception generalException)
             {
-                MessageFunctions.Error("Error retrieving summary data for staff member with ID " + contactID.ToString(), generalException);
+                MessageFunctions.Error("Error retrieving summary data for client staff member with ID " + contactID.ToString(), generalException);
                 return null;
             }
         }
@@ -943,8 +943,9 @@ namespace ProjectTile
                     List<Projects> relevantProjects =
                         (from pp in existingPtDb.ProjectProducts
                          join pj in existingPtDb.Projects on pp.ProjectID equals pj.ID
+                         join ps in existingPtDb.ProjectStages on pj.StageID equals ps.ID
                          where pp.ProductID == thisRecord.ProductID && pj.ClientID == thisRecord.ClientID
-                         orderby pj.StageCode descending
+                         orderby ps.StageNumber descending
                          select pj
                         ).ToList();
 
@@ -952,7 +953,7 @@ namespace ProjectTile
                     {
                         foreach (Projects rp in relevantProjects)
                         {
-                            if (rp.StageCode >= ProjectFunctions.LiveStage)
+                            if (ProjectFunctions.GetStageNumber(rp.StageID) >= ProjectFunctions.LiveStage)
                             {
                                 newStatus = ClientProductStatus.Retired; // This is checked first; if a project has been completed but the product is not active, it must have been retired
                                 break;
@@ -970,7 +971,7 @@ namespace ProjectTile
                         newStatus = ClientProductStatus.Live;
                         foreach (Projects rp in relevantProjects)
                         {
-                            if (rp.StageCode <= ProjectFunctions.LiveStage)
+                            if (ProjectFunctions.GetStageNumber(rp.StageID) <= ProjectFunctions.LiveStage)
                             {
                                 newStatus = ClientProductStatus.Updates;
                                 break;
@@ -1178,7 +1179,8 @@ namespace ProjectTile
 
                             List<Projects> openProjects = (from pj in existingPtDb.Projects
                                                            join pp in existingPtDb.ProjectProducts on pj.ID equals pp.ProjectID
-                                                           where pj.ClientID == clientID && pp.ProductID == productID && pj.StageCode < ProjectFunctions.LiveStage
+                                                           join ps in existingPtDb.ProjectStages on pj.StageID equals ps.ID
+                                                           where pj.ClientID == clientID && pp.ProductID == productID && ps.StageNumber < ProjectFunctions.LiveStage
                                                            select pj).ToList();
                             if (openProjects.Count > 0)
                             {

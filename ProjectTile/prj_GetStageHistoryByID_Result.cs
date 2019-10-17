@@ -10,17 +10,13 @@
 namespace ProjectTile
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class ErrorLog
+    public partial class prj_GetStageHistoryByID_Result
     {
         public int ID { get; set; }
-        public string CustomMessage { get; set; }
-        public string ExceptionMessage { get; set; }
-        public string ExceptionType { get; set; }
-        public string TargetSite { get; set; }
-        public Nullable<System.DateTime> LoggedAt { get; set; }
-        public string LoggedBy { get; set; }
-        public string InnerException { get; set; }
+        public int ProjectID { get; set; }
+        public int StageID { get; set; }
+        public Nullable<System.DateTime> TargetDate { get; set; }
+        public Nullable<System.DateTime> AchievedDate { get; set; }
     }
 }

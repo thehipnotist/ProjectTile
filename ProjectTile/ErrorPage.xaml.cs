@@ -106,7 +106,7 @@ namespace ProjectTile
             try
             {                
                 AdminFunctions.SetErrorLogEntries(fromDate, toDate, typeName, loggedBy.UserID);
-                errorGridList = AdminFunctions.ErrorLogEntries;
+                errorGridList = AdminFunctions.ErrorLogEntries.OrderByDescending(ele => ele.LoggedAt).ToList();
                 ErrorDataGrid.ItemsSource = errorGridList;
             }
             catch (Exception generalException) { MessageFunctions.Error("Error displaying error data", generalException); }	

@@ -141,7 +141,7 @@ namespace ProjectTile
         {
             get
             {
-                if (TableName == projectStages && !AType.Equals('D')) { return ProjectFunctions.GetStageByCode(RecordID); }
+                if (TableName == projectStages && !AType.Equals('D')) { return ProjectFunctions.GetStageByID(RecordID); }
                 else { return null; }
             }
         }
