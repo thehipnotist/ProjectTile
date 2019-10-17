@@ -2455,7 +2455,7 @@ BEGIN TRY
 			, InternalRole				VARCHAR(5)		NOT NULL						
 			, ClientRole				VARCHAR(5)
 			, Notes						VARCHAR(200)
-			, StagePrerequisite			INT				
+			, StageID			INT				
 				CONSTRAINT fk_PrerequisiteStage FOREIGN KEY REFERENCES dbo.ProjectStages (ID)
 			, TargetDuration			DECIMAL(16,2)
 			, S_NS						BIT
@@ -2472,7 +2472,7 @@ BEGIN TRY
 		PRINT 'Created suggested actions table'
 
 		INSERT INTO dbo.SuggestedActions (
-						StagePrerequisite, 											ShortDescription,							InternalRole,	ClientRole,	TargetDuration, 
+						StageID, 											ShortDescription,							InternalRole,	ClientRole,	TargetDuration, 
 							S_NS,	S_AS,	S_TO,	S_UG,	S_RB,	S_UR,	S_AF,	S_IP,	S_RS)
 		SELECT			(SELECT ID FROM dbo.ProjectStages where StageNumber = 0),	'Write project brief',						'PS',			'',			0.8,
 							1,		1,		1,		1,		1,		1,		1,		1,		1
@@ -2562,7 +2562,7 @@ BEGIN TRY
 			, InternalOwner				INT						
 			, ClientOwner				INT
 			, Notes						VARCHAR(200)
-			, StagePrerequisite			INT				NULL
+			, StageID			INT				NULL
 				--CONSTRAINT fk_PrerequisiteStage FOREIGN KEY REFERENCES dbo.ProjectStages (ID)
 		)
 
@@ -2624,7 +2624,7 @@ BEGIN TRY
 		PRINT 'Created audit trigger for actions'
 
 		INSERT INTO dbo.Actions
-		( ActionCode, ProjectID, LoggedDate, TargetDate, UpdatedDate, ShortDescription, StatusCode, LoggedBy, InternalOwner, ClientOwner, Notes, StagePrerequisite)
+		( ActionCode, ProjectID, LoggedDate, TargetDate, UpdatedDate, ShortDescription, StatusCode, LoggedBy, InternalOwner, ClientOwner, Notes, StageID)
 		SELECT LEFT(HistoryAction.ShortDescription, 20) AS ActionCode, -- Will correct later via an update
 			Project.ID AS ProjectID,
 			CASE WHEN HistoryStage.StageNumber = 0 
@@ -2663,7 +2663,7 @@ BEGIN TRY
 			END AS InternalOwner,
 			ClientOwner.ID AS ClientOwner,
 			HistoryAction.Notes AS Notes,
-			History.StageID AS StagePrerequisite
+			History.StageID AS StageID
 
 			--, HistoryStage.StageNumber As HistoryStage
 			--, History.TargetDate
@@ -2696,14 +2696,14 @@ BEGIN TRY
 			ON History.ProjectID = Project.ID AND HistoryStage.StageNumber <= CurrentStage.StageNumber
 			INNER JOIN dbo.SuggestedActions HistoryAction 
 				INNER JOIN dbo.ProjectTeams InternalOwner ON InternalOwner.ProjectRoleCode = HistoryAction.InternalRole
-			ON InternalOwner.ProjectID = Project.ID AND History.StageID = HistoryAction.StagePrerequisite	
+			ON InternalOwner.ProjectID = Project.ID AND History.StageID = HistoryAction.StageID	
 			INNER JOIN dbo.ProjectTeams InternalManager ON InternalManager.ProjectID = Project.ID AND InternalManager.ProjectRoleCode = 'PM'
 			LEFT JOIN dbo.ClientTeams ClientOwner ON ClientOwner.ProjectID = Project.ID AND ClientOwner.ClientTeamRoleCode = HistoryAction.ClientRole
 			LEFT JOIN dbo.StageHistory PreviousStageHistory 
 				INNER JOIN dbo.ProjectStages PreviousStage ON PreviousStageHistory.StageID = PreviousStage.ID 
 			ON PreviousStageHistory.ProjectID = Project.ID AND PreviousStage.StageNumber = HistoryStage.StageNumber - 1
 			INNER JOIN dbo.SuggestedActions KickOffAction 
-				INNER JOIN dbo.StageHistory KickOffStageHistory ON KickOffStageHistory.StageID = KickOffAction.StagePrerequisite
+				INNER JOIN dbo.StageHistory KickOffStageHistory ON KickOffStageHistory.StageID = KickOffAction.StageID
 			ON KickOffStageHistory.ProjectID = Project.ID AND KickOffAction.ShortDescription = 'Hold kick-off meeting'
 		ORDER BY 2, 12, 5
 
@@ -2764,7 +2764,7 @@ BEGIN TRY
 		PRINT 'Created standard procedures for actions table'
 
 		EXEC ('CREATE VIEW dbo.vi_ProjectActions AS	
-			SELECT p.ProjectCode, p.ProjectName, a.ActionCode, a.LoggedDate, a.UpdatedDate, a.StatusCode, a.StagePrerequisite
+			SELECT p.ProjectCode, p.ProjectName, a.ActionCode, a.LoggedDate, a.UpdatedDate, a.StatusCode, a.StageID
 				, s.FullName AS LoggedBy, ISNULL(s2.FullName, cs.FullName) as Owner
 			FROM dbo.Actions a
 				INNER JOIN dbo.Projects p ON a.ProjectID = p.ID
