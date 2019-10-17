@@ -113,6 +113,8 @@
                                   Template="{DynamicResource UpwardsMenuItem}" Width="Auto" BorderBrush="{StaticResource PtBrushProject3}"/>
                         <MenuItem x:Name="ProductMenu" Header="Project Products" Click="ProductMenu_Click" Background="{StaticResource PtBrushProduct1}" Icon="{DynamicResource ProductImage}" 
                                   Template="{DynamicResource UpwardsMenuItem}" Width="Auto" BorderBrush="{StaticResource PtBrushProject3}"/>
+                        <MenuItem x:Name="TimelineMenu" Header="Project Timelines" Click="TimelineMenu_Click" Background="{StaticResource PtBrushProject1}" Icon="{DynamicResource TimelineImage}" 
+                                  Template="{DynamicResource UpwardsMenuItem}" Width="Auto" BorderBrush="{StaticResource PtBrushProject3}"/>
                     </MenuItem>
                 </Menu>
                 <Button x:Name="MoreButton" HorizontalAlignment="Right" Height="30" Margin="15,15,265,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 

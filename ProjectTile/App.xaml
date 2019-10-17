@@ -344,13 +344,14 @@
         <BitmapImage x:Key="SubtractIcon" UriSource="112_Minus_Blue_24x24_72.png"/>
         <BitmapImage x:Key="SuggestIcon" UriSource="Function_32.png"/>
         <BitmapImage x:Key="TilesIcon" UriSource="1460_PaintPalette_48x48.png"/>
+        <BitmapImage x:Key="TimelineIcon" UriSource="Calendar-BusinessMonthView_32.png"/>
         <BitmapImage x:Key="UpIcon" UriSource="112_UpArrowShort_Blue_24x24_72.png"/>
         <BitmapImage x:Key="ViewIcon" UriSource="search.png"/>
 
         <Image x:Key="StaffImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="{DynamicResource StaffIcon}"/>
         <Image x:Key="ContactImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="{DynamicResource ContactIcon}"/>
         <Image x:Key="ProductImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="{DynamicResource ProductIcon}"/>
-
+        <Image x:Key="TimelineImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="{DynamicResource TimelineIcon}"/>
         <!-- Styles -->
         <Style x:Key="RoundedButton" TargetType="{x:Type Button}">
             <Setter Property="FocusVisualStyle">

@@ -129,13 +129,15 @@ namespace ProjectTile
         {
             bool allowTeams = ( Globals.MyPermissions.Allow("ViewProjectTeams") || Globals.MyPermissions.Allow("EditProjectTeams") );
             bool allowContacts = (Globals.MyPermissions.Allow("ViewClientTeams") || Globals.MyPermissions.Allow("EditClientTeams") ) ;
-            bool allowProducts = (Globals.MyPermissions.Allow("ViewProjectProducts") || Globals.MyPermissions.Allow("EditProjectTeams") );
+            bool allowProducts = (Globals.MyPermissions.Allow("ViewProjectProducts") || Globals.MyPermissions.Allow("EditProjectProducts") );
+            bool allowTimelines = (Globals.MyPermissions.Allow("ViewStageHistory") || Globals.MyPermissions.Allow("EditStageHistory"));
             
             TeamMenu.Visibility = allowTeams ? Visibility.Visible : Visibility.Collapsed;
             ContactMenu.Visibility = allowContacts ? Visibility.Visible : Visibility.Collapsed;
             ProductMenu.Visibility = allowProducts ? Visibility.Visible : Visibility.Collapsed;
+            TimelineMenu.Visibility = allowTimelines ? Visibility.Visible : Visibility.Collapsed;
             
-            if (!allowTeams && !allowContacts && !allowProducts)
+            if (!allowTeams && !allowContacts && !allowProducts && !allowTimelines)
             {
                 MoreButton.Visibility = Visibility.Hidden;
                 MoreMenu.Visibility = Visibility.Hidden;
@@ -362,6 +364,11 @@ namespace ProjectTile
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
             ProjectFunctions.SelectTeamProject(selectedProject);
+        }
+
+        private void TimelineMenu_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowTimelinePage();
         }
 
 

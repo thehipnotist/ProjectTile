@@ -118,6 +118,9 @@
     <Compile Include="err_GetErrorLogByID_Result.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="TimelinePage.xaml.cs">
+      <DependentUpon>TimelinePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="pja_GetClientTeamRolesByRoleCode_Result.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
@@ -305,6 +308,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="AuditPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="TimelinePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -576,6 +583,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="109_AllAnnotations_Error_24x24_72.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Calendar-BusinessMonthView_32.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
