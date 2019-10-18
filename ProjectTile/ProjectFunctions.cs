@@ -1583,7 +1583,7 @@ namespace ProjectTile
         // Stage history (timelines)
         public static TimelineProxy GetProjectTimeline(int projectID)
         {
-            int stageNumber = 0;
+            ProjectStages stage = null;
             int MaxNonCancelledStage = 0;
             List<StageHistory> stageHistory = null;
             try
@@ -1592,13 +1592,13 @@ namespace ProjectTile
                 using (existingPtDb)
                 {
                     int stageID = existingPtDb.Projects.Where(p => p.ID == projectID).Select(p => p.StageID).FirstOrDefault();
-                    stageNumber = GetStageNumber(stageID);
+                    stage = GetStageByID(stageID);
                     stageHistory = existingPtDb.StageHistory.Where(sh => sh.ProjectID == projectID).ToList();
                     MaxNonCancelledStage = existingPtDb.ProjectStages.Where(ps => ps.StageNumber != CancelledStage).Select(ps => ps.StageNumber).Max();
                 }
 
                 TimelineProxy timeline = new TimelineProxy();
-                timeline.StageNumber = stageNumber;
+                timeline.Stage = stage;
                 for (int i=0; i<=MaxNonCancelledStage; i++)
                 {
                     ProjectStages thisStage = GetStageByNumber(i);

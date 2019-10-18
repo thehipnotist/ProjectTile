@@ -30,7 +30,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="{Binding ElementName=MiddleRow, Path=ActualHeight}" MinHeight="400"/>
                 </Grid.RowDefinitions>
-                <Label x:Name="Instructions" Content="The dates represent the start of each given stage; official project start and end dates are in blue." HorizontalAlignment="Left" Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+                <Label x:Name="Instructions" Content="Dates represent stage starts. Project start and end dates are blue. Actual dates are bold, estimates italic." HorizontalAlignment="Left" Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
 
                 <Label x:Name="PreProjectLabel" Content="Pre-Project" HorizontalAlignment="Left" Height="30" Margin="15,60,0,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
                 <DatePicker x:Name="PreProject" HorizontalAlignment="Left" Height="30" Margin="95,60,0,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
@@ -96,6 +96,19 @@
                 <DatePicker x:Name="Cancelled" HorizontalAlignment="Right" Height="30" Margin="0,285,15,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
                             Padding="5" SelectedDate="{Binding Path=Stage99Date, Mode=TwoWay}" Foreground="Red" BorderBrush="Red"/>
 
+                <Label x:Name="StageLabel" Content="Project Stage" HorizontalAlignment="Left" Height="30" Margin="15,0,0,15" VerticalAlignment="Bottom" Width="95" FontWeight="Bold"/>
+                <ComboBox x:Name="StageCombo" HorizontalAlignment="Left" Height="30" Margin="115,0,0,15" VerticalAlignment="Bottom" Width="145" SelectedItem="{Binding Path=Stage, Mode=TwoWay}" 
+                              DisplayMemberPath="StageName" SelectionChanged="StageCombo_SelectionChanged" Style="{DynamicResource PaddedCombo}"/>
+                <TextBlock x:Name="StageDescription" HorizontalAlignment="Right" Height="30" Margin="15,0,15,15" TextWrapping="Wrap" VerticalAlignment="Bottom" 
+                               Width="370" Padding="5" Text="{Binding Path=Stage.StageDescription, Mode=OneWay}"/>
+                <Button x:Name="NextButton" HorizontalAlignment="Right" Height="30" Margin="15,0,15,15" VerticalAlignment="Bottom" Width="110" Style="{StaticResource RoundedButton}" 
+                            FontWeight="Bold" Click="NextButton_Click" ToolTip="Move to next available stage" BorderBrush="{DynamicResource PtBrushProject3}">
+                    <StackPanel x:Name="NextPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                        <Image x:Name="NextImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource NextIcon}"/>
+                        <TextBlock x:Name="NextButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Next" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
             </Grid>
         </Border>
         <Border Height="60" Margin="0,0,0,15" BorderBrush="{StaticResource PtBrushProject3}" MinWidth="655" Style="{DynamicResource SectionBorder}" Grid.Row="2" Grid.Column="1" Width="Auto" 
@@ -108,14 +121,24 @@
                         FontWeight="Bold" Click="CancelButton_Click">
                     <StackPanel x:Name="CancelPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Image x:Name="CancelImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource CancelIcon}"/>
-                        <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Cancel" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Close" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
+                <Button x:Name="BackButton" HorizontalAlignment="Left" Height="30" Margin="130,15,15,15" VerticalAlignment="Top" Width="100" Style="{StaticResource RoundedButton}" 
+                            FontWeight="Bold" Click="BackButton_Click" ToolTip="Return to projects list without saving">
+                    <StackPanel x:Name="BackPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                        <Image x:Name="BackImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource BackIcon}"/>
+                        <TextBlock x:Name="BackButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Back" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <TextBlock HorizontalAlignment="Center" Height="30" Margin="115,15,15,15" TextWrapping="Wrap" VerticalAlignment="Top" Width="230" Padding="5">
+                        <Span><TextBlock Text="Overall Status: "/></Span><Span><TextBlock Text="{Binding Path=Stage.ProjectStatus, Mode=OneWay}"/></Span>
+                    </TextBlock>
                 <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="115" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" Click="CommitButton_Click" BorderBrush="{DynamicResource PtGradientCommit}">
                     <StackPanel x:Name="CommitPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Image x:Name="CommitImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource CommitIcon}"/>
-                        <TextBlock x:Name="CommitButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Commit" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="CommitButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Save" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
             </Grid>

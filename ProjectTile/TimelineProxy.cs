@@ -1,15 +1,38 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
 namespace ProjectTile
 {
-    public class TimelineProxy : Globals
+    public class TimelineProxy : Globals, INotifyPropertyChanged
     {
-        public int StageNumber { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
+        
+        private ProjectStages stage;
+        
         public Hashtable dateHash = new Hashtable();
+        public ProjectStages Stage
+        {
+            get { return stage; }
+            set
+            {
+                stage = value;
+                OnPropertyChanged("Stage");
+            }
+        }
+
+        public int StageID
+        {
+            get { return (stage == null) ? 0 : stage.ID; }
+        }
+
+        public int StageNumber
+        {
+            get { return (stage == null) ? 0 : stage.StageNumber; }
+        }
 
         public DateTime? Stage0Date 
         { 
@@ -101,5 +124,19 @@ namespace ProjectTile
             get { return (DateTime?)dateHash[17]; }
             set { dateHash[17] = value; }
         }
-    }
-}
+
+        protected void OnPropertyChanged(string eventName)
+        {
+            try
+            {
+                PropertyChangedEventHandler thisHandler = PropertyChanged;
+                if (thisHandler != null)
+                {
+                    thisHandler(this, new PropertyChangedEventArgs(eventName));
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error handling changed property", generalException); }
+        }
+
+    } // class
+} // namespace
