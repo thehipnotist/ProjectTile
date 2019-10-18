@@ -1580,6 +1580,48 @@ namespace ProjectTile
             }
         }
 
+        // Stage history (timelines)
+        public static TimelineProxy GetProjectTimeline(int projectID)
+        {
+            int stageNumber = 0;
+            int MaxNonCancelledStage = 0;
+            List<StageHistory> stageHistory = null;
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    int stageID = existingPtDb.Projects.Where(p => p.ID == projectID).Select(p => p.StageID).FirstOrDefault();
+                    stageNumber = GetStageNumber(stageID);
+                    stageHistory = existingPtDb.StageHistory.Where(sh => sh.ProjectID == projectID).ToList();
+                    MaxNonCancelledStage = existingPtDb.ProjectStages.Where(ps => ps.StageNumber != CancelledStage).Select(ps => ps.StageNumber).Max();
+                }
+
+                TimelineProxy timeline = new TimelineProxy();
+                timeline.StageNumber = stageNumber;
+                for (int i=0; i<=MaxNonCancelledStage; i++)
+                {
+                    ProjectStages thisStage = GetStageByNumber(i);
+                    if (thisStage == null) { break; }
+                    StageHistory thisHistory = stageHistory.FirstOrDefault(sh => sh.StageID == thisStage.ID);
+                    if (thisHistory == null) { timeline.dateHash.Add(i, null); }
+                    else { timeline.dateHash.Add(i, thisHistory.EffectiveStart ?? null); }
+                }
+                
+                ProjectStages cancelledStage = GetStageByNumber(CancelledStage);
+                StageHistory cancelledHistory = stageHistory.FirstOrDefault(sh => sh.StageID == cancelledStage.ID);
+                if (cancelledHistory == null) { timeline.dateHash.Add(CancelledStage, null); }
+                else { timeline.dateHash.Add(CancelledStage, cancelledHistory.EffectiveStart ?? null); }
+				
+                return timeline;
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving project timeline details", generalException);
+                return null;
+            }
+        }
+
         // -------------- Data updates -------------- // 
 
         public static bool IsGoLive(int originalStage, int newStage)

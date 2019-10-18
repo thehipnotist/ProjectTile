@@ -295,6 +295,7 @@
     <Compile Include="TilesPage.xaml.cs">
       <DependentUpon>TilesPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TimelineProxy.cs" />
     <Page Include="ErrorPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

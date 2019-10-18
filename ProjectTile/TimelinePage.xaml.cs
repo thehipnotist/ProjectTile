@@ -30,7 +30,7 @@ namespace ProjectTile
 
         // ------------ Current variables ----------- // 
 
-
+        TimelineProxy currentTimeline = new TimelineProxy();
 
         // ------------- Current records ------------ //
 
@@ -69,6 +69,9 @@ namespace ProjectTile
             //{
             //    HeaderImage2.SetResourceReference(Image.SourceProperty, "AmendIcon");
             //}
+
+            refreshTimeData();
+            
         }
 
 
@@ -78,7 +81,12 @@ namespace ProjectTile
         // ---------------------------------------------------------- //  
 
         // ------------- Data retrieval ------------- // 		
-
+        private void refreshTimeData()
+        {
+            currentTimeline = ProjectFunctions.GetProjectTimeline(Globals.SelectedProjectProxy.ProjectID);
+            //MessageBox.Show(currentTimeline.dateHash[0].ToString());
+            this.DataContext = currentTimeline;
+        }
 
 
         // -------------- Data updates -------------- // 
