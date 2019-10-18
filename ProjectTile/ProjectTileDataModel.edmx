@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="ProjectTileModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="ProjectTileModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Actions">
           <Key>
             <PropertyRef Name="ID" />
@@ -13,7 +13,7 @@
           <Property Name="ActionCode" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="ProjectID" Type="int" Nullable="false" />
           <Property Name="LoggedDate" Type="date" Nullable="false" />
-          <Property Name="TargetDate" Type="date" />
+          <Property Name="TargetCompletion" Type="date" />
           <Property Name="UpdatedDate" Type="date" />
           <Property Name="ShortDescription" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="StatusCode" Type="bit" />
@@ -224,8 +224,9 @@
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ProjectID" Type="int" Nullable="false" />
           <Property Name="StageID" Type="int" Nullable="false" />
-          <Property Name="TargetDate" Type="date" />
-          <Property Name="AchievedDate" Type="date" />
+          <Property Name="TargetStart" Type="date" />
+          <Property Name="ActualStart" Type="date" />
+          <Property Name="EffectiveStart" Type="date" StoreGeneratedPattern="Computed" />
         </EntityType>
         <EntityType Name="SuggestedActions">
           <Key>
@@ -769,7 +770,7 @@
           <Parameter Name="ActionCode" Type="varchar" Mode="In" />
           <Parameter Name="ProjectID" Type="int" Mode="In" />
           <Parameter Name="LoggedDate" Type="date" Mode="In" />
-          <Parameter Name="TargetDate" Type="date" Mode="In" />
+          <Parameter Name="TargetCompletion" Type="date" Mode="In" />
           <Parameter Name="UpdatedDate" Type="date" Mode="In" />
           <Parameter Name="ShortDescription" Type="varchar" Mode="In" />
           <Parameter Name="StatusCode" Type="bit" Mode="In" />
@@ -811,12 +812,8 @@
         <Function Name="prj_InsertIntoStageHistory" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ProjectID" Type="int" Mode="In" />
           <Parameter Name="StageID" Type="int" Mode="In" />
-          <Parameter Name="TargetDate" Type="date" Mode="In" />
-          <Parameter Name="AchievedDate" Type="date" Mode="In" />
-        </Function>
-        <Function Name="prj_UpdateAchievedDateInStageHistory" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="ID" Type="varchar" Mode="In" />
-          <Parameter Name="AchievedDate" Type="varchar" Mode="In" />
+          <Parameter Name="TargetStart" Type="date" Mode="In" />
+          <Parameter Name="ActualStart" Type="date" Mode="In" />
         </Function>
         <Function Name="prj_UpdateClientStaffIDInClientTeams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID" Type="varchar" Mode="In" />
@@ -857,14 +854,6 @@
         <Function Name="prj_UpdateStatusInNotes" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID" Type="varchar" Mode="In" />
           <Parameter Name="Status" Type="varchar" Mode="In" />
-        </Function>
-        <Function Name="prj_UpdateTargetDateInActions" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="ID" Type="varchar" Mode="In" />
-          <Parameter Name="TargetDate" Type="varchar" Mode="In" />
-        </Function>
-        <Function Name="prj_UpdateTargetDateInStageHistory" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="ID" Type="varchar" Mode="In" />
-          <Parameter Name="TargetDate" Type="varchar" Mode="In" />
         </Function>
         <Function Name="prj_UpdateToDateInClientTeams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID" Type="varchar" Mode="In" />
@@ -1077,8 +1066,7 @@
             <End Role="ProjectTeams" EntitySet="ProjectTeams" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ProjectTileModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -1090,7 +1078,6 @@
           <Property Name="ActionCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="ProjectID" Type="Int32" Nullable="false" />
           <Property Name="LoggedDate" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="TargetDate" Type="DateTime" Precision="0" />
           <Property Name="UpdatedDate" Type="DateTime" Precision="0" />
           <Property Name="ShortDescription" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="StatusCode" Type="Boolean" />
@@ -1101,6 +1088,7 @@
           <Property Name="StageID" Type="Int32" />
           <NavigationProperty Name="ProjectTeams" Relationship="Self.fk_ActionLoggedBy" FromRole="Actions" ToRole="ProjectTeams" />
           <NavigationProperty Name="Projects" Relationship="Self.fk_ActionProjectID" FromRole="Actions" ToRole="Projects" />
+          <Property Name="TargetCompletion" Type="DateTime" Precision="0" />
         </EntityType>
         <EntityType Name="AuditEntries">
           <Key>
@@ -1353,10 +1341,11 @@
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ProjectID" Type="Int32" Nullable="false" />
           <Property Name="StageID" Type="Int32" Nullable="false" />
-          <Property Name="TargetDate" Type="DateTime" Precision="0" />
-          <Property Name="AchievedDate" Type="DateTime" Precision="0" />
           <NavigationProperty Name="Projects" Relationship="Self.fk_StageProject" FromRole="StageHistory" ToRole="Projects" />
           <NavigationProperty Name="ProjectStages" Relationship="Self.fk_HistoryStage" FromRole="StageHistory" ToRole="ProjectStages" />
+          <Property Name="TargetStart" Type="DateTime" Precision="0" />
+          <Property Name="ActualStart" Type="DateTime" Precision="0" />
+          <Property Name="EffectiveStart" Type="DateTime" annotation:StoreGeneratedPattern="Computed" Precision="0" />
         </EntityType>
         <EntityType Name="SuggestedActions">
           <Key>
@@ -1865,16 +1854,16 @@
             <End Role="TablePermissions" EntitySet="TablePermissions" />
           </AssociationSet>
           <FunctionImport Name="cln_GetClientsByAccountManagerID" ReturnType="Collection(ProjectTileModel.cln_GetClientsByAccountManagerID_Result)">
-            <Parameter Name="AccountManagerID" Mode="In" Type="String" />
+          <Parameter Name="AccountManagerID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="cln_GetClientsByClientCode" ReturnType="Collection(ProjectTileModel.cln_GetClientsByClientCode_Result)">
-            <Parameter Name="ClientCode" Mode="In" Type="String" />
+          <Parameter Name="ClientCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="cln_GetClientsByID" ReturnType="Collection(ProjectTileModel.cln_GetClientsByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="cln_GetClientStaffByID" ReturnType="Collection(ProjectTileModel.cln_GetClientStaffByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="cln_InsertIntoClientProducts">
             <Parameter Name="ClientID" Mode="In" Type="Int32" />
@@ -1919,7 +1908,7 @@
             <Parameter Name="Surname" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="ent_GetEntitiesByID" ReturnType="Collection(ProjectTileModel.ent_GetEntitiesByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="ent_InsertIntoEntities">
             <Parameter Name="EntityName" Mode="In" Type="String" />
@@ -1934,7 +1923,7 @@
             <Parameter Name="EntityName" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="err_GetErrorLogByID" ReturnType="Collection(ProjectTileModel.err_GetErrorLogByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="err_InsertIntoErrorLog">
             <Parameter Name="CustomMessage" Mode="In" Type="String" />
@@ -1946,13 +1935,13 @@
             <Parameter Name="InnerException" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="pja_GetClientTeamRolesByRoleCode" ReturnType="Collection(ProjectTileModel.pja_GetClientTeamRolesByRoleCode_Result)">
-            <Parameter Name="RoleCode" Mode="In" Type="String" />
+          <Parameter Name="RoleCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="pja_GetProjectRolesByRoleCode" ReturnType="Collection(ProjectTileModel.pja_GetProjectRolesByRoleCode_Result)">
-            <Parameter Name="RoleCode" Mode="In" Type="String" />
+          <Parameter Name="RoleCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="pja_GetProjectStagesByID" ReturnType="Collection(ProjectTileModel.pja_GetProjectStagesByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="pja_InsertIntoClientTeamRoles">
             <Parameter Name="RoleCode" Mode="In" Type="String" />
@@ -1998,10 +1987,10 @@
             <Parameter Name="TypeName" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prd_GetProductsByID" ReturnType="Collection(ProjectTileModel.prd_GetProductsByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prd_GetProductsByProductName" ReturnType="Collection(ProjectTileModel.prd_GetProductsByProductName_Result)">
-            <Parameter Name="ProductName" Mode="In" Type="String" />
+          <Parameter Name="ProductName" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prd_InsertIntoProducts">
             <Parameter Name="ProductName" Mode="In" Type="String" />
@@ -2013,31 +2002,31 @@
             <Parameter Name="LatestVersion" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_GetActionsByID" ReturnType="Collection(ProjectTileModel.prj_GetActionsByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_GetClientTeamsByID" ReturnType="Collection(ProjectTileModel.prj_GetClientTeamsByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_GetNewVersionByID">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_GetOldVersionByID">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_GetProjectsByID" ReturnType="Collection(ProjectTileModel.prj_GetProjectsByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_GetProjectTeamsByID" ReturnType="Collection(ProjectTileModel.prj_GetProjectTeamsByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_GetStageHistoryByID" ReturnType="Collection(ProjectTileModel.prj_GetStageHistoryByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_InsertIntoActions">
             <Parameter Name="ActionCode" Mode="In" Type="String" />
             <Parameter Name="ProjectID" Mode="In" Type="Int32" />
             <Parameter Name="LoggedDate" Mode="In" Type="DateTime" />
-            <Parameter Name="TargetDate" Mode="In" Type="DateTime" />
+            <Parameter Name="TargetCompletion" Mode="In" Type="DateTime" />
             <Parameter Name="UpdatedDate" Mode="In" Type="DateTime" />
             <Parameter Name="ShortDescription" Mode="In" Type="String" />
             <Parameter Name="StatusCode" Mode="In" Type="Boolean" />
@@ -2079,8 +2068,8 @@
           <FunctionImport Name="prj_InsertIntoStageHistory">
             <Parameter Name="ProjectID" Mode="In" Type="Int32" />
             <Parameter Name="StageID" Mode="In" Type="Int32" />
-            <Parameter Name="TargetDate" Mode="In" Type="DateTime" />
-            <Parameter Name="AchievedDate" Mode="In" Type="DateTime" />
+            <Parameter Name="TargetStart" Mode="In" Type="DateTime" />
+            <Parameter Name="ActualStart" Mode="In" Type="DateTime" />
           </FunctionImport>
           <FunctionImport Name="prj_UpdateAchievedDateInStageHistory">
             <Parameter Name="ID" Mode="In" Type="String" />
@@ -2147,7 +2136,7 @@
             <Parameter Name="UpdatedDate" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="sec_GetTablePermissionsByID" ReturnType="Collection(ProjectTileModel.sec_GetTablePermissionsByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="sec_InsertIntoTablePermissions">
             <Parameter Name="TableName" Mode="In" Type="String" />
@@ -2166,13 +2155,13 @@
             <Parameter Name="Passwd" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="stf_GetStaffByID" ReturnType="Collection(ProjectTileModel.stf_GetStaffByID_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
+          <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="stf_GetStaffByRoleCode" ReturnType="Collection(ProjectTileModel.stf_GetStaffByRoleCode_Result)">
-            <Parameter Name="RoleCode" Mode="In" Type="String" />
+          <Parameter Name="RoleCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="stf_GetStaffRolesByRoleCode" ReturnType="Collection(ProjectTileModel.stf_GetStaffRolesByRoleCode_Result)">
-            <Parameter Name="RoleCode" Mode="In" Type="String" />
+          <Parameter Name="RoleCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="stf_InsertIntoStaff">
             <Parameter Name="FirstName" Mode="In" Type="String" />
@@ -2394,11 +2383,11 @@
           <EntitySetMapping Name="Actions">
             <EntityTypeMapping TypeName="ProjectTileModel.Actions">
               <MappingFragment StoreEntitySet="Actions">
+                <ScalarProperty Name="TargetCompletion" ColumnName="TargetCompletion" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ActionCode" ColumnName="ActionCode" />
                 <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
                 <ScalarProperty Name="LoggedDate" ColumnName="LoggedDate" />
-                <ScalarProperty Name="TargetDate" ColumnName="TargetDate" />
                 <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
                 <ScalarProperty Name="ShortDescription" ColumnName="ShortDescription" />
                 <ScalarProperty Name="StatusCode" ColumnName="StatusCode" />
@@ -2625,12 +2614,13 @@
           <EntitySetMapping Name="StageHistory">
             <EntityTypeMapping TypeName="ProjectTileModel.StageHistory">
               <MappingFragment StoreEntitySet="StageHistory">
+                <ScalarProperty Name="EffectiveStart" ColumnName="EffectiveStart" />
+                <ScalarProperty Name="ActualStart" ColumnName="ActualStart" />
+                <ScalarProperty Name="TargetStart" ColumnName="TargetStart" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
                 <ScalarProperty Name="StageID" ColumnName="StageID" />
-                <ScalarProperty Name="TargetDate" ColumnName="TargetDate" />
-                <ScalarProperty Name="AchievedDate" ColumnName="AchievedDate" />
-              </MappingFragment>
+                </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SuggestedActions">
@@ -2890,7 +2880,6 @@
           <FunctionImportMapping FunctionImportName="prj_InsertIntoProjects" FunctionName="ProjectTileModel.Store.prj_InsertIntoProjects" />
           <FunctionImportMapping FunctionImportName="prj_InsertIntoProjectTeams" FunctionName="ProjectTileModel.Store.prj_InsertIntoProjectTeams" />
           <FunctionImportMapping FunctionImportName="prj_InsertIntoStageHistory" FunctionName="ProjectTileModel.Store.prj_InsertIntoStageHistory" />
-          <FunctionImportMapping FunctionImportName="prj_UpdateAchievedDateInStageHistory" FunctionName="ProjectTileModel.Store.prj_UpdateAchievedDateInStageHistory" />
           <FunctionImportMapping FunctionImportName="prj_UpdateClientStaffIDInClientTeams" FunctionName="ProjectTileModel.Store.prj_UpdateClientStaffIDInClientTeams" />
           <FunctionImportMapping FunctionImportName="prj_UpdateClientTeamRoleCodeInClientTeams" FunctionName="ProjectTileModel.Store.prj_UpdateClientTeamRoleCodeInClientTeams" />
           <FunctionImportMapping FunctionImportName="prj_UpdateNewVersionInProjectProducts" FunctionName="ProjectTileModel.Store.prj_UpdateNewVersionInProjectProducts" />
@@ -2901,8 +2890,6 @@
           <FunctionImportMapping FunctionImportName="prj_UpdateStaffIDInProjectTeams" FunctionName="ProjectTileModel.Store.prj_UpdateStaffIDInProjectTeams" />
           <FunctionImportMapping FunctionImportName="prj_UpdateStatusCodeInActions" FunctionName="ProjectTileModel.Store.prj_UpdateStatusCodeInActions" />
           <FunctionImportMapping FunctionImportName="prj_UpdateStatusInNotes" FunctionName="ProjectTileModel.Store.prj_UpdateStatusInNotes" />
-          <FunctionImportMapping FunctionImportName="prj_UpdateTargetDateInActions" FunctionName="ProjectTileModel.Store.prj_UpdateTargetDateInActions" />
-          <FunctionImportMapping FunctionImportName="prj_UpdateTargetDateInStageHistory" FunctionName="ProjectTileModel.Store.prj_UpdateTargetDateInStageHistory" />
           <FunctionImportMapping FunctionImportName="prj_UpdateToDateInClientTeams" FunctionName="ProjectTileModel.Store.prj_UpdateToDateInClientTeams" />
           <FunctionImportMapping FunctionImportName="prj_UpdateToDateInProjectTeams" FunctionName="ProjectTileModel.Store.prj_UpdateToDateInProjectTeams" />
           <FunctionImportMapping FunctionImportName="prj_UpdateUpdatedDateInActions" FunctionName="ProjectTileModel.Store.prj_UpdateUpdatedDateInActions" />

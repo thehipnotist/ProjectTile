@@ -600,7 +600,7 @@ namespace ProjectTile
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<prj_GetStageHistoryByID_Result>("prj_GetStageHistoryByID", iDParameter);
         }
     
-        public virtual int prj_InsertIntoActions(string actionCode, Nullable<int> projectID, Nullable<System.DateTime> loggedDate, Nullable<System.DateTime> targetDate, Nullable<System.DateTime> updatedDate, string shortDescription, Nullable<bool> statusCode, Nullable<int> loggedBy, Nullable<int> internalOwner, Nullable<int> clientOwner, string notes, Nullable<int> stageID)
+        public virtual int prj_InsertIntoActions(string actionCode, Nullable<int> projectID, Nullable<System.DateTime> loggedDate, Nullable<System.DateTime> targetCompletion, Nullable<System.DateTime> updatedDate, string shortDescription, Nullable<bool> statusCode, Nullable<int> loggedBy, Nullable<int> internalOwner, Nullable<int> clientOwner, string notes, Nullable<int> stageID)
         {
             var actionCodeParameter = actionCode != null ?
                 new ObjectParameter("ActionCode", actionCode) :
@@ -614,9 +614,9 @@ namespace ProjectTile
                 new ObjectParameter("LoggedDate", loggedDate) :
                 new ObjectParameter("LoggedDate", typeof(System.DateTime));
     
-            var targetDateParameter = targetDate.HasValue ?
-                new ObjectParameter("TargetDate", targetDate) :
-                new ObjectParameter("TargetDate", typeof(System.DateTime));
+            var targetCompletionParameter = targetCompletion.HasValue ?
+                new ObjectParameter("TargetCompletion", targetCompletion) :
+                new ObjectParameter("TargetCompletion", typeof(System.DateTime));
     
             var updatedDateParameter = updatedDate.HasValue ?
                 new ObjectParameter("UpdatedDate", updatedDate) :
@@ -650,7 +650,7 @@ namespace ProjectTile
                 new ObjectParameter("StageID", stageID) :
                 new ObjectParameter("StageID", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_InsertIntoActions", actionCodeParameter, projectIDParameter, loggedDateParameter, targetDateParameter, updatedDateParameter, shortDescriptionParameter, statusCodeParameter, loggedByParameter, internalOwnerParameter, clientOwnerParameter, notesParameter, stageIDParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_InsertIntoActions", actionCodeParameter, projectIDParameter, loggedDateParameter, targetCompletionParameter, updatedDateParameter, shortDescriptionParameter, statusCodeParameter, loggedByParameter, internalOwnerParameter, clientOwnerParameter, notesParameter, stageIDParameter);
         }
     
         public virtual int prj_InsertIntoClientTeams(Nullable<int> projectID, Nullable<int> clientStaffID, string clientTeamRoleCode, Nullable<System.DateTime> fromDate, Nullable<System.DateTime> toDate)
@@ -757,7 +757,7 @@ namespace ProjectTile
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_InsertIntoProjectTeams", projectIDParameter, staffIDParameter, projectRoleCodeParameter, fromDateParameter, toDateParameter);
         }
     
-        public virtual int prj_InsertIntoStageHistory(Nullable<int> projectID, Nullable<int> stageID, Nullable<System.DateTime> targetDate, Nullable<System.DateTime> achievedDate)
+        public virtual int prj_InsertIntoStageHistory(Nullable<int> projectID, Nullable<int> stageID, Nullable<System.DateTime> targetStart, Nullable<System.DateTime> actualStart)
         {
             var projectIDParameter = projectID.HasValue ?
                 new ObjectParameter("ProjectID", projectID) :
@@ -767,15 +767,15 @@ namespace ProjectTile
                 new ObjectParameter("StageID", stageID) :
                 new ObjectParameter("StageID", typeof(int));
     
-            var targetDateParameter = targetDate.HasValue ?
-                new ObjectParameter("TargetDate", targetDate) :
-                new ObjectParameter("TargetDate", typeof(System.DateTime));
+            var targetStartParameter = targetStart.HasValue ?
+                new ObjectParameter("TargetStart", targetStart) :
+                new ObjectParameter("TargetStart", typeof(System.DateTime));
     
-            var achievedDateParameter = achievedDate.HasValue ?
-                new ObjectParameter("AchievedDate", achievedDate) :
-                new ObjectParameter("AchievedDate", typeof(System.DateTime));
+            var actualStartParameter = actualStart.HasValue ?
+                new ObjectParameter("ActualStart", actualStart) :
+                new ObjectParameter("ActualStart", typeof(System.DateTime));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_InsertIntoStageHistory", projectIDParameter, stageIDParameter, targetDateParameter, achievedDateParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_InsertIntoStageHistory", projectIDParameter, stageIDParameter, targetStartParameter, actualStartParameter);
         }
     
         public virtual int prj_UpdateAchievedDateInStageHistory(string iD, string achievedDate)

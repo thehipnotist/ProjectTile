@@ -17,8 +17,9 @@ namespace ProjectTile
         public int ID { get; set; }
         public int ProjectID { get; set; }
         public int StageID { get; set; }
-        public Nullable<System.DateTime> TargetDate { get; set; }
-        public Nullable<System.DateTime> AchievedDate { get; set; }
+        public Nullable<System.DateTime> TargetStart { get; set; }
+        public Nullable<System.DateTime> ActualStart { get; set; }
+        public Nullable<System.DateTime> EffectiveStart { get; set; }
     
         public virtual Projects Projects { get; set; }
         public virtual ProjectStages ProjectStages { get; set; }

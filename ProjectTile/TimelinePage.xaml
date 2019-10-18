@@ -30,7 +30,72 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="{Binding ElementName=MiddleRow, Path=ActualHeight}" MinHeight="400"/>
                 </Grid.RowDefinitions>
-                <Label x:Name="Instructions" Content="Instructions." HorizontalAlignment="Left" Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+                <Label x:Name="Instructions" Content="The dates represent the start of each given stage; official project start and end dates are in blue." HorizontalAlignment="Left" Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+
+                <Label x:Name="PreProjectLabel" Content="Pre-Project" HorizontalAlignment="Left" Height="30" Margin="15,60,0,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
+                <DatePicker x:Name="PreProject" HorizontalAlignment="Left" Height="30" Margin="95,60,0,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
+                            Padding="5"/>
+                <Label x:Name="InitiationLabel" Content="Initiation" HorizontalAlignment="Center" Height="30" Margin="0,60,115,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"
+                       Foreground="Blue"/>
+                <DatePicker x:Name="Initiation" HorizontalAlignment="Center" Height="30" Margin="80,60,0,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
+                            Padding="5" Foreground="Blue" BorderBrush="Blue"/>
+                <Label x:Name="TechPrepLabel" Content="Tech Prep" HorizontalAlignment="Right" Height="30" Margin="0,60,130,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
+                <DatePicker x:Name="TechPrep" HorizontalAlignment="Right" Height="30" Margin="0,60,15,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
+                            Padding="5"/>
+                
+                <Label x:Name="DesignLabel" Content="Design" HorizontalAlignment="Left" Height="30" Margin="15,105,0,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
+                <DatePicker x:Name="Design" HorizontalAlignment="Left" Height="30" Margin="95,105,0,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
+                            Padding="5"/>
+                <Label x:Name="InstallationLabel" Content="Installation" HorizontalAlignment="Center" Height="30" Margin="0,105,115,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
+                <DatePicker x:Name="Installation" HorizontalAlignment="Center" Height="30" Margin="80,105,0,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
+                            Padding="5"/>                
+                <Label x:Name="DataMigrationLabel" Content="Migration" HorizontalAlignment="Right" Height="30" Margin="0,105,130,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
+                <DatePicker x:Name="DataMigration" HorizontalAlignment="Right" Height="30" Margin="0,105,15,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
+                            Padding="5"/>
+                
+                <Label x:Name="ConfigurationLabel" Content="Configure" HorizontalAlignment="Left" Height="30" Margin="15,150,0,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
+                <DatePicker x:Name="Configuration" HorizontalAlignment="Left" Height="30" Margin="95,150,0,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
+                            Padding="5"/>
+                <Label x:Name="SystemTestLabel" Content="System Test" HorizontalAlignment="Center" Height="30" Margin="0,150,115,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
+                <DatePicker x:Name="SystemTest" HorizontalAlignment="Center" Height="30" Margin="80,150,0,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
+                            Padding="5"/>
+                <Label x:Name="TrainAdminLabel" Content="Train Admins" HorizontalAlignment="Right" Height="30" Margin="0,150,130,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
+                <DatePicker x:Name="TrainAdmin" HorizontalAlignment="Right" Height="30" Margin="0,150,15,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
+                            Padding="5"/>
+
+                <Label x:Name="UserTestLabel" Content="User Test" HorizontalAlignment="Left" Height="30" Margin="15,195,0,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
+                <DatePicker x:Name="UserTest" HorizontalAlignment="Left" Height="30" Margin="95,195,0,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
+                            Padding="5"/>
+                <Label x:Name="TrainUsersLabel" Content="Train Users" HorizontalAlignment="Center" Height="30" Margin="0,195,115,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
+                <DatePicker x:Name="TrainUsers" HorizontalAlignment="Center" Height="30" Margin="80,195,0,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
+                            Padding="5"/>
+                <Label x:Name="LivePrepLabel" Content="Live Prep" HorizontalAlignment="Right" Height="30" Margin="0,195,130,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
+                <DatePicker x:Name="LivePrep" HorizontalAlignment="Right" Height="30" Margin="0,195,15,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
+                            Padding="5"/>
+
+                <Label x:Name="GoLiveLabel" Content="Go-Live" HorizontalAlignment="Left" Height="30" Margin="15,240,0,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
+                <DatePicker x:Name="GoLive" HorizontalAlignment="Left" Height="30" Margin="95,240,0,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
+                            Padding="5"/>
+                <Label x:Name="LiveRunningLabel" Content="Live Run" HorizontalAlignment="Center" Height="30" Margin="0,240,115,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"
+                        Foreground="Green"/>
+                <DatePicker x:Name="LiveRunning" HorizontalAlignment="Center" Height="30" Margin="80,240,0,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
+                            Padding="5" Foreground="Green" BorderBrush="Green"/>
+                <Label x:Name="PostLiveLabel" Content="Post-Live" HorizontalAlignment="Right" Height="30" Margin="0,240,130,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
+                <DatePicker x:Name="PostLive" HorizontalAlignment="Right" Height="30" Margin="0,240,15,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
+                            Padding="5"/>
+
+                <Label x:Name="ClosureLabel" Content="Closure" HorizontalAlignment="Left" Height="30" Margin="15,285,0,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
+                <DatePicker x:Name="Closure" HorizontalAlignment="Left" Height="30" Margin="95,285,0,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
+                            Padding="5"/>
+                <Label x:Name="CompletedLabel" Content="Completed" HorizontalAlignment="Center" Height="30" Margin="0,285,115,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"
+                       Foreground="Blue"/>
+                <DatePicker x:Name="Completed" HorizontalAlignment="Center" Height="30" Margin="80,285,0,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
+                            Padding="5" Foreground="Blue" BorderBrush="Blue"/>
+                <Label x:Name="CancelledLabel" Content="Cancelled" HorizontalAlignment="Right" Height="30" Margin="0,285,130,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"
+                       Foreground="Red"/>
+                <DatePicker x:Name="Cancelled" HorizontalAlignment="Right" Height="30" Margin="0,285,15,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
+                            Padding="5" Foreground="Red" BorderBrush="Red"/>
+
             </Grid>
         </Border>
         <Border Height="60" Margin="0,0,0,15" BorderBrush="{StaticResource PtBrushProject3}" MinWidth="655" Style="{DynamicResource SectionBorder}" Grid.Row="2" Grid.Column="1" Width="Auto" 
@@ -46,7 +111,7 @@
                         <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Cancel" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
+                <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="115" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" Click="CommitButton_Click" BorderBrush="{DynamicResource PtGradientCommit}">
                     <StackPanel x:Name="CommitPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Image x:Name="CommitImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource CommitIcon}"/>

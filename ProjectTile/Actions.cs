@@ -18,7 +18,6 @@ namespace ProjectTile
         public string ActionCode { get; set; }
         public int ProjectID { get; set; }
         public System.DateTime LoggedDate { get; set; }
-        public Nullable<System.DateTime> TargetDate { get; set; }
         public Nullable<System.DateTime> UpdatedDate { get; set; }
         public string ShortDescription { get; set; }
         public Nullable<bool> StatusCode { get; set; }
@@ -27,6 +26,7 @@ namespace ProjectTile
         public Nullable<int> ClientOwner { get; set; }
         public string Notes { get; set; }
         public Nullable<int> StageID { get; set; }
+        public Nullable<System.DateTime> TargetCompletion { get; set; }
     
         public virtual ProjectTeams ProjectTeams { get; set; }
         public virtual Projects Projects { get; set; }
