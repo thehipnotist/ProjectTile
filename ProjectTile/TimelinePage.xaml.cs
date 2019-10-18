@@ -32,6 +32,7 @@ namespace ProjectTile
 
         TimelineProxy currentTimeline = new TimelineProxy();
         bool stageChanged = false;
+        int initialStage = 0;
 
         // ------------- Current records ------------ //
 
@@ -73,9 +74,9 @@ namespace ProjectTile
 
             createControlArrays();
             refreshTimeData();
+            initialStage = currentTimeline.StageNumber;
             refreshStageCombo();
-            displaySelectedStage();
-            
+            displaySelectedStage();            
         }
 
         // ---------------------------------------------------------- //
@@ -99,19 +100,28 @@ namespace ProjectTile
 
         // -------------- Data updates -------------- // 
 
-        private void updateProjectStage(int newStageNumber)
+        private void updateProjectStage(int newStageNumber, bool alreadyUpdated)
         {
-            currentTimeline.Stage = ProjectFunctions.GetStageByNumber(newStageNumber);            
-            displaySelectedStage();
-            showStageChange(newStageNumber);
-        }
-
-        private void showStageChange(int newStage)
-        {
+            if (newStageNumber != initialStage)
+            {
+                bool confirm = MessageFunctions.ConfirmOKCancel("This will update the start dates of any future-dated stages that are now complete or in progress. Are you sure? "
+                    + "If the results are not as expected, use the 'Back' or 'Close' button afterwards to undo all changes.");
+                if (!confirm)
+                {
+                    if (alreadyUpdated) { currentTimeline.Stage = ProjectFunctions.GetStageByNumber(initialStage); }
+                    return;
+                }
+            }          
+            initialStage = newStageNumber;
+            if (!alreadyUpdated)
+            {
+                currentTimeline.Stage = ProjectFunctions.GetStageByNumber(newStageNumber);
+                displaySelectedStage();
+            }
             stageChanged = true;
-            NextButton.IsEnabled = (!ProjectFunctions.IsLastStage(newStage));
+            NextButton.IsEnabled = (!ProjectFunctions.IsLastStage(newStageNumber));
             updateAffectedDates();
-            highlightDateStatuses();
+            highlightDateStatuses();            
         }
 
         private void updateAffectedDates()
@@ -214,7 +224,7 @@ namespace ProjectTile
             if (StageCombo.SelectedItem != null && pageMode != PageFunctions.View)
             {
                 int newStage = currentTimeline.StageNumber;
-                showStageChange(newStage);
+                updateProjectStage(newStage, true);
             }
         }
         
@@ -223,7 +233,7 @@ namespace ProjectTile
             try
             {
                 int newStage = currentTimeline.StageNumber + 1;
-                updateProjectStage(newStage);                
+                updateProjectStage(newStage, false);                
             }
             catch (Exception generalException) { MessageFunctions.Error("Error moving to the next stage", generalException); }
         }
