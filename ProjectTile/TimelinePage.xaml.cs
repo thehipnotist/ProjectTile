@@ -27,10 +27,12 @@ namespace ProjectTile
 
         string pageMode;
         bool fromProjectPage = (Globals.ProjectSourcePage != Globals.TilesPageName);
+        bool stagesLoaded = false;
 
         // ------------ Current variables ----------- // 
 
         TimelineProxy currentTimeline = new TimelineProxy();
+        Globals.TimelineType currentType = Globals.TimelineType.Effective;
         bool stageChanged = false;
         int initialStage = 0;
 
@@ -73,10 +75,8 @@ namespace ProjectTile
             //}
 
             createControlArrays();
-            refreshTimeData();
-            initialStage = currentTimeline.StageNumber;
             refreshStageCombo();
-            displaySelectedStage();            
+            refreshTimeData();                                  
         }
 
         // ---------------------------------------------------------- //
@@ -87,47 +87,126 @@ namespace ProjectTile
 
         private void refreshTimeData()
         {
-            currentTimeline = ProjectFunctions.GetProjectTimeline(Globals.SelectedProjectProxy.ProjectID);
-            this.DataContext = currentTimeline;
-            highlightDateStatuses();
+            try
+            {
+                currentTimeline = ProjectFunctions.GetProjectTimeline(Globals.SelectedProjectProxy.ProjectID, currentType);
+                this.DataContext = currentTimeline;
+                initialStage = currentTimeline.StageNumber;
+                displaySelectedStage();
+                formatDatePickers();
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error displaying project status history timeline", generalException); }	
         }
 
         private void refreshStageCombo()
         {
             ProjectFunctions.SetFullStageList();
-            StageCombo.ItemsSource = ProjectFunctions.FullStageList;            
+            StageCombo.ItemsSource = ProjectFunctions.FullStageList;
+            if (!stagesLoaded) { stagesLoaded = true; }
+        }
+
+        private void changeTimelineType(Globals.TimelineType type)
+        {
+            try
+            {
+                if (ProjectFunctions.FullStageList == null || ProjectFunctions.FullStageList.Count() == 0) { return; } // Too early
+                else if (checkForChanges())
+                {
+                    currentType = type;
+                    clearChanges();
+                    refreshTimeData();
+                }
+                else { setTimelineType(currentType); }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error changing timeline type", generalException); }	
+        }
+
+        private bool checkForChanges()
+        {
+            bool changesExist = (stageChanged || ProjectFunctions.StageDatesChanged.Count > 0);
+            if (!changesExist) { return true; }
+            bool isOK = MessageFunctions.WarningYesNo("This will undo all unsaved changes, including changes to the project's current stage. Is this correct?", "Override changes?");
+            return isOK;
+        }
+
+        private void setTimelineType(Globals.TimelineType type)
+        {
+            switch (type)
+            {
+                case Globals.TimelineType.Actual: ActualRadio.IsChecked = true; break;
+                case Globals.TimelineType.Effective: EffectiveRadio.IsChecked = true; break;
+                case Globals.TimelineType.Target: TargetRadio.IsChecked = true; break;
+                default: EffectiveRadio.IsChecked = true; break;
+            }
         }
 
         // -------------- Data updates -------------- // 
 
         private void updateProjectStage(int newStageNumber, bool alreadyUpdated)
         {
-            if (newStageNumber != initialStage)
+            try
             {
-                bool confirm = MessageFunctions.ConfirmOKCancel("This will update the start dates of any future-dated stages that are now complete or in progress. Are you sure? "
-                    + "If the results are not as expected, use the 'Back' or 'Close' button afterwards to undo all changes.");
-                if (!confirm)
+                if (newStageNumber != initialStage) // Allows looping round again if undoing the change
                 {
-                    if (alreadyUpdated) { currentTimeline.Stage = ProjectFunctions.GetStageByNumber(initialStage); }
-                    return;
+                    bool confirm = MessageFunctions.ConfirmOKCancel("This will update the start dates of any future-dated stages that are now complete or in progress. Are you sure? "
+                        + "If the results are not as expected, use the 'Back' or 'Close' button afterwards to undo all changes.");
+                    if (!confirm)
+                    {
+                        if (alreadyUpdated) { currentTimeline.Stage = ProjectFunctions.GetStageByNumber(initialStage); }
+                        return;
+                    }
+                    initialStage = newStageNumber;
+                    if (!alreadyUpdated)
+                    {
+                        currentTimeline.Stage = ProjectFunctions.GetStageByNumber(newStageNumber);
+                        displaySelectedStage();
+                    }
+                    stageChanged = true;
+                    updateAffectedDates();
+                    formatDatePickers();
+                    NextButton.IsEnabled = (!ProjectFunctions.IsLastStage(newStageNumber));
+                    CommitButton.IsEnabled = true;
                 }
-            }          
-            initialStage = newStageNumber;
-            if (!alreadyUpdated)
-            {
-                currentTimeline.Stage = ProjectFunctions.GetStageByNumber(newStageNumber);
-                displaySelectedStage();
             }
-            stageChanged = true;
-            NextButton.IsEnabled = (!ProjectFunctions.IsLastStage(newStageNumber));
-            updateAffectedDates();
-            highlightDateStatuses();            
+            catch (Exception generalException) { MessageFunctions.Error("Error updating current project stage", generalException); }	     
         }
 
         private void updateAffectedDates()
         {
-            //TODO: work out which dates to update
+            try
+            {
+                if (currentType == Globals.TimelineType.Target) { return; }
+                for (int i = 0; i < ProjectFunctions.MaxNonCancelledStage(); i++) { updateDate(i); }
+                updateDate(Globals.CancelledStage);
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error updating affected project dates", generalException); }
         }
+
+        private void updateDate(int i)
+        {
+            try
+            {
+                int position = (i == Globals.CancelledStage) ? 99 : i; 
+                
+                DateTime thisDate = (currentTimeline.DateHash[i] == null) ? Globals.InfiniteDate : (DateTime)currentTimeline.DateHash[i];
+                if (i < currentTimeline.StageNumber && thisDate > Globals.Today) 
+                { 
+                    datePickers[position].SelectedDate = null;
+                    ProjectFunctions.QueueDateChange(i);
+                }
+                else if (i == currentTimeline.StageNumber && !thisDate.Equals(Globals.Today)) 
+                { 
+                    datePickers[position].SelectedDate = Globals.Today;
+                    ProjectFunctions.QueueDateChange(i);
+                }
+                else if (i > currentTimeline.StageNumber && thisDate < Globals.Today) 
+                { 
+                    datePickers[position].SelectedDate = null;
+                    ProjectFunctions.QueueDateChange(i);
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error updating project date for stage number " + i.ToString(), generalException); }
+        }        
 
         // --------- Other/shared functions --------- // 
 
@@ -135,8 +214,13 @@ namespace ProjectTile
         {
             try
             {
+                if (currentTimeline == null || ProjectFunctions.FullStageList == null || !stagesLoaded ) { return; }
                 ProjectStages selectedStage = ProjectFunctions.GetStageByID(currentTimeline.StageID); // Gets it from FullStageList, so it is picked up
-                StageCombo.SelectedIndex = ProjectFunctions.FullStageList.IndexOf(selectedStage);
+                if (selectedStage != null)
+                {
+                    int selectedIndex = ProjectFunctions.FullStageList.IndexOf(selectedStage);
+                    if (selectedIndex >= 0) { StageCombo.SelectedIndex = ProjectFunctions.FullStageList.IndexOf(selectedStage); }
+                }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error selecting current project stage", generalException); }
         }
@@ -145,12 +229,19 @@ namespace ProjectTile
         {
             if (checkFirst && pageMode != PageFunctions.View)
             {
-                bool doClose = MessageFunctions.WarningYesNo("Are you sure you want to close this page? Any changes you have made will be lost.");
+                bool doClose = checkForChanges();
                 if (!doClose) { return; }
             }
+            clearChanges();          
             bool closeFully = closeAll ? true : !fromProjectPage;
             if (closeFully) { ProjectFunctions.ReturnToTilesPage(); }
             else { ProjectFunctions.ReturnToProjectPage(); }
+        }
+
+        public void clearChanges()
+        {
+            stageChanged = false;
+            ProjectFunctions.ClearHistoryChanges();
         }
 
         private void createControlArrays()
@@ -194,15 +285,30 @@ namespace ProjectTile
             datePickers.Add(Cancelled);
         }
 
-        private void highlightDateStatuses()
+        private void formatDatePickers()
         {
-            int stageNumber = currentTimeline.StageNumber;
-            
-            for (int i=0; i<dateLabels.Count; i++)
+            try
             {
-                dateLabels[i].FontWeight = datePickers[i].FontWeight = (i <= stageNumber) ? FontWeights.Bold : FontWeights.Normal;
-                dateLabels[i].FontStyle = datePickers[i].FontStyle = (i <= stageNumber) ? FontStyles.Normal : FontStyles.Italic;
+                if (datePickers.Count <= 0) { return;  }
+                int stageNumber = currentTimeline.StageNumber;
+                bool actual = (currentType == Globals.TimelineType.Actual);
+                bool effective = (currentType == Globals.TimelineType.Effective);
+                bool target = (currentType == Globals.TimelineType.Target);
+                int cancelledPosition = datePickers.Count - 1;                
+
+                for (int i = 0; i < cancelledPosition; i++)
+                {
+                    dateLabels[i].FontWeight = datePickers[i].FontWeight = (actual || (effective && i <= stageNumber)) ? FontWeights.Bold : FontWeights.Normal;
+                    dateLabels[i].FontStyle = datePickers[i].FontStyle = (actual || (effective && i <= stageNumber)) ? FontStyles.Normal : FontStyles.Italic;
+                    datePickers[i].IsEnabled = ((actual && i <= stageNumber) || effective || (target && i > stageNumber));
+                }
+                dateLabels[cancelledPosition].FontWeight = datePickers[cancelledPosition].FontWeight = (actual || (effective && stageNumber == Globals.CancelledStage)) ?
+                    FontWeights.Bold : FontWeights.Normal;
+                dateLabels[cancelledPosition].FontStyle = datePickers[cancelledPosition].FontStyle = (actual || (effective && stageNumber == Globals.CancelledStage)) ?
+                    FontStyles.Normal : FontStyles.Italic;
+                datePickers[cancelledPosition].IsEnabled = (stageNumber == Globals.CancelledStage);
             }
+            catch (Exception generalException) { MessageFunctions.Error("Error highlighing date statuses", generalException); }	
         }
 
         // ---------- Links to other pages ---------- //		
@@ -215,17 +321,48 @@ namespace ProjectTile
 
         // ---- Generic (shared) control events ----- // 		   
 
+        private void CheckDate(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (!(sender is DatePicker)) { return; }
+                DatePicker thisPicker = (DatePicker)sender;
+                int? position = datePickers.IndexOf(thisPicker);
+                if (position == null)
+                {
+                    MessageFunctions.Error("Error processing date change: could not find the relevant date picker in the list", null);
+                    return;
+                }
+                int stageNumber = (position == datePickers.Count - 1) ? 99 : (int)position;
+                DateTime? newDate = (DateTime?)thisPicker.SelectedDate;
+                DateTime? oldDate = (DateTime?)currentTimeline.InitialDates[stageNumber];
 
+                if (newDate == (DateTime?)oldDate) { return; } // No change
+                bool target = (currentType == Globals.TimelineType.Target || (currentType == Globals.TimelineType.Effective && stageNumber > currentTimeline.StageNumber));
+                bool dateOK = ProjectFunctions.ProcessDateChange(stageNumber, currentTimeline.StageNumber, newDate, target);
+                if (dateOK) 
+                { 
+                    currentTimeline.InitialDates[stageNumber] = newDate; // Update for future comparisons
+                    CommitButton.IsEnabled = true;
+                } 
+                else { thisPicker.SelectedDate = oldDate; } // Undo change
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error processing date change", generalException); }	
+        }
 
         // -------- Control-specific events --------- // 
 
         private void StageCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (StageCombo.SelectedItem != null && pageMode != PageFunctions.View)
+            try
             {
-                int newStage = currentTimeline.StageNumber;
-                updateProjectStage(newStage, true);
+                if (StageCombo.SelectedItem != null && currentTimeline != null && pageMode != PageFunctions.View)
+                {
+                    int newStage = currentTimeline.StageNumber;
+                    updateProjectStage(newStage, true);
+                }
             }
+            catch (Exception generalException) { MessageFunctions.Error("Error handling stage selection", generalException); }	
         }
         
         private void NextButton_Click(object sender, RoutedEventArgs e)
@@ -236,6 +373,21 @@ namespace ProjectTile
                 updateProjectStage(newStage, false);                
             }
             catch (Exception generalException) { MessageFunctions.Error("Error moving to the next stage", generalException); }
+        }
+
+        private void TargetRadio_Checked(object sender, RoutedEventArgs e)
+        {
+            changeTimelineType(Globals.TimelineType.Target);
+        }
+
+        private void ActualRadio_Checked(object sender, RoutedEventArgs e)
+        {
+            changeTimelineType(Globals.TimelineType.Actual);
+        }
+
+        private void EffectiveRadio_Checked(object sender, RoutedEventArgs e)
+        {
+            changeTimelineType(Globals.TimelineType.Effective);
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -250,10 +402,18 @@ namespace ProjectTile
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
-
+            foreach(int stageNo in ProjectFunctions.StageDatesChanged)
+            {
+                MessageBox.Show(stageNo.ToString());
+            }
+            
+            bool success = ProjectFunctions.UpdateHistory(currentTimeline, stageChanged);
+            if (success)
+            {
+                MessageFunctions.SuccessAlert("Changes saved successfully. You can make further changes in this screen, or use the 'Back' or 'Close' buttons to exit.", "Timeline Changes Saved");
+                clearChanges();
+            }
         }
-
-
 
     } // class
 } // namespace

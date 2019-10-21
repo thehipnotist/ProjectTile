@@ -52,6 +52,8 @@ namespace ProjectTile
         public static List<int> ProductIDsToRemove = new List<int>();
         public static List<int> ProductIDsToUpdate = new List<int>();
 
+        public static List<int> StageDatesChanged = new List<int>();
+
         // ---------------------------------------------------------- //
         // -------------------- Page Management --------------------- //
         // ---------------------------------------------------------- //
@@ -1581,10 +1583,27 @@ namespace ProjectTile
         }
 
         // Stage history (timelines)
-        public static TimelineProxy GetProjectTimeline(int projectID)
+        public static int MaxNonCancelledStage()
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return existingPtDb.ProjectStages.Where(ps => ps.StageNumber != CancelledStage).Select(ps => ps.StageNumber).Max();
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving maximum stage number", generalException);
+                return 0;
+            }
+        }            
+        
+        public static TimelineProxy GetProjectTimeline(int projectID, TimelineType type)
         {
             ProjectStages stage = null;
-            int MaxNonCancelledStage = 0;
+            int maxNonCancelledStage = 0;
             List<StageHistory> stageHistory = null;
             try
             {
@@ -1594,25 +1613,32 @@ namespace ProjectTile
                     int stageID = existingPtDb.Projects.Where(p => p.ID == projectID).Select(p => p.StageID).FirstOrDefault();
                     stage = GetStageByID(stageID);
                     stageHistory = existingPtDb.StageHistory.Where(sh => sh.ProjectID == projectID).ToList();
-                    MaxNonCancelledStage = existingPtDb.ProjectStages.Where(ps => ps.StageNumber != CancelledStage).Select(ps => ps.StageNumber).Max();
+                    maxNonCancelledStage = MaxNonCancelledStage();
                 }
 
                 TimelineProxy timeline = new TimelineProxy();
                 timeline.Stage = stage;
-                for (int i=0; i<=MaxNonCancelledStage; i++)
+                timeline.TimeType = type;
+                for (int i=0; i<=maxNonCancelledStage; i++)
                 {
                     ProjectStages thisStage = GetStageByNumber(i);
                     if (thisStage == null) { break; }
                     StageHistory thisHistory = stageHistory.FirstOrDefault(sh => sh.StageID == thisStage.ID);
-                    if (thisHistory == null) { timeline.dateHash.Add(i, null); }
-                    else { timeline.dateHash.Add(i, thisHistory.EffectiveStart ?? null); }
+                    if (thisHistory == null) { timeline.DateHash.Add(i, null); }
+                    else if (type == TimelineType.Target) { timeline.DateHash.Add(i, thisHistory.TargetStart ?? null); }  
+                    else if (type == TimelineType.Actual) { timeline.DateHash.Add(i, thisHistory.ActualStart ?? null); }                  
+                    else { timeline.DateHash.Add(i, thisHistory.EffectiveStart ?? null); }
                 }
                 
                 ProjectStages cancelledStage = GetStageByNumber(CancelledStage);
                 StageHistory cancelledHistory = stageHistory.FirstOrDefault(sh => sh.StageID == cancelledStage.ID);
-                if (cancelledHistory == null) { timeline.dateHash.Add(CancelledStage, null); }
-                else { timeline.dateHash.Add(CancelledStage, cancelledHistory.EffectiveStart ?? null); }
-				
+                if (cancelledHistory == null) { timeline.DateHash.Add(CancelledStage, null); }
+                else if (type == TimelineType.Target) { timeline.DateHash.Add(CancelledStage, cancelledHistory.TargetStart ?? null); }
+                else if (type == TimelineType.Actual) { timeline.DateHash.Add(CancelledStage, cancelledHistory.ActualStart ?? null); }                                
+                else { timeline.DateHash.Add(CancelledStage, cancelledHistory.EffectiveStart ?? null); }
+
+                timeline.StoreOriginalValues(); // shallow copy DateHash to InitialDates for comparison
+
                 return timeline;
             }
             catch (Exception generalException)
@@ -1962,7 +1988,7 @@ namespace ProjectTile
                     ProjectRoleCode = ProjectManagerCode,
                     FromDate = (DateTime.Today < thisProject.StartDate) ? DateTime.Today : thisProject.StartDate
                 };
-                
+
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
@@ -1976,6 +2002,7 @@ namespace ProjectTile
                     existingPtDb.SaveChanges();
                     
                     MessageFunctions.SuccessAlert("New project saved successfully. You can now add products and project team members.", "Project Created");
+                    UpdateHistoryForStatus(thisProject, true);
                     return true;
                 }
             }
@@ -1986,7 +2013,7 @@ namespace ProjectTile
             }		            
         }
 
-        public static bool SaveProjectChanges(ProjectProxy projectProxy, bool managerChanged, int originalStage)
+        public static bool SaveProjectChanges(ProjectProxy projectProxy, bool managerChanged, int originalStageNumber)
         {
                    
             if (!ValidateProject(projectProxy, true, managerChanged)) { return false; }
@@ -2066,9 +2093,9 @@ namespace ProjectTile
                         }
                     }
 
-                    bool goLive = IsGoLive(originalStage, projectProxy.StageID);
-                    bool reversal = goLive ? false : IsLiveReversal(originalStage, projectProxy.StageID);
-                    bool completion = (projectProxy.StageID == CompletedStage && originalStage != CompletedStage);                    
+                    bool goLive = IsGoLive(originalStageNumber, projectProxy.StageNumber);
+                    bool reversal = goLive ? false : IsLiveReversal(originalStageNumber, projectProxy.StageNumber);
+                    bool completion = (projectProxy.StageNumber == CompletedStage && originalStageNumber != CompletedStage);                    
                     if (goLive || reversal)
                     {
                         // TODO: handle internal projects - should we update linked master versions?
@@ -2111,6 +2138,7 @@ namespace ProjectTile
                     else if (goLive) { congratulations = " Congratulations on going Live.";  }
                     
                     MessageFunctions.SuccessAlert("Project amendments saved successfully." + congratulations, "Changes Saved");
+                    if (projectProxy.StageNumber != originalStageNumber) { UpdateHistoryForStatus(thisProject, false); }
                     return true;
                 }
             }
@@ -2885,6 +2913,177 @@ namespace ProjectTile
                 return true;
             }
         }
+
+        // Project timeline (stage history) updates
+
+        public static bool ProcessDateChange(int affectedStageNo, int projectStageNo, DateTime? newDate, bool isTarget)
+        {
+            if (isTarget)
+            {
+                if (affectedStageNo <= projectStageNo)
+                {
+                    MessageFunctions.InvalidMessage("You cannot change the target date of previous stages.", "Previous Stage");
+                    return false;
+                }
+            }            
+            else
+            {
+                if (affectedStageNo == projectStageNo && newDate == null)
+                {
+                    MessageFunctions.InvalidMessage("The actual start date of the current stage cannot be null.", "Missing Start Date");
+                    return false;
+                }
+                else if (affectedStageNo == projectStageNo && newDate > Today)
+                {
+                    MessageFunctions.InvalidMessage("The actual start date of the current stage cannot be in the future.", "Future Date Selected");
+                    return false;
+                }
+                else if (affectedStageNo < projectStageNo && newDate > Today)
+                {
+                    MessageFunctions.InvalidMessage("The actual start date of previous stages cannot be in the future.", "Future Date Selected");
+                    return false;
+                }
+                else if (affectedStageNo > projectStageNo && newDate != null)
+                {
+                    MessageFunctions.InvalidMessage("The actual start date of future stages cannot be set manually.", "Past Date Selected");
+                    return false;
+                }
+            }
+
+            QueueDateChange(affectedStageNo);
+            return true;
+        }
+
+        public static void QueueDateChange(int StageNumber)
+        {
+            if (!StageDatesChanged.Contains(StageNumber)) { StageDatesChanged.Add(StageNumber); }
+        }
+
+        public static void ClearHistoryChanges()
+        {
+            StageDatesChanged.Clear();
+        }
+
+        public static void UpdateHistoryForStatus(Projects thisProject, bool isNew)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    if (isNew)
+                    {
+                        StageHistory firstStage = new StageHistory
+                        {
+                            ProjectID = thisProject.ID,
+                            StageID = thisProject.StageID,
+                            TargetStart = Today,
+                            ActualStart = Today
+                        };
+                        existingPtDb.StageHistory.Add(firstStage);
+                        existingPtDb.SaveChanges();
+                    }
+                    else
+                    {
+                        int currentStage = GetStageNumber(thisProject.StageID);
+                        SetFullStageList();
+                        foreach (ProjectStages thisStage in FullStageList)
+                        {
+                            if (thisStage.StageNumber <= currentStage)
+                            {
+                                DateTime? newActualDate = (thisStage.StageNumber == currentStage) ? (DateTime?) Today : null;
+                                StageHistory stageHist = existingPtDb.StageHistory.FirstOrDefault(sh => sh.ProjectID == thisProject.ID && sh.StageID == thisStage.ID);
+                                if (stageHist == null && thisStage.StageNumber == currentStage)
+                                {
+                                    stageHist = new StageHistory
+                                    {
+                                        ProjectID = thisProject.ID,
+                                        StageID = thisProject.StageID,
+                                        TargetStart = null,
+                                        ActualStart = Today
+                                    };
+                                    existingPtDb.StageHistory.Add(stageHist);
+                                }
+                                else if (stageHist != null && stageHist.ActualStart != newActualDate) { stageHist.ActualStart = newActualDate; }
+                            }
+                            else
+                            {                                
+                                StageHistory stageHist = existingPtDb.StageHistory.FirstOrDefault(sh => sh.ProjectID == thisProject.ID && sh.StageID == thisStage.ID);
+                                if (stageHist != null && stageHist.ActualStart != null) { stageHist.ActualStart = null; }
+                            }
+                            existingPtDb.SaveChanges();
+                        }
+                    }
+				}
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error updating project stage history to match new status", generalException); }	
+        }
+
+        public static bool UpdateHistory(TimelineProxy thisTimeline, bool stageChanged)
+        {
+            try
+            {
+                if (stageChanged && !ValidateProject(Globals.SelectedProjectProxy, true, false)) { return false; }
+                int projectID = Globals.SelectedProjectProxy.ProjectID;
+
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    try
+                    {
+                        if (stageChanged)
+                        {
+                            Projects thisProject = existingPtDb.Projects.Where(p => p.ID == projectID).FirstOrDefault();
+                            if (thisProject == null)
+                            {
+                                MessageFunctions.Error("Error saving project amendments to the database: no matching project found.", null);
+                                return false;
+                            }
+                            thisProject.StageID = thisTimeline.StageID;
+                            existingPtDb.SaveChanges();
+                        }
+                    }
+                    catch (Exception generalException)
+                    {
+                        MessageFunctions.Error("Error updating project stage", generalException);
+                        return false;
+                    }
+
+                    int currentStage = GetStageNumber(thisTimeline.StageID);
+                    SetFullStageList();
+                    foreach (ProjectStages thisStage in FullStageList)
+                    {
+                        if (!StageDatesChanged.Contains(thisStage.StageNumber)) { break; }
+                        bool target = (thisTimeline.TimeType == TimelineType.Target || (thisTimeline.TimeType == TimelineType.Effective && thisStage.StageNumber > currentStage));
+
+                        DateTime? newDate = (DateTime?) thisTimeline.DateHash[thisStage.StageNumber];
+                        StageHistory stageHist = existingPtDb.StageHistory.FirstOrDefault(sh => sh.ProjectID == projectID && sh.StageID == thisStage.ID);
+                        if (stageHist == null)
+                        {
+                            stageHist = new StageHistory
+                            {
+                                ProjectID = projectID,
+                                StageID = thisStage.ID,
+                                TargetStart = target? newDate : null,
+                                ActualStart = target? null : newDate
+                            };
+                            existingPtDb.StageHistory.Add(stageHist);
+                        }
+                        else if (target) { stageHist.TargetStart = newDate; }
+                        else { stageHist.ActualStart = newDate; }
+                    }
+                    existingPtDb.SaveChanges();
+                    ClearHistoryChanges();
+                    return true;
+                }
+            }
+            catch (Exception generalException) 
+            { 
+                MessageFunctions.Error("Error updating project stage history", generalException);
+                return false;
+            }
+        }
+
 
     } // class
 } // namespace

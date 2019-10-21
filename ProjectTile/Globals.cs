@@ -28,6 +28,7 @@ namespace ProjectTile
         public enum ClientProductStatus { Added = 1, New = 2, InProgress = 3, Live = 4, Updates = 5, Inactive = 6, Retired = 7 }
         public enum ProjectStatusFilter { All, Current, Open, InProgress, Closed }
         public enum TeamTimeFilter { All, Future, Current }
+        public enum TimelineType { Target, Actual, Effective }
         
         // Additional records for all/any/none
         public const string AllRecords = "<All>";

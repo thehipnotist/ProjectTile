@@ -9,11 +9,12 @@ namespace ProjectTile
 {
     public class TimelineProxy : Globals, INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-        
+        public event PropertyChangedEventHandler PropertyChanged;        
+        public Hashtable DateHash = new Hashtable();
+        public Hashtable InitialDates = new Hashtable();
         private ProjectStages stage;
-        
-        public Hashtable dateHash = new Hashtable();
+
+        public TimelineType TimeType { get; set; }
         public ProjectStages Stage
         {
             get { return stage; }
@@ -24,105 +25,98 @@ namespace ProjectTile
             }
         }
 
-        public int StageID
-        {
-            get { return (stage == null) ? 0 : stage.ID; }
-        }
-
-        public int StageNumber
-        {
-            get { return (stage == null) ? 0 : stage.StageNumber; }
-        }
+        public int StageID { get { return (stage == null) ? 0 : stage.ID; } }
+        public int StageNumber { get { return (stage == null) ? 0 : stage.StageNumber; } }
 
         public DateTime? Stage0Date 
         { 
-            get { return (DateTime?) dateHash[0]; }
-            set { dateHash[0] = value; }
+            get { return (DateTime?) DateHash[0]; }
+            set { DateHash[0] = value; }
         }
         public DateTime? Stage1Date
         {
-            get { return (DateTime?)dateHash[1]; }
-            set { dateHash[1] = value; }
+            get { return (DateTime?)DateHash[1]; }
+            set { DateHash[1] = value; }
         }
         public DateTime? Stage2Date
         {
-            get { return (DateTime?)dateHash[2]; }
-            set { dateHash[2] = value; }
+            get { return (DateTime?)DateHash[2]; }
+            set { DateHash[2] = value; }
         }
         public DateTime? Stage3Date
         {
-            get { return (DateTime?)dateHash[3]; }
-            set { dateHash[3] = value; }
+            get { return (DateTime?)DateHash[3]; }
+            set { DateHash[3] = value; }
         }
         public DateTime? Stage4Date
         {
-            get { return (DateTime?)dateHash[4]; }
-            set { dateHash[4] = value; }
+            get { return (DateTime?)DateHash[4]; }
+            set { DateHash[4] = value; }
         }
         public DateTime? Stage5Date
         {
-            get { return (DateTime?)dateHash[5]; }
-            set { dateHash[5] = value; }
+            get { return (DateTime?)DateHash[5]; }
+            set { DateHash[5] = value; }
         }
         public DateTime? Stage6Date
         {
-            get { return (DateTime?)dateHash[6]; }
-            set { dateHash[6] = value; }
+            get { return (DateTime?)DateHash[6]; }
+            set { DateHash[6] = value; }
         }
         public DateTime? Stage7Date
         {
-            get { return (DateTime?)dateHash[7]; }
-            set { dateHash[7] = value; }
+            get { return (DateTime?)DateHash[7]; }
+            set { DateHash[7] = value; }
         }
         public DateTime? Stage8Date
         {
-            get { return (DateTime?)dateHash[8]; }
-            set { dateHash[8] = value; }
+            get { return (DateTime?)DateHash[8]; }
+            set { DateHash[8] = value; }
         }
         public DateTime? Stage9Date
         {
-            get { return (DateTime?)dateHash[9]; }
-            set { dateHash[9] = value; }
+            get { return (DateTime?)DateHash[9]; }
+            set { DateHash[9] = value; }
         }
         public DateTime? Stage10Date
         {
-            get { return (DateTime?)dateHash[10]; }
-            set { dateHash[10] = value; }
+            get { return (DateTime?)DateHash[10]; }
+            set { DateHash[10] = value; }
         }
         public DateTime? Stage11Date
         {
-            get { return (DateTime?)dateHash[11]; }
-            set { dateHash[11] = value; }
+            get { return (DateTime?)DateHash[11]; }
+            set { DateHash[11] = value; }
         }
         public DateTime? Stage12Date
         {
-            get { return (DateTime?)dateHash[12]; }
-            set { dateHash[12] = value; }
+            get { return (DateTime?)DateHash[12]; }
+            set { DateHash[12] = value; }
         }
         public DateTime? Stage13Date
         {
-            get { return (DateTime?)dateHash[13]; }
-            set { dateHash[13] = value; }
+            get { return (DateTime?)DateHash[13]; }
+            set { DateHash[13] = value; }
         }
         public DateTime? Stage14Date
         {
-            get { return (DateTime?)dateHash[14]; }
-            set { dateHash[14] = value; }
+            get { return (DateTime?)DateHash[14]; }
+            set { DateHash[14] = value; }
         }
         public DateTime? Stage15Date
         {
-            get { return (DateTime?)dateHash[15]; }
-            set { dateHash[15] = value; }
+            get { return (DateTime?)DateHash[15]; }
+            set { DateHash[15] = value; }
         }
         public DateTime? Stage16Date
         {
-            get { return (DateTime?)dateHash[16]; }
-            set { dateHash[16] = value; }
+            get { return (DateTime?)DateHash[16]; }
+            set { DateHash[16] = value; }
         }
-        public DateTime? Stage17Date
+        public DateTime? Stage99Date
         {
-            get { return (DateTime?)dateHash[17]; }
-            set { dateHash[17] = value; }
+            get { return (DateTime?)DateHash[99]; }
+            set { DateHash[99] = value; }
         }
 
         protected void OnPropertyChanged(string eventName)
@@ -137,6 +131,12 @@ namespace ProjectTile
             }
             catch (Exception generalException) { MessageFunctions.Error("Error handling changed property", generalException); }
         }
+
+        public void StoreOriginalValues()
+        {
+            InitialDates = (Hashtable) DateHash.Clone();
+        }
+
 
     } // class
 } // namespace
