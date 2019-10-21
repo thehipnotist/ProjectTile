@@ -1226,6 +1226,6 @@
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="IsHitTestVisible" Value="False"/>
         </Style>
-        
+
     </Application.Resources>
 </Application>

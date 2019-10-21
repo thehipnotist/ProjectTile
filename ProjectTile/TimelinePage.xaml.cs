@@ -28,6 +28,7 @@ namespace ProjectTile
         string pageMode;
         bool fromProjectPage = (Globals.ProjectSourcePage != Globals.TilesPageName);
         bool stagesLoaded = false;
+        bool viewOnly = false;
 
         // ------------ Current variables ----------- // 
 
@@ -68,15 +69,19 @@ namespace ProjectTile
                 MessageFunctions.Error("Error retrieving query details", generalException);
                 PageFunctions.ShowTilesPage();
             }
+            if (pageMode == PageFunctions.View)
+            {
+                viewOnly = true;
+                CommitButton.Visibility = NextButton.Visibility = Visibility.Hidden;
+                StageCombo.IsEnabled = false;
+            }
 
-            //if (pageMode == PageFunctions.Amend) 
-            //{
-            //    HeaderImage2.SetResourceReference(Image.SourceProperty, "AmendIcon");
-            //}
-
+            PageHeader.Content = "Project Timeline for Project " + Globals.SelectedProjectProxy.ProjectCode;
             createControlArrays();
             refreshStageCombo();
-            refreshTimeData();                                  
+            refreshTimeData();
+            MessageFunctions.InfoAlert("Effective date is the actual date for previous stages, and the target date for future ones. If targets are out of date, this can mean that "
+                + "future stages show an earlier (target) date than historic ones.", "Please note");
         }
 
         // ---------------------------------------------------------- //
@@ -110,6 +115,7 @@ namespace ProjectTile
             try
             {
                 if (ProjectFunctions.FullStageList == null || ProjectFunctions.FullStageList.Count() == 0) { return; } // Too early
+                else if (type == currentType) { return; } // Cancelling the earlier change
                 else if (checkForChanges())
                 {
                     currentType = type;
@@ -199,9 +205,11 @@ namespace ProjectTile
                     datePickers[position].SelectedDate = Globals.Today;
                     ProjectFunctions.QueueDateChange(i);
                 }
-                else if (i > currentTimeline.StageNumber && thisDate < Globals.Today) 
-                { 
-                    datePickers[position].SelectedDate = null;
+                else if (i > currentTimeline.StageNumber && thisDate <= Globals.Today) 
+                {                    
+                    datePickers[position].SelectedDate = (currentType == Globals.TimelineType.Effective)? 
+                        ProjectFunctions.GetHistoryDate(Globals.SelectedProjectProxy.ProjectID, i, true) :
+                        datePickers[position].SelectedDate = null;                     
                     ProjectFunctions.QueueDateChange(i);
                 }
             }
@@ -232,7 +240,8 @@ namespace ProjectTile
                 bool doClose = checkForChanges();
                 if (!doClose) { return; }
             }
-            clearChanges();          
+            clearChanges();
+            MessageFunctions.CancelInfoAlert();
             bool closeFully = closeAll ? true : !fromProjectPage;
             if (closeFully) { ProjectFunctions.ReturnToTilesPage(); }
             else { ProjectFunctions.ReturnToProjectPage(); }
@@ -300,13 +309,13 @@ namespace ProjectTile
                 {
                     dateLabels[i].FontWeight = datePickers[i].FontWeight = (actual || (effective && i <= stageNumber)) ? FontWeights.Bold : FontWeights.Normal;
                     dateLabels[i].FontStyle = datePickers[i].FontStyle = (actual || (effective && i <= stageNumber)) ? FontStyles.Normal : FontStyles.Italic;
-                    datePickers[i].IsEnabled = ((actual && i <= stageNumber) || effective || (target && i > stageNumber));
+                    datePickers[i].IsEnabled = (!viewOnly && (actual && i <= stageNumber || effective || target && i > stageNumber));
                 }
                 dateLabels[cancelledPosition].FontWeight = datePickers[cancelledPosition].FontWeight = (actual || (effective && stageNumber == Globals.CancelledStage)) ?
                     FontWeights.Bold : FontWeights.Normal;
                 dateLabels[cancelledPosition].FontStyle = datePickers[cancelledPosition].FontStyle = (actual || (effective && stageNumber == Globals.CancelledStage)) ?
                     FontStyles.Normal : FontStyles.Italic;
-                datePickers[cancelledPosition].IsEnabled = (stageNumber == Globals.CancelledStage);
+                datePickers[cancelledPosition].IsEnabled = (!viewOnly && stageNumber == Globals.CancelledStage);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error highlighing date statuses", generalException); }	
         }
@@ -402,10 +411,10 @@ namespace ProjectTile
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach(int stageNo in ProjectFunctions.StageDatesChanged)
-            {
-                MessageBox.Show(stageNo.ToString());
-            }
+            //foreach (int stageNo in ProjectFunctions.StageDatesChanged)
+            //{
+            //    MessageBox.Show(stageNo.ToString());
+            //}
             
             bool success = ProjectFunctions.UpdateHistory(currentTimeline, stageChanged);
             if (success)

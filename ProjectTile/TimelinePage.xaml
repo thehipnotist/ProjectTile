@@ -32,69 +32,303 @@
                 </Grid.RowDefinitions>
                 <Label x:Name="Instructions" Content="Dates represent stage starts. Project start and end dates are blue. Actual dates are bold, estimates italic." HorizontalAlignment="Left" Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
 
-                <Label x:Name="PreProjectLabel" Content="Pre-Project" HorizontalAlignment="Left" Height="30" Margin="15,50,0,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
-                <DatePicker x:Name="PreProject" HorizontalAlignment="Left" Height="30" Margin="95,50,0,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage0Date, Mode=TwoWay}" LostFocus="CheckDate"/>
-                <Label x:Name="InitiationLabel" Content="Initiation" HorizontalAlignment="Center" Height="30" Margin="230,50,345,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"
+                <Label x:Name="PreProjectLabel" Content="Pre-Project" HorizontalAlignment="Left" Height="30" Margin="15,50,0,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
+                <DatePicker x:Name="PreProject" HorizontalAlignment="Left" Height="30" Margin="95,50,0,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
+                            Padding="5" SelectedDate="{Binding Path=Stage0Date, Mode=TwoWay}" LostFocus="CheckDate">
+                    <DatePicker.Resources>
+                        <Style TargetType="{x:Type DatePickerTextBox}">
+                            <Setter Property="Text" Value=" "/>
+                        </Style>
+                        <Style TargetType="Rectangle">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.00"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
+                <Label x:Name="InitiationLabel" Content="Initiation" HorizontalAlignment="Center" Height="30" Margin="230,50,345,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"
                        Foreground="Blue"/>
-                <DatePicker x:Name="Initiation" HorizontalAlignment="Center" Height="30" Margin="310,50,230,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage1Date, Mode=TwoWay}" LostFocus="CheckDate" Foreground="Blue" BorderBrush="Blue"/>
-                <Label x:Name="TechPrepLabel" Content="Tech Prep" HorizontalAlignment="Right" Height="30" Margin="0,50,130,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
-                <DatePicker x:Name="TechPrep" HorizontalAlignment="Right" Height="30" Margin="0,50,15,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage2Date, Mode=TwoWay}" LostFocus="CheckDate"/>
+                <DatePicker x:Name="Initiation" HorizontalAlignment="Center" Height="30" Margin="310,50,230,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
+                            Padding="5" SelectedDate="{Binding Path=Stage1Date, Mode=TwoWay}" LostFocus="CheckDate" Foreground="Blue" BorderBrush="Blue">
+                    <DatePicker.Resources>
+                        <Style TargetType="{x:Type DatePickerTextBox}">
+                            <Setter Property="Text" Value=" "/>
+                        </Style>
+                        <Style TargetType="Rectangle">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.00"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
+                <Label x:Name="TechPrepLabel" Content="Tech Prep" HorizontalAlignment="Right" Height="30" Margin="0,50,130,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
+                <DatePicker x:Name="TechPrep" HorizontalAlignment="Right" Height="30" Margin="0,50,15,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
+                            Padding="5" SelectedDate="{Binding Path=Stage2Date, Mode=TwoWay}" LostFocus="CheckDate">
+                    <DatePicker.Resources>
+                        <Style TargetType="{x:Type DatePickerTextBox}">
+                            <Setter Property="Text" Value=" "/>
+                        </Style>
+                        <Style TargetType="Rectangle">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.00"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
 
-                <Label x:Name="DesignLabel" Content="Design" HorizontalAlignment="Left" Height="30" Margin="15,95,0,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
-                <DatePicker x:Name="Design" HorizontalAlignment="Left" Height="30" Margin="95,95,0,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage3Date, Mode=TwoWay}" LostFocus="CheckDate"/>
-                <Label x:Name="InstallationLabel" Content="Installation" HorizontalAlignment="Center" Height="30" Margin="230,95,345,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
-                <DatePicker x:Name="Installation" HorizontalAlignment="Center" Height="30" Margin="310,95,230,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage4Date, Mode=TwoWay}" LostFocus="CheckDate"/>
-                <Label x:Name="DataMigrationLabel" Content="Migration" HorizontalAlignment="Right" Height="30" Margin="0,95,130,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
-                <DatePicker x:Name="DataMigration" HorizontalAlignment="Right" Height="30" Margin="0,95,15,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage5Date, Mode=TwoWay}" LostFocus="CheckDate"/>
+                <Label x:Name="DesignLabel" Content="Design" HorizontalAlignment="Left" Height="30" Margin="15,95,0,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
+                <DatePicker x:Name="Design" HorizontalAlignment="Left" Height="30" Margin="95,95,0,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
+                            Padding="5" SelectedDate="{Binding Path=Stage3Date, Mode=TwoWay}" LostFocus="CheckDate">
+                    <DatePicker.Resources>
+                        <Style TargetType="{x:Type DatePickerTextBox}">
+                            <Setter Property="Text" Value=" "/>
+                        </Style>
+                        <Style TargetType="Rectangle">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.00"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
+                <Label x:Name="InstallationLabel" Content="Installation" HorizontalAlignment="Center" Height="30" Margin="230,95,345,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
+                <DatePicker x:Name="Installation" HorizontalAlignment="Center" Height="30" Margin="310,95,230,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
+                            Padding="5" SelectedDate="{Binding Path=Stage4Date, Mode=TwoWay}" LostFocus="CheckDate">
+                    <DatePicker.Resources>
+                        <Style TargetType="{x:Type DatePickerTextBox}">
+                            <Setter Property="Text" Value=" "/>
+                        </Style>
+                        <Style TargetType="Rectangle">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.00"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
+                <Label x:Name="DataMigrationLabel" Content="Migration" HorizontalAlignment="Right" Height="30" Margin="0,95,130,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
+                <DatePicker x:Name="DataMigration" HorizontalAlignment="Right" Height="30" Margin="0,95,15,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
+                            Padding="5" SelectedDate="{Binding Path=Stage5Date, Mode=TwoWay}" LostFocus="CheckDate">
+                    <DatePicker.Resources>
+                        <Style TargetType="{x:Type DatePickerTextBox}">
+                            <Setter Property="Text" Value=" "/>
+                        </Style>
+                        <Style TargetType="Rectangle">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.00"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
 
-                <Label x:Name="ConfigurationLabel" Content="Configure" HorizontalAlignment="Left" Height="30" Margin="15,140,0,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
-                <DatePicker x:Name="Configuration" HorizontalAlignment="Left" Height="30" Margin="95,140,0,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage6Date, Mode=TwoWay}" LostFocus="CheckDate"/>
-                <Label x:Name="SystemTestLabel" Content="System Test" HorizontalAlignment="Center" Height="30" Margin="230,140,345,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
-                <DatePicker x:Name="SystemTest" HorizontalAlignment="Center" Height="30" Margin="310,140,230,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage7Date, Mode=TwoWay}" LostFocus="CheckDate"/>
-                <Label x:Name="TrainAdminLabel" Content="Train Admins" HorizontalAlignment="Right" Height="30" Margin="0,140,130,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
-                <DatePicker x:Name="TrainAdmin" HorizontalAlignment="Right" Height="30" Margin="0,140,15,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage8Date, Mode=TwoWay}" LostFocus="CheckDate"/>
+                <Label x:Name="ConfigurationLabel" Content="Configure" HorizontalAlignment="Left" Height="30" Margin="15,140,0,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
+                <DatePicker x:Name="Configuration" HorizontalAlignment="Left" Height="30" Margin="95,140,0,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
+                            Padding="5" SelectedDate="{Binding Path=Stage6Date, Mode=TwoWay}" LostFocus="CheckDate">
+                    <DatePicker.Resources>
+                        <Style TargetType="{x:Type DatePickerTextBox}">
+                            <Setter Property="Text" Value=" "/>
+                        </Style>
+                        <Style TargetType="Rectangle">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.00"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
+                <Label x:Name="SystemTestLabel" Content="System Test" HorizontalAlignment="Center" Height="30" Margin="230,140,345,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
+                <DatePicker x:Name="SystemTest" HorizontalAlignment="Center" Height="30" Margin="310,140,230,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
+                            Padding="5" SelectedDate="{Binding Path=Stage7Date, Mode=TwoWay}" LostFocus="CheckDate">
+                    <DatePicker.Resources>
+                        <Style TargetType="{x:Type DatePickerTextBox}">
+                            <Setter Property="Text" Value=" "/>
+                        </Style>
+                        <Style TargetType="Rectangle">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.00"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
+                <Label x:Name="TrainAdminLabel" Content="Train Admin" HorizontalAlignment="Right" Height="30" Margin="0,140,130,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
+                <DatePicker x:Name="TrainAdmin" HorizontalAlignment="Right" Height="30" Margin="0,140,15,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
+                            Padding="5" SelectedDate="{Binding Path=Stage8Date, Mode=TwoWay}" LostFocus="CheckDate">
+                    <DatePicker.Resources>
+                        <Style TargetType="{x:Type DatePickerTextBox}">
+                            <Setter Property="Text" Value=" "/>
+                        </Style>
+                        <Style TargetType="Rectangle">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.00"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
 
-                <Label x:Name="UserTestLabel" Content="User Test" HorizontalAlignment="Left" Height="30" Margin="15,185,0,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
-                <DatePicker x:Name="UserTest" HorizontalAlignment="Left" Height="30" Margin="95,185,0,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage9Date, Mode=TwoWay}" LostFocus="CheckDate"/>
-                <Label x:Name="TrainUsersLabel" Content="Train Users" HorizontalAlignment="Center" Height="30" Margin="230,185,345,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
-                <DatePicker x:Name="TrainUsers" HorizontalAlignment="Center" Height="30" Margin="310,185,230,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage10Date, Mode=TwoWay}" LostFocus="CheckDate"/>
-                <Label x:Name="LivePrepLabel" Content="Live Prep" HorizontalAlignment="Right" Height="30" Margin="0,185,130,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
-                <DatePicker x:Name="LivePrep" HorizontalAlignment="Right" Height="30" Margin="0,185,15,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage11Date, Mode=TwoWay}" LostFocus="CheckDate"/>
+                <Label x:Name="UserTestLabel" Content="User Test" HorizontalAlignment="Left" Height="30" Margin="15,185,0,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
+                <DatePicker x:Name="UserTest" HorizontalAlignment="Left" Height="30" Margin="95,185,0,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
+                            Padding="5" SelectedDate="{Binding Path=Stage9Date, Mode=TwoWay}" LostFocus="CheckDate">
+                    <DatePicker.Resources>
+                        <Style TargetType="{x:Type DatePickerTextBox}">
+                            <Setter Property="Text" Value=" "/>
+                        </Style>
+                        <Style TargetType="Rectangle">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.00"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
+                <Label x:Name="TrainUsersLabel" Content="Train Users" HorizontalAlignment="Center" Height="30" Margin="230,185,345,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
+                <DatePicker x:Name="TrainUsers" HorizontalAlignment="Center" Height="30" Margin="310,185,230,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
+                            Padding="5" SelectedDate="{Binding Path=Stage10Date, Mode=TwoWay}" LostFocus="CheckDate">
+                    <DatePicker.Resources>
+                        <Style TargetType="{x:Type DatePickerTextBox}">
+                            <Setter Property="Text" Value=" "/>
+                        </Style>
+                        <Style TargetType="Rectangle">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.00"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
+                <Label x:Name="LivePrepLabel" Content="Live Prep" HorizontalAlignment="Right" Height="30" Margin="0,185,130,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
+                <DatePicker x:Name="LivePrep" HorizontalAlignment="Right" Height="30" Margin="0,185,15,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
+                            Padding="5" SelectedDate="{Binding Path=Stage11Date, Mode=TwoWay}" LostFocus="CheckDate">
+                    <DatePicker.Resources>
+                        <Style TargetType="{x:Type DatePickerTextBox}">
+                            <Setter Property="Text" Value=" "/>
+                        </Style>
+                        <Style TargetType="Rectangle">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.00"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
 
-                <Label x:Name="GoLiveLabel" Content="Go-Live" HorizontalAlignment="Left" Height="30" Margin="15,230,0,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
-                <DatePicker x:Name="GoLive" HorizontalAlignment="Left" Height="30" Margin="95,230,0,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage12Date, Mode=TwoWay}" LostFocus="CheckDate"/>
-                <Label x:Name="LiveRunningLabel" Content="Live Run" HorizontalAlignment="Center" Height="30" Margin="230,230,345,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"
+                <Label x:Name="GoLiveLabel" Content="Go-Live" HorizontalAlignment="Left" Height="30" Margin="15,230,0,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
+                <DatePicker x:Name="GoLive" HorizontalAlignment="Left" Height="30" Margin="95,230,0,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
+                            Padding="5" SelectedDate="{Binding Path=Stage12Date, Mode=TwoWay, TargetNullValue=''}" LostFocus="CheckDate">
+                    <DatePicker.Resources>
+                        <Style TargetType="{x:Type DatePickerTextBox}">
+                            <Setter Property="Text" Value=" "/>
+                        </Style>
+                        <Style TargetType="Rectangle">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.00"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
+                <Label x:Name="LiveRunningLabel" Content="Live Run" HorizontalAlignment="Center" Height="30" Margin="230,230,345,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"
                         Foreground="Green"/>
-                <DatePicker x:Name="LiveRunning" HorizontalAlignment="Center" Height="30" Margin="310,230,230,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage13Date, Mode=TwoWay}" LostFocus="CheckDate" Foreground="Green" BorderBrush="Green"/>
-                <Label x:Name="PostLiveLabel" Content="Post-Live" HorizontalAlignment="Right" Height="30" Margin="0,230,130,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
-                <DatePicker x:Name="PostLive" HorizontalAlignment="Right" Height="30" Margin="0,230,15,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage14Date, Mode=TwoWay}" LostFocus="CheckDate"/>
+                <DatePicker x:Name="LiveRunning" HorizontalAlignment="Center" Height="30" Margin="310,230,230,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
+                            Padding="5" SelectedDate="{Binding Path=Stage13Date, Mode=TwoWay}" LostFocus="CheckDate" Foreground="Green" BorderBrush="Green">
+                    <DatePicker.Resources>
+                        <Style TargetType="{x:Type DatePickerTextBox}">
+                            <Setter Property="Text" Value=" "/>
+                        </Style>
+                        <Style TargetType="Rectangle">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.00"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
+                <Label x:Name="PostLiveLabel" Content="Post-Live" HorizontalAlignment="Right" Height="30" Margin="0,230,130,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
+                <DatePicker x:Name="PostLive" HorizontalAlignment="Right" Height="30" Margin="0,230,15,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
+                            Padding="5" SelectedDate="{Binding Path=Stage14Date, Mode=TwoWay}" LostFocus="CheckDate">
+                    <DatePicker.Resources>
+                        <Style TargetType="{x:Type DatePickerTextBox}">
+                            <Setter Property="Text" Value=" "/>
+                        </Style>
+                        <Style TargetType="Rectangle">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.00"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
 
-                <Label x:Name="ClosureLabel" Content="Closure" HorizontalAlignment="Left" Height="30" Margin="15,275,0,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
-                <DatePicker x:Name="Closure" HorizontalAlignment="Left" Height="30" Margin="95,275,0,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage15Date, Mode=TwoWay}" LostFocus="CheckDate"/>
-                <Label x:Name="CompletedLabel" Content="Completed" HorizontalAlignment="Center" Height="30" Margin="230,275,345,0" VerticalAlignment="Top" Width="80" FontWeight="Bold"
+                <Label x:Name="ClosureLabel" Content="Closure" HorizontalAlignment="Left" Height="30" Margin="15,275,0,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
+                <DatePicker x:Name="Closure" HorizontalAlignment="Left" Height="30" Margin="95,275,0,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
+                            Padding="5" SelectedDate="{Binding Path=Stage15Date, Mode=TwoWay}" LostFocus="CheckDate">
+                    <DatePicker.Resources>
+                        <Style TargetType="{x:Type DatePickerTextBox}">
+                            <Setter Property="Text" Value=" "/>
+                        </Style>
+                        <Style TargetType="Rectangle">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.00"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
+                <Label x:Name="CompletedLabel" Content="Completed" HorizontalAlignment="Center" Height="30" Margin="230,275,345,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"
                        Foreground="Blue"/>
-                <DatePicker x:Name="Completed" HorizontalAlignment="Center" Height="30" Margin="310,275,230,0" VerticalAlignment="Top" Width="115" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage16Date, Mode=TwoWay}" LostFocus="CheckDate" Foreground="Blue" BorderBrush="Blue"/>
-                <Label x:Name="CancelledLabel" Content="Cancelled" HorizontalAlignment="Right" Height="30" Margin="0,315,130,60" VerticalAlignment="Bottom" Width="80" FontWeight="Bold"
+                <DatePicker x:Name="Completed" HorizontalAlignment="Center" Height="30" Margin="310,275,230,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
+                            Padding="5" SelectedDate="{Binding Path=Stage16Date, Mode=TwoWay}" LostFocus="CheckDate" Foreground="Blue" BorderBrush="Blue">
+                    <DatePicker.Resources>
+                        <Style TargetType="{x:Type DatePickerTextBox}">
+                            <Setter Property="Text" Value=" "/>
+                        </Style>
+                        <Style TargetType="Rectangle">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.00"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
+                <Label x:Name="CancelledLabel" Content="Cancelled" HorizontalAlignment="Right" Height="30" Margin="0,315,130,60" VerticalAlignment="Bottom" Width="85" FontWeight="Bold"
                        Foreground="Red"/>
-                <DatePicker x:Name="Cancelled" HorizontalAlignment="Right" Height="30" Margin="0,0,15,60" VerticalAlignment="Bottom" Width="115" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage99Date, Mode=TwoWay}" LostFocus="CheckDate" Foreground="Red" BorderBrush="Red"/>
+                <DatePicker x:Name="Cancelled" HorizontalAlignment="Right" Height="30" Margin="0,0,15,60" VerticalAlignment="Bottom" Width="110" SelectedDateFormat="Short" Background="White"
+                            Padding="5" SelectedDate="{Binding Path=Stage99Date, Mode=TwoWay}" LostFocus="CheckDate" Foreground="Red" BorderBrush="Red">
+                    <DatePicker.Resources>
+                        <Style TargetType="{x:Type DatePickerTextBox}">
+                            <Setter Property="Text" Value=" "/>
+                        </Style>
+                        <Style TargetType="Rectangle">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.00"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
 
                 <GroupBox x:Name="ModeGroup"  HorizontalAlignment="Left" Height="30" Margin="15,0,0,60" VerticalAlignment="Bottom" Width="215" Padding="0">
                     <DockPanel FlowDirection="LeftToRight" HorizontalAlignment="Right" LastChildFill="False">
@@ -145,7 +379,7 @@
                 <TextBlock HorizontalAlignment="Center" Height="30" Margin="115,15,15,15" TextWrapping="Wrap" VerticalAlignment="Top" Width="230" Padding="5">
                         <Span><TextBlock Text="Overall Status: "/></Span><Span><TextBlock Text="{Binding Path=Stage.ProjectStatus, Mode=OneWay}"/></Span>
                     </TextBlock>
-                <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="115" Style="{StaticResource RoundedButton}" 
+                <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 
                         FontWeight="Bold" Click="CommitButton_Click" BorderBrush="{DynamicResource PtGradientCommit}" IsEnabled="False">
                     <StackPanel x:Name="CommitPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Image x:Name="CommitImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource CommitIcon}"/>

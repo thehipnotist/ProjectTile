@@ -368,7 +368,7 @@ namespace ProjectTile
 
         private void TimelineMenu_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowTimelinePage();
+            PageFunctions.ShowTimelinePage(pageMode);
         }
 
 
