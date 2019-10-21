@@ -2572,7 +2572,7 @@ BEGIN TRY
 			, ProjectID					INT				NOT NULL
 				CONSTRAINT fk_ActionProjectID FOREIGN KEY REFERENCES dbo.Projects (ID)
 			, LoggedDate				DATE			NOT NULL
-			, TargetStart				DATE
+			, TargetCompletion			DATE
 			, UpdatedDate				DATE
 			, ShortDescription			VARCHAR(50)		NOT NULL
 			, StatusCode				BIT
@@ -2643,35 +2643,36 @@ BEGIN TRY
 		PRINT 'Created audit trigger for actions'
 
 		INSERT INTO dbo.Actions
-		( ActionCode, ProjectID, LoggedDate, TargetStart, UpdatedDate, ShortDescription, StatusCode, LoggedBy, InternalOwner, ClientOwner, Notes, StageID)
-		SELECT LEFT(HistoryAction.ShortDescription, 20) AS ActionCode, -- Will correct later via an update
+			( ActionCode, ProjectID, LoggedDate, TargetCompletion, UpdatedDate, ShortDescription, StatusCode, LoggedBy, InternalOwner, ClientOwner, Notes, StageID)
+		SELECT LEFT(Action.ShortDescription, 20) AS ActionCode, -- Will correct later via an update, based on kick-off date
 			Project.ID AS ProjectID,
-			CASE WHEN HistoryStage.StageNumber = 0 
-				THEN DATEADD(DAY, -7, Project.StartDate)
-				ELSE CASE WHEN HistoryAction.ShortDescription = 'Hold kick-off meeting' THEN DATEADD(DAY, -7, Project.StartDate)
-					ELSE '1970-01-01' -- Will correct later via an update
+			CASE WHEN ActionStage.StageNumber = 0 
+				THEN ActionStageDates.EffectiveStart
+				ELSE CASE WHEN Action.ShortDescription = 'Hold kick-off meeting' THEN PreProjectStageDates.EffectiveStart
+					ELSE '1970-01-01' -- Will correct later via an update, setting to kick-off date
 					END
 			END AS LoggedDate,
-			NULL AS TargetStart,
-			CASE WHEN History.ActualStart IS NULL THEN -- Not yet completed this stage
-					CASE WHEN CurrentStage.StageNumber = HistoryStage.StageNumber THEN -- Current stage
-						CASE CAST(1 - ROUND(HistoryAction.TargetDuration, 0) AS BIT) -- If the result is closer to 0, it is less likely to be done or have an update
-							WHEN 1 THEN DATEADD(DAY, 
-								-1 * CAST(ROUND((1 - HistoryAction.TargetDuration) * DATEDIFF(DAY, ISNULL(PreviousStageHistory.ActualStart, DATEADD(DAY, -7, Project.StartDate)), History.TargetStart),0) AS INT)
-								, History.TargetStart)
+			NULL AS TargetCompletion,
+			CASE WHEN FollowingStageDates.ActualStart IS NULL THEN -- Not yet completed this stage
+					CASE WHEN ActionStage.StageNumber = ProjectCurrentStage.StageNumber THEN -- Current project stage
+						CASE CAST(1 - ROUND(Action.TargetDuration, 0) AS BIT) -- If result is closer to 0, less likely to be done or have an update
+							WHEN 1 THEN 
+								DATEADD(DAY, 
+								CAST(ROUND(Action.TargetDuration * DATEDIFF(DAY, ActionStageDates.EffectiveStart, FollowingStageDates.EffectiveStart),0) AS INT)
+								, ActionStageDates.EffectiveStart)
 							ELSE NULL
 						END
 						ELSE NULL -- Future stage, no updates expected
 					END
-				ELSE -- Past stage: calculate stage duration, multiply by action target duration and take that from the stage end
+				ELSE -- Past stage: calculate stage duration, multiply by action target duration and add it to the stage start
 					DATEADD(DAY, 
-					-1 * CAST(ROUND((1 - HistoryAction.TargetDuration) * DATEDIFF(DAY, ISNULL(PreviousStageHistory.ActualStart, DATEADD(DAY, -7, Project.StartDate)), History.ActualStart),0) AS INT) 
-					, History.ActualStart)
+					CAST(ROUND(Action.TargetDuration * DATEDIFF(DAY, ActionStageDates.EffectiveStart, FollowingStageDates.EffectiveStart),0) AS INT)
+					, ActionStageDates.EffectiveStart)
 			END AS UpdatedDate,
-			HistoryAction.ShortDescription AS ShortDescription,
-			CASE WHEN History.ActualStart IS NULL THEN -- Not yet completed this stage
-					CASE WHEN CurrentStage.StageNumber = HistoryStage.StageNumber THEN -- Current stage
-						CAST(1 - ROUND(HistoryAction.TargetDuration, 0) AS BIT) -- If the result is closer to 0, less likely to be done
+			Action.ShortDescription AS ShortDescription,
+			CASE WHEN FollowingStageDates.ActualStart IS NULL THEN -- Not yet completed this stage
+					CASE WHEN ActionStage.StageNumber = ProjectCurrentStage.StageNumber  THEN -- Current project stage
+						CAST(1 - ROUND(Action.TargetDuration, 0) AS BIT) -- If result is closer to 0, less likely to be done
 					ELSE NULL -- Future stage, not expected to be done
 					END
 				ELSE 1
@@ -2681,49 +2682,44 @@ BEGIN TRY
 				ELSE CASE WHEN ClientOwner.ID IS NULL THEN InternalOwner.ID ELSE NULL END 
 			END AS InternalOwner,
 			ClientOwner.ID AS ClientOwner,
-			HistoryAction.Notes AS Notes,
-			History.StageID AS StageID
+			Action.Notes AS Notes,
+			Action.StageID AS StageID
 
-			--, HistoryStage.StageNumber As HistoryStage
-			--, History.TargetStart
-			--, History.ActualStart
-			--, CurrentStage.StageNumber As ProjectStage
-			--, CurrentStage.StageName
-			--, PreviousStage.StageNumber AS PreviousStage
-			--, DATEADD(DAY, 1, ISNULL(PreviousStageHistory.ActualStart, ISNULL(PreviousStageHistory.TargetStart, DATEADD(DAY, -7, Project.StartDate)))) AS StageStart 
-			--, ISNULL(History.ActualStart, History.TargetStart) AS StageEnd
-			--, ISNULL(KickOffStageHistory.ActualStart, KickOffStageHistory.TargetStart) AS KickOffStageEnd
-			--, CAST(DATEDIFF(DAY, 
-			--	COALESCE(PreviousStageHistory.ActualStart, PreviousStageHistory.TargetStart, DATEADD(DAY, -7, Project.StartDate)), 
-			--	COALESCE(History.ActualStart, History.TargetStart)) 
-			--AS INT) AS StageDuration
-			--, HistoryAction.TargetDuration
-			--, HistoryAction.InternalRole
-			--, HistoryAction.ClientRole
+			--, ActionStage.StageNumber As ActionStage
+			--, ActionStageDates.EffectiveStart as ActionStageStart
+			--, ProjectCurrentStage.StageNumber As ProjectStage
+			--, ProjectCurrentStage.StageName
+			--, FollowingStage.StageNumber AS FollowingStage
+			--, FollowingStageDates.EffectiveStart AS FollowingStageStart 
+			--, PreProjectStageDates.EffectiveStart AS PreProjectStart
+			--, CAST(DATEDIFF(DAY,  ActionStageDates.EffectiveStart, FollowingStageDates.EffectiveStart) AS INT) AS StageDuration
+			--, Action.TargetDuration
+			--, Action.InternalRole
+			--, Action.ClientRole
 			--, Project.TypeCode
 			--, dbo.udf_CheckActionOwner(Project.ID, 	
 			--	CASE WHEN Project.TypeCode = 'IP' THEN InternalOwner.ID
 			--	ELSE CASE WHEN ClientOwner.ID IS NULL THEN InternalOwner.ID ELSE NULL END 
 			--	END ,
 			--	ClientOwner.ID) AS CheckConstraint
-			--, CASE WHEN CurrentStage.StageNumber = HistoryStage.StageNumber THEN 1 ELSE 0 END AS CurrentStage
+			--, CASE WHEN ProjectCurrentStage.StageNumber = ActionStage.StageNumber THEN 1 ELSE 0 END AS CurrentStage
 
 		FROM dbo.Projects Project
-			INNER JOIN dbo.ProjectStages CurrentStage ON Project.StageID = CurrentStage.ID
-			INNER JOIN dbo.StageHistory History 
-				INNER JOIN dbo.ProjectStages HistoryStage ON History.StageID = HistoryStage.ID
-			ON History.ProjectID = Project.ID AND HistoryStage.StageNumber <= CurrentStage.StageNumber
-			INNER JOIN dbo.SuggestedActions HistoryAction 
-				INNER JOIN dbo.ProjectTeams InternalOwner ON InternalOwner.ProjectRoleCode = HistoryAction.InternalRole
-			ON InternalOwner.ProjectID = Project.ID AND History.StageID = HistoryAction.StageID	
+			INNER JOIN dbo.ProjectStages ProjectCurrentStage ON Project.StageID = ProjectCurrentStage.ID
+			INNER JOIN dbo.StageHistory ActionStageDates 
+				INNER JOIN dbo.ProjectStages ActionStage ON ActionStageDates.StageID = ActionStage.ID
+			ON ActionStageDates.ProjectID = Project.ID --AND ActionStage.StageNumber <= ProjectCurrentStage.StageNumber
+			INNER JOIN dbo.SuggestedActions Action 
+				INNER JOIN dbo.ProjectTeams InternalOwner ON InternalOwner.ProjectRoleCode = Action.InternalRole
+			ON InternalOwner.ProjectID = Project.ID AND Action.StageID = ActionStage.ID
 			INNER JOIN dbo.ProjectTeams InternalManager ON InternalManager.ProjectID = Project.ID AND InternalManager.ProjectRoleCode = 'PM'
-			LEFT JOIN dbo.ClientTeams ClientOwner ON ClientOwner.ProjectID = Project.ID AND ClientOwner.ClientTeamRoleCode = HistoryAction.ClientRole
-			LEFT JOIN dbo.StageHistory PreviousStageHistory 
-				INNER JOIN dbo.ProjectStages PreviousStage ON PreviousStageHistory.StageID = PreviousStage.ID 
-			ON PreviousStageHistory.ProjectID = Project.ID AND PreviousStage.StageNumber = HistoryStage.StageNumber - 1
-			INNER JOIN dbo.SuggestedActions KickOffAction 
-				INNER JOIN dbo.StageHistory KickOffStageHistory ON KickOffStageHistory.StageID = KickOffAction.StageID
-			ON KickOffStageHistory.ProjectID = Project.ID AND KickOffAction.ShortDescription = 'Hold kick-off meeting'
+			LEFT JOIN dbo.ClientTeams ClientOwner ON ClientOwner.ProjectID = Project.ID AND ClientOwner.ClientTeamRoleCode = Action.ClientRole
+			LEFT JOIN dbo.StageHistory FollowingStageDates 
+				INNER JOIN dbo.ProjectStages FollowingStage ON FollowingStageDates.StageID = FollowingStage.ID 
+			ON FollowingStageDates.ProjectID = Project.ID AND FollowingStage.StageNumber = ActionStage.StageNumber + 1
+			INNER JOIN dbo.StageHistory PreProjectStageDates
+				INNER JOIN dbo.ProjectStages PreProjectStage ON PreProjectStageDates.StageID = PreProjectStage.ID AND PreProjectStage.StageNumber = 0 
+			ON PreProjectStageDates.ProjectID = Project.ID
 		ORDER BY 2, 12, 5
 
 		-- Update logged dates		
@@ -2755,7 +2751,7 @@ BEGIN TRY
 		EXEC [dbo].[usp_CreateUpdateProcedure] 
 			@TableName = 'Actions'
 			, @IDColumn = 'ID'
-			, @UpdateColumn = 'TargetStart'
+			, @UpdateColumn = 'TargetCompletion'
 			, @Prefix = 'prj'
 
 		EXEC [dbo].[usp_CreateUpdateProcedure] 
