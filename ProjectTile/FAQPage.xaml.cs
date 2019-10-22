@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -57,7 +58,7 @@ namespace ProjectTile
             addTileQuestions();
             addFunctionalityQuestions();
             addDevelopmentQuestions();
-
+            addYourQuestions();
             
         }
 
@@ -150,12 +151,61 @@ namespace ProjectTile
                 + "methods and using string interpolation.");
         }
 
+        private void addYourQuestions()
+        {
+            addHeader("Your Questions");           
+            try
+            {
+                Paragraph para = new Paragraph();
+                Span question = new Span();
+                question.SetResourceReference(StyleProperty, "QuestionSpan");
+                question.Inlines.Add("How do I get in touch to find out more?" + newLine);
+                para.Inlines.Add(question);
+                
+                Span answer1 = new Span();
+                answer1.SetResourceReference(StyleProperty, "AnswerSpan");
+                answer1.Inlines.Add("Email ");
+                
+                //Span hyperSpan = new Span();
+                //Run hyperText = new Run("mrmarkajohnson@yahoo.co.uk");                
+                Hyperlink hyperLink = new Hyperlink();
+                hyperLink.Inlines.Add("mrmarkajohnson@yahoo.co.uk");
+                hyperLink.NavigateUri = new Uri("mailto:mrmarkajohnson@yahoo.co.uk?subject=Regarding%20ProjectTile");
+                //hyperLink.RequestNavigate += new System.Windows.Navigation.RequestNavigateEventHandler(requestNavigation);
+                //hyperLink.Click += requestEmail;
+                //hyperSpan.Inlines.Add(hyperText);
+                
+                Span answer2 = new Span();
+                answer2.SetResourceReference(StyleProperty, "AnswerSpan");
+                answer2.Inlines.Add(" with any further questions, comments or to get in touch regarding job opportunities.");
+                
+                para.Inlines.Add(answer1);
+                para.Inlines.Add(hyperLink);
+                para.Inlines.Add(answer2);
+                thisDoc.Blocks.Add(para);
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error adding question", generalException); }
+
+        }
+
 
         // ---------------------- //
         // -- Event Management -- //
         // ---------------------- //
 
         // Generic (shared) control events //
+        //private void requestNavigation(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        //{
+        //    Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+        //    e.Handled = true;
+        //}
+
+        //private void requestEmail(object sender, RoutedEventArgs e)
+        //{
+        //    Uri mailUri = new Uri("mailto:mrmarkajohnson@yahoo.co.uk");
+        //    Process.Start(new ProcessStartInfo(mailUri.AbsoluteUri));
+        //    e.Handled = true;
+        //}
 
         // Control-specific events //
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -163,12 +213,6 @@ namespace ProjectTile
             if (Globals.MyStaffID > 0) { PageFunctions.ShowTilesPage(); }
             else { PageFunctions.ShowLoginPage(PageFunctions.LogIn); }
         }
-
-        private void CommitButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
 
 
     } // class

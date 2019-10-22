@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 
 namespace ProjectTile
 {
@@ -91,14 +92,23 @@ namespace ProjectTile
 
             SystemText = "ProjectTile is designed to simulate an in-house system for managing small software implementation or improvement projects, most of which would be on behalf of clients "
                 + "(software customers)."
-                + newLine + "It allows multiple Entities to be set up to represent different parts of the business - mainly to allow some 'dummy' data to be created in a Sample company"
-                + " - although Products are currently 'global' to all Entities."
+                + newLine + "It allows multiple Entities to be set up to represent different parts of the business - mainly to allow some 'dummy' data to be created in a Sample company "
+                + "- although Products are currently 'global' to all Entities."
                 + newLine + "Staff can be assigned to multiple Entities. Clients are per Entity, although it is possible to copy them (and their contacts, but not products) to another Entity.";
 
-            AcknowledgementsText = "Many thanks to all of the people on various forums (StackOverflow, Microsoft etc.) who had previously asked questions that I needed to ask, to the people "
-                + " who took the time to answer, and - most of all - to the ones who gave the answers I needed."
-                + newLine + "Also thanks to the lovely Monica Sudiwala for her patience as I wrote this, and for keeping me sane.";
+            AcknowledgementsText = "Many thanks to all of the people on various forums (StackOverflow, Microsoft etc.) who had previously asked questions that I needed to ask, to the people"
+                + " who took the time to answer, and - most of all - to the ones who gave the answers I needed!"
+                + newLine + "I used a combination of the Microsoft Visual C# Step by Step guide and Programming with Mosh to get started. Also thanks to the lovely Monica Sudiwala for her "
+                + "patience as I wrote this, and for keeping me sane.";
 
+            Run getInTouch1 = new Run("Please see the ");
+            Run getInTouch2 = new Run("Frequently Asked Questions");
+            Run getInTouch3 = new Run(" page for contact details.");
+            Hyperlink hyperLink = new Hyperlink(getInTouch2);
+            hyperLink.Click += openFAQs;
+            MainText.Inlines.Add(getInTouch1);
+            MainText.Inlines.Add(hyperLink);
+            MainText.Inlines.Add(getInTouch3);
         }
 
         // ---------------------- //
@@ -128,6 +138,10 @@ namespace ProjectTile
         // ---------------------- //
 
         // Generic (shared) control events //
+        private void openFAQs(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowFAQPage();
+        }
 
         // Control-specific events //
         private void CancelButton_Click(object sender, RoutedEventArgs e)

@@ -49,7 +49,11 @@
                             <LineBreak/>
                             <TextBlock FontWeight="Bold" Text="Acknowledgements"/>
                             <LineBreak/>
-                            <TextBlock Text="{Binding Path=AcknowledgementsText, Mode=OneWay}" TextWrapping="Wrap"/>                        
+                            <TextBlock Text="{Binding Path=AcknowledgementsText, Mode=OneWay}" TextWrapping="Wrap"/>
+                            <LineBreak/>
+                            <LineBreak/>
+                            <TextBlock FontWeight="Bold" Text="Get in Touch"/>
+                            <LineBreak/>
                         </TextBlock.Inlines>
                     </TextBlock>
                 </ScrollViewer>
