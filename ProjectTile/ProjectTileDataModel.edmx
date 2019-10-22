@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="ProjectTileModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="ProjectTileDataModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Actions">
           <Key>
             <PropertyRef Name="ID" />
@@ -815,6 +815,10 @@
           <Parameter Name="TargetStart" Type="date" Mode="In" />
           <Parameter Name="ActualStart" Type="date" Mode="In" />
         </Function>
+        <Function Name="prj_UpdateActualStartInStageHistory" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="ActualStart" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="prj_UpdateClientStaffIDInClientTeams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID" Type="varchar" Mode="In" />
           <Parameter Name="ClientStaffID" Type="varchar" Mode="In" />
@@ -854,6 +858,14 @@
         <Function Name="prj_UpdateStatusInNotes" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID" Type="varchar" Mode="In" />
           <Parameter Name="Status" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_UpdateTargetCompletionInActions" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="TargetCompletion" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="prj_UpdateTargetStartInStageHistory" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="varchar" Mode="In" />
+          <Parameter Name="TargetStart" Type="varchar" Mode="In" />
         </Function>
         <Function Name="prj_UpdateToDateInClientTeams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID" Type="varchar" Mode="In" />
@@ -930,7 +942,7 @@
           <Parameter Name="RoleCode" Type="varchar" Mode="In" />
           <Parameter Name="RoleDescription" Type="varchar" Mode="In" />
         </Function>
-        <EntityContainer Name="ProjectTileModelStoreContainer">
+        <EntityContainer Name="ProjectTileDataModelStoreContainer">
           <EntitySet Name="Actions" EntityType="Self.Actions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AuditEntries" EntityType="Self.AuditEntries" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ClientProducts" EntityType="Self.ClientProducts" Schema="dbo" store:Type="Tables" />
@@ -1066,10 +1078,11 @@
             <End Role="ProjectTeams" EntitySet="ProjectTeams" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="ProjectTileModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="ProjectTileDataModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="Actions">
           <Key>
             <PropertyRef Name="ID" />
@@ -1078,6 +1091,7 @@
           <Property Name="ActionCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="ProjectID" Type="Int32" Nullable="false" />
           <Property Name="LoggedDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="TargetCompletion" Type="DateTime" Precision="0" />
           <Property Name="UpdatedDate" Type="DateTime" Precision="0" />
           <Property Name="ShortDescription" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="StatusCode" Type="Boolean" />
@@ -1088,7 +1102,6 @@
           <Property Name="StageID" Type="Int32" />
           <NavigationProperty Name="ProjectTeams" Relationship="Self.fk_ActionLoggedBy" FromRole="Actions" ToRole="ProjectTeams" />
           <NavigationProperty Name="Projects" Relationship="Self.fk_ActionProjectID" FromRole="Actions" ToRole="Projects" />
-          <Property Name="TargetCompletion" Type="DateTime" Precision="0" />
         </EntityType>
         <EntityType Name="AuditEntries">
           <Key>
@@ -1341,11 +1354,11 @@
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ProjectID" Type="Int32" Nullable="false" />
           <Property Name="StageID" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Projects" Relationship="Self.fk_StageProject" FromRole="StageHistory" ToRole="Projects" />
-          <NavigationProperty Name="ProjectStages" Relationship="Self.fk_HistoryStage" FromRole="StageHistory" ToRole="ProjectStages" />
           <Property Name="TargetStart" Type="DateTime" Precision="0" />
           <Property Name="ActualStart" Type="DateTime" Precision="0" />
           <Property Name="EffectiveStart" Type="DateTime" annotation:StoreGeneratedPattern="Computed" Precision="0" />
+          <NavigationProperty Name="Projects" Relationship="Self.fk_StageProject" FromRole="StageHistory" ToRole="Projects" />
+          <NavigationProperty Name="ProjectStages" Relationship="Self.fk_HistoryStage" FromRole="StageHistory" ToRole="ProjectStages" />
         </EntityType>
         <EntityType Name="SuggestedActions">
           <Key>
@@ -1853,17 +1866,17 @@
             <End Role="StaffRoles" EntitySet="StaffRoles" />
             <End Role="TablePermissions" EntitySet="TablePermissions" />
           </AssociationSet>
-          <FunctionImport Name="cln_GetClientsByAccountManagerID" ReturnType="Collection(ProjectTileModel.cln_GetClientsByAccountManagerID_Result)">
-          <Parameter Name="AccountManagerID" Mode="In" Type="String" />
+          <FunctionImport Name="cln_GetClientsByAccountManagerID" ReturnType="Collection(ProjectTileDataModel.cln_GetClientsByAccountManagerID_Result)">
+            <Parameter Name="AccountManagerID" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="cln_GetClientsByClientCode" ReturnType="Collection(ProjectTileModel.cln_GetClientsByClientCode_Result)">
-          <Parameter Name="ClientCode" Mode="In" Type="String" />
+          <FunctionImport Name="cln_GetClientsByClientCode" ReturnType="Collection(ProjectTileDataModel.cln_GetClientsByClientCode_Result)">
+            <Parameter Name="ClientCode" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="cln_GetClientsByID" ReturnType="Collection(ProjectTileModel.cln_GetClientsByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+          <FunctionImport Name="cln_GetClientsByID" ReturnType="Collection(ProjectTileDataModel.cln_GetClientsByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="cln_GetClientStaffByID" ReturnType="Collection(ProjectTileModel.cln_GetClientStaffByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+          <FunctionImport Name="cln_GetClientStaffByID" ReturnType="Collection(ProjectTileDataModel.cln_GetClientStaffByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="cln_InsertIntoClientProducts">
             <Parameter Name="ClientID" Mode="In" Type="Int32" />
@@ -1907,8 +1920,8 @@
             <Parameter Name="ID" Mode="In" Type="String" />
             <Parameter Name="Surname" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="ent_GetEntitiesByID" ReturnType="Collection(ProjectTileModel.ent_GetEntitiesByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+          <FunctionImport Name="ent_GetEntitiesByID" ReturnType="Collection(ProjectTileDataModel.ent_GetEntitiesByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="ent_InsertIntoEntities">
             <Parameter Name="EntityName" Mode="In" Type="String" />
@@ -1922,8 +1935,8 @@
             <Parameter Name="ID" Mode="In" Type="String" />
             <Parameter Name="EntityName" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="err_GetErrorLogByID" ReturnType="Collection(ProjectTileModel.err_GetErrorLogByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+          <FunctionImport Name="err_GetErrorLogByID" ReturnType="Collection(ProjectTileDataModel.err_GetErrorLogByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="err_InsertIntoErrorLog">
             <Parameter Name="CustomMessage" Mode="In" Type="String" />
@@ -1934,14 +1947,14 @@
             <Parameter Name="LoggedBy" Mode="In" Type="String" />
             <Parameter Name="InnerException" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="pja_GetClientTeamRolesByRoleCode" ReturnType="Collection(ProjectTileModel.pja_GetClientTeamRolesByRoleCode_Result)">
-          <Parameter Name="RoleCode" Mode="In" Type="String" />
+          <FunctionImport Name="pja_GetClientTeamRolesByRoleCode" ReturnType="Collection(ProjectTileDataModel.pja_GetClientTeamRolesByRoleCode_Result)">
+            <Parameter Name="RoleCode" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="pja_GetProjectRolesByRoleCode" ReturnType="Collection(ProjectTileModel.pja_GetProjectRolesByRoleCode_Result)">
-          <Parameter Name="RoleCode" Mode="In" Type="String" />
+          <FunctionImport Name="pja_GetProjectRolesByRoleCode" ReturnType="Collection(ProjectTileDataModel.pja_GetProjectRolesByRoleCode_Result)">
+            <Parameter Name="RoleCode" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="pja_GetProjectStagesByID" ReturnType="Collection(ProjectTileModel.pja_GetProjectStagesByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+          <FunctionImport Name="pja_GetProjectStagesByID" ReturnType="Collection(ProjectTileDataModel.pja_GetProjectStagesByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="pja_InsertIntoClientTeamRoles">
             <Parameter Name="RoleCode" Mode="In" Type="String" />
@@ -1986,11 +1999,11 @@
             <Parameter Name="TypeCode" Mode="In" Type="String" />
             <Parameter Name="TypeName" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="prd_GetProductsByID" ReturnType="Collection(ProjectTileModel.prd_GetProductsByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+          <FunctionImport Name="prd_GetProductsByID" ReturnType="Collection(ProjectTileDataModel.prd_GetProductsByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="prd_GetProductsByProductName" ReturnType="Collection(ProjectTileModel.prd_GetProductsByProductName_Result)">
-          <Parameter Name="ProductName" Mode="In" Type="String" />
+          <FunctionImport Name="prd_GetProductsByProductName" ReturnType="Collection(ProjectTileDataModel.prd_GetProductsByProductName_Result)">
+            <Parameter Name="ProductName" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prd_InsertIntoProducts">
             <Parameter Name="ProductName" Mode="In" Type="String" />
@@ -2001,26 +2014,26 @@
             <Parameter Name="ID" Mode="In" Type="String" />
             <Parameter Name="LatestVersion" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="prj_GetActionsByID" ReturnType="Collection(ProjectTileModel.prj_GetActionsByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+          <FunctionImport Name="prj_GetActionsByID" ReturnType="Collection(ProjectTileDataModel.prj_GetActionsByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="prj_GetClientTeamsByID" ReturnType="Collection(ProjectTileModel.prj_GetClientTeamsByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+          <FunctionImport Name="prj_GetClientTeamsByID" ReturnType="Collection(ProjectTileDataModel.prj_GetClientTeamsByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_GetNewVersionByID">
-          <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_GetOldVersionByID">
-          <Parameter Name="ID" Mode="In" Type="String" />
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="prj_GetProjectsByID" ReturnType="Collection(ProjectTileModel.prj_GetProjectsByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+          <FunctionImport Name="prj_GetProjectsByID" ReturnType="Collection(ProjectTileDataModel.prj_GetProjectsByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="prj_GetProjectTeamsByID" ReturnType="Collection(ProjectTileModel.prj_GetProjectTeamsByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+          <FunctionImport Name="prj_GetProjectTeamsByID" ReturnType="Collection(ProjectTileDataModel.prj_GetProjectTeamsByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="prj_GetStageHistoryByID" ReturnType="Collection(ProjectTileModel.prj_GetStageHistoryByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+          <FunctionImport Name="prj_GetStageHistoryByID" ReturnType="Collection(ProjectTileDataModel.prj_GetStageHistoryByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_InsertIntoActions">
             <Parameter Name="ActionCode" Mode="In" Type="String" />
@@ -2071,9 +2084,9 @@
             <Parameter Name="TargetStart" Mode="In" Type="DateTime" />
             <Parameter Name="ActualStart" Mode="In" Type="DateTime" />
           </FunctionImport>
-          <FunctionImport Name="prj_UpdateAchievedDateInStageHistory">
+          <FunctionImport Name="prj_UpdateActualStartInStageHistory">
             <Parameter Name="ID" Mode="In" Type="String" />
-            <Parameter Name="AchievedDate" Mode="In" Type="String" />
+            <Parameter Name="ActualStart" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_UpdateClientStaffIDInClientTeams">
             <Parameter Name="ID" Mode="In" Type="String" />
@@ -2115,13 +2128,13 @@
             <Parameter Name="ID" Mode="In" Type="String" />
             <Parameter Name="Status" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="prj_UpdateTargetDateInActions">
+          <FunctionImport Name="prj_UpdateTargetCompletionInActions">
             <Parameter Name="ID" Mode="In" Type="String" />
-            <Parameter Name="TargetDate" Mode="In" Type="String" />
+            <Parameter Name="TargetCompletion" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="prj_UpdateTargetDateInStageHistory">
+          <FunctionImport Name="prj_UpdateTargetStartInStageHistory">
             <Parameter Name="ID" Mode="In" Type="String" />
-            <Parameter Name="TargetDate" Mode="In" Type="String" />
+            <Parameter Name="TargetStart" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="prj_UpdateToDateInClientTeams">
             <Parameter Name="ID" Mode="In" Type="String" />
@@ -2135,8 +2148,8 @@
             <Parameter Name="ID" Mode="In" Type="String" />
             <Parameter Name="UpdatedDate" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="sec_GetTablePermissionsByID" ReturnType="Collection(ProjectTileModel.sec_GetTablePermissionsByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+          <FunctionImport Name="sec_GetTablePermissionsByID" ReturnType="Collection(ProjectTileDataModel.sec_GetTablePermissionsByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="sec_InsertIntoTablePermissions">
             <Parameter Name="TableName" Mode="In" Type="String" />
@@ -2154,14 +2167,14 @@
             <Parameter Name="UserID" Mode="In" Type="String" />
             <Parameter Name="Passwd" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="stf_GetStaffByID" ReturnType="Collection(ProjectTileModel.stf_GetStaffByID_Result)">
-          <Parameter Name="ID" Mode="In" Type="String" />
+          <FunctionImport Name="stf_GetStaffByID" ReturnType="Collection(ProjectTileDataModel.stf_GetStaffByID_Result)">
+            <Parameter Name="ID" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="stf_GetStaffByRoleCode" ReturnType="Collection(ProjectTileModel.stf_GetStaffByRoleCode_Result)">
-          <Parameter Name="RoleCode" Mode="In" Type="String" />
+          <FunctionImport Name="stf_GetStaffByRoleCode" ReturnType="Collection(ProjectTileDataModel.stf_GetStaffByRoleCode_Result)">
+            <Parameter Name="RoleCode" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="stf_GetStaffRolesByRoleCode" ReturnType="Collection(ProjectTileModel.stf_GetStaffRolesByRoleCode_Result)">
-          <Parameter Name="RoleCode" Mode="In" Type="String" />
+          <FunctionImport Name="stf_GetStaffRolesByRoleCode" ReturnType="Collection(ProjectTileDataModel.stf_GetStaffRolesByRoleCode_Result)">
+            <Parameter Name="RoleCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="stf_InsertIntoStaff">
             <Parameter Name="FirstName" Mode="In" Type="String" />
@@ -2281,7 +2294,7 @@
           <Property Type="String" Name="ActionCode" Nullable="false" MaxLength="20" />
           <Property Type="Int32" Name="ProjectID" Nullable="false" />
           <Property Type="DateTime" Name="LoggedDate" Nullable="false" />
-          <Property Type="DateTime" Name="TargetDate" Nullable="true" />
+          <Property Type="DateTime" Name="TargetCompletion" Nullable="true" />
           <Property Type="DateTime" Name="UpdatedDate" Nullable="true" />
           <Property Type="String" Name="ShortDescription" Nullable="false" MaxLength="50" />
           <Property Type="Boolean" Name="StatusCode" Nullable="true" />
@@ -2322,8 +2335,9 @@
           <Property Type="Int32" Name="ID" Nullable="false" />
           <Property Type="Int32" Name="ProjectID" Nullable="false" />
           <Property Type="Int32" Name="StageID" Nullable="false" />
-          <Property Type="DateTime" Name="TargetDate" Nullable="true" />
-          <Property Type="DateTime" Name="AchievedDate" Nullable="true" />
+          <Property Type="DateTime" Name="TargetStart" Nullable="true" />
+          <Property Type="DateTime" Name="ActualStart" Nullable="true" />
+          <Property Type="DateTime" Name="EffectiveStart" Nullable="true" />
         </ComplexType>
         <ComplexType Name="sec_GetTablePermissionsByID_Result">
           <Property Type="Int32" Name="ID" Nullable="false" />
@@ -2379,15 +2393,15 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="ProjectTileModelStoreContainer" CdmEntityContainer="ProjectTileSqlDatabase">
+        <EntityContainerMapping StorageEntityContainer="ProjectTileDataModelStoreContainer" CdmEntityContainer="ProjectTileSqlDatabase">
           <EntitySetMapping Name="Actions">
-            <EntityTypeMapping TypeName="ProjectTileModel.Actions">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.Actions">
               <MappingFragment StoreEntitySet="Actions">
-                <ScalarProperty Name="TargetCompletion" ColumnName="TargetCompletion" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ActionCode" ColumnName="ActionCode" />
                 <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
                 <ScalarProperty Name="LoggedDate" ColumnName="LoggedDate" />
+                <ScalarProperty Name="TargetCompletion" ColumnName="TargetCompletion" />
                 <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
                 <ScalarProperty Name="ShortDescription" ColumnName="ShortDescription" />
                 <ScalarProperty Name="StatusCode" ColumnName="StatusCode" />
@@ -2400,7 +2414,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AuditEntries">
-            <EntityTypeMapping TypeName="ProjectTileModel.AuditEntries">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.AuditEntries">
               <MappingFragment StoreEntitySet="AuditEntries">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ActionType" ColumnName="ActionType" />
@@ -2416,7 +2430,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ClientProducts">
-            <EntityTypeMapping TypeName="ProjectTileModel.ClientProducts">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.ClientProducts">
               <MappingFragment StoreEntitySet="ClientProducts">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ClientID" ColumnName="ClientID" />
@@ -2427,7 +2441,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Clients">
-            <EntityTypeMapping TypeName="ProjectTileModel.Clients">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.Clients">
               <MappingFragment StoreEntitySet="Clients">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="EntityID" ColumnName="EntityID" />
@@ -2439,7 +2453,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ClientStaff">
-            <EntityTypeMapping TypeName="ProjectTileModel.ClientStaff">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.ClientStaff">
               <MappingFragment StoreEntitySet="ClientStaff">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ClientID" ColumnName="ClientID" />
@@ -2454,7 +2468,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ClientTeamRoles">
-            <EntityTypeMapping TypeName="ProjectTileModel.ClientTeamRoles">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.ClientTeamRoles">
               <MappingFragment StoreEntitySet="ClientTeamRoles">
                 <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
                 <ScalarProperty Name="RoleDescription" ColumnName="RoleDescription" />
@@ -2462,7 +2476,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ClientTeams">
-            <EntityTypeMapping TypeName="ProjectTileModel.ClientTeams">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.ClientTeams">
               <MappingFragment StoreEntitySet="ClientTeams">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
@@ -2474,7 +2488,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Entities">
-            <EntityTypeMapping TypeName="ProjectTileModel.Entities">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.Entities">
               <MappingFragment StoreEntitySet="Entities">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="EntityName" ColumnName="EntityName" />
@@ -2483,7 +2497,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ErrorLog">
-            <EntityTypeMapping TypeName="ProjectTileModel.ErrorLog">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.ErrorLog">
               <MappingFragment StoreEntitySet="ErrorLog">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="CustomMessage" ColumnName="CustomMessage" />
@@ -2497,7 +2511,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Products">
-            <EntityTypeMapping TypeName="ProjectTileModel.Products">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.Products">
               <MappingFragment StoreEntitySet="Products">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ProductName" ColumnName="ProductName" />
@@ -2507,7 +2521,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ProjectProducts">
-            <EntityTypeMapping TypeName="ProjectTileModel.ProjectProducts">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.ProjectProducts">
               <MappingFragment StoreEntitySet="ProjectProducts">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
@@ -2518,7 +2532,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ProjectRoles">
-            <EntityTypeMapping TypeName="ProjectTileModel.ProjectRoles">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.ProjectRoles">
               <MappingFragment StoreEntitySet="ProjectRoles">
                 <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
                 <ScalarProperty Name="RoleDescription" ColumnName="RoleDescription" />
@@ -2526,7 +2540,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Projects">
-            <EntityTypeMapping TypeName="ProjectTileModel.Projects">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.Projects">
               <MappingFragment StoreEntitySet="Projects">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="EntityID" ColumnName="EntityID" />
@@ -2541,7 +2555,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ProjectStages">
-            <EntityTypeMapping TypeName="ProjectTileModel.ProjectStages">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.ProjectStages">
               <MappingFragment StoreEntitySet="ProjectStages">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="StageNumber" ColumnName="StageNumber" />
@@ -2552,7 +2566,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ProjectTeams">
-            <EntityTypeMapping TypeName="ProjectTileModel.ProjectTeams">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.ProjectTeams">
               <MappingFragment StoreEntitySet="ProjectTeams">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
@@ -2564,7 +2578,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ProjectTypes">
-            <EntityTypeMapping TypeName="ProjectTileModel.ProjectTypes">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.ProjectTypes">
               <MappingFragment StoreEntitySet="ProjectTypes">
                 <ScalarProperty Name="TypeCode" ColumnName="TypeCode" />
                 <ScalarProperty Name="TypeName" ColumnName="TypeName" />
@@ -2573,7 +2587,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Staff">
-            <EntityTypeMapping TypeName="ProjectTileModel.Staff">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.Staff">
               <MappingFragment StoreEntitySet="Staff">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
@@ -2595,7 +2609,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="StaffEntities">
-            <EntityTypeMapping TypeName="ProjectTileModel.StaffEntities">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.StaffEntities">
               <MappingFragment StoreEntitySet="StaffEntities">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="StaffID" ColumnName="StaffID" />
@@ -2604,7 +2618,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="StaffRoles">
-            <EntityTypeMapping TypeName="ProjectTileModel.StaffRoles">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.StaffRoles">
               <MappingFragment StoreEntitySet="StaffRoles">
                 <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
                 <ScalarProperty Name="RoleDescription" ColumnName="RoleDescription" />
@@ -2612,19 +2626,19 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="StageHistory">
-            <EntityTypeMapping TypeName="ProjectTileModel.StageHistory">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.StageHistory">
               <MappingFragment StoreEntitySet="StageHistory">
-                <ScalarProperty Name="EffectiveStart" ColumnName="EffectiveStart" />
-                <ScalarProperty Name="ActualStart" ColumnName="ActualStart" />
-                <ScalarProperty Name="TargetStart" ColumnName="TargetStart" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
                 <ScalarProperty Name="StageID" ColumnName="StageID" />
-                </MappingFragment>
+                <ScalarProperty Name="TargetStart" ColumnName="TargetStart" />
+                <ScalarProperty Name="ActualStart" ColumnName="ActualStart" />
+                <ScalarProperty Name="EffectiveStart" ColumnName="EffectiveStart" />
+              </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SuggestedActions">
-            <EntityTypeMapping TypeName="ProjectTileModel.SuggestedActions">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.SuggestedActions">
               <MappingFragment StoreEntitySet="SuggestedActions">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ShortDescription" ColumnName="ShortDescription" />
@@ -2646,7 +2660,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="TablePermissions">
-            <EntityTypeMapping TypeName="ProjectTileModel.TablePermissions">
+            <EntityTypeMapping TypeName="ProjectTileDataModel.TablePermissions">
               <MappingFragment StoreEntitySet="TablePermissions">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="TableName" ColumnName="TableName" />
@@ -2658,9 +2672,9 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="cln_GetClientsByAccountManagerID" FunctionName="ProjectTileModel.Store.cln_GetClientsByAccountManagerID">
+          <FunctionImportMapping FunctionImportName="cln_GetClientsByAccountManagerID" FunctionName="ProjectTileDataModel.Store.cln_GetClientsByAccountManagerID">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.cln_GetClientsByAccountManagerID_Result">
+              <ComplexTypeMapping TypeName="ProjectTileDataModel.cln_GetClientsByAccountManagerID_Result">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="EntityID" ColumnName="EntityID" />
                 <ScalarProperty Name="ClientCode" ColumnName="ClientCode" />
@@ -2670,9 +2684,9 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="cln_GetClientsByClientCode" FunctionName="ProjectTileModel.Store.cln_GetClientsByClientCode">
+          <FunctionImportMapping FunctionImportName="cln_GetClientsByClientCode" FunctionName="ProjectTileDataModel.Store.cln_GetClientsByClientCode">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.cln_GetClientsByClientCode_Result">
+              <ComplexTypeMapping TypeName="ProjectTileDataModel.cln_GetClientsByClientCode_Result">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="EntityID" ColumnName="EntityID" />
                 <ScalarProperty Name="ClientCode" ColumnName="ClientCode" />
@@ -2682,9 +2696,9 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="cln_GetClientsByID" FunctionName="ProjectTileModel.Store.cln_GetClientsByID">
+          <FunctionImportMapping FunctionImportName="cln_GetClientsByID" FunctionName="ProjectTileDataModel.Store.cln_GetClientsByID">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.cln_GetClientsByID_Result">
+              <ComplexTypeMapping TypeName="ProjectTileDataModel.cln_GetClientsByID_Result">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="EntityID" ColumnName="EntityID" />
                 <ScalarProperty Name="ClientCode" ColumnName="ClientCode" />
@@ -2694,9 +2708,9 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="cln_GetClientStaffByID" FunctionName="ProjectTileModel.Store.cln_GetClientStaffByID">
+          <FunctionImportMapping FunctionImportName="cln_GetClientStaffByID" FunctionName="ProjectTileDataModel.Store.cln_GetClientStaffByID">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.cln_GetClientStaffByID_Result">
+              <ComplexTypeMapping TypeName="ProjectTileDataModel.cln_GetClientStaffByID_Result">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ClientID" ColumnName="ClientID" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
@@ -2709,29 +2723,29 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="cln_InsertIntoClientProducts" FunctionName="ProjectTileModel.Store.cln_InsertIntoClientProducts" />
-          <FunctionImportMapping FunctionImportName="cln_InsertIntoClients" FunctionName="ProjectTileModel.Store.cln_InsertIntoClients" />
-          <FunctionImportMapping FunctionImportName="cln_InsertIntoClientStaff" FunctionName="ProjectTileModel.Store.cln_InsertIntoClientStaff" />
-          <FunctionImportMapping FunctionImportName="cln_UpdateAccountManagerIDInClients" FunctionName="ProjectTileModel.Store.cln_UpdateAccountManagerIDInClients" />
-          <FunctionImportMapping FunctionImportName="cln_UpdateActiveInClientStaff" FunctionName="ProjectTileModel.Store.cln_UpdateActiveInClientStaff" />
-          <FunctionImportMapping FunctionImportName="cln_UpdateClientNameInClients" FunctionName="ProjectTileModel.Store.cln_UpdateClientNameInClients" />
-          <FunctionImportMapping FunctionImportName="cln_UpdateJobTitleInClientStaff" FunctionName="ProjectTileModel.Store.cln_UpdateJobTitleInClientStaff" />
-          <FunctionImportMapping FunctionImportName="cln_UpdateSurnameInClientStaff" FunctionName="ProjectTileModel.Store.cln_UpdateSurnameInClientStaff" />
-          <FunctionImportMapping FunctionImportName="ent_GetEntitiesByID" FunctionName="ProjectTileModel.Store.ent_GetEntitiesByID">
+          <FunctionImportMapping FunctionImportName="cln_InsertIntoClientProducts" FunctionName="ProjectTileDataModel.Store.cln_InsertIntoClientProducts" />
+          <FunctionImportMapping FunctionImportName="cln_InsertIntoClients" FunctionName="ProjectTileDataModel.Store.cln_InsertIntoClients" />
+          <FunctionImportMapping FunctionImportName="cln_InsertIntoClientStaff" FunctionName="ProjectTileDataModel.Store.cln_InsertIntoClientStaff" />
+          <FunctionImportMapping FunctionImportName="cln_UpdateAccountManagerIDInClients" FunctionName="ProjectTileDataModel.Store.cln_UpdateAccountManagerIDInClients" />
+          <FunctionImportMapping FunctionImportName="cln_UpdateActiveInClientStaff" FunctionName="ProjectTileDataModel.Store.cln_UpdateActiveInClientStaff" />
+          <FunctionImportMapping FunctionImportName="cln_UpdateClientNameInClients" FunctionName="ProjectTileDataModel.Store.cln_UpdateClientNameInClients" />
+          <FunctionImportMapping FunctionImportName="cln_UpdateJobTitleInClientStaff" FunctionName="ProjectTileDataModel.Store.cln_UpdateJobTitleInClientStaff" />
+          <FunctionImportMapping FunctionImportName="cln_UpdateSurnameInClientStaff" FunctionName="ProjectTileDataModel.Store.cln_UpdateSurnameInClientStaff" />
+          <FunctionImportMapping FunctionImportName="ent_GetEntitiesByID" FunctionName="ProjectTileDataModel.Store.ent_GetEntitiesByID">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.ent_GetEntitiesByID_Result">
+              <ComplexTypeMapping TypeName="ProjectTileDataModel.ent_GetEntitiesByID_Result">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="EntityName" ColumnName="EntityName" />
                 <ScalarProperty Name="EntityDescription" ColumnName="EntityDescription" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="ent_InsertIntoEntities" FunctionName="ProjectTileModel.Store.ent_InsertIntoEntities" />
-          <FunctionImportMapping FunctionImportName="ent_UpdateEntityDescriptionInEntities" FunctionName="ProjectTileModel.Store.ent_UpdateEntityDescriptionInEntities" />
-          <FunctionImportMapping FunctionImportName="ent_UpdateEntityNameInEntities" FunctionName="ProjectTileModel.Store.ent_UpdateEntityNameInEntities" />
-          <FunctionImportMapping FunctionImportName="err_GetErrorLogByID" FunctionName="ProjectTileModel.Store.err_GetErrorLogByID">
+          <FunctionImportMapping FunctionImportName="ent_InsertIntoEntities" FunctionName="ProjectTileDataModel.Store.ent_InsertIntoEntities" />
+          <FunctionImportMapping FunctionImportName="ent_UpdateEntityDescriptionInEntities" FunctionName="ProjectTileDataModel.Store.ent_UpdateEntityDescriptionInEntities" />
+          <FunctionImportMapping FunctionImportName="ent_UpdateEntityNameInEntities" FunctionName="ProjectTileDataModel.Store.ent_UpdateEntityNameInEntities" />
+          <FunctionImportMapping FunctionImportName="err_GetErrorLogByID" FunctionName="ProjectTileDataModel.Store.err_GetErrorLogByID">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.err_GetErrorLogByID_Result">
+              <ComplexTypeMapping TypeName="ProjectTileDataModel.err_GetErrorLogByID_Result">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="CustomMessage" ColumnName="CustomMessage" />
                 <ScalarProperty Name="ExceptionMessage" ColumnName="ExceptionMessage" />
@@ -2743,26 +2757,26 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="err_InsertIntoErrorLog" FunctionName="ProjectTileModel.Store.err_InsertIntoErrorLog" />
-          <FunctionImportMapping FunctionImportName="pja_GetClientTeamRolesByRoleCode" FunctionName="ProjectTileModel.Store.pja_GetClientTeamRolesByRoleCode">
+          <FunctionImportMapping FunctionImportName="err_InsertIntoErrorLog" FunctionName="ProjectTileDataModel.Store.err_InsertIntoErrorLog" />
+          <FunctionImportMapping FunctionImportName="pja_GetClientTeamRolesByRoleCode" FunctionName="ProjectTileDataModel.Store.pja_GetClientTeamRolesByRoleCode">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.pja_GetClientTeamRolesByRoleCode_Result">
+              <ComplexTypeMapping TypeName="ProjectTileDataModel.pja_GetClientTeamRolesByRoleCode_Result">
                 <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
                 <ScalarProperty Name="RoleDescription" ColumnName="RoleDescription" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="pja_GetProjectRolesByRoleCode" FunctionName="ProjectTileModel.Store.pja_GetProjectRolesByRoleCode">
+          <FunctionImportMapping FunctionImportName="pja_GetProjectRolesByRoleCode" FunctionName="ProjectTileDataModel.Store.pja_GetProjectRolesByRoleCode">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.pja_GetProjectRolesByRoleCode_Result">
+              <ComplexTypeMapping TypeName="ProjectTileDataModel.pja_GetProjectRolesByRoleCode_Result">
                 <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
                 <ScalarProperty Name="RoleDescription" ColumnName="RoleDescription" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="pja_GetProjectStagesByID" FunctionName="ProjectTileModel.Store.pja_GetProjectStagesByID">
+          <FunctionImportMapping FunctionImportName="pja_GetProjectStagesByID" FunctionName="ProjectTileDataModel.Store.pja_GetProjectStagesByID">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.pja_GetProjectStagesByID_Result">
+              <ComplexTypeMapping TypeName="ProjectTileDataModel.pja_GetProjectStagesByID_Result">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="StageNumber" ColumnName="StageNumber" />
                 <ScalarProperty Name="StageName" ColumnName="StageName" />
@@ -2771,19 +2785,19 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="pja_InsertIntoClientTeamRoles" FunctionName="ProjectTileModel.Store.pja_InsertIntoClientTeamRoles" />
-          <FunctionImportMapping FunctionImportName="pja_InsertIntoProjectRoles" FunctionName="ProjectTileModel.Store.pja_InsertIntoProjectRoles" />
-          <FunctionImportMapping FunctionImportName="pja_InsertIntoProjectStages" FunctionName="ProjectTileModel.Store.pja_InsertIntoProjectStages" />
-          <FunctionImportMapping FunctionImportName="pja_InsertIntoProjectTypes" FunctionName="ProjectTileModel.Store.pja_InsertIntoProjectTypes" />
-          <FunctionImportMapping FunctionImportName="pja_UpdateRoleDescriptionInClientTeamRoles" FunctionName="ProjectTileModel.Store.pja_UpdateRoleDescriptionInClientTeamRoles" />
-          <FunctionImportMapping FunctionImportName="pja_UpdateRoleDescriptionInProjectRoles" FunctionName="ProjectTileModel.Store.pja_UpdateRoleDescriptionInProjectRoles" />
-          <FunctionImportMapping FunctionImportName="pja_UpdateStageDescriptionInProjectStages" FunctionName="ProjectTileModel.Store.pja_UpdateStageDescriptionInProjectStages" />
-          <FunctionImportMapping FunctionImportName="pja_UpdateStageNumberInProjectStages" FunctionName="ProjectTileModel.Store.pja_UpdateStageNumberInProjectStages" />
-          <FunctionImportMapping FunctionImportName="pja_UpdateTypeDescriptionInProjectTypes" FunctionName="ProjectTileModel.Store.pja_UpdateTypeDescriptionInProjectTypes" />
-          <FunctionImportMapping FunctionImportName="pja_UpdateTypeNameInProjectTypes" FunctionName="ProjectTileModel.Store.pja_UpdateTypeNameInProjectTypes" />
-          <FunctionImportMapping FunctionImportName="prd_GetProductsByID" FunctionName="ProjectTileModel.Store.prd_GetProductsByID">
+          <FunctionImportMapping FunctionImportName="pja_InsertIntoClientTeamRoles" FunctionName="ProjectTileDataModel.Store.pja_InsertIntoClientTeamRoles" />
+          <FunctionImportMapping FunctionImportName="pja_InsertIntoProjectRoles" FunctionName="ProjectTileDataModel.Store.pja_InsertIntoProjectRoles" />
+          <FunctionImportMapping FunctionImportName="pja_InsertIntoProjectStages" FunctionName="ProjectTileDataModel.Store.pja_InsertIntoProjectStages" />
+          <FunctionImportMapping FunctionImportName="pja_InsertIntoProjectTypes" FunctionName="ProjectTileDataModel.Store.pja_InsertIntoProjectTypes" />
+          <FunctionImportMapping FunctionImportName="pja_UpdateRoleDescriptionInClientTeamRoles" FunctionName="ProjectTileDataModel.Store.pja_UpdateRoleDescriptionInClientTeamRoles" />
+          <FunctionImportMapping FunctionImportName="pja_UpdateRoleDescriptionInProjectRoles" FunctionName="ProjectTileDataModel.Store.pja_UpdateRoleDescriptionInProjectRoles" />
+          <FunctionImportMapping FunctionImportName="pja_UpdateStageDescriptionInProjectStages" FunctionName="ProjectTileDataModel.Store.pja_UpdateStageDescriptionInProjectStages" />
+          <FunctionImportMapping FunctionImportName="pja_UpdateStageNumberInProjectStages" FunctionName="ProjectTileDataModel.Store.pja_UpdateStageNumberInProjectStages" />
+          <FunctionImportMapping FunctionImportName="pja_UpdateTypeDescriptionInProjectTypes" FunctionName="ProjectTileDataModel.Store.pja_UpdateTypeDescriptionInProjectTypes" />
+          <FunctionImportMapping FunctionImportName="pja_UpdateTypeNameInProjectTypes" FunctionName="ProjectTileDataModel.Store.pja_UpdateTypeNameInProjectTypes" />
+          <FunctionImportMapping FunctionImportName="prd_GetProductsByID" FunctionName="ProjectTileDataModel.Store.prd_GetProductsByID">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.prd_GetProductsByID_Result">
+              <ComplexTypeMapping TypeName="ProjectTileDataModel.prd_GetProductsByID_Result">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ProductName" ColumnName="ProductName" />
                 <ScalarProperty Name="LatestVersion" ColumnName="LatestVersion" />
@@ -2791,9 +2805,9 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="prd_GetProductsByProductName" FunctionName="ProjectTileModel.Store.prd_GetProductsByProductName">
+          <FunctionImportMapping FunctionImportName="prd_GetProductsByProductName" FunctionName="ProjectTileDataModel.Store.prd_GetProductsByProductName">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.prd_GetProductsByProductName_Result">
+              <ComplexTypeMapping TypeName="ProjectTileDataModel.prd_GetProductsByProductName_Result">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ProductName" ColumnName="ProductName" />
                 <ScalarProperty Name="LatestVersion" ColumnName="LatestVersion" />
@@ -2801,16 +2815,16 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="prd_InsertIntoProducts" FunctionName="ProjectTileModel.Store.prd_InsertIntoProducts" />
-          <FunctionImportMapping FunctionImportName="prd_UpdateLatestVersionInProducts" FunctionName="ProjectTileModel.Store.prd_UpdateLatestVersionInProducts" />
-          <FunctionImportMapping FunctionImportName="prj_GetActionsByID" FunctionName="ProjectTileModel.Store.prj_GetActionsByID">
+          <FunctionImportMapping FunctionImportName="prd_InsertIntoProducts" FunctionName="ProjectTileDataModel.Store.prd_InsertIntoProducts" />
+          <FunctionImportMapping FunctionImportName="prd_UpdateLatestVersionInProducts" FunctionName="ProjectTileDataModel.Store.prd_UpdateLatestVersionInProducts" />
+          <FunctionImportMapping FunctionImportName="prj_GetActionsByID" FunctionName="ProjectTileDataModel.Store.prj_GetActionsByID">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.prj_GetActionsByID_Result">
+              <ComplexTypeMapping TypeName="ProjectTileDataModel.prj_GetActionsByID_Result">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ActionCode" ColumnName="ActionCode" />
                 <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
                 <ScalarProperty Name="LoggedDate" ColumnName="LoggedDate" />
-                <ScalarProperty Name="TargetDate" ColumnName="TargetDate" />
+                <ScalarProperty Name="TargetCompletion" ColumnName="TargetCompletion" />
                 <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
                 <ScalarProperty Name="ShortDescription" ColumnName="ShortDescription" />
                 <ScalarProperty Name="StatusCode" ColumnName="StatusCode" />
@@ -2822,9 +2836,9 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="prj_GetClientTeamsByID" FunctionName="ProjectTileModel.Store.prj_GetClientTeamsByID">
+          <FunctionImportMapping FunctionImportName="prj_GetClientTeamsByID" FunctionName="ProjectTileDataModel.Store.prj_GetClientTeamsByID">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.prj_GetClientTeamsByID_Result">
+              <ComplexTypeMapping TypeName="ProjectTileDataModel.prj_GetClientTeamsByID_Result">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
                 <ScalarProperty Name="ClientStaffID" ColumnName="ClientStaffID" />
@@ -2834,11 +2848,11 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="prj_GetNewVersionByID" FunctionName="ProjectTileModel.Store.prj_GetNewVersionByID" />
-          <FunctionImportMapping FunctionImportName="prj_GetOldVersionByID" FunctionName="ProjectTileModel.Store.prj_GetOldVersionByID" />
-          <FunctionImportMapping FunctionImportName="prj_GetProjectsByID" FunctionName="ProjectTileModel.Store.prj_GetProjectsByID">
+          <FunctionImportMapping FunctionImportName="prj_GetNewVersionByID" FunctionName="ProjectTileDataModel.Store.prj_GetNewVersionByID" />
+          <FunctionImportMapping FunctionImportName="prj_GetOldVersionByID" FunctionName="ProjectTileDataModel.Store.prj_GetOldVersionByID" />
+          <FunctionImportMapping FunctionImportName="prj_GetProjectsByID" FunctionName="ProjectTileDataModel.Store.prj_GetProjectsByID">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.prj_GetProjectsByID_Result">
+              <ComplexTypeMapping TypeName="ProjectTileDataModel.prj_GetProjectsByID_Result">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="EntityID" ColumnName="EntityID" />
                 <ScalarProperty Name="ProjectCode" ColumnName="ProjectCode" />
@@ -2851,9 +2865,9 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="prj_GetProjectTeamsByID" FunctionName="ProjectTileModel.Store.prj_GetProjectTeamsByID">
+          <FunctionImportMapping FunctionImportName="prj_GetProjectTeamsByID" FunctionName="ProjectTileDataModel.Store.prj_GetProjectTeamsByID">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.prj_GetProjectTeamsByID_Result">
+              <ComplexTypeMapping TypeName="ProjectTileDataModel.prj_GetProjectTeamsByID_Result">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
                 <ScalarProperty Name="StaffID" ColumnName="StaffID" />
@@ -2863,39 +2877,43 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="prj_GetStageHistoryByID" FunctionName="ProjectTileModel.Store.prj_GetStageHistoryByID">
+          <FunctionImportMapping FunctionImportName="prj_GetStageHistoryByID" FunctionName="ProjectTileDataModel.Store.prj_GetStageHistoryByID">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.prj_GetStageHistoryByID_Result">
+              <ComplexTypeMapping TypeName="ProjectTileDataModel.prj_GetStageHistoryByID_Result">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
                 <ScalarProperty Name="StageID" ColumnName="StageID" />
-                <ScalarProperty Name="TargetDate" ColumnName="TargetDate" />
-                <ScalarProperty Name="AchievedDate" ColumnName="AchievedDate" />
+                <ScalarProperty Name="TargetStart" ColumnName="TargetStart" />
+                <ScalarProperty Name="ActualStart" ColumnName="ActualStart" />
+                <ScalarProperty Name="EffectiveStart" ColumnName="EffectiveStart" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="prj_InsertIntoActions" FunctionName="ProjectTileModel.Store.prj_InsertIntoActions" />
-          <FunctionImportMapping FunctionImportName="prj_InsertIntoClientTeams" FunctionName="ProjectTileModel.Store.prj_InsertIntoClientTeams" />
-          <FunctionImportMapping FunctionImportName="prj_InsertIntoProjectProducts" FunctionName="ProjectTileModel.Store.prj_InsertIntoProjectProducts" />
-          <FunctionImportMapping FunctionImportName="prj_InsertIntoProjects" FunctionName="ProjectTileModel.Store.prj_InsertIntoProjects" />
-          <FunctionImportMapping FunctionImportName="prj_InsertIntoProjectTeams" FunctionName="ProjectTileModel.Store.prj_InsertIntoProjectTeams" />
-          <FunctionImportMapping FunctionImportName="prj_InsertIntoStageHistory" FunctionName="ProjectTileModel.Store.prj_InsertIntoStageHistory" />
-          <FunctionImportMapping FunctionImportName="prj_UpdateClientStaffIDInClientTeams" FunctionName="ProjectTileModel.Store.prj_UpdateClientStaffIDInClientTeams" />
-          <FunctionImportMapping FunctionImportName="prj_UpdateClientTeamRoleCodeInClientTeams" FunctionName="ProjectTileModel.Store.prj_UpdateClientTeamRoleCodeInClientTeams" />
-          <FunctionImportMapping FunctionImportName="prj_UpdateNewVersionInProjectProducts" FunctionName="ProjectTileModel.Store.prj_UpdateNewVersionInProjectProducts" />
-          <FunctionImportMapping FunctionImportName="prj_UpdateOldVersionInProjectProducts" FunctionName="ProjectTileModel.Store.prj_UpdateOldVersionInProjectProducts" />
-          <FunctionImportMapping FunctionImportName="prj_UpdateProjectNameInProjects" FunctionName="ProjectTileModel.Store.prj_UpdateProjectNameInProjects" />
-          <FunctionImportMapping FunctionImportName="prj_UpdateProjectRoleCodeInProjectTeams" FunctionName="ProjectTileModel.Store.prj_UpdateProjectRoleCodeInProjectTeams" />
-          <FunctionImportMapping FunctionImportName="prj_UpdateProjectSummaryInProjects" FunctionName="ProjectTileModel.Store.prj_UpdateProjectSummaryInProjects" />
-          <FunctionImportMapping FunctionImportName="prj_UpdateStaffIDInProjectTeams" FunctionName="ProjectTileModel.Store.prj_UpdateStaffIDInProjectTeams" />
-          <FunctionImportMapping FunctionImportName="prj_UpdateStatusCodeInActions" FunctionName="ProjectTileModel.Store.prj_UpdateStatusCodeInActions" />
-          <FunctionImportMapping FunctionImportName="prj_UpdateStatusInNotes" FunctionName="ProjectTileModel.Store.prj_UpdateStatusInNotes" />
-          <FunctionImportMapping FunctionImportName="prj_UpdateToDateInClientTeams" FunctionName="ProjectTileModel.Store.prj_UpdateToDateInClientTeams" />
-          <FunctionImportMapping FunctionImportName="prj_UpdateToDateInProjectTeams" FunctionName="ProjectTileModel.Store.prj_UpdateToDateInProjectTeams" />
-          <FunctionImportMapping FunctionImportName="prj_UpdateUpdatedDateInActions" FunctionName="ProjectTileModel.Store.prj_UpdateUpdatedDateInActions" />
-          <FunctionImportMapping FunctionImportName="sec_GetTablePermissionsByID" FunctionName="ProjectTileModel.Store.sec_GetTablePermissionsByID">
+          <FunctionImportMapping FunctionImportName="prj_InsertIntoActions" FunctionName="ProjectTileDataModel.Store.prj_InsertIntoActions" />
+          <FunctionImportMapping FunctionImportName="prj_InsertIntoClientTeams" FunctionName="ProjectTileDataModel.Store.prj_InsertIntoClientTeams" />
+          <FunctionImportMapping FunctionImportName="prj_InsertIntoProjectProducts" FunctionName="ProjectTileDataModel.Store.prj_InsertIntoProjectProducts" />
+          <FunctionImportMapping FunctionImportName="prj_InsertIntoProjects" FunctionName="ProjectTileDataModel.Store.prj_InsertIntoProjects" />
+          <FunctionImportMapping FunctionImportName="prj_InsertIntoProjectTeams" FunctionName="ProjectTileDataModel.Store.prj_InsertIntoProjectTeams" />
+          <FunctionImportMapping FunctionImportName="prj_InsertIntoStageHistory" FunctionName="ProjectTileDataModel.Store.prj_InsertIntoStageHistory" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateActualStartInStageHistory" FunctionName="ProjectTileDataModel.Store.prj_UpdateActualStartInStageHistory" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateClientStaffIDInClientTeams" FunctionName="ProjectTileDataModel.Store.prj_UpdateClientStaffIDInClientTeams" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateClientTeamRoleCodeInClientTeams" FunctionName="ProjectTileDataModel.Store.prj_UpdateClientTeamRoleCodeInClientTeams" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateNewVersionInProjectProducts" FunctionName="ProjectTileDataModel.Store.prj_UpdateNewVersionInProjectProducts" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateOldVersionInProjectProducts" FunctionName="ProjectTileDataModel.Store.prj_UpdateOldVersionInProjectProducts" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateProjectNameInProjects" FunctionName="ProjectTileDataModel.Store.prj_UpdateProjectNameInProjects" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateProjectRoleCodeInProjectTeams" FunctionName="ProjectTileDataModel.Store.prj_UpdateProjectRoleCodeInProjectTeams" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateProjectSummaryInProjects" FunctionName="ProjectTileDataModel.Store.prj_UpdateProjectSummaryInProjects" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateStaffIDInProjectTeams" FunctionName="ProjectTileDataModel.Store.prj_UpdateStaffIDInProjectTeams" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateStatusCodeInActions" FunctionName="ProjectTileDataModel.Store.prj_UpdateStatusCodeInActions" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateStatusInNotes" FunctionName="ProjectTileDataModel.Store.prj_UpdateStatusInNotes" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateTargetCompletionInActions" FunctionName="ProjectTileDataModel.Store.prj_UpdateTargetCompletionInActions" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateTargetStartInStageHistory" FunctionName="ProjectTileDataModel.Store.prj_UpdateTargetStartInStageHistory" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateToDateInClientTeams" FunctionName="ProjectTileDataModel.Store.prj_UpdateToDateInClientTeams" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateToDateInProjectTeams" FunctionName="ProjectTileDataModel.Store.prj_UpdateToDateInProjectTeams" />
+          <FunctionImportMapping FunctionImportName="prj_UpdateUpdatedDateInActions" FunctionName="ProjectTileDataModel.Store.prj_UpdateUpdatedDateInActions" />
+          <FunctionImportMapping FunctionImportName="sec_GetTablePermissionsByID" FunctionName="ProjectTileDataModel.Store.sec_GetTablePermissionsByID">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.sec_GetTablePermissionsByID_Result">
+              <ComplexTypeMapping TypeName="ProjectTileDataModel.sec_GetTablePermissionsByID_Result">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="TableName" ColumnName="TableName" />
                 <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
@@ -2906,12 +2924,12 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="sec_InsertIntoTablePermissions" FunctionName="ProjectTileModel.Store.sec_InsertIntoTablePermissions" />
-          <FunctionImportMapping FunctionImportName="stf_ChangeDatabasePassword" FunctionName="ProjectTileModel.Store.stf_ChangeDatabasePassword" />
-          <FunctionImportMapping FunctionImportName="stf_CheckHashedPassword" FunctionName="ProjectTileModel.Store.stf_CheckHashedPassword" />
-          <FunctionImportMapping FunctionImportName="stf_GetStaffByID" FunctionName="ProjectTileModel.Store.stf_GetStaffByID">
+          <FunctionImportMapping FunctionImportName="sec_InsertIntoTablePermissions" FunctionName="ProjectTileDataModel.Store.sec_InsertIntoTablePermissions" />
+          <FunctionImportMapping FunctionImportName="stf_ChangeDatabasePassword" FunctionName="ProjectTileDataModel.Store.stf_ChangeDatabasePassword" />
+          <FunctionImportMapping FunctionImportName="stf_CheckHashedPassword" FunctionName="ProjectTileDataModel.Store.stf_CheckHashedPassword" />
+          <FunctionImportMapping FunctionImportName="stf_GetStaffByID" FunctionName="ProjectTileDataModel.Store.stf_GetStaffByID">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.stf_GetStaffByID_Result">
+              <ComplexTypeMapping TypeName="ProjectTileDataModel.stf_GetStaffByID_Result">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
@@ -2931,9 +2949,9 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="stf_GetStaffByRoleCode" FunctionName="ProjectTileModel.Store.stf_GetStaffByRoleCode">
+          <FunctionImportMapping FunctionImportName="stf_GetStaffByRoleCode" FunctionName="ProjectTileDataModel.Store.stf_GetStaffByRoleCode">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.stf_GetStaffByRoleCode_Result">
+              <ComplexTypeMapping TypeName="ProjectTileDataModel.stf_GetStaffByRoleCode_Result">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
@@ -2953,20 +2971,20 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="stf_GetStaffRolesByRoleCode" FunctionName="ProjectTileModel.Store.stf_GetStaffRolesByRoleCode">
+          <FunctionImportMapping FunctionImportName="stf_GetStaffRolesByRoleCode" FunctionName="ProjectTileDataModel.Store.stf_GetStaffRolesByRoleCode">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ProjectTileModel.stf_GetStaffRolesByRoleCode_Result">
+              <ComplexTypeMapping TypeName="ProjectTileDataModel.stf_GetStaffRolesByRoleCode_Result">
                 <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
                 <ScalarProperty Name="RoleDescription" ColumnName="RoleDescription" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="stf_InsertIntoStaff" FunctionName="ProjectTileModel.Store.stf_InsertIntoStaff" />
-          <FunctionImportMapping FunctionImportName="stf_InsertIntoStaffEntities" FunctionName="ProjectTileModel.Store.stf_InsertIntoStaffEntities" />
-          <FunctionImportMapping FunctionImportName="stf_InsertIntoStaffRoles" FunctionName="ProjectTileModel.Store.stf_InsertIntoStaffRoles" />
-          <FunctionImportMapping FunctionImportName="stf_UpdateLeaveDateInStaff" FunctionName="ProjectTileModel.Store.stf_UpdateLeaveDateInStaff" />
-          <FunctionImportMapping FunctionImportName="stf_UpdateRoleCodeInStaff" FunctionName="ProjectTileModel.Store.stf_UpdateRoleCodeInStaff" />
-          <FunctionImportMapping FunctionImportName="stf_UpdateRoleDescriptionInStaffRoles" FunctionName="ProjectTileModel.Store.stf_UpdateRoleDescriptionInStaffRoles" />
+          <FunctionImportMapping FunctionImportName="stf_InsertIntoStaff" FunctionName="ProjectTileDataModel.Store.stf_InsertIntoStaff" />
+          <FunctionImportMapping FunctionImportName="stf_InsertIntoStaffEntities" FunctionName="ProjectTileDataModel.Store.stf_InsertIntoStaffEntities" />
+          <FunctionImportMapping FunctionImportName="stf_InsertIntoStaffRoles" FunctionName="ProjectTileDataModel.Store.stf_InsertIntoStaffRoles" />
+          <FunctionImportMapping FunctionImportName="stf_UpdateLeaveDateInStaff" FunctionName="ProjectTileDataModel.Store.stf_UpdateLeaveDateInStaff" />
+          <FunctionImportMapping FunctionImportName="stf_UpdateRoleCodeInStaff" FunctionName="ProjectTileDataModel.Store.stf_UpdateRoleCodeInStaff" />
+          <FunctionImportMapping FunctionImportName="stf_UpdateRoleDescriptionInStaffRoles" FunctionName="ProjectTileDataModel.Store.stf_UpdateRoleDescriptionInStaffRoles" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

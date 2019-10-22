@@ -195,9 +195,15 @@ namespace ProjectTile
                     {
                         try
                         {
-                            Staff thisUser = defaultPtDb.Staff.Find(staffID);
+                            Staff thisUser = defaultPtDb.Staff.FirstOrDefault(s => s.ID == staffID);
+                            if (thisUser == null)
+                            {
+                                MessageFunctions.Error("Error amending login details in the database: user with ID " + staffID.ToString() + " not found.", null);
+                                return false;
+                            }
+
                             if (passwordChange) { thisUser.Passwd = newPassword; }
-                            if (thisUser.UserID != userID) 
+                            if (thisUser.UserID == null || thisUser.UserID != userID) 
                             {
                                 Staff checkUserID = defaultPtDb.Staff.FirstOrDefault(s => s.UserID == userID && s.ID != staffID);
                                 if (checkUserID != null)
@@ -243,12 +249,12 @@ namespace ProjectTile
                         }
                         catch (SqlException sqlException)
                         {
-                            MessageFunctions.Error("Error amending details in the database", sqlException);
+                            MessageFunctions.Error("Error amending login details in the database", sqlException);
                             return false;
                         }
                         catch (Exception generalException)
                         {
-                            MessageFunctions.Error("Error amending details", generalException);
+                            MessageFunctions.Error("Error amending login details", generalException);
                             return false;
                         }
                     }

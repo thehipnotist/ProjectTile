@@ -43,9 +43,18 @@ namespace ProjectTile
         }
 
         public static ProjectTileSqlDatabase UserPtDbConnection (string userID, string password)
-        {
+        {            
+            string dataSource = "data source=";
+            string connection = System.Configuration.ConfigurationManager.ConnectionStrings["ProjectTileSqlDatabase"].ConnectionString;
+            int dataSourcePos = connection.IndexOf(dataSource);
+            connection = connection.Substring(dataSourcePos);
+            connection = connection.Replace(dataSource, "");
+            int endPos = connection.IndexOf(";initial catalog=");
+            connection = connection.Substring(0, endPos);
+
             SqlConnectionStringBuilder SqlBuilder = new SqlConnectionStringBuilder();
-            SqlBuilder.DataSource = ".\\SQLExpress";
+            //SqlBuilder.DataSource = "sqlexpress1.cq1cqdtv0373.eu-west-2.rds.amazonaws.com";
+            SqlBuilder.DataSource = connection;
             SqlBuilder.InitialCatalog = "ProjectTile";
             SqlBuilder.IntegratedSecurity = false;
             SqlBuilder.UserID = userID;

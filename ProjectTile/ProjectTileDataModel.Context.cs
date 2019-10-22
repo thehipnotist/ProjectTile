@@ -778,17 +778,17 @@ namespace ProjectTile
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_InsertIntoStageHistory", projectIDParameter, stageIDParameter, targetStartParameter, actualStartParameter);
         }
     
-        public virtual int prj_UpdateAchievedDateInStageHistory(string iD, string achievedDate)
+        public virtual int prj_UpdateActualStartInStageHistory(string iD, string actualStart)
         {
             var iDParameter = iD != null ?
                 new ObjectParameter("ID", iD) :
                 new ObjectParameter("ID", typeof(string));
     
-            var achievedDateParameter = achievedDate != null ?
-                new ObjectParameter("AchievedDate", achievedDate) :
-                new ObjectParameter("AchievedDate", typeof(string));
+            var actualStartParameter = actualStart != null ?
+                new ObjectParameter("ActualStart", actualStart) :
+                new ObjectParameter("ActualStart", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_UpdateAchievedDateInStageHistory", iDParameter, achievedDateParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_UpdateActualStartInStageHistory", iDParameter, actualStartParameter);
         }
     
         public virtual int prj_UpdateClientStaffIDInClientTeams(string iD, string clientStaffID)
@@ -921,30 +921,30 @@ namespace ProjectTile
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_UpdateStatusInNotes", iDParameter, statusParameter);
         }
     
-        public virtual int prj_UpdateTargetDateInActions(string iD, string targetDate)
+        public virtual int prj_UpdateTargetCompletionInActions(string iD, string targetCompletion)
         {
             var iDParameter = iD != null ?
                 new ObjectParameter("ID", iD) :
                 new ObjectParameter("ID", typeof(string));
     
-            var targetDateParameter = targetDate != null ?
-                new ObjectParameter("TargetDate", targetDate) :
-                new ObjectParameter("TargetDate", typeof(string));
+            var targetCompletionParameter = targetCompletion != null ?
+                new ObjectParameter("TargetCompletion", targetCompletion) :
+                new ObjectParameter("TargetCompletion", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_UpdateTargetDateInActions", iDParameter, targetDateParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_UpdateTargetCompletionInActions", iDParameter, targetCompletionParameter);
         }
     
-        public virtual int prj_UpdateTargetDateInStageHistory(string iD, string targetDate)
+        public virtual int prj_UpdateTargetStartInStageHistory(string iD, string targetStart)
         {
             var iDParameter = iD != null ?
                 new ObjectParameter("ID", iD) :
                 new ObjectParameter("ID", typeof(string));
     
-            var targetDateParameter = targetDate != null ?
-                new ObjectParameter("TargetDate", targetDate) :
-                new ObjectParameter("TargetDate", typeof(string));
+            var targetStartParameter = targetStart != null ?
+                new ObjectParameter("TargetStart", targetStart) :
+                new ObjectParameter("TargetStart", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_UpdateTargetDateInStageHistory", iDParameter, targetDateParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("prj_UpdateTargetStartInStageHistory", iDParameter, targetStartParameter);
         }
     
         public virtual int prj_UpdateToDateInClientTeams(string iD, string toDate)
