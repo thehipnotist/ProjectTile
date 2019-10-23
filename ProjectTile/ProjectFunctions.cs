@@ -232,7 +232,7 @@ namespace ProjectTile
             }
         }
 
-        public static void SetProjectFilterList(ProjectStatusFilter inStatus)
+        public static void SetProjectFilterList(ProjectStatusFilter inStatus, bool includeInternals)
         {
             try
             {
@@ -242,6 +242,7 @@ namespace ProjectTile
                     ProjectFilterList =
                         (from fpl in FullProjectList
                          where IsInFilter(inStatus, fpl.Stage)
+                            && (includeInternals || (fpl.Client != null && fpl.Client.ID > 0))
                          select fpl
                         ).ToList();
                     ProjectFilterList.Insert(0, SearchProjects);
@@ -1185,7 +1186,7 @@ namespace ProjectTile
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    List<Projects> nonInternalProjects = existingPtDb.Projects.Where(p => p.ClientID != null && p.ClientID > 0).ToList();
+                    List<Projects> nonInternalProjects = existingPtDb.Projects.Where(p => p.ClientID != null && p.ClientID > 0 && p.EntityID == CurrentEntityID).ToList();
                     foreach (Projects p in nonInternalProjects)
                     {
                         if (existingPtDb.ClientTeams.FirstOrDefault(ct => ct.ProjectID == p.ID) == null) { returnProjects.Add(p); }
@@ -1797,12 +1798,12 @@ namespace ProjectTile
                     }
                     else if (isUnderway && proxy.StartDate == null)
                     {
-                        errorDetails = ", as no start date has been set. Please enter a start date or keep the project in the 'Initation' stage."
+                        errorDetails = ", as no start date has been set. Please enter a start date or keep the project in the 'Initiation' stage."
                             + "|No Start Date";
                     }
                     else if (isUnderway && proxy.StartDate > Today)
                     {
-                        errorDetails = ", as the start date is in the future. Please change the start date or keep the project in the 'Initation' stage."
+                        errorDetails = ", as the start date is in the future. Please change the start date or keep the project in the 'Initiation' stage."
                             + "|No Start Date";
                     }
                     else if (proxy.ProjectManager == null)
@@ -1868,12 +1869,12 @@ namespace ProjectTile
                             else if (isUnderway && missingInternalRoles != "")
                             {
                                 errorDetails = ", as the project does not have a current (internal) " + missingInternalRoles + ". Key roles must be filled throughout the project. "
-                                + "Please keep the project in  'Initation' stage, then use 'Project Teams (Staff)' to complete the project team.|Key Role Not Covered"; 
+                                + "Please keep the project in 'Initiation' stage, then use 'Project Teams (Staff)' to complete the project team.|Key Role Not Covered"; 
                             }
                             else if (isUnderway && missingClientRoles != "")
                             {
                                 errorDetails = ", as the project does not have a current client " + missingClientRoles + ". Key roles must be filled throughout the project. "
-                                + "Please keep the project in 'Initation' stage until the required roles are set in 'Project (Client) Contacts'.|Key Role Not Covered";
+                                + "Please keep the project in 'Initiation' stage until the required roles are set in 'Project (Client) Contacts'.|Key Role Not Covered";
                             }
                             else if (clientChanged && countLinkedContacts > 0)
                             {

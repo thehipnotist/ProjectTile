@@ -230,6 +230,7 @@ namespace ProjectTile
         private void toggleProjectButtons(bool projectSelected)
         {
             AmendButton.IsEnabled = MoreButton.IsEnabled = projectSelected;
+            ContactMenu.IsEnabled = (selectedProject != null && selectedProject.Client != null && selectedProject.Client.ID > 0);
         }
 
         private void closePage(bool goBack)

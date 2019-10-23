@@ -9,7 +9,7 @@ namespace ProjectTile
     {
         // Data retrieval
 
-        public static int[] AllowedEntityIDs(int thisUserID) 
+        public static int[] AllowedEntityIDs(int staffID) 
         {     
             try
             {
@@ -17,7 +17,7 @@ namespace ProjectTile
                 using (existingPtDb)
                 {
                     int[] allowedEntities = existingPtDb.StaffEntities
-                                .Where(se => se.StaffID == thisUserID)
+                                .Where(se => se.StaffID == staffID)
                                 .Select(se => (int)se.EntityID)
                                 .ToArray();
                     return allowedEntities;
@@ -30,7 +30,7 @@ namespace ProjectTile
             }
         }
 
-        public static List<Entities> AllowedEntities(int thisUserID)
+        public static List<Entities> AllowedEntities(int staffID)
         {
             try
             {
@@ -39,7 +39,7 @@ namespace ProjectTile
                 {
                     List<Entities> allowedEntities = (from se in existingPtDb.StaffEntities
                                 join e in existingPtDb.Entities on se.EntityID equals e.ID
-                                where se.StaffID == thisUserID
+                                where se.StaffID == staffID
                                 orderby e.EntityName
                                 select e)
                                 .ToList();

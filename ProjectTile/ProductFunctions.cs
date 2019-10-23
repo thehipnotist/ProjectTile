@@ -172,8 +172,8 @@ namespace ProjectTile
                         Products thisProduct = existingPtDb.Products.Find(productID);
                         if (thisProduct.LatestVersion > versionNumber)
                         {
-                            MessageFunctions.Error("Error amending product '" + productName + "': new version number is lower than the existing one.", null);
-                            return false;
+                            bool carryOn = MessageFunctions.WarningYesNo("The new version number is lower than the existing one. Is that correct?", "Unexpected Version");
+                            if (!carryOn) { return false; }
                         }
                         thisProduct.ProductName = productName;
                         thisProduct.ProductDescription = productDescription;

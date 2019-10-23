@@ -309,8 +309,14 @@ namespace ProjectTile
         }
 
         private void ProjectButton_Click(object sender, RoutedEventArgs e)
-        {
-            PageFunctions.ShowProjectTeamsPage(pageMode, selectedStaffID, "StaffPage");
+        {            
+            int[] allowedEntities = EntityFunctions.AllowedEntityIDs(selectedStaffID);
+            if (!allowedEntities.Contains(Globals.CurrentEntityID))
+            {
+                MessageFunctions.InvalidMessage("This staff member does not have access to this Entity, so they cannot have any projects in it.", "Invalid Entity");
+                return;
+            }
+            else { PageFunctions.ShowProjectTeamsPage(pageMode, selectedStaffID, "StaffPage"); }
         }
 
     } // class

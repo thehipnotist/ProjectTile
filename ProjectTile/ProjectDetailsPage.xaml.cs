@@ -315,10 +315,24 @@ namespace ProjectTile
 
         private void TypeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (TypeCombo.SelectedItem != null)
+            {
+                ProjectTypes selectedType = (ProjectTypes) TypeCombo.SelectedItem;
+                if (thisProjectProxy.Client == null && selectedType.TypeCode == Globals.InternalProjectCode)
+                {
+                    thisProjectProxy.Client = Globals.NoClient;
+                    displaySelectedClient(Globals.NoClient.ID);
+                }
+            }
         }
 
         private void ClientCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (ClientCombo.SelectedIndex == 0 && thisProjectProxy.Type == null) 
+            { 
+                thisProjectProxy.Type = ProjectFunctions.GetProjectType(Globals.InternalProjectCode);
+                displaySelectedType();
+            }
         }
 
         private void StageCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)

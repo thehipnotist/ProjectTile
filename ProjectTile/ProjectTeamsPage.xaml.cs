@@ -136,7 +136,7 @@ namespace ProjectTile
             try
             {
                 ProjectProxy currentRecord = (Globals.SelectedProjectProxy != null) ? Globals.SelectedProjectProxy : Globals.DefaultProjectProxy;
-                ProjectFunctions.SetProjectFilterList(Globals.SelectedStatusFilter);
+                ProjectFunctions.SetProjectFilterList(Globals.SelectedStatusFilter, true);
                 ProjectCombo.ItemsSource = ProjectFunctions.ProjectFilterList;
                 selectProject(currentRecord.ProjectID);
             }

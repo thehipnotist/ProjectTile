@@ -530,12 +530,12 @@ namespace ProjectTile
 
         private void NonAMsCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            refreshEditManagersCombo(true, EditManagersCombo.SelectedItem.ToString());
+            refreshEditManagersCombo(true, getEditAMName());
         }
 
         private void NonAMsCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            refreshEditManagersCombo(false, EditManagersCombo.SelectedItem.ToString());
+            refreshEditManagersCombo(false, getEditAMName());
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)

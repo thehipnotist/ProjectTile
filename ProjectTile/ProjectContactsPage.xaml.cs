@@ -137,7 +137,7 @@ namespace ProjectTile
             try
             {
                 ProjectProxy currentRecord = (Globals.SelectedProjectProxy != null) ? Globals.SelectedProjectProxy : Globals.DefaultProjectProxy;
-                ProjectFunctions.SetProjectFilterList(Globals.SelectedStatusFilter);
+                ProjectFunctions.SetProjectFilterList(Globals.SelectedStatusFilter, false);
                 ProjectCombo.ItemsSource = ProjectFunctions.ProjectFilterList;
                 selectProject(currentRecord.ProjectID);
             }
@@ -232,7 +232,7 @@ namespace ProjectTile
                     }
                 }
             }
-            catch (Exception generalException) { MessageFunctions.Error("Error processing client selection", generalException); }
+            catch (Exception generalException) { MessageFunctions.Error("Error processing project client selection", generalException); }
         }
         
         private int currentClientID()
@@ -468,6 +468,7 @@ namespace ProjectTile
         {
             try
             {
+                if (ProjectFunctions.SelectedTeamProject.Client == null) { return; }
                 CloseProjectLookup();
                 Globals.SelectedProjectProxy = ProjectFunctions.SelectedTeamProject;
                 refreshProjectCombo();

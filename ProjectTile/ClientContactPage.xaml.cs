@@ -198,8 +198,8 @@ namespace ProjectTile
                 { 
                     PageHeader.Content = "Manage Client Contacts";
                     if (canAmend && !canAdd) { Instructions.Content = "Choose a contacts from the list and click on 'Amend' to change it."; }
-                    else if (canAdd & !canAmend) { Instructions.Content = "Existing contacts are shown for reference. Click 'Add' to create a new one."; }
-                    else { Instructions.Content = "Click 'Add' to create a new contact, or choose one from the list and click 'Amend' to change it."; }
+                    else if (canAdd & !canAmend) { Instructions.Content = "Existing contacts are shown for reference. Click 'New Contact' to create a new one."; }
+                    else { Instructions.Content = "Click 'New Contact' to create a contact, or choose a record from the list and click 'Amend' to change it."; }
                 }
                 else
                 {
