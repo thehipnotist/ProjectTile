@@ -790,7 +790,7 @@ BEGIN TRY
 
 		INSERT INTO dbo.Staff (
 							FirstName,	Surname,		RoleCode,	StartDate,		LeaveDate,		UserID,		Passwd,	Active, DefaultEntity,	SingleSignon,	OSUser)
-			SELECT			'System',	'Admin',		'AD',		'2000-01-01',	NULL,			'pjadmin',	'E*l3',	1,		1,				1,				SYSTEM_USER
+			SELECT			'System',	'Admin',		'AD',		'2000-01-01',	NULL,			'pjadmin',	'Pr0jectAdm1n',	1,		1,		0,				''
 			UNION SELECT	'Julie',	'Drench',		'SM',		'2010-01-01',	'2019-08-03',	NULL,		'',		0,		1,				0,				''
 			UNION SELECT	'Michel',	'Jambon',		'SM',		'2010-01-01',	NULL,			NULL,		'',		0,		1,				0,				''
 			UNION SELECT	'Maddie',	'Smidt',		'SM',		'2010-01-01',	NULL,			NULL,		'',		0,		1,				0,				''
