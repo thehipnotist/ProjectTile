@@ -44,7 +44,7 @@ namespace ProjectTile
                             where ae.ChangeTime >= fromDate && ae.ChangeTime < maxTime
                             && ae.TableName == tableName
                             && (userID == "" || userID == AllCodes || userID == ae.UserName.Replace(DbUserPrefix, ""))
-                            orderby ae.ChangeTime descending 
+                            orderby ae.ChangeTime descending, ae.PrimaryValue ascending 
                             select new AuditProxy
                             {
                                 ID = ae.ID,

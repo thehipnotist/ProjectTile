@@ -17,7 +17,7 @@ namespace ProjectTile
         string pageMode;
 
         // Current variables //
-        int selectedEntityID = 0;
+        //int selectedEntityID = 0;
 
         // Current records //
         Entities selectedEntity = null;
@@ -56,15 +56,15 @@ namespace ProjectTile
                     EntityName.Visibility = Visibility.Hidden;
                     SwitchToCheckBox.Visibility = Visibility.Hidden;
                     EntityDescription.IsEnabled = false;
-                    EntityList.Margin = EntityName.Margin;
+                    EntityCombo.Margin = EntityName.Margin;
                     CommitButtonText.Text = "Change";
                     ChangeNameLabel.Visibility = Visibility.Hidden;
-                    EntityList.ItemsSource = EntityFunctions.EntityNameList(Globals.MyStaffID, false, Globals.CurrentEntityID);
-                    if (EntityList.Items.Count == 1) { EntityList.SelectedIndex = 0; }
+                    EntityCombo.ItemsSource = EntityFunctions.EntityList(Globals.MyStaffID, false, Globals.CurrentEntityID);
+                    if (EntityCombo.Items.Count == 1) { EntityCombo.SelectedIndex = 0; }
                 }
                 else if (pageMode == PageFunctions.New)
                 {
-                    EntityList.Visibility = Visibility.Hidden;
+                    EntityCombo.Visibility = Visibility.Hidden;
                     ChangeNameLabel.Visibility = Visibility.Hidden;
                 }
                 else if (pageMode == PageFunctions.Amend)
@@ -77,10 +77,10 @@ namespace ProjectTile
                     EntityDescription.IsEnabled = false;
 
                     Thickness nameMargin = EntityName.Margin;
-                    EntityName.Margin = EntityList.Margin;
-                    EntityList.Margin = nameMargin;
+                    EntityName.Margin = EntityCombo.Margin;
+                    EntityCombo.Margin = nameMargin;
                     CommitButtonText.Text = "Amend";
-                    EntityList.ItemsSource = EntityFunctions.EntityNameList(Globals.MyStaffID, false);
+                    EntityCombo.ItemsSource = EntityFunctions.EntityList(Globals.MyStaffID, false);
                 }
                 else if (pageMode == PageFunctions.Default) 
                 {
@@ -93,22 +93,22 @@ namespace ProjectTile
                     SwitchToCheckBox.Visibility = Visibility.Hidden;
                     MakeDefaultCheckBox.Visibility = Visibility.Hidden;
                     EntityDescription.IsEnabled = false;
-                    EntityList.Margin = EntityName.Margin;
+                    EntityCombo.Margin = EntityName.Margin;
                     CommitButtonText.Text = "Set Default";
                     ChangeNameLabel.Visibility = Visibility.Hidden;
-                    EntityList.ItemsSource = EntityFunctions.EntityNameList(Globals.MyStaffID, false, Globals.MyDefaultEntityID);
+                    EntityCombo.ItemsSource = EntityFunctions.EntityList(Globals.MyStaffID, false, Globals.MyDefaultEntityID);
 
                     if (Globals.MyDefaultEntityID != Globals.CurrentEntityID)
                     {
-                        try { EntityList.SelectedItem = Globals.CurrentEntityName; }
+                        try { EntityCombo.SelectedItem = Globals.CurrentEntityName; }
                         catch (Exception generalException) { MessageFunctions.Error("Error setting current entity", generalException); }
                     }
-                    else { if (EntityList.Items.Count == 1) { EntityList.SelectedIndex = 0; } }
+                    else { if (EntityCombo.Items.Count == 1) { EntityCombo.SelectedIndex = 0; } }
                 
                 }
                 else // Not sure
                 {
-                    EntityList.Visibility = Visibility.Hidden;
+                    EntityCombo.Visibility = Visibility.Hidden;
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error setting initial values", generalException); }
@@ -121,8 +121,8 @@ namespace ProjectTile
         // Control-specific events //
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
-            string displayName = EntityName.Text;
-            string displayDescription = EntityDescription.Text;
+            string name = EntityName.Text;
+            string description = EntityDescription.Text;
 
             if (pageMode == PageFunctions.Switch)
             {
@@ -130,16 +130,16 @@ namespace ProjectTile
             }
             else if (pageMode == PageFunctions.New)
             {
-                EntityFunctions.NewEntity(displayName, displayDescription, (bool)SwitchToCheckBox.IsChecked, (bool)MakeDefaultCheckBox.IsChecked);              
+                EntityFunctions.NewEntity(name, description, (bool)SwitchToCheckBox.IsChecked, (bool)MakeDefaultCheckBox.IsChecked);              
             }
             else if (pageMode == PageFunctions.Amend)
             {
-                EntityFunctions.AmendEntity(ref selectedEntity, displayName, displayDescription);                
+                EntityFunctions.AmendEntity(ref selectedEntity, name, description);                
                
             }
             else if (pageMode == PageFunctions.Default)
             {
-                EntityFunctions.ChangeDefaultEntity(ref selectedEntity, displayName);
+                EntityFunctions.ChangeDefaultEntity(ref selectedEntity, name);
             }  
         }
 
@@ -148,16 +148,15 @@ namespace ProjectTile
             PageFunctions.ShowTilesPage();
         }
 
-        private void EntityList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void EntityCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string displayName = EntityList.SelectedValue.ToString();
-            EntityName.Text = displayName;
-
             try
             {
-                selectedEntity = EntityFunctions.GetEntityByName(displayName);
-                selectedEntityID = selectedEntity.ID;
+                if (EntityCombo.SelectedValue == null) { return; }
 
+                selectedEntity = (Entities)EntityCombo.SelectedValue;
+                //selectedEntityID = selectedEntity.ID;
+                EntityName.Text = selectedEntity.EntityName;
                 EntityDescription.Text = selectedEntity.EntityDescription;
                 if (pageMode == PageFunctions.Amend)
                 {
@@ -165,21 +164,14 @@ namespace ProjectTile
                 }
                 else if (pageMode == PageFunctions.Switch)
                 {
-                    if (selectedEntityID != Globals.MyDefaultEntityID)
-                    {
-                        MakeDefaultCheckBox.IsEnabled = true;
-                    }
-                    else
-                    {
-                        MakeDefaultCheckBox.IsEnabled = false;
-                        MakeDefaultCheckBox.IsChecked = false;
-                    }
+                    if (selectedEntity.ID != Globals.MyDefaultEntityID) { MakeDefaultCheckBox.IsEnabled = true; }
+                    else { MakeDefaultCheckBox.IsChecked = MakeDefaultCheckBox.IsEnabled = false; }
                 }
             }
             catch (Exception generalException) 
             {
                 MessageFunctions.Error("Error changing entity selection", generalException);
-                selectedEntityID = 0;
+                //selectedEntityID = 0;
                 selectedEntity = null;
             }
         }

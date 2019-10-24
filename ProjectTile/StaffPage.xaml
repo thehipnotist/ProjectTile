@@ -38,9 +38,9 @@
                          LostFocus="NameContains_LostFocus" KeyUp="NameContains_KeyUp" Style="{DynamicResource PaddedTextBox}" CharacterCasing="Upper"/>
                 <CheckBox x:Name="ActiveOnlyCheckBox" Content="Active Only" HorizontalAlignment="Center" Height="30" Margin="55,44,15,0" VerticalAlignment="Top" Width="100" FontWeight="Bold" 
                           VerticalContentAlignment="Center" Checked="ActiveOnlyCheckBox_Checked" Unchecked="ActiveOnlyCheckBox_Unchecked" Style="{DynamicResource RoundedCheckbox}"/>
-                <Label x:Name="RoleListLabel" Content="Main Role" HorizontalAlignment="Right" Height="30" Margin="0,45,150,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
-                <ComboBox x:Name="RoleList" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="135" SelectionChanged="RoleList_SelectionChanged"
-                           Style="{DynamicResource PaddedCombo}"/>
+                <Label x:Name="RoleComboLabel" Content="Main Role" HorizontalAlignment="Right" Height="30" Margin="0,45,150,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
+                <ComboBox x:Name="RoleCombo" HorizontalAlignment="Right" Height="30" Margin="0,45,15,0" VerticalAlignment="Top" Width="135" SelectionChanged="RoleCombo_SelectionChanged"
+                           Style="{DynamicResource PaddedCombo}" DisplayMemberPath="RoleDescription"/>
 
                 <DataGrid x:Name="StaffDataGrid" MinHeight="295" Margin="15,90,15,15" MinWidth="625" AutoGenerateColumns="False" IsReadOnly="True" BorderBrush="{StaticResource PtBrushStaff3}" 
                           SelectionChanged="StaffGrid_SelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Top">

@@ -633,7 +633,7 @@ namespace ProjectTile
             try
             {
                 List<StaffProxy> managerList = null;
-                if (anyActiveUser) { managerList = StaffFunctions.GetStaffGridData(activeOnly: true, nameContains: "", roleDescription: AllRecords, entityID: CurrentEntityID); }
+                if (anyActiveUser) { managerList = StaffFunctions.GetStaffList(activeOnly: true, nameContains: "", roleCode: "", entityID: CurrentEntityID); }
                 else
                 {
                     SetFullPMsList();
@@ -1645,6 +1645,23 @@ namespace ProjectTile
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error retrieving project timeline details", generalException);
+                return null;
+            }
+        }
+
+        public static StageHistory GetHistoryRecord(int historyID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return existingPtDb.StageHistory.FirstOrDefault(sh => sh.ID == historyID);                    
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving stage history details with ID " + historyID.ToString(), generalException);
                 return null;
             }
         }

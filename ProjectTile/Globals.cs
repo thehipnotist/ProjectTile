@@ -45,6 +45,7 @@ namespace ProjectTile
         public static ClientProxy AnyClient = new ClientProxy { ID = 0, ClientCode = "ANY", ClientName = AnyRecord, EntityID = CurrentEntityID, ActiveClient = false };
         public static ClientProxy NoClient = new ClientProxy { ID = NoID, ClientCode = "NONE", ClientName = NoRecord, EntityID = CurrentEntityID, ActiveClient = true };
         public static StaffProxy AllPMs = new StaffProxy { ID = 0, FirstName = AllRecords, Surname = "", Active = false };
+        public static StaffRoles AllStaffRoles = new StaffRoles { RoleCode = AllCodes, RoleDescription = AllRecords };
         public static ProjectRoles AllProjectRoles = new ProjectRoles { RoleCode = AllCodes, RoleDescription = AllRecords };
         public static ClientTeamRoles AllClientRoles = new ClientTeamRoles { RoleCode = AllCodes, RoleDescription = AllRecords };
         public static StaffProxy AllStaff = new StaffProxy { ID = 0, FirstName = AllRecords, Surname = "", Active = true, UserID = AllCodes };

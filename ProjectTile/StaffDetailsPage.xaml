@@ -72,9 +72,11 @@
                             Padding="5"/>
 
                 <Label x:Name="DefaultEntityLabel" Content="Default Entity" HorizontalAlignment="Left" Height="30" Margin="15,300,0,0" VerticalAlignment="Top" Width="95" FontWeight="Bold"/>
-                <ComboBox x:Name="EntityCombo" HorizontalAlignment="Left" Height="30" Margin="115,300,0,0" VerticalAlignment="Top" Width="180" Style="{DynamicResource PaddedCombo}"/>
+                <ComboBox x:Name="EntityCombo" HorizontalAlignment="Left" Height="30" Margin="115,300,0,0" VerticalAlignment="Top" Width="180" Style="{DynamicResource PaddedCombo}"
+                          DisplayMemberPath="EntityName"/>
                 <Label x:Name="RoleLabel" Content="Main Role" HorizontalAlignment="Right" Height="30" Margin="0,300,210,0" VerticalAlignment="Top" Width="90" FontWeight="Bold"/>
-                <ComboBox x:Name="RoleCombo" HorizontalAlignment="Right" Height="30" Margin="0,300,30,0" VerticalAlignment="Top" Width="180" Style="{DynamicResource PaddedCombo}"/>
+                <ComboBox x:Name="RoleCombo" HorizontalAlignment="Right" Height="30" Margin="0,300,30,0" VerticalAlignment="Top" Width="180" Style="{DynamicResource PaddedCombo}"
+                          DisplayMemberPath="RoleDescription"/>
 
             </Grid>
         </Border>

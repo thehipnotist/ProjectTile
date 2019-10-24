@@ -34,7 +34,7 @@
                     <TextBlock x:Name="MainText" HorizontalAlignment="Left" MinHeight="370" TextWrapping="Wrap" VerticalAlignment="Top" Width="625" Padding="5,5,20,5" 
                                ScrollViewer.VerticalScrollBarVisibility="Visible">
                         <TextBlock.Inlines>
-                            <TextBlock FontWeight="Bold" Text="ProjectTile v1.00"/>
+                            <TextBlock FontWeight="Bold" Text="ProjectTile v1.10"/>
                             <LineBreak/>
                             <TextBlock Text="{Binding Path=VersionText, Mode=OneWay}" TextWrapping="Wrap"/>
                             <LineBreak/><LineBreak/>

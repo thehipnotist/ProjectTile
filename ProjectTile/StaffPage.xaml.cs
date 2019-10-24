@@ -24,7 +24,7 @@ namespace ProjectTile
         // Current variables //
         bool activeOnly = false;
         string nameContains = "";
-        string roleDescription = Globals.AllRecords;
+        string roleCode = Globals.AllRecords;
         int selectedStaffID = 0;
 
         bool viewEntities = Globals.MyPermissions.Allow("ViewStaffEntities");
@@ -53,7 +53,7 @@ namespace ProjectTile
             {                
                 pageMode = PageFunctions.pageParameter(this, "Mode");
                 selectedStaffID = Int32.Parse(PageFunctions.pageParameter(this, "StaffID"));
-                refreshRoleList(); // This also runs LoadOrRefreshData to populate the main staff data grid
+                refreshRoleCombo(); // This also runs LoadOrRefreshData to populate the main staff data grid
             }
             catch (Exception generalException)
             {
@@ -99,12 +99,12 @@ namespace ProjectTile
         // ---------------------- //
 
         // Data updates //
-        private void refreshRoleList()
+        private void refreshRoleCombo()
         {
             try
             {
-                RoleList.ItemsSource = StaffFunctions.ListUserRoles(true);
-                RoleList.SelectedItem = Globals.AllRecords;                 
+                RoleCombo.ItemsSource = StaffFunctions.ListStaffRoles(true);
+                RoleCombo.SelectedItem = Globals.AllStaffRoles;                 
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating role filter list", generalException); }
         }
@@ -114,7 +114,7 @@ namespace ProjectTile
             try
             {
                 int entityFilterID = (pageMode == PageFunctions.Lookup) ? Globals.CurrentEntityID : 0;
-                List<StaffProxy> gridList = StaffFunctions.GetStaffGridData(activeOnly, nameContains, roleDescription, entityFilterID);
+                List<StaffProxy> gridList = StaffFunctions.GetStaffList(activeOnly, nameContains, roleCode, entityFilterID);
                 StaffDataGrid.ItemsSource = gridList.OrderBy(gl => gl.UserID).OrderBy(gl => gl.StaffName);
  
                 if (selectedStaffID > 0)
@@ -225,9 +225,11 @@ namespace ProjectTile
             nameFilter();
         }
 
-        private void RoleList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void RoleCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            roleDescription = RoleList.SelectedValue.ToString();
+            if (RoleCombo.SelectedItem == null) { return; }
+            StaffRoles role = (StaffRoles)RoleCombo.SelectedItem;
+            roleCode = role.RoleCode;
             refreshStaffGrid();
         }
 

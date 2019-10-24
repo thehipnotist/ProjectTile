@@ -96,7 +96,7 @@ namespace ProjectTile
 
         private void refreshStaffCombo()
         {
-            staffComboList = StaffFunctions.GetStaffGridData(activeOnly: false, nameContains: "", roleDescription: "", entityID: Globals.CurrentEntityID);
+            staffComboList = StaffFunctions.GetStaffList(activeOnly: false, nameContains: "", roleCode: "", entityID: Globals.CurrentEntityID);
             staffComboList.Insert(0, Globals.AllStaff);
             StaffCombo.ItemsSource = staffComboList;
             StaffCombo.SelectedItem = Globals.AllStaff;

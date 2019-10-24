@@ -137,7 +137,7 @@ namespace ProjectTile
         {
             try
             {
-                var gridList = StaffFunctions.GetStaffGridData(activeOnly, nameContains, Globals.AllRecords, selectedEntityID);
+                var gridList = StaffFunctions.GetStaffList(activeOnly, nameContains, "", selectedEntityID);
                 StaffDataGrid.ItemsSource = gridList;
 
                 if (selectedStaffID > 0)
@@ -244,7 +244,7 @@ namespace ProjectTile
             toggleSelectionControls(false);
             try
             {
-                var staffComboList = StaffFunctions.GetStaffGridData(activeOnly, nameContains, Globals.AllRecords, 0);
+                var staffComboList = StaffFunctions.GetStaffList(activeOnly, nameContains, "", 0);
                 var staffNames = staffComboList.Select(sg => sg.StaffName);
                 StaffCombo.ItemsSource = staffNames;
                 selectedStaffName = StaffFunctions.GetSelectedName();

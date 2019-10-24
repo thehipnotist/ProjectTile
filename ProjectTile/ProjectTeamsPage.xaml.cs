@@ -179,7 +179,7 @@ namespace ProjectTile
                 else
                 {
                     PossibleNames.Visibility = Visibility.Visible;
-                    staffDropList = StaffFunctions.GetStaffGridData(activeOnly: false, nameContains: nameLike, roleDescription: "", entityID: Globals.CurrentEntityID);
+                    staffDropList = StaffFunctions.GetStaffList(activeOnly: false, nameContains: nameLike, roleCode: "", entityID: Globals.CurrentEntityID);
                     PossibleNames.ItemsSource = staffDropList;
                 }
             }
@@ -188,7 +188,7 @@ namespace ProjectTile
 
         private void refreshStaffCombo()
         {
-            staffComboList = StaffFunctions.GetStaffGridData(activeOnly: true, nameContains: "", roleDescription: "", entityID: Globals.CurrentEntityID);
+            staffComboList = StaffFunctions.GetStaffList(activeOnly: true, nameContains: "", roleCode: "", entityID: Globals.CurrentEntityID);
             StaffCombo.ItemsSource = staffComboList;
         }
 

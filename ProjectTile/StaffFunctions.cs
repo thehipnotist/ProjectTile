@@ -51,7 +51,7 @@ namespace ProjectTile
 
         // Get staff data
         
-        public static List<StaffProxy> GetStaffGridData(bool activeOnly, string nameContains, string roleDescription, int entityID)
+        public static List<StaffProxy> GetStaffList(bool activeOnly, string nameContains, string roleCode, int entityID)
         {
             ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
             using (existingPtDb)
@@ -72,12 +72,12 @@ namespace ProjectTile
 
                     // Set the contents based on all of the filters
                     List<StaffProxy> gridList = (from s in existingPtDb.Staff
-                               join sr in existingPtDb.StaffRoles on s.RoleCode equals sr.RoleCode
+                               //join sr in existingPtDb.StaffRoles on s.RoleCode equals sr.RoleCode
                                join se in existingPtDb.StaffEntities on s.ID equals se.StaffID
                                where (!activeOnly || s.Active)
                                     && (nameContains == "" || (s.FullName).Contains(nameContains))
                                     && (myAllowedEntities.Contains((int) se.EntityID))
-                                    && (roleDescription == AllRecords || roleDescription == "" || sr.RoleDescription == roleDescription)
+                                    && (roleCode == AllCodes || roleCode == "" || s.RoleCode == roleCode)
                                orderby new { s.FirstName, s.Surname, s.UserID }
                                select (new StaffProxy()
                                {
@@ -173,7 +173,7 @@ namespace ProjectTile
             {
                 if (entityID == 0) { entityID = CurrentEntityID; }
                 
-                List<StaffProxy> allStaffinEntity = GetStaffGridData(activeOnly: false, nameContains: "", roleDescription: AllRecords, entityID: CurrentEntityID);
+                List<StaffProxy> allStaffinEntity = GetStaffList(activeOnly: false, nameContains: "", roleCode: "", entityID: CurrentEntityID);
                 if (allStaffinEntity.Exists(ase => ase.ID == staffID)) { return allStaffinEntity.First(ase => ase.ID == staffID); }
                 else
                 {
@@ -335,8 +335,8 @@ namespace ProjectTile
             }
         }
 
-        public static int SaveStaffDetails(int staffID, string firstName, string surname, string roleDesc, DateTime? start, DateTime? leave, string userID, string passwd, 
-            bool active, string defaultEnt, bool canSSO, string networkUser)
+        public static int SaveStaffDetails(int staffID, string firstName, string surname, string roleCode, DateTime? start, DateTime? leave, string userID, string passwd, 
+            bool active, int defaultEntityID, bool canSSO, string networkUser)
         {
             string errorMessage = "";
             bool addEntity = false;
@@ -351,8 +351,8 @@ namespace ProjectTile
             else if (userID == "" && passwd != "") { errorMessage = "Passwords cannot be set without a UserID.|No UserID Provided"; }
             else if (start == null) { errorMessage = "Please enter the date the user started working.|Start Date Blank"; }
             else if (leave < start) { errorMessage = "The user's start date cannot be after their leave date.|Invalid Date Combination"; } 
-            else if (defaultEnt == "") { errorMessage = "Please select the staff member's default Entity from the drop-down list. Ask your system administrator if unsure.|No Entity Selected"; }
-            else if (roleDesc == "") { errorMessage = "Please select the staff member's role from the drop-down list. Ask your system administrator if unsure what to choose.|No Role Selected"; }
+            else if (defaultEntityID <= 0) { errorMessage = "Please select the staff member's default Entity from the drop-down list. Ask your system administrator if unsure.|No Entity Selected"; }
+            else if (roleCode == "") { errorMessage = "Please select the staff member's role from the drop-down list. Ask your system administrator if unsure what to choose.|No Role Selected"; }
             else if (canSSO && networkUser == "") { errorMessage = "Please provide a Domain UserID for this user if they will use single sign-on.|No Network Username"; }           
 
             if (errorMessage != "")
@@ -368,8 +368,8 @@ namespace ProjectTile
                     using (existingPtDb)
                     {
                         string fullName = firstName + " " + surname;
-                        int defaultEntityID = EntityFunctions.GetEntityByName(defaultEnt).ID;
-                        string roleCode = GetRoleByDescription(roleDesc);
+                        //int defaultEntityID = EntityFunctions.GetEntityByName(defaultEnt).ID;
+                        //string roleCode = GetRoleByDescription(roleDesc);
                         
                         Staff checkNewName = existingPtDb.Staff.FirstOrDefault(s => s.FullName == fullName && s.ID != staffID);
                         if (checkNewName != null)
@@ -441,7 +441,7 @@ namespace ProjectTile
                                     int[] allowedEntities = EntityFunctions.AllowedEntityIDs(staffID);
                                     if (!allowedEntities.Contains(defaultEntityID))
                                     {
-                                        addEntity = MessageFunctions.WarningYesNo("This staff member does not currently have access to " + defaultEnt + ". Is this correct?", "Allow new Entity?");
+                                        addEntity = MessageFunctions.WarningYesNo("This staff member does not currently have access to " + defaultEntityID + ". Is this correct?", "Allow new Entity?");
                                         if (addEntity) { EntityFunctions.AllowEntity(defaultEntityID, staffID); }
                                         else { return 0; }
                                     }
@@ -1135,8 +1135,27 @@ namespace ProjectTile
         }
 
         // Staff roles
+
+        public static List<StaffRoles> ListStaffRoles(bool includeAll)
+        {
+            ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+            using (existingPtDb)
+            {
+                try
+                {
+                    var rolesList = existingPtDb.StaffRoles.ToList();
+                    if (includeAll) { rolesList.Add(Globals.AllStaffRoles); }
+                    return rolesList;
+                }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error listing staff roles", generalException);
+                    return null;
+                }
+            }
+        }        
         
-        public static string[] ListUserRoles(bool includeAll)
+        public static string[] ListStaffRoleNames(bool includeAll)
         {
             ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
             using (existingPtDb)
@@ -1154,7 +1173,7 @@ namespace ProjectTile
                 }
                 catch (Exception generalException)
                 {
-                    MessageFunctions.Error("Error listing staff roles", generalException);
+                    MessageFunctions.Error("Error listing staff role names", generalException);
                     return null;
                 }
             }
@@ -1195,23 +1214,23 @@ namespace ProjectTile
             }
         }
 
-        public static string GetRoleByDescription(string roleDescription)
-        {
-            try
-            {
-                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
-                using (existingPtDb)
-                {
-                    StaffRoles thisRole = existingPtDb.StaffRoles.First(sr => sr.RoleDescription == roleDescription);
-                    return thisRole.RoleCode;
-                }
-            }
-            catch (Exception generalException)
-            {
-                MessageFunctions.Error("Error retrieving role code", generalException);
-                return "";
-            }
-        }
+        //public static string GetRoleByDescription(string roleDescription)
+        //{
+        //    try
+        //    {
+        //        ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+        //        using (existingPtDb)
+        //        {
+        //            StaffRoles thisRole = existingPtDb.StaffRoles.First(sr => sr.RoleDescription == roleDescription);
+        //            return thisRole.RoleCode;
+        //        }
+        //    }
+        //    catch (Exception generalException)
+        //    {
+        //        MessageFunctions.Error("Error retrieving role code", generalException);
+        //        return "";
+        //    }
+        //}
 
         // Navigation
 

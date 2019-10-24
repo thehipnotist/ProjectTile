@@ -23,6 +23,7 @@ namespace ProjectTile
         private const string staff = "Staff";
         private const string staffEntities = "StaffEntities";
         private const string staffRoles = "StaffRoles";
+        private const string stageHistory = "StageHistory";
         private const string tablePermissions = "TablePermissions";
 
         public int ID { get; set; }
@@ -142,6 +143,15 @@ namespace ProjectTile
             get
             {
                 if (TableName == projectStages && !AType.Equals('D')) { return ProjectFunctions.GetStageByID(RecordID); }
+                else if (TableName == stageHistory)
+                {
+                    if (!AType.Equals('D') && StageHistory != null) { return ProjectFunctions.GetStageByID(StageHistory.StageID); }
+                    else
+                    {
+                        int stageID = GetDeletedID("StageID");
+                        return (stageID <= 0) ? null : ProjectFunctions.GetStageByID(stageID);
+                    }
+                }
                 else { return null; }
             }
         }
@@ -196,6 +206,15 @@ namespace ProjectTile
                     MessageFunctions.Error("Error retrieving staff role details", generalException);
                     return null;
                 }
+            }
+        }
+
+        public StageHistory StageHistory
+        {
+            get
+            {
+                if (TableName == stageHistory && !AType.Equals('D')) { return ProjectFunctions.GetHistoryRecord(RecordID); }
+                else { return null; }
             }
         }
 
@@ -319,6 +338,8 @@ namespace ProjectTile
                                 return ProjectFunctions.GetProject(RecordID);
                             case projectTeams:
                                 return (ProjectTeam == null) ? null : ProjectTeam.Project;
+                            case stageHistory:
+                                return (StageHistory == null) ? null : ProjectFunctions.GetProject(StageHistory.ProjectID);
                             default:
                                 return null;
                         }
@@ -392,6 +413,7 @@ namespace ProjectTile
                             case projectProducts:
                             case projects:
                             case projectTeams:
+                            case stageHistory:
                                 return (Project == null) ? NoID : Project.EntityID;
                             case staff:
                                 if (StaffMember == null) { return NoID; }
@@ -459,6 +481,8 @@ namespace ProjectTile
                             return StaffMember.FullName + " in " + Entity.EntityName;
                         case staffRoles:
                             return (AType.Equals('D')) ? GetDeletedValue("RoleDescription") : StaffRole.RoleDescription;
+                        case stageHistory:
+                            return Project.ProjectCode + " to " + ProjectStage.StageName;
                         case tablePermissions:
                             return StaffRole.RoleDescription + " with " + ((AType.Equals('D')) ? GetDeletedValue("TableName") : TablePermission.TableName);
                         default:

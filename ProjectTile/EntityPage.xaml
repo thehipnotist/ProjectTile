@@ -40,8 +40,8 @@
                 <TextBox x:Name="EntityDescription" HorizontalAlignment="Left" Height="30" Margin="105,120,0,0" VerticalAlignment="Top" Width="289" ToolTip="Give the entity a brief description" 
                          MaxLength="60" Style="{DynamicResource PaddedTextBox}"/>
 
-                <ComboBox x:Name="EntityList" HorizontalAlignment="Left" Height="30" Margin="475,75,0,0" VerticalAlignment="Top" Width="154" SelectionChanged="EntityList_SelectionChanged"
-                           Style="{DynamicResource PaddedCombo}"/>
+                <ComboBox x:Name="EntityCombo" HorizontalAlignment="Left" Height="30" Margin="475,75,0,0" VerticalAlignment="Top" Width="154" SelectionChanged="EntityCombo_SelectionChanged"
+                           Style="{DynamicResource PaddedCombo}" DisplayMemberPath="EntityName"/>
 
                 <CheckBox x:Name="SwitchToCheckBox" Content="Switch to this Entity " HorizontalAlignment="Right" Height="30" Margin="0,120,25,0" VerticalAlignment="Top" Width="140" FontWeight="Bold" 
                           VerticalContentAlignment="Center" Style="{DynamicResource RoundedCheckbox}"/>

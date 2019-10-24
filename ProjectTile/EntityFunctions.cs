@@ -53,11 +53,11 @@ namespace ProjectTile
             }
         }
 
-        public static List<Entities> EntityList(int thisUserID, bool includeAll)
+        public static List<Entities> EntityList(int thisUserID, bool includeAll, int excludeID = 0)
         {
             try
             {
-                var entityList = AllowedEntities(thisUserID);
+                var entityList = AllowedEntities(thisUserID).Where(ae => !ae.ID.Equals(excludeID)).ToList();
                 if (includeAll) { entityList.Add(AllEntities); }
                 return entityList;
             }
@@ -68,30 +68,31 @@ namespace ProjectTile
             }
         }        
         
-        public static string[] EntityNameList(int thisUserID, bool includeAll, int excludeID = 0)
-        {
-            try
-            {
-                int[] entityIDs = AllowedEntityIDs(thisUserID).Where(aei => !aei.Equals(excludeID)).ToArray();
-                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
-                using (existingPtDb)
-                {
-                    var entityList = existingPtDb.Entities
-                        .Where(ent => entityIDs.Contains(ent.ID))
-                        .Select(ent => ent.EntityName)
-                        .ToList();
+        //public static string[] EntityNameList(int thisUserID, bool includeAll, int excludeID = 0)
+        //{
+        //    try
+        //    {
+        //        int[] entityIDs = AllowedEntityIDs(thisUserID).Where(aei => !aei.Equals(excludeID)).ToArray();
+        //        ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+        //        using (existingPtDb)
+        //        {
+        //            var entityList = existingPtDb.Entities
+        //                .Where(ent => entityIDs.Contains(ent.ID))
+        //                .Select(ent => ent.EntityName)
+        //                .ToList();
 
-                    if (includeAll) { entityList.Add(AllRecords); }
-                    string[] entityArray = entityList.ToArray();
-                    return entityArray;
-                }
-            }
-            catch (Exception generalException)
-            {
-                MessageFunctions.Error("Error listing valid Entity names", generalException);
-                return null;
-            }
-        }
+        //            if (includeAll) { entityList.Add(AllRecords); }
+        //            string[] entityArray = entityList.ToArray();
+        //            return entityArray;
+        //        }
+        //    }
+        //    catch (Exception generalException)
+        //    {
+        //        MessageFunctions.Error("Error listing valid Entity names", generalException);
+        //        return null;
+        //    }
+        //}
+
 
         public static Entities GetEntity(int entityID)
         {
