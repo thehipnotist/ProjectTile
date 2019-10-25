@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace ProjectTile
         public delegate void ReturnToTeamsDelegate();
         public static ReturnToTeamsDelegate SelectProjectForTeam;
         public static ReturnToTeamsDelegate CancelTeamProjectSelection;
+        public static Dictionary<int, string> ActionStatusOptions = new Dictionary<int, string>();
 
         // ------------------ Lists ----------------- //
 
@@ -1691,6 +1693,47 @@ namespace ProjectTile
                 MessageFunctions.Error("Error retrieving stage history details for stage " + stageNumber.ToString(), generalException);
                 return null;
             }
+        }
+
+        // Actions
+        public static void SetActionStatusOptions()
+        {
+            try
+            {
+                if (ActionStatusOptions.Count == 0)
+                {
+                    ActionStatusOptions.Add(3, "Yes");
+                    ActionStatusOptions.Add(2, "Part");
+                    ActionStatusOptions.Add(1, "No");
+                    ActionStatusOptions.Add(0, AllRecords);
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error setting action status options", generalException); }	
+        }
+
+        public static List<string> ActionCompletedList(bool includeAll)
+        {
+            try
+            {
+                List<string> optionsList = new List<string>();
+                foreach (var entry in ActionStatusOptions.Values)
+                {
+                    if (includeAll || entry.ToString() != AllRecords) { optionsList.Add(entry.ToString()); };
+                }
+                //if (includeAll) { optionsList.Add(AllRecords); }
+
+                return optionsList;
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving action status options", generalException);
+                return null;
+            }	
+        }
+
+        public static int GetCompletedKey(string value)
+        {
+            return ActionStatusOptions.Keys.FirstOrDefault(k => ActionStatusOptions[k] == value);
         }
 
         // -------------- Data updates -------------- // 

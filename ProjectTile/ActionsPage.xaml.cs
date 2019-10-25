@@ -33,14 +33,18 @@ namespace ProjectTile
 
         // ------------ Current variables ----------- // 
 
-
+        DateTime fromDate = Globals.InfiniteDate;
+        DateTime toDate = Globals.StartOfTime;
+        string nameLike = "";
+        bool exactName = false;
+        int completed = 0;
 
         // ------------- Current records ------------ //
 
 
 
         // ------------------ Lists ----------------- //
-
+        List<string> completedList = null;
 
 
         // ---------------------------------------------------------- //
@@ -76,6 +80,10 @@ namespace ProjectTile
 
             refreshClientCombo();
             refreshStatusCombo();
+            FromDate.SelectedDate = fromDate = Globals.StartOfMonth;
+            ToDate.SelectedDate = toDate = Globals.Today;
+            ProjectFunctions.SetActionStatusOptions();
+            refreshCompletedList();
 
             Instructions.Content = defaultInstructions;
 
@@ -125,7 +133,7 @@ namespace ProjectTile
                 StatusCombo.ItemsSource = ProjectFunctions.StatusFilterList;
                 StatusCombo.SelectedItem = currentName;
             }
-            catch (Exception generalException) { MessageFunctions.Error("Error populating status drop-down list", generalException); }
+            catch (Exception generalException) { MessageFunctions.Error("Error populating project status drop-down list", generalException); }
         }
 
         private void refreshProjectCombo()
@@ -139,6 +147,35 @@ namespace ProjectTile
                 selectProject(currentRecord.ProjectID);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating projects drop-down list", generalException); }
+        }
+
+        private void refreshNamesList()
+        {
+            try
+            {
+                exactName = false;
+                string nameLike = NameLike.Text;
+                if (nameLike == "") { PossibleNames.Visibility = Visibility.Hidden; }
+                else
+                {
+                    int projectClientID = clientSelected ? Globals.SelectedClient.ID : 0;
+                    PossibleNames.Visibility = Visibility.Visible;
+                    //teamDropList = ClientFunctions.ContactGridList(contactContains: nameLike, activeOnly: false, clientID: projectClientID, includeJob: false);
+                    //PossibleNames.ItemsSource = teamDropList;
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error processing name change", generalException); }
+        }
+
+        private void refreshCompletedList()
+        {
+            try
+            {
+                completedList = ProjectFunctions.ActionCompletedList(true);
+                CompleteCombo.ItemsSource = completedList;
+                CompleteCombo.SelectedValue = Globals.AllRecords;
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error populating action status drop-down list", generalException); }
         }
 
         // -------------- Data updates -------------- // 
@@ -212,6 +249,33 @@ namespace ProjectTile
             else { PageHeader.Content = defaultHeader; }
         }
 
+        private void chooseContactName(int contactID = 0)
+        {
+            try
+            {
+                //ContactProxy selectedContact = (contactID != 0) ? ClientFunctions.GetContactProxy(contactID) : (ContactProxy)PossibleNames.SelectedItem;
+                //NameLike.Text = selectedContact.ContactName;
+                //setCurrentClient(selectedContact.Client, null);
+                exactName = true;
+                nameFilter();
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error processing contact name selection", generalException); }
+        }
+
+        private void nameFilter()
+        {
+            try
+            {
+                PossibleNames.Visibility = Visibility.Hidden;
+                nameLike = NameLike.Text;
+                if (nameLike == "") { exactName = false; }
+                if (!exactName && !projectSelected) { setCurrentClient(null); }
+                //toggleContactNameColumn();
+                refreshActionsGrid();
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error updating filters for contact name selection change", generalException); }
+        }
+
         // ---------- Links to other pages ---------- //		
 
 
@@ -225,10 +289,6 @@ namespace ProjectTile
 
 
         // -------- Control-specific events --------- // 
-
-
-
-
 
         private void ClientCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -269,7 +329,8 @@ namespace ProjectTile
             {
                 try
                 {
-                    Globals.SelectedProjectProxy = (ProjectProxy)ProjectCombo.SelectedItem;                  
+                    Globals.SelectedProjectProxy = (ProjectProxy)ProjectCombo.SelectedItem;
+                    setCurrentClient(null, Globals.SelectedProjectProxy.Client ?? null);
                     refreshActionsGrid();
                     toggleProjectMode(Globals.SelectedProjectProxy != Globals.AllProjects);
                 }
@@ -279,42 +340,58 @@ namespace ProjectTile
 
         private void FromDate_LostFocus(object sender, RoutedEventArgs e)
         {
-
+            if (FromDate.SelectedDate != null)
+            {
+                fromDate = (DateTime)FromDate.SelectedDate;
+                if (toDate != null && toDate < fromDate) { ToDate.SelectedDate = fromDate; }
+            }
+            else { fromDate = Globals.InfiniteDate; }
+            refreshActionsGrid();
         }
 
         private void ToDate_LostFocus(object sender, RoutedEventArgs e)
         {
-
+            if (ToDate.SelectedDate != null)
+            {
+                toDate = (DateTime)ToDate.SelectedDate;
+                if (fromDate != null && fromDate > toDate) { FromDate.SelectedDate = toDate; }
+            }
+            else { toDate = Globals.StartOfTime; }
+            refreshActionsGrid();
         }
 
         private void NameLike_LostFocus(object sender, RoutedEventArgs e)
         {
-
+            nameFilter();
         }
 
         private void NameLike_KeyUp(object sender, KeyEventArgs e)
         {
-
+            refreshNamesList();
         }
 
         private void NameLike_GotFocus(object sender, RoutedEventArgs e)
         {
-
+            refreshNamesList();
         }
 
         private void PossibleNames_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            if (PossibleNames.SelectedItem != null) { chooseContactName(); }
         }
 
         private void CompleteCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            if (CompleteCombo.SelectedValue != null)
+            {
+                string value = (string) CompleteCombo.SelectedValue;
+                completed = ProjectFunctions.GetCompletedKey(value);
+            }
         }
 
         private void ActionDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)

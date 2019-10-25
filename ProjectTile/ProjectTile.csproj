@@ -102,6 +102,7 @@
     <Compile Include="cln_GetClientStaffByID_Result.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="CombinedTeamMember.cs" />
     <Compile Include="Entities.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>

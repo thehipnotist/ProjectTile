@@ -21,7 +21,8 @@
         </Grid.RowDefinitions>
 
         <Image x:Name="HeaderImage" Source="{DynamicResource ProjectIcon}" Grid.Row="0" Grid.Column="1" Margin="0,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
-        <Image x:Name="HeaderImage2" Source="{DynamicResource ActionIcon}" Grid.Row="0" Grid.Column="1" Margin="25,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"/>
+        <Image x:Name="HeaderImage2" Source="{DynamicResource ActionIcon}" Grid.Row="0" Grid.Column="1" Margin="25,5,0,0" VerticalAlignment="Top" Width="20" HorizontalAlignment="Left"
+               Height="19"/>
         <Label x:Name="PageHeader" Content="Project Actions" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="605" FontWeight="Bold" Background="{x:Null}" Margin="50,0,0,0" 
                Foreground="White" Grid.Row="0" Grid.Column="1"/>
         <Border MinHeight="400" MinWidth="655" Height="Auto" Width="Auto" Margin="0,0,0,0" BorderBrush="{StaticResource PtBrushProject3}" Style="{DynamicResource SectionBorder}" Grid.Row="1" 
@@ -76,7 +77,7 @@
                         <DataGridTextColumn x:Name="ActionCodeColumn" Binding="{Binding Project.ActionCode, Mode=TwoWay}" ClipboardContentBinding="{x:Null}" Header="Action"/>
                         <DataGridTextColumn x:Name="DescriptionColumn" Binding="{Binding ShortDescription, Mode=TwoWay}" ClipboardContentBinding="{x:Null}" Header="Description"/>                        
                         <DataGridTextColumn x:Name="DueDateColumn" Binding="{Binding EffectiveDue, StringFormat=dd/MM/yyyy, Mode=TwoWay}" ClipboardContentBinding="{x:Null}" Header="Due"/>
-                        <DataGridTextColumn x:Name="OwnerColumn" Binding="{Binding Oner.FullName, Mode=TwoWay}" ClipboardContentBinding="{x:Null}" Header="Owner"
+                        <DataGridTextColumn x:Name="OwnerColumn" Binding="{Binding Owner.FullName, Mode=TwoWay}" ClipboardContentBinding="{x:Null}" Header="Owner"
                                                 Width="*" MinWidth="100"/>
                         <DataGridTextColumn x:Name="LoggedDateColumn" Binding="{Binding LoggedDate, StringFormat=dd/MM/yyyy, Mode=OneWay}" ClipboardContentBinding="{x:Null}" Header="Logged"/>
                         <DataGridTextColumn x:Name="LoggedByColumn" Binding="{Binding LoggedBy.FullName, Mode=TwoWay}" ClipboardContentBinding="{x:Null}" Header="Logged By"
