@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ProjectTile
 {
-    class CombinedTeamMember
+    public class CombinedTeamMember
     {
         public Projects Project { get; set; }
         public TeamProxy InternalTeamMember { get; set; }
@@ -21,24 +21,24 @@ namespace ProjectTile
             }
         }
 
-        public int ClientID
-        {
-            get { return (Project != null) ? (Project.ClientID ?? 0) : 0; }
-        }
+        //public int ClientID
+        //{
+        //    get { return (Project != null) ? (Project.ClientID ?? 0) : 0; }
+        //}
 
-        public string ClientCode
-        {
-            get { return (ClientID > 0)? ClientFunctions.GetClientByID(ClientID).ClientCode : ""; }
-        }
+        //public string ClientCode
+        //{
+        //    get { return (ClientID > 0)? ClientFunctions.GetClientByID(ClientID).ClientCode : ""; }
+        //}
 
-        public string NameAndClient
-        {
-            get
-            {
-                if (ClientTeamMember != null && ClientID > 0) { return FullName + " (" + ClientCode + " )"; }
-                else { return FullName; }
-            }
-        }
+        //public string NameAndClient
+        //{
+        //    get
+        //    {
+        //        if (ClientTeamMember != null && ClientID > 0) { return FullName + " (" + ClientCode + " )"; }
+        //        else { return FullName; }
+        //    }
+        //}
 
     } // class
 } // namespace

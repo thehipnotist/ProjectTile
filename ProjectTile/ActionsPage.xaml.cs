@@ -142,7 +142,7 @@ namespace ProjectTile
             {
                 int clientID = (Globals.SelectedClientProxy != null)? Globals.SelectedClientProxy.ID : 0;
                 ProjectProxy currentRecord = (Globals.SelectedProjectProxy != null) ? Globals.SelectedProjectProxy : Globals.DefaultProjectProxy;
-                ProjectFunctions.SetProjectFilterList(Globals.SelectedStatusFilter, false, clientID);
+                ProjectFunctions.SetProjectFilterList(Globals.SelectedStatusFilter, false, clientID, false);
                 ProjectCombo.ItemsSource = ProjectFunctions.ProjectFilterList;
                 selectProject(currentRecord.ProjectID);
             }
@@ -158,10 +158,11 @@ namespace ProjectTile
                 if (nameLike == "") { PossibleNames.Visibility = Visibility.Hidden; }
                 else
                 {
-                    int projectClientID = clientSelected ? Globals.SelectedClient.ID : 0;
+                    int projectClientID = clientSelected ? Globals.SelectedClientProxy.ID : 0;
+                    int projectID = projectSelected ? Globals.SelectedProjectProxy.ProjectID : 0;
                     PossibleNames.Visibility = Visibility.Visible;
-                    //teamDropList = ClientFunctions.ContactGridList(contactContains: nameLike, activeOnly: false, clientID: projectClientID, includeJob: false);
-                    //PossibleNames.ItemsSource = teamDropList;
+                    List<CombinedStaffMember> teamDropList = ProjectFunctions.CombinedStaffList(nameLike: nameLike, clientID: projectClientID, projectID: projectID);
+                    PossibleNames.ItemsSource = teamDropList;
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error processing name change", generalException); }
@@ -197,26 +198,18 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error selecting current project in the list", generalException); }
         }
 
-        private void setCurrentClient(Clients client, ClientProxy clientProxy = null)
+        private void setCurrentClient(ClientProxy clientProxy = null)
         {
             try
             {
-                if (client == null && (clientProxy == null || clientProxy.ID <= 0))
+                if (clientProxy == null || clientProxy.ID <= 0)
                 {
-                    Globals.SelectedClientProxy = null;
-                    
-                    //if (!projectSelected) { MessageFunctions.CancelInfoAlert(); }
+                    Globals.SelectedClientProxy = null;                   
                     clientSelected = false;
                 }
                 else
                 {
-                    if (clientProxy == null) { clientProxy = ClientFunctions.GetClientProxy(client.ID); }
                     Globals.SelectedClientProxy = clientProxy;                    
-                    //if (!projectSelected)
-                    //{
-                    //    MessageFunctions.InfoAlert("This effectively sets the current client to " + clientProxy.ClientName + " until the name filter is changed/cleared "
-                    //        + " or a different project is selected (the projects drop-down list is unaffected)", "Client " + clientProxy.ClientCode + " selected");
-                    //}
                     clientSelected = true;
                 }
                 togglePageHeader();
@@ -249,13 +242,13 @@ namespace ProjectTile
             else { PageHeader.Content = defaultHeader; }
         }
 
-        private void chooseContactName(int contactID = 0)
+        private void chooseCombinedStaffMember()
         {
             try
             {
-                //ContactProxy selectedContact = (contactID != 0) ? ClientFunctions.GetContactProxy(contactID) : (ContactProxy)PossibleNames.SelectedItem;
-                //NameLike.Text = selectedContact.ContactName;
-                //setCurrentClient(selectedContact.Client, null);
+                CombinedStaffMember selectedPerson = (CombinedStaffMember) PossibleNames.SelectedItem;
+                NameLike.Text = selectedPerson.FullName;
+                //setCurrentClient(selectedPerson.ClientID, null);
                 exactName = true;
                 nameFilter();
             }
@@ -269,7 +262,7 @@ namespace ProjectTile
                 PossibleNames.Visibility = Visibility.Hidden;
                 nameLike = NameLike.Text;
                 if (nameLike == "") { exactName = false; }
-                if (!exactName && !projectSelected) { setCurrentClient(null); }
+                //if (!exactName && !projectSelected) { setCurrentClient(0); }
                 //toggleContactNameColumn();
                 refreshActionsGrid();
             }
@@ -297,8 +290,7 @@ namespace ProjectTile
                 if (ClientCombo.SelectedItem == null) { } // Won't be for long
                 else
                 {
-                    //Globals.SelectedClientProxy = (ClientProxy)ClientCombo.SelectedItem;
-                    setCurrentClient(null, (ClientProxy)ClientCombo.SelectedItem ?? null);
+                    setCurrentClient((ClientProxy)ClientCombo.SelectedItem);
                     //refreshActionsGrid();
                     refreshProjectCombo();
                 }
@@ -330,7 +322,7 @@ namespace ProjectTile
                 try
                 {
                     Globals.SelectedProjectProxy = (ProjectProxy)ProjectCombo.SelectedItem;
-                    setCurrentClient(null, Globals.SelectedProjectProxy.Client ?? null);
+                    setCurrentClient(Globals.SelectedProjectProxy.Client ?? null);
                     refreshActionsGrid();
                     toggleProjectMode(Globals.SelectedProjectProxy != Globals.AllProjects);
                 }
@@ -377,7 +369,7 @@ namespace ProjectTile
 
         private void PossibleNames_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (PossibleNames.SelectedItem != null) { chooseContactName(); }
+            if (PossibleNames.SelectedItem != null) { chooseCombinedStaffMember(); }
         }
 
         private void CompleteCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)

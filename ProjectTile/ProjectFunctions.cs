@@ -234,7 +234,7 @@ namespace ProjectTile
             }
         }
 
-        public static void SetProjectFilterList(ProjectStatusFilter inStatus, bool includeInternals, int clientID = 0)
+        public static void SetProjectFilterList(ProjectStatusFilter inStatus, bool includeInternals, int clientID = 0, bool includeSearch = true)
         {
             try
             {
@@ -248,7 +248,7 @@ namespace ProjectTile
                                 || (clientID > 0 && fpl.Client != null && fpl.Client.ID == clientID)))                                                      
                          select fpl
                         ).ToList();
-                    ProjectFilterList.Insert(0, SearchProjects);
+                    if (includeSearch) { ProjectFilterList.Insert(0, SearchProjects); }
                     ProjectFilterList.Add(AllProjects);
                 }
             }
@@ -1734,6 +1734,48 @@ namespace ProjectTile
         public static int GetCompletedKey(string value)
         {
             return ActionStatusOptions.Keys.FirstOrDefault(k => ActionStatusOptions[k] == value);
+        }
+
+        public static List<CombinedStaffMember> CombinedStaffList(string nameLike, int clientID, int projectID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    List<CombinedStaffMember> combinedList = new List<CombinedStaffMember>();
+                    List<int> projectStaffIDs = null;
+                    List<int> projectContactIDs = null;
+                    if (projectID > 0)
+                    {
+                        projectStaffIDs = existingPtDb.ProjectTeams.Where(pt => pt.ProjectID == projectID).Select(pt => pt.StaffID).ToList();
+                        projectContactIDs = existingPtDb.ClientTeams.Where(ct => ct.ProjectID == projectID).Select(ct => ct.ClientStaffID).ToList();
+                    }
+                    
+                    List<StaffProxy> allStaff = StaffFunctions.GetStaffList(activeOnly: false, nameContains: nameLike, roleCode: "", entityID: CurrentEntityID);
+                    List<StaffProxy> relevantStaff = allStaff.Where(s => projectID <= 0 || projectStaffIDs.Contains(s.ID)).ToList();
+                    foreach (StaffProxy staffMember in relevantStaff)
+                    {
+                        CombinedStaffMember person = new CombinedStaffMember { StaffMember = staffMember, ClientContact = null };
+                        combinedList.Add(person);
+                    }
+
+                    List<ContactProxy> allContacts = ClientFunctions.ContactGridList(contactContains: nameLike, activeOnly: false, clientID: clientID, includeJob: false);
+                    List<ContactProxy> relevantContacts = allContacts.Where(c => projectID <= 0 || projectContactIDs.Contains(c.ID)).ToList();
+                    foreach (ContactProxy contact in relevantContacts)
+                    {
+                        CombinedStaffMember person = new CombinedStaffMember { StaffMember = null, ClientContact = contact };
+                        combinedList.Add(person);
+                    }
+
+                    return combinedList;    
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving list of combined staff members", generalException);
+                return null;
+            }		
         }
 
         // -------------- Data updates -------------- // 
