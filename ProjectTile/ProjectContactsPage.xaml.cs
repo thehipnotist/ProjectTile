@@ -410,6 +410,7 @@ namespace ProjectTile
                 {
                     ProjectCombo.SelectedItem = ProjectFunctions.ProjectFilterList.First(pfl => pfl.ProjectID == projectID);
                 }
+                else ProjectCombo.SelectedItem = ProjectFunctions.ProjectFilterList.First(pfl => pfl.ProjectID == 0);
             }
             catch (Exception generalException) { MessageFunctions.Error("Error selecting current project in the list", generalException); }	
         }

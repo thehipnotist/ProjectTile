@@ -86,7 +86,7 @@ namespace ProjectTile
                 mainButtons.Add(HelpButton);
                 mainButtons.Add(AdminButton);
 
-                entityButtons.Add(EntityButton_Change);
+                entityButtons.Add(EntityButton_Switch);
                 entityButtons.Add(EntityButton_Default);
 
                 if (myPermissions.Allow("AddEntities")) { entityButtons.Add(EntityButton_New); }
@@ -124,6 +124,7 @@ namespace ProjectTile
                 if (myPermissions.Allow("ViewProjectProducts")) { projectButtons.Add(ProjectButton_Product); }
                 else { ProjectButton_Contact.Margin = ProjectButton_Product.Margin; }
                 if (myPermissions.Allow("ViewClientTeams")) { projectButtons.Add(ProjectButton_Contact); }
+                if (myPermissions.Allow("ViewActions")) { projectButtons.Add(ProjectButton_Action); }
 
                 helpButtons.Add(HelpButton_About);
                 helpButtons.Add(HelpButton_FAQ);
@@ -229,24 +230,20 @@ namespace ProjectTile
         }
 
         private void buttonGotFocus(object sender, RoutedEventArgs e)
-        {
-            
+        {            
             if (sender is Button)
             {            
                 Button thisButton = (Button)sender;
                 thisButton.BorderThickness = fatBorder;
                 expandButton(ref thisButton);
                 keepExpansion = true;
-            }
-            
+            }            
         }
 
         private void buttonLostFocus(object sender, RoutedEventArgs e)
-        {            
-            
+        {                        
             keepExpansion = false;
-            movedElsewhere();
-             
+            movedElsewhere();             
         }
 
         private void movedElsewhere()
@@ -282,7 +279,6 @@ namespace ProjectTile
 
         private void mouseOffButtons(object sender, MouseButtonEventArgs e)
         {
-            //MessageBox.Show("Hi");
             keepExpansion = false;
             movedElsewhere();
         }
@@ -307,22 +303,22 @@ namespace ProjectTile
         }
 
         // Control-specific events //
-        private void ChangeCurrentEntityButton_Click(object sender, RoutedEventArgs e)
+        private void EntityButton_Switch_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowEntityPage(PageFunctions.Switch);
         }
 
-        private void NewEntityButton_Click(object sender, RoutedEventArgs e)
+        private void EntityButton_New_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowEntityPage(PageFunctions.New);
         }
 
-        private void AmendEntityButton_Click(object sender, RoutedEventArgs e)
+        private void EntityButton_Amend_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowEntityPage(PageFunctions.Amend);
         }
 
-        private void ChangeDefaultEntityButton_Click(object sender, RoutedEventArgs e)
+        private void EntityButton_Default_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowEntityPage(PageFunctions.Default);
         }
@@ -432,6 +428,11 @@ namespace ProjectTile
             PageFunctions.ShowProjectTeamsPage();
         }
 
+        private void ProjectButton_Action_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowActionsPage();
+        }        
+
         private void HelpButton_About_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowAboutPage();
@@ -451,6 +452,6 @@ namespace ProjectTile
         {
             PageFunctions.ShowErrorPage();
         }
-        
+
     } // class
 } // namespace

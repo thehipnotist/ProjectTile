@@ -232,7 +232,7 @@ namespace ProjectTile
             }
         }
 
-        public static void SetProjectFilterList(ProjectStatusFilter inStatus, bool includeInternals)
+        public static void SetProjectFilterList(ProjectStatusFilter inStatus, bool includeInternals, int clientID = 0)
         {
             try
             {
@@ -242,7 +242,8 @@ namespace ProjectTile
                     ProjectFilterList =
                         (from fpl in FullProjectList
                          where IsInFilter(inStatus, fpl.Stage)
-                            && (includeInternals || (fpl.Client != null && fpl.Client.ID > 0))
+                            && ((clientID <= 0 && (includeInternals || (fpl.Client != null && fpl.Client.ID > 0))
+                                || (clientID > 0 && fpl.Client != null && fpl.Client.ID == clientID)))                                                      
                          select fpl
                         ).ToList();
                     ProjectFilterList.Insert(0, SearchProjects);

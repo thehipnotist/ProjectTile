@@ -431,6 +431,11 @@ namespace ProjectTile
             PageFunctions.ShowProjectProductsPage();
         }
 
+        private void ProjectAction_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowActionsPage();
+        }
+
         private void ProjectButton_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowProjectTeamsPage(pageMode: "", selectedStaffID: Globals.MyStaffID);

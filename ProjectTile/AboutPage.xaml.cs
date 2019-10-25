@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -63,6 +64,16 @@ namespace ProjectTile
             }
         }
 
+        string historyText = "";
+        public string HistoryText
+        {
+            get { return historyText; }
+            set
+            {
+                historyText = value;
+                OnPropertyChanged("HistoryText");
+            }
+        }
 
         // Current variables //
 
@@ -85,10 +96,18 @@ namespace ProjectTile
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             VersionText = "This version is written in Visual C# 2013 and SQL Server 2014. It requires Windows with .NET 4.5 or above and a SQL Server instance (2012 or above).";
-            
+
             BackgroundText = "ProjectTile was created by Mark Adrian Johnson in 2019 to learn and demonstrate his programming skills."
-                + newLine + "The front end is written in Visual C# with WPF forms. The back end is a scripted SQL Server database."
-                + newLine + "All of the code will be made available on GitHub soon.";
+                + newLine + "The front end is written in Visual C# with WPF forms. The back end is a scripted SQL Server database.";
+            Run gitHub1 = new Run("All of the code is available on GitHub at ");
+            Run gitHub2 = new Run("github.com/thehipnotist/ProjectTile");
+            Run gitHub3 = new Run(".");
+            Hyperlink gitHubLink = new Hyperlink(gitHub2);
+            //gitHubLink.NavigateUri = new Uri("https://github.com/thehipnotist/ProjectTile");
+            gitHubLink.Click += requestGitHubLink;
+            GitHubText.Inlines.Add(gitHub1);
+            GitHubText.Inlines.Add(gitHubLink);
+            GitHubText.Inlines.Add(gitHub3);
 
             SystemText = "ProjectTile is designed to simulate an in-house system for managing small software implementation or improvement projects, most of which would be on behalf of clients "
                 + "(software customers)."
@@ -104,11 +123,17 @@ namespace ProjectTile
             Run getInTouch1 = new Run("Please see the ");
             Run getInTouch2 = new Run("Frequently Asked Questions");
             Run getInTouch3 = new Run(" page for contact details.");
-            Hyperlink hyperLink = new Hyperlink(getInTouch2);
-            hyperLink.Click += openFAQs;
-            MainText.Inlines.Add(getInTouch1);
-            MainText.Inlines.Add(hyperLink);
-            MainText.Inlines.Add(getInTouch3);
+            Hyperlink getInTouchLink = new Hyperlink(getInTouch2);
+            getInTouchLink.Click += openFAQs;
+            GetInTouchText.Inlines.Add(getInTouch1);
+            GetInTouchText.Inlines.Add(getInTouchLink);
+            GetInTouchText.Inlines.Add(getInTouch3);
+
+            HistoryText = "A summary of the key changes is as follows:"
+                + newLine
+                + newLine + "Version 1.00          23/10/2019          Initial version"
+                + newLine + "Version 1.10          24/10/2019          Added stage history audit"
+                + newLine + "Version 1.20          28/10/2019          Added project actions, menu icons and GitHub link"; 
         }
 
         // ---------------------- //
@@ -131,6 +156,13 @@ namespace ProjectTile
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error handling changed property", generalException); }
+        }
+
+        private void requestGitHubLink(object sender, RoutedEventArgs e)
+        {
+            Uri gitHubUri = new Uri("https://github.com/thehipnotist/ProjectTile");
+            Process.Start(new ProcessStartInfo(gitHubUri.AbsoluteUri));
+            e.Handled = true;
         }
 
         // ---------------------- //

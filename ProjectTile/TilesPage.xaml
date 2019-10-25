@@ -119,7 +119,7 @@
                 </Label>
             </Button>            
 
-            <Button x:Name="EntityButton_New" Margin="0,210,0,0" Background="{DynamicResource PtBrushEntity1}" Click="NewEntityButton_Click" MouseLeave="buttonMouseOut" Visibility="Hidden" 
+            <Button x:Name="EntityButton_New" Margin="0,210,0,0" Background="{DynamicResource PtBrushEntity1}" Click="EntityButton_New_Click" MouseLeave="buttonMouseOut" Visibility="Hidden" 
                     Grid.Column="2" Style="{DynamicResource TileStyle}">
                 <Label  Background="{DynamicResource PtGradientEntity1}" Style="{DynamicResource TileLabelStyle2}">
                     <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -128,7 +128,7 @@
                     </Grid>
                 </Label>
             </Button>
-            <Button x:Name="EntityButton_Amend" Margin="0,330,0,0" Background="{DynamicResource PtBrushEntity1}" Click="AmendEntityButton_Click" MouseLeave="buttonMouseOut" 
+            <Button x:Name="EntityButton_Amend" Margin="0,330,0,0" Background="{DynamicResource PtBrushEntity1}" Click="EntityButton_Amend_Click" MouseLeave="buttonMouseOut" 
                         Visibility="Hidden" Grid.Column="2" Style="{DynamicResource TileStyle}">
                 <Label Background="{DynamicResource PtGradientEntity1}" Style="{DynamicResource TileLabelStyle2}">
                     <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -137,7 +137,7 @@
                     </Grid>
                 </Label>
             </Button>
-            <Button x:Name="EntityButton_Change" Margin="120,90,0,0" Background="{DynamicResource PtBrushEntity1}" Click="ChangeCurrentEntityButton_Click" 
+            <Button x:Name="EntityButton_Switch" Margin="120,90,0,0" Background="{DynamicResource PtBrushEntity1}" Click="EntityButton_Switch_Click" 
                         MouseLeave="buttonMouseOut" Visibility="Hidden" Grid.Column="2" Style="{DynamicResource TileStyle}">
                 <Label Background="{DynamicResource PtGradientEntity1}" Style="{DynamicResource TileLabelStyle2}">
                     <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -146,7 +146,7 @@
                     </Grid>
                 </Label>
             </Button>
-            <Button x:Name="EntityButton_Default" Margin="240,90,0,0" Background="{DynamicResource PtBrushEntity1}" Click="ChangeDefaultEntityButton_Click" 
+            <Button x:Name="EntityButton_Default" Margin="240,90,0,0" Background="{DynamicResource PtBrushEntity1}" Click="EntityButton_Default_Click" 
                         MouseLeave="buttonMouseOut" Visibility="Hidden" Grid.Column="2" Style="{DynamicResource TileStyle}">
                 <Label  Background="{DynamicResource PtGradientEntity1}" Style="{DynamicResource TileLabelStyle2}">
                     <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -366,6 +366,15 @@
                     <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Image Source="{DynamicResource ProductIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
                         <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Project Products" VerticalAlignment="Center" Margin="2,0,2,0"/>
+                    </Grid>
+                </Label>
+            </Button>
+            <Button x:Name="ProjectButton_Action" Margin="285,15,0,0" Background="{DynamicResource PtBrushProject1}" MouseLeave="buttonMouseOut" 
+                        Grid.Column="2" Visibility="Hidden" Click="ProjectButton_Action_Click" Style="{DynamicResource TileStyle}">
+                <Label  Background="{DynamicResource PtGradientProject1}" Style="{DynamicResource TileLabelStyle}">
+                    <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Image Source="{DynamicResource ActionIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Project Actions" VerticalAlignment="Center" Margin="2,0,2,0"/>
                     </Grid>
                 </Label>
             </Button>

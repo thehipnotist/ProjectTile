@@ -227,6 +227,12 @@ namespace ProjectTile
             ChangePage("TimelinePage.xaml?Mode=" + pageMode);
         }
 
+        public static void ShowActionsPage(string pageMode = "")
+        {
+            if (pageMode == "" || pageMode == Amend) { pageMode = MyPermissions.Allow("EditActions") ? Amend : View; }
+            ChangePage("ActionsPage.xaml?Mode=" + pageMode);
+        }
+
         public static void ShowAboutPage()
         {
             ChangePage("AboutPage.xaml?Mode=View");

@@ -34,14 +34,16 @@
                     <TextBlock x:Name="MainText" HorizontalAlignment="Left" MinHeight="370" TextWrapping="Wrap" VerticalAlignment="Top" Width="625" Padding="5,5,20,5" 
                                ScrollViewer.VerticalScrollBarVisibility="Visible">
                         <TextBlock.Inlines>
-                            <TextBlock FontWeight="Bold" Text="ProjectTile v1.10"/>
+                            <TextBlock FontWeight="Bold" Text="ProjectTile v1.20"/>
                             <LineBreak/>
                             <TextBlock Text="{Binding Path=VersionText, Mode=OneWay}" TextWrapping="Wrap"/>
                             <LineBreak/><LineBreak/>
                             <TextBlock FontWeight="Bold" Text="Background"/>
                             <LineBreak/>
                             <TextBlock Text="{Binding Path=BackgroundText, Mode=OneWay}" TextWrapping="Wrap"/>
-                            <LineBreak/><LineBreak/>
+                            <TextBlock x:Name="GitHubText"/>
+                            <LineBreak/>
+                            <LineBreak/>
                             <TextBlock FontWeight="Bold" Text="The ProjectTile System"/>
                             <LineBreak/>
                             <TextBlock Text="{Binding Path=SystemText, Mode=OneWay}" TextWrapping="Wrap"/>
@@ -53,6 +55,14 @@
                             <LineBreak/>
                             <LineBreak/>
                             <TextBlock FontWeight="Bold" Text="Get in Touch"/>
+                            <LineBreak/>
+                            <TextBlock x:Name="GetInTouchText"></TextBlock>
+                            <LineBreak/>
+                            <LineBreak/>
+                            <TextBlock FontWeight="Bold" Text="Version History"/>
+                            <LineBreak/>
+                            <TextBlock Text="{Binding Path=HistoryText, Mode=OneWay}" TextWrapping="Wrap"/>
+                            <LineBreak/>
                             <LineBreak/>
                         </TextBlock.Inlines>
                     </TextBlock>

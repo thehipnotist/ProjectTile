@@ -306,6 +306,7 @@
 
         <!-- Images -->
         <BitmapImage x:Key="AboutIcon" UriSource="StatusAnnotations_Information_32xLG.png"/>
+        <BitmapImage x:Key="ActionIcon" UriSource="005_Task_24x24_72.png"/>
         <BitmapImage x:Key="AddIcon" UriSource="112_Plus_Grey_24x24_72.png"/>
         <BitmapImage x:Key="AdminIcon" UriSource="Gear.png"/>
         <BitmapImage x:Key="AmendIcon" UriSource="Rename.png"/>
@@ -352,6 +353,7 @@
         <Image x:Key="ContactImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="{DynamicResource ContactIcon}"/>
         <Image x:Key="ProductImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="{DynamicResource ProductIcon}"/>
         <Image x:Key="TimelineImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Source="{DynamicResource TimelineIcon}"/>
+                
         <!-- Styles -->
         <Style x:Key="RoundedButton" TargetType="{x:Type Button}">
             <Setter Property="FocusVisualStyle">
