@@ -69,19 +69,23 @@
                     </ComboBox.Resources>
                 </ComboBox>
 
-                <DataGrid x:Name="ActionDataGrid" MinHeight="250" Margin="15,90,0,0" Width="625" MinWidth="400" MaxWidth="625" AutoGenerateColumns="False" IsReadOnly="True" 
+                <DataGrid x:Name="ActionDataGrid" MinHeight="250" Margin="15,90,15,60" Width="625" MinWidth="400" MaxWidth="625" AutoGenerateColumns="False" IsReadOnly="False" 
                           BorderBrush="{StaticResource PtBrushProject3}" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionMode="Single"
                           SelectionChanged="ActionDataGrid_SelectionChanged">
                     <DataGrid.Columns>
-                        <DataGridTextColumn x:Name="ProjectCodeColumn" Binding="{Binding Project.ProjectCode, Mode=TwoWay}" ClipboardContentBinding="{x:Null}" Header="Project"/>
-                        <DataGridTextColumn x:Name="ActionCodeColumn" Binding="{Binding Project.ActionCode, Mode=TwoWay}" ClipboardContentBinding="{x:Null}" Header="Action"/>
-                        <DataGridTextColumn x:Name="DescriptionColumn" Binding="{Binding ShortDescription, Mode=TwoWay}" ClipboardContentBinding="{x:Null}" Header="Description"/>                        
-                        <DataGridTextColumn x:Name="DueDateColumn" Binding="{Binding EffectiveDue, StringFormat=dd/MM/yyyy, Mode=TwoWay}" ClipboardContentBinding="{x:Null}" Header="Due"/>
-                        <DataGridTextColumn x:Name="OwnerColumn" Binding="{Binding Owner.FullName, Mode=TwoWay}" ClipboardContentBinding="{x:Null}" Header="Owner"
-                                                Width="*" MinWidth="100"/>
+                        <DataGridTextColumn x:Name="ProjectCodeColumn" Binding="{Binding Project.ProjectCode, Mode=OneWay}" Header="Project"/>
+                        <DataGridTextColumn x:Name="ActionCodeColumn" Binding="{Binding ActionCode, Mode=OneWay}" Header="Action"/>
+                        <DataGridTextColumn x:Name="DescriptionColumn" Binding="{Binding ShortDescription, Mode=TwoWay}" Header="Description"/>
+                        <DataGridComboBoxColumn x:Name="StageColumn" DisplayMemberPath="StageName" SelectedItemBinding="{Binding Path=LinkedStage, Mode=TwoWay}" SelectedValuePath="LinkedStage" 
+                                                TextBinding="{Binding Path=LinkedStage.StageName, Mode=OneWay}" Header="Stage"/>
+                        <DataGridTextColumn x:Name="DueDateColumn" Binding="{Binding EffectiveDue, StringFormat=dd/MM/yyyy, Mode=TwoWay}" Header="Due"/>
+                        <DataGridComboBoxColumn x:Name="OwnerColumn" DisplayMemberPath="FullName" SelectedItemBinding="{Binding Path=Owner, Mode=TwoWay}" SelectedValuePath="Owner" Header="Owner"
+                                                TextBinding="{Binding Path=Owner.FullName, Mode=OneWay}" Width="*" MinWidth="100"/>
+<!--                        <DataGridTextColumn x:Name="StatusColumn" Binding="{Binding StatusDescription, Mode=TwoWay}" ClipboardContentBinding="{x:Null}" Header="Status"/>
+                        <DataGridTextColumn x:Name="UpdatedDateColumn" Binding="{Binding UpdatedDate, StringFormat=dd/MM/yyyy, Mode=TwoWay}" ClipboardContentBinding="{x:Null}" Header="Updated"/>
                         <DataGridTextColumn x:Name="LoggedDateColumn" Binding="{Binding LoggedDate, StringFormat=dd/MM/yyyy, Mode=OneWay}" ClipboardContentBinding="{x:Null}" Header="Logged"/>
-                        <DataGridTextColumn x:Name="LoggedByColumn" Binding="{Binding LoggedBy.FullName, Mode=TwoWay}" ClipboardContentBinding="{x:Null}" Header="Logged By"
-                                                Width="*" MinWidth="100"/>                        
+-->                        <DataGridComboBoxColumn x:Name="LoggedByColumn" DisplayMemberPath="StaffName" SelectedItemBinding="{Binding Path=LoggedBy, Mode=TwoWay}" SelectedValuePath="LoggedBy"
+                                                   TextBinding="{Binding Path=LoggedBy.StaffName, Mode=OneWay}" Header="Logged By"/>
                     </DataGrid.Columns>
                     <DataGrid.Resources>
                         <Style TargetType="DataGridRow">

@@ -160,7 +160,7 @@ namespace ProjectTile
         {
             get
             {
-                if (TableName == projectTeams && !AType.Equals('D')) { return ProjectFunctions.GetProjectTeam(RecordID); }
+                if (TableName == projectTeams && !AType.Equals('D')) { return ProjectFunctions.GetTeamMember(RecordID); }
                 else { return null; }
             }
         }

@@ -11,6 +11,11 @@ namespace ProjectTile
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
 
+        public string StaffName
+        {
+            get { return (StaffMember != null)? StaffMember.StaffName : ""; }
+        }
+        
         public ProjectStages Stage
         {
             get { return (Project == null)? null : ProjectFunctions.GetStageByID(Project.StageID); }

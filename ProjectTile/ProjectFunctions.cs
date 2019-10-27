@@ -526,6 +526,24 @@ namespace ProjectTile
             }
         }
 
+        public static ProjectStages ProjectCurrentStage(int projectID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    int stageID = existingPtDb.Projects.Where(p => p.ID == projectID).Select(p => p.StageID).FirstOrDefault();        
+                    return GetStageByID(stageID);
+                }                
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving current stage for project ID " + projectID.ToString(), generalException);
+                return null;
+            }		
+        }
+
         // Project types
         public static void SetFullTypeList()
         {
@@ -869,10 +887,24 @@ namespace ProjectTile
             }
         }
 
-        public static TeamProxy GetProjectTeam(int projectTeamID)
+        public static TeamProxy GetTeamMember(int projectTeamID)
         {
             SetFullTeamsList();
             return FullTeamsList.FirstOrDefault(ftl => ftl.ID == projectTeamID);
+        }
+
+        public static List<TeamProxy> GetInternalTeam(int projectID)
+        {
+            try
+            {
+                SetFullTeamsList();
+                return FullTeamsList.Where(ftl => ftl.Project.ID == projectID).OrderBy(ftl => ftl.StaffName).ToList();                
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving list of internal project team members", generalException);
+                return null;
+            }
         }
 
         public static bool IsInTimeFilter(TeamTimeFilter timeFilter, DateTime? fromDate, DateTime? toDate)
@@ -1376,7 +1408,83 @@ namespace ProjectTile
             }
         }
 
+        public static List<ProjectContactProxy> GetClientTeam(int projectID)
+        {
+            SetFullContactsList();
+            return FullContactsList.Where(fcl => fcl.Project.ID == projectID).ToList();
+        }
 
+        // Combined teams
+        public static List<CombinedStaffMember> CombinedStaffList(string nameLike, int clientID, int projectID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    List<CombinedStaffMember> combinedList = new List<CombinedStaffMember>();
+                    List<int> projectStaffIDs = null;
+                    List<int> projectContactIDs = null;
+                    if (projectID > 0)
+                    {
+                        projectStaffIDs = existingPtDb.ProjectTeams.Where(pt => pt.ProjectID == projectID).Select(pt => pt.StaffID).ToList();
+                        projectContactIDs = existingPtDb.ClientTeams.Where(ct => ct.ProjectID == projectID).Select(ct => ct.ClientStaffID).ToList();
+                    }
+
+                    List<StaffProxy> allStaff = StaffFunctions.GetStaffList(activeOnly: false, nameContains: nameLike, roleCode: "", entityID: CurrentEntityID);
+                    List<StaffProxy> relevantStaff = allStaff.Where(s => projectID <= 0 || projectStaffIDs.Contains(s.ID)).ToList();
+                    foreach (StaffProxy staffMember in relevantStaff)
+                    {
+                        CombinedStaffMember person = new CombinedStaffMember { StaffMember = staffMember, ClientContact = null };
+                        combinedList.Add(person);
+                    }
+
+                    List<ContactProxy> allContacts = ClientFunctions.ContactGridList(contactContains: nameLike, activeOnly: false, clientID: clientID, includeJob: false);
+                    List<ContactProxy> relevantContacts = allContacts.Where(c => projectID <= 0 || projectContactIDs.Contains(c.ID)).ToList();
+                    foreach (ContactProxy contact in relevantContacts)
+                    {
+                        CombinedStaffMember person = new CombinedStaffMember { StaffMember = null, ClientContact = contact };
+                        combinedList.Add(person);
+                    }
+
+                    return combinedList;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving list of combined staff members", generalException);
+                return null;
+            }
+        }
+
+        public static List<CombinedTeamMember> CombinedTeamList(int projectID)
+        {
+            try
+            {
+                List<CombinedTeamMember> combinedList = new List<CombinedTeamMember>();                
+                List<TeamProxy> internalTeam = GetInternalTeam(projectID);
+                List<ProjectContactProxy> clientTeam = GetClientTeam(projectID);
+
+                foreach (TeamProxy teamMember in internalTeam)
+                {
+                    CombinedTeamMember person = new CombinedTeamMember { ProjectID = projectID, InternalTeamMember = teamMember, ClientTeamMember = null };
+                    combinedList.Add(person);
+                }
+
+                foreach (ProjectContactProxy contact in clientTeam)
+                {
+                    CombinedTeamMember person = new CombinedTeamMember { ProjectID = projectID, InternalTeamMember = null, ClientTeamMember = contact };
+                    combinedList.Add(person);
+                }
+
+                return combinedList;
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving list of combined project team members", generalException);
+                return null;
+            }
+        }
 
         // Products
         public static List<ProjectProxy> ProjectGridListByProduct(bool activeOnly, string nameContains, int productID, int entityID) 
@@ -1604,6 +1712,36 @@ namespace ProjectTile
             }
         }            
         
+        public static List<StageHistory> GetProjectStageHistory(int projectID)
+        {
+            ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+            using (existingPtDb)
+            {
+                return existingPtDb.StageHistory.Where(sh => sh.ProjectID == projectID).ToList();
+            }
+        }
+
+        public static List<ProjectStages> GetProjectHistoryStages(int projectID)
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return (from sh in existingPtDb.StageHistory
+                            join ps in existingPtDb.ProjectStages on sh.StageID equals ps.ID
+                            where sh.ProjectID == projectID
+                            select ps
+                            ).ToList();
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving stages for project history", generalException);
+                return null;
+            }	
+        }
+
         public static TimelineProxy GetProjectTimeline(int projectID, TimelineType type)
         {
             ProjectStages stage = null;
@@ -1611,14 +1749,9 @@ namespace ProjectTile
             List<StageHistory> stageHistory = null;
             try
             {
-                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
-                using (existingPtDb)
-                {
-                    int stageID = existingPtDb.Projects.Where(p => p.ID == projectID).Select(p => p.StageID).FirstOrDefault();
-                    stage = GetStageByID(stageID);
-                    stageHistory = existingPtDb.StageHistory.Where(sh => sh.ProjectID == projectID).ToList();
-                    maxNonCancelledStage = MaxNonCancelledStage();
-                }
+                stage = ProjectCurrentStage(projectID);
+                stageHistory = GetProjectStageHistory(projectID);
+                maxNonCancelledStage = MaxNonCancelledStage();
 
                 TimelineProxy timeline = new TimelineProxy();
                 timeline.Stage = stage;
@@ -1720,8 +1853,6 @@ namespace ProjectTile
                 {
                     if (includeAll || entry.ToString() != AllRecords) { optionsList.Add(entry.ToString()); };
                 }
-                //if (includeAll) { optionsList.Add(AllRecords); }
-
                 return optionsList;
             }
             catch (Exception generalException)
@@ -1731,49 +1862,135 @@ namespace ProjectTile
             }	
         }
 
-        public static int GetCompletedKey(string value)
+        public static int GetCompletedCode(string value)
         {
             return ActionStatusOptions.Keys.FirstOrDefault(k => ActionStatusOptions[k] == value);
         }
 
-        public static List<CombinedStaffMember> CombinedStaffList(string nameLike, int clientID, int projectID)
+        public static string GetCompletedDescription(int key)
+        {
+            return ActionStatusOptions[key];
+        }
+
+        public static string ActionCode(DateTime date)
+        {
+            return ""; // TODO: Build this up from the actions list
+        }
+
+        public static bool StageFitsDates(int StageNumber, DateTime fromDate, DateTime maxDate)
+        {
+            return true; // TODO: Create this logic by finding the next stage start date
+        }
+
+        public static CombinedTeamMember GetOwner(int projectID, int? internalTeamID, int? clientTeamID)
         {
             try
             {
+                TeamProxy internalOwner = (internalTeamID != null) ? GetTeamMember((int)internalTeamID) : null;
+                ProjectContactProxy clientOwner = (clientTeamID != null) ? GetProjectContact((int)clientTeamID) : null;
+                return new CombinedTeamMember { ProjectID = projectID, InternalTeamMember = internalOwner, ClientTeamMember = clientOwner };
+            }
+            catch (Exception generalException) 
+            { 
+                MessageFunctions.Error("Error retrieving action owner", generalException);
+                return null;
+            }
+        }
+
+        public static bool? GetStatusCode(int statusNumber)
+        {
+            try
+            {
+                if (statusNumber == 1) { return null; }
+                else if (statusNumber == 2) { return false; }
+                else if (statusNumber == 3) { return true; }
+                else { return null; }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error converting action status to boolean", generalException);
+                return null;
+            }		
+        }
+
+        public static int GetStatusNumber(bool? statusCode)
+        {
+            try
+            {
+                if (statusCode == null) { return 1; }
+                else if (statusCode == false) { return 2; }
+                else { return 3; }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error converting action status to integer", generalException);
+                return 0;
+            }		
+        }
+
+        public static List<ActionProxy> ActionsList(int clientID, ProjectStatusFilter filterCode, int projectID, DateTime fromDate, DateTime toDate, CombinedStaffMember owner, int statusNumber)
+        {
+            try
+            {                
+                DateTime maxDate = toDate.AddDays(1);
+                bool? statusCode = GetStatusCode(statusNumber);                
+                
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
                 {
-                    List<CombinedStaffMember> combinedList = new List<CombinedStaffMember>();
-                    List<int> projectStaffIDs = null;
-                    List<int> projectContactIDs = null;
-                    if (projectID > 0)
-                    {
-                        projectStaffIDs = existingPtDb.ProjectTeams.Where(pt => pt.ProjectID == projectID).Select(pt => pt.StaffID).ToList();
-                        projectContactIDs = existingPtDb.ClientTeams.Where(ct => ct.ProjectID == projectID).Select(ct => ct.ClientStaffID).ToList();
-                    }
-                    
-                    List<StaffProxy> allStaff = StaffFunctions.GetStaffList(activeOnly: false, nameContains: nameLike, roleCode: "", entityID: CurrentEntityID);
-                    List<StaffProxy> relevantStaff = allStaff.Where(s => projectID <= 0 || projectStaffIDs.Contains(s.ID)).ToList();
-                    foreach (StaffProxy staffMember in relevantStaff)
-                    {
-                        CombinedStaffMember person = new CombinedStaffMember { StaffMember = staffMember, ClientContact = null };
-                        combinedList.Add(person);
-                    }
+                    var actionsWithStage = (from a in existingPtDb.Actions
+                                            join p in existingPtDb.Projects on a.ProjectID equals p.ID
+                                            join ps in existingPtDb.ProjectStages on a.StageID equals ps.ID
+                                                into GroupJoin from gps in GroupJoin.DefaultIfEmpty()
+                                            where (a.ProjectID == projectID 
+                                                    || (projectID <= 0 && (clientID <= 0 || p.ClientID == clientID)))
+                                                && (a.TargetCompletion == null || (a.TargetCompletion >= fromDate && a.TargetCompletion < maxDate))
+                                                && (statusNumber == 0 || a.StatusCode == statusCode)
+                                            select new { Action = a, Stage = gps ?? null, Project  = p }
+                                            ).ToList();
+                    //if (actionsWithStage.Count == 0) { return null; }
 
-                    List<ContactProxy> allContacts = ClientFunctions.ContactGridList(contactContains: nameLike, activeOnly: false, clientID: clientID, includeJob: false);
-                    List<ContactProxy> relevantContacts = allContacts.Where(c => projectID <= 0 || projectContactIDs.Contains(c.ID)).ToList();
-                    foreach (ContactProxy contact in relevantContacts)
+                    if (projectID == 0 && filterCode != ProjectStatusFilter.All)
                     {
-                        CombinedStaffMember person = new CombinedStaffMember { StaffMember = null, ClientContact = contact };
-                        combinedList.Add(person);
+                        var filteredActions = actionsWithStage.Where(aws => IsInFilter(filterCode, GetStageByID(aws.Project.StageID)));
+                        actionsWithStage = filteredActions.ToList();
                     }
+                    if (owner != null)
+                    {
+                        bool internalOwner = (owner != null && owner.StaffMember != null);
+                        int ownerTeamID = internalOwner ?
+                            existingPtDb.ProjectTeams.Where(pt => pt.StaffID == owner.StaffMember.ID).Select(pt => pt.ID).FirstOrDefault() : 
+                            existingPtDb.ClientTeams.Where(ct => ct.ClientStaffID == owner.ClientContact.ID).Select(ct => ct.ID).FirstOrDefault();
 
-                    return combinedList;    
+                        var filteredActions = actionsWithStage.Where(aws =>
+                            (internalOwner && aws.Action.InternalOwner == ownerTeamID)
+                            || (!internalOwner && aws.Action.ClientOwner == ownerTeamID)
+                            ).ToList();
+                        actionsWithStage = filteredActions.Select(aws => new { Action = aws.Action, Stage = aws.Stage, Project = aws.Project }).ToList();
+                    }
+                    var dateFilteredActions = actionsWithStage.Where(aws =>  aws.Action.TargetCompletion != null // already filtered above
+                                                                            || (aws.Stage != null && StageFitsDates(aws.Stage.StageNumber, fromDate, maxDate)));
+
+                    return dateFilteredActions.Select(dfa => new ActionProxy
+                        {
+                            ID = dfa.Action.ID,
+                            Owner = GetOwner(dfa.Project.ID, dfa.Action.InternalOwner, dfa.Action.ClientOwner),
+                            ActionCode = dfa.Action.ActionCode,
+                            Project = dfa.Project,
+                            LoggedDate = dfa.Action.LoggedDate,
+                            UpdatedDate = dfa.Action.UpdatedDate,
+                            ShortDescription = dfa.Action.ShortDescription,
+                            LoggedBy = GetTeamMember((int)dfa.Action.LoggedBy),
+                            StatusNumber = GetStatusNumber(dfa.Action.StatusCode),
+                            Notes = dfa.Action.Notes,
+                            LinkedStage = dfa.Stage ?? null
+                        }
+                        ).ToList();
                 }
             }
             catch (Exception generalException)
             {
-                MessageFunctions.Error("Error retrieving list of combined staff members", generalException);
+                MessageFunctions.Error("Error retrieving list of project actions", generalException);
                 return null;
             }		
         }
@@ -3187,9 +3404,6 @@ namespace ProjectTile
                         bool target = (thisTimeline.TimeType == TimelineType.Target || (thisTimeline.TimeType == TimelineType.Effective && thisStage.StageNumber > currentStage));                        
 
                         DateTime? newDate = (DateTime?) thisTimeline.DateHash[thisStage.StageNumber];
-
-                        //MessageBox.Show(thisStage.StageNumber.ToString() + " " + target.ToString() + " " + newDate.ToString());
-
                         StageHistory stageHist = existingPtDb.StageHistory.FirstOrDefault(sh => sh.ProjectID == projectID && sh.StageID == thisStage.ID);
                         if (stageHist == null)
                         {

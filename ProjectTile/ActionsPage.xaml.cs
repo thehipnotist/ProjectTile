@@ -38,6 +38,7 @@ namespace ProjectTile
         string nameLike = "";
         bool exactName = false;
         int completed = 0;
+        CombinedStaffMember selectedPerson = null;
 
         // ------------- Current records ------------ //
 
@@ -45,7 +46,10 @@ namespace ProjectTile
 
         // ------------------ Lists ----------------- //
         List<string> completedList = null;
-
+        List<ActionProxy> actionList = null;
+        List<TeamProxy> loggedByList = null;
+        List<ProjectStages> stageList = null;
+        List<CombinedTeamMember> ownerList = null;
 
         // ---------------------------------------------------------- //
         // -------------------- Page Management --------------------- //
@@ -101,11 +105,40 @@ namespace ProjectTile
 
         private void refreshActionsGrid()
         {
-            
+            try
+            {
+                int clientID = clientSelected ? Globals.SelectedClientProxy.ID : 0;
+                int projectID = projectSelected ? Globals.SelectedProjectProxy.ProjectID : 0;
 
+                actionList = ProjectFunctions.ActionsList(clientID, Globals.SelectedStatusFilter, projectID, fromDate, toDate, selectedPerson, completed); // TODO: Replace/alternate selectedPerson with non-exact name
 
+                if (projectSelected)
+                {
+                    ActionDataGrid.IsReadOnly = false;
+                    loggedByList = ProjectFunctions.GetInternalTeam(projectID);
+                    stageList = ProjectFunctions.GetProjectHistoryStages(projectID);
+                    ownerList = ProjectFunctions.CombinedTeamList(projectID);
+                }
+                else
+                {
+                    ActionDataGrid.IsReadOnly = true;
+                    loggedByList = actionList.Select(al => al.LoggedBy).Distinct().ToList();
+                    //stageList = ProjectFunctions.FullStageList;
+                    stageList = actionList.Select(al => al.LinkedStage).Distinct().ToList();
+                    ownerList = actionList.Select(al => al.Owner).Distinct().ToList();
+                }
 
+                
+                LoggedByColumn.ItemsSource = loggedByList;
+                StageColumn.ItemsSource = stageList;
+                OwnerColumn.ItemsSource = ownerList;
 
+                ActionDataGrid.ItemsSource = actionList;
+
+                
+                
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error populating the actions data grid", generalException); }
         }
 
         private void refreshClientCombo()
@@ -246,7 +279,7 @@ namespace ProjectTile
         {
             try
             {
-                CombinedStaffMember selectedPerson = (CombinedStaffMember) PossibleNames.SelectedItem;
+                selectedPerson = (CombinedStaffMember) PossibleNames.SelectedItem;
                 NameLike.Text = selectedPerson.FullName;
                 //setCurrentClient(selectedPerson.ClientID, null);
                 exactName = true;
@@ -307,7 +340,7 @@ namespace ProjectTile
                     string selection = StatusCombo.SelectedItem.ToString();
                     selection = selection.Replace(" ", "");
                     Globals.SelectedStatusFilter = (Globals.ProjectStatusFilter)Enum.Parse(typeof(Globals.ProjectStatusFilter), selection);
-                    //refreshActionsGrid();
+                    refreshActionsGrid();
                     refreshProjectCombo();
                 }
             }
@@ -323,8 +356,8 @@ namespace ProjectTile
                 {
                     Globals.SelectedProjectProxy = (ProjectProxy)ProjectCombo.SelectedItem;
                     setCurrentClient(Globals.SelectedProjectProxy.Client ?? null);
-                    refreshActionsGrid();
                     toggleProjectMode(Globals.SelectedProjectProxy != Globals.AllProjects);
+                    refreshActionsGrid();                    
                 }
                 catch (Exception generalException) { MessageFunctions.Error("Error processing project selection", generalException); }
             }
@@ -377,7 +410,8 @@ namespace ProjectTile
             if (CompleteCombo.SelectedValue != null)
             {
                 string value = (string) CompleteCombo.SelectedValue;
-                completed = ProjectFunctions.GetCompletedKey(value);
+                completed = ProjectFunctions.GetCompletedCode(value);
+                refreshActionsGrid();
             }
         }
 

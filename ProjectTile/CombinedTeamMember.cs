@@ -7,7 +7,7 @@ namespace ProjectTile
 {
     public class CombinedTeamMember
     {
-        public Projects Project { get; set; }
+        public int ProjectID { get; set; }
         public TeamProxy InternalTeamMember { get; set; }
         public ProjectContactProxy ClientTeamMember { get; set; }
 
@@ -20,25 +20,6 @@ namespace ProjectTile
                 else { return ""; }
             }
         }
-
-        //public int ClientID
-        //{
-        //    get { return (Project != null) ? (Project.ClientID ?? 0) : 0; }
-        //}
-
-        //public string ClientCode
-        //{
-        //    get { return (ClientID > 0)? ClientFunctions.GetClientByID(ClientID).ClientCode : ""; }
-        //}
-
-        //public string NameAndClient
-        //{
-        //    get
-        //    {
-        //        if (ClientTeamMember != null && ClientID > 0) { return FullName + " (" + ClientCode + " )"; }
-        //        else { return FullName; }
-        //    }
-        //}
 
     } // class
 } // namespace
