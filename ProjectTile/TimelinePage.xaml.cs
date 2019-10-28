@@ -208,7 +208,7 @@ namespace ProjectTile
                 else if (i > currentTimeline.StageNumber && thisDate <= Globals.Today) 
                 {                    
                     datePickers[position].SelectedDate = (currentType == Globals.TimelineType.Effective)? 
-                        ProjectFunctions.GetHistoryDate(Globals.SelectedProjectProxy.ProjectID, i, true) :
+                        ProjectFunctions.GetStageStartDate(Globals.SelectedProjectProxy.ProjectID, i, true) :
                         datePickers[position].SelectedDate = null;                     
                     ProjectFunctions.QueueDateChange(i);
                 }

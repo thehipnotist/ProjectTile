@@ -1802,14 +1802,14 @@ namespace ProjectTile
             }
         }
 
-        public static DateTime? GetHistoryDate(int projectID, int stageNumber, bool target)
+        public static DateTime? GetStageStartDate(int projectID, int stageNumber, bool? target)
         {
             try
             {
                 ProjectStages thisStage = GetStageByNumber(stageNumber);
                 if (thisStage == null)
                 {
-                    MessageFunctions.Error("Stage number " + stageNumber.ToString() + "not found.", null);
+                    MessageFunctions.Error("Stage number " + stageNumber.ToString() + " not found.", null);
                     return null;
                 }
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
@@ -1817,8 +1817,9 @@ namespace ProjectTile
                 {
                     StageHistory thisHistory = existingPtDb.StageHistory.FirstOrDefault(sh => sh.ProjectID == projectID && sh.StageID == thisStage.ID);
                     if (thisHistory == null) { return null; }
-                    else if (target) { return thisHistory.TargetStart; }
-                    else { return thisHistory.ActualStart; }
+                    else if (target == true) { return thisHistory.TargetStart; }
+                    else if (target == false) { return thisHistory.ActualStart; }
+                    else { return thisHistory.EffectiveStart; }
                 }                             
             }
             catch (Exception generalException)
@@ -1826,6 +1827,14 @@ namespace ProjectTile
                 MessageFunctions.Error("Error retrieving stage history details for stage " + stageNumber.ToString(), generalException);
                 return null;
             }
+        }
+
+        public static DateTime? EffectiveStageEndDate(int projectID, int stageNumber)
+        {
+            int nextStage = (stageNumber == MaxNonCancelledStage())? CancelledStage : stageNumber + 1;
+            DateTime? nextStageStart = GetStageStartDate(projectID, nextStage, null);
+            if (nextStageStart == null) { return null; }
+            else { return ((DateTime)nextStageStart).AddDays(-1); }
         }
 
         // Actions
@@ -1877,9 +1886,15 @@ namespace ProjectTile
             return ""; // TODO: Build this up from the actions list
         }
 
-        public static bool StageFitsDates(int StageNumber, DateTime fromDate, DateTime maxDate)
+        public static bool StageFitsDates(int projectID, int stageNumber, DateTime fromDate, DateTime toDate)
         {
-            return true; // TODO: Create this logic by finding the next stage start date
+            DateTime? stageEnd = EffectiveStageEndDate(projectID, stageNumber);
+            if (stageEnd == null) { return true; } // Shouldn't happen, but if no stage end is set the action should not be lost
+            else 
+            {
+                DateTime deadline = (DateTime)stageEnd;
+                return (deadline >= fromDate && deadline <= toDate);
+            }
         }
 
         public static CombinedTeamMember GetOwner(int projectID, int? internalTeamID, int? clientTeamID)
@@ -1958,18 +1973,19 @@ namespace ProjectTile
                     if (owner != null)
                     {
                         bool internalOwner = (owner != null && owner.StaffMember != null);
-                        int ownerTeamID = internalOwner ?
-                            existingPtDb.ProjectTeams.Where(pt => pt.StaffID == owner.StaffMember.ID).Select(pt => pt.ID).FirstOrDefault() : 
-                            existingPtDb.ClientTeams.Where(ct => ct.ClientStaffID == owner.ClientContact.ID).Select(ct => ct.ID).FirstOrDefault();
+                        List<int> ownerTeamIDs = internalOwner ?
+                            existingPtDb.ProjectTeams.Where(pt => pt.StaffID == owner.StaffMember.ID).Select(pt => pt.ID).ToList() :
+                            existingPtDb.ClientTeams.Where(ct => ct.ClientStaffID == owner.ClientContact.ID).Select(ct => ct.ID).ToList();
 
                         var filteredActions = actionsWithStage.Where(aws =>
-                            (internalOwner && aws.Action.InternalOwner == ownerTeamID)
-                            || (!internalOwner && aws.Action.ClientOwner == ownerTeamID)
+                            (internalOwner && aws.Action.InternalOwner != null && ownerTeamIDs.Contains((int)aws.Action.InternalOwner))
+                            || (!internalOwner && aws.Action.ClientOwner != null && ownerTeamIDs.Contains((int)aws.Action.ClientOwner))
                             ).ToList();
-                        actionsWithStage = filteredActions.Select(aws => new { Action = aws.Action, Stage = aws.Stage, Project = aws.Project }).ToList();
+                        actionsWithStage = filteredActions.ToList();
                     }
-                    var dateFilteredActions = actionsWithStage.Where(aws =>  aws.Action.TargetCompletion != null // already filtered above
-                                                                            || (aws.Stage != null && StageFitsDates(aws.Stage.StageNumber, fromDate, maxDate)));
+                    
+                    var dateFilteredActions = actionsWithStage.Where(aws =>   aws.Action.TargetCompletion != null // already filtered above
+                                                                             || (aws.Stage != null && StageFitsDates(aws.Project.ID, aws.Stage.StageNumber, fromDate, toDate) ));
 
                     return dateFilteredActions.Select(dfa => new ActionProxy
                         {
@@ -1978,6 +1994,7 @@ namespace ProjectTile
                             ActionCode = dfa.Action.ActionCode,
                             Project = dfa.Project,
                             LoggedDate = dfa.Action.LoggedDate,
+                            TargetCompletion = dfa.Action.TargetCompletion,
                             UpdatedDate = dfa.Action.UpdatedDate,
                             ShortDescription = dfa.Action.ShortDescription,
                             LoggedBy = GetTeamMember((int)dfa.Action.LoggedBy),

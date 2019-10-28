@@ -26,6 +26,7 @@ namespace ProjectTile
         // --------- Global/page parameters --------- // 
 
         string pageMode;
+        bool pageLoaded = false;
         const string defaultInstructions = "The top filters refer to the project, the bottom ones to the action and its owner.";
         const string defaultHeader = "Project Actions";
         bool projectSelected = false;
@@ -91,7 +92,8 @@ namespace ProjectTile
 
             Instructions.Content = defaultInstructions;
 
-
+            pageLoaded = true;
+            refreshActionsGrid();
         }
 
 
@@ -107,9 +109,9 @@ namespace ProjectTile
         {
             try
             {
+                if (!pageLoaded) { return; }
                 int clientID = clientSelected ? Globals.SelectedClientProxy.ID : 0;
                 int projectID = projectSelected ? Globals.SelectedProjectProxy.ProjectID : 0;
-
                 actionList = ProjectFunctions.ActionsList(clientID, Globals.SelectedStatusFilter, projectID, fromDate, toDate, selectedPerson, completed); // TODO: Replace/alternate selectedPerson with non-exact name
 
                 if (projectSelected)
@@ -281,7 +283,6 @@ namespace ProjectTile
             {
                 selectedPerson = (CombinedStaffMember) PossibleNames.SelectedItem;
                 NameLike.Text = selectedPerson.FullName;
-                //setCurrentClient(selectedPerson.ClientID, null);
                 exactName = true;
                 nameFilter();
             }
@@ -294,8 +295,11 @@ namespace ProjectTile
             {
                 PossibleNames.Visibility = Visibility.Hidden;
                 nameLike = NameLike.Text;
-                if (nameLike == "") { exactName = false; }
-                //if (!exactName && !projectSelected) { setCurrentClient(0); }
+                if (nameLike == "") 
+                { 
+                    exactName = false;
+                    selectedPerson = null;
+                }
                 //toggleContactNameColumn();
                 refreshActionsGrid();
             }

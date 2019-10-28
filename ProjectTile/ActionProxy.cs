@@ -9,21 +9,15 @@ namespace ProjectTile
     public class ActionProxy: Globals, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        private DateTime? nextStageTargetStart = null;
-        private DateTime? targetCompletion { get; set; }
+        //private DateTime? nextStageTargetStart = null;
+        
 
         public int ID { get; set; }
         public CombinedTeamMember Owner { get; set; }
         public string ActionCode { get; set; }
         public Projects Project { get; set; }
-        public DateTime LoggedDate
-        {
-            get { return LoggedDate; }
-            set 
-            { 
-                //ActionCode = ProjectFunctions.ActionCode(value); // TODO: write that function
-            } 
-        }        
+        public DateTime LoggedDate { get; set; }
+        public DateTime? TargetCompletion { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public string ShortDescription { get; set; }        
         public TeamProxy LoggedBy { get; set; }
@@ -59,6 +53,17 @@ namespace ProjectTile
         //    get { return targetCompletion ?? nextStageTargetStart; }
         //    set { targetCompletion = value; } 
         //}
+
+        public DateTime? EffectiveDue
+        {
+            get 
+            {
+                if (TargetCompletion != null) { return TargetCompletion; }
+                return ProjectFunctions.EffectiveStageEndDate(Project.ID, LinkedStage.StageNumber); 
+            }
+            set { TargetCompletion = value; }
+        }
+
         //public string StatusDescription 
         //{
         //    get { return StatusDescription; }
