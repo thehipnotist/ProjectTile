@@ -244,8 +244,10 @@ namespace ProjectTile
                     ProjectFilterList =
                         (from fpl in FullProjectList
                          where IsInFilter(inStatus, fpl.Stage)
-                            && ((clientID <= 0 && (includeInternals || (fpl.Client != null && fpl.Client.ID > 0))
-                                || (clientID > 0 && fpl.Client != null && fpl.Client.ID == clientID)))                                                      
+                            && ((clientID == 0 && (includeInternals || (fpl.Client != null && fpl.Client.ID > 0))
+                                || (clientID == -1 && includeInternals && (fpl.Client == null || fpl.Client.ID <= 0))
+                                || (clientID > 0 && fpl.Client != null && fpl.Client.ID == clientID)))
+                         orderby fpl.ProjectCode                      
                          select fpl
                         ).ToList();
                     if (includeSearch) { ProjectFilterList.Insert(0, SearchProjects); }
@@ -1884,9 +1886,9 @@ namespace ProjectTile
             return ActionStatusOptions[key];
         }
 
-        public static string ActionCode(DateTime date)
+        public static string ActionCode(int projectID, DateTime date)
         {
-            return ""; // TODO: Build this up from the actions list
+            return "Test"; // TODO: Build this up from the actions list
         }
 
         public static bool StageFitsDates(int projectID, int stageNumber, DateTime fromDate, DateTime toDate)
@@ -1961,7 +1963,8 @@ namespace ProjectTile
                                             join p in existingPtDb.Projects on a.ProjectID equals p.ID
                                             join ps in existingPtDb.ProjectStages on a.StageID equals ps.ID
                                                 into GroupJoin from gps in GroupJoin.DefaultIfEmpty()
-                                            where (a.ProjectID == projectID || (projectID <= 0 && (clientID <= 0 || p.ClientID == clientID)))
+                                            where (a.ProjectID == projectID 
+                                                    || (projectID <= 0 && (clientID == 0 || (clientID == -1 && p.ClientID == null) || p.ClientID == clientID)))
                                                 && (a.TargetCompletion == null || (a.TargetCompletion >= fromDate && a.TargetCompletion < maxDate))
                                                 && (statusNumber == 0 || a.StatusCode == statusCode || (statusNumber == -1 && a.StatusCode != true))
                                             select new { Action = a, Stage = gps ?? null, Project  = p }

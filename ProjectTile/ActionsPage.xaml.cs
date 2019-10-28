@@ -31,6 +31,7 @@ namespace ProjectTile
         const string defaultHeader = "Project Actions";
         bool projectSelected = false;
         bool clientSelected = false;
+        bool canEdit = false;
 
         // ------------ Current variables ----------- // 
 
@@ -48,6 +49,7 @@ namespace ProjectTile
         // ------------------ Lists ----------------- //
         List<string> completedFilterList = null;
         List<ActionProxy> actionList = null;
+        List<int> projectTeamStaffIDs = null;
         List<TeamProxy> loggedByList = null;
         List<ProjectStages> stageList = null;
         List<CombinedTeamMember> ownerList = null;
@@ -71,18 +73,13 @@ namespace ProjectTile
             try
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
+                canEdit = (pageMode != PageFunctions.View && Globals.MyPermissions.Allow("EditActions"));
             }
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error retrieving query details", generalException);
                 PageFunctions.ShowTilesPage();
             }
-
-            //if (pageMode == PageFunctions.Amend) 
-            //{
-            //    HeaderImage2.SetResourceReference(Image.SourceProperty, "AmendIcon");
-            //}
-
 
             refreshClientCombo();
             refreshStatusCombo();
@@ -94,6 +91,9 @@ namespace ProjectTile
 
             pageLoaded = true;
             refreshActionsGrid();
+
+            if (canEdit) { MessageFunctions.InfoAlert("If you are a team member of an active project, you can edit its actions by selecting the project; the table becomes italic with a thicker border. "
+                + "Further instructions will then appear", "Direct Editing"); }
         }
 
 
@@ -110,35 +110,58 @@ namespace ProjectTile
             try
             {
                 if (!pageLoaded) { return; }
-                int clientID = clientSelected ? Globals.SelectedClientProxy.ID : 0;
-                int projectID = projectSelected ? Globals.SelectedProjectProxy.ProjectID : 0;
-                actionList = ProjectFunctions.ActionsList(clientID, Globals.SelectedStatusFilter, projectID, fromDate, toDate, selectedPerson, completed); // TODO: Replace/alternate selectedPerson with non-exact name
-                
+                Globals.LoadingActions = true;
 
-                if (projectSelected)
+                int clientID = Globals.SelectedClientProxy.ID;
+                int projectID = projectSelected ? Globals.SelectedProjectProxy.ProjectID : 0;
+                projectTeamStaffIDs = projectSelected ? ProjectFunctions.GetInternalTeam(projectID).Select(git => git.StaffID).ToList() : null;
+
+                actionList = ProjectFunctions.ActionsList(clientID, Globals.SelectedStatusFilter, projectID, fromDate, toDate, selectedPerson, completed); // TODO: Replace/alternate selectedPerson with non-exact name
+
+                if (canEdit && projectSelected && !Globals.SelectedProjectProxy.IsOld && projectTeamStaffIDs.Contains(Globals.MyStaffID))
                 {
                     ActionDataGrid.IsReadOnly = false;
+                    //ActionDataGrid.FontStyle = FontStyles.Italic;                    
+                    ActionDataGrid.BorderThickness = new Thickness(3);
+
                     loggedByList = ProjectFunctions.GetInternalTeam(projectID);
                     stageList = ProjectFunctions.GetProjectHistoryStages(projectID);
                     ownerList = ProjectFunctions.CombinedTeamList(projectID);
+
+                    foreach (ActionProxy action in actionList) // Required for the initial values to display when in 'project mode'
+                    {
+                        int? stageID = action.LinkedStage.ID;
+                        if (stageID != null) { action.LinkedStage = stageList.Where(sl => sl.ID == stageID).FirstOrDefault(); }
+
+                        int loggedByID = action.LoggedBy.ID;
+                        action.LoggedBy = loggedByList.Where(lbl => lbl.ID == loggedByID).FirstOrDefault();
+
+                        bool internalOwner = (action.Owner.InternalTeamMember != null);
+                        int ownerID = internalOwner? action.Owner.InternalTeamMember.ID : action.Owner.ClientTeamMember.ID;
+                        action.Owner = ownerList.Where(ol => (internalOwner && ol.InternalTeamMember.ID == ownerID)
+                                                          || (!internalOwner && ol.ClientTeamMember.ID == ownerID))
+                                                          .FirstOrDefault();
+                    }
+
+                    MessageFunctions.InfoAlert("You can double-click within italicised cells (only) to edit them. Others are set/updated automatically as needed.", "Direct Editing");
                 }
                 else
                 {
                     ActionDataGrid.IsReadOnly = true;
+                    //ActionDataGrid.FontStyle = FontStyles.Normal;
+                    ActionDataGrid.BorderThickness = new Thickness(1);
+
                     loggedByList = actionList.Select(al => al.LoggedBy).Distinct().ToList();
-                    //stageList = ProjectFunctions.FullStageList;
                     stageList = actionList.Select(al => al.LinkedStage).Distinct().ToList();
                     ownerList = actionList.Select(al => al.Owner).Distinct().ToList();
                 }
-
                 
                 LoggedByColumn.ItemsSource = loggedByList;
                 StageColumn.ItemsSource = stageList;
                 OwnerColumn.ItemsSource = ownerList;
 
                 ActionDataGrid.ItemsSource = actionList;
-
-                
+                Globals.LoadingActions = false;
                 
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating the actions data grid", generalException); }
@@ -178,7 +201,7 @@ namespace ProjectTile
             {
                 int clientID = (Globals.SelectedClientProxy != null)? Globals.SelectedClientProxy.ID : 0;
                 ProjectProxy currentRecord = (Globals.SelectedProjectProxy != null) ? Globals.SelectedProjectProxy : Globals.DefaultProjectProxy;
-                ProjectFunctions.SetProjectFilterList(Globals.SelectedStatusFilter, false, clientID, false);
+                ProjectFunctions.SetProjectFilterList(Globals.SelectedStatusFilter, true, clientID, false);
                 ProjectCombo.ItemsSource = ProjectFunctions.ProjectFilterList;
                 selectProject(currentRecord.ProjectID);
             }
@@ -239,20 +262,12 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error selecting current project in the list", generalException); }
         }
 
-        private void setCurrentClient(ClientProxy clientProxy = null)
+        private void setCurrentClient(ClientProxy clientProxy)
         {
             try
             {
-                if (clientProxy == null || clientProxy.ID <= 0)
-                {
-                    Globals.SelectedClientProxy = null;                   
-                    clientSelected = false;
-                }
-                else
-                {
-                    Globals.SelectedClientProxy = clientProxy;                    
-                    clientSelected = true;
-                }
+                Globals.SelectedClientProxy = clientProxy;
+                clientSelected = (clientProxy != null && clientProxy.ID > 0);
                 togglePageHeader();
             }
             catch (Exception generalException) { MessageFunctions.Error("Error processing project client selection", generalException); }
@@ -334,7 +349,7 @@ namespace ProjectTile
                 else
                 {
                     setCurrentClient((ClientProxy)ClientCombo.SelectedItem);
-                    //refreshActionsGrid();
+                    refreshActionsGrid();
                     refreshProjectCombo();
                 }
             }
@@ -365,7 +380,7 @@ namespace ProjectTile
                 try
                 {
                     Globals.SelectedProjectProxy = (ProjectProxy)ProjectCombo.SelectedItem;
-                    setCurrentClient(Globals.SelectedProjectProxy.Client ?? null);
+                    //setCurrentClient(Globals.SelectedProjectProxy.Client ?? null);
                     toggleProjectMode(Globals.SelectedProjectProxy != Globals.AllProjects);
                     refreshActionsGrid();                    
                 }

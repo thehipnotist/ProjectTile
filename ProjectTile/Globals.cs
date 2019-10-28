@@ -23,6 +23,7 @@ namespace ProjectTile
 
         // Status variables
         public static bool InfoMessageDisplaying = false;
+        public static bool LoadingActions = false;
 
         // Common enumerations
         public enum ClientProductStatus { Added = 1, New = 2, InProgress = 3, Live = 4, Updates = 5, Inactive = 6, Retired = 7 }
