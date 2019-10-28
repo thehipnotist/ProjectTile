@@ -1843,24 +1843,27 @@ namespace ProjectTile
             try
             {
                 if (ActionStatusOptions.Count == 0)
-                {
-                    ActionStatusOptions.Add(3, "Yes");
-                    ActionStatusOptions.Add(2, "Part");
-                    ActionStatusOptions.Add(1, "No");
+                {                    
+                    ActionStatusOptions.Add(3, "Yes");                    
+                    ActionStatusOptions.Add(2, "Partly");
+                    ActionStatusOptions.Add(1, "Not Started");
                     ActionStatusOptions.Add(0, AllRecords);
+                    ActionStatusOptions.Add(-1, "No");
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error setting action status options", generalException); }	
         }
 
-        public static List<string> ActionCompletedList(bool includeAll)
+        public static List<string> ActionCompletedList(bool includeAll, bool includeNo)
         {
             try
             {
                 List<string> optionsList = new List<string>();
                 foreach (var entry in ActionStatusOptions.Values)
                 {
-                    if (includeAll || entry.ToString() != AllRecords) { optionsList.Add(entry.ToString()); };
+                    if (!includeAll && entry == AllRecords) {}
+                    else if (!includeNo && entry == "No" ) {}
+                    else { optionsList.Add(entry.ToString()); };
                 }
                 return optionsList;
             }
@@ -1871,7 +1874,7 @@ namespace ProjectTile
             }	
         }
 
-        public static int GetCompletedCode(string value)
+        public static int GetCompletedKey(string value)
         {
             return ActionStatusOptions.Keys.FirstOrDefault(k => ActionStatusOptions[k] == value);
         }
@@ -1916,8 +1919,9 @@ namespace ProjectTile
         {
             try
             {
-                if (statusNumber == 1) { return null; }
-                else if (statusNumber == 2) { return false; }
+                if (statusNumber == -1) { return false; }
+                else if (statusNumber == 1) { return null; }
+                else if (statusNumber == 2) { return false; }                
                 else if (statusNumber == 3) { return true; }
                 else { return null; }
             }
@@ -1957,10 +1961,9 @@ namespace ProjectTile
                                             join p in existingPtDb.Projects on a.ProjectID equals p.ID
                                             join ps in existingPtDb.ProjectStages on a.StageID equals ps.ID
                                                 into GroupJoin from gps in GroupJoin.DefaultIfEmpty()
-                                            where (a.ProjectID == projectID 
-                                                    || (projectID <= 0 && (clientID <= 0 || p.ClientID == clientID)))
+                                            where (a.ProjectID == projectID || (projectID <= 0 && (clientID <= 0 || p.ClientID == clientID)))
                                                 && (a.TargetCompletion == null || (a.TargetCompletion >= fromDate && a.TargetCompletion < maxDate))
-                                                && (statusNumber == 0 || a.StatusCode == statusCode)
+                                                && (statusNumber == 0 || a.StatusCode == statusCode || (statusNumber == -1 && a.StatusCode != true))
                                             select new { Action = a, Stage = gps ?? null, Project  = p }
                                             ).ToList();
                     //if (actionsWithStage.Count == 0) { return null; }
@@ -1970,7 +1973,7 @@ namespace ProjectTile
                         var filteredActions = actionsWithStage.Where(aws => IsInFilter(filterCode, GetStageByID(aws.Project.StageID)));
                         actionsWithStage = filteredActions.ToList();
                     }
-                    if (owner != null)
+                    if (actionsWithStage.Count > 0 && owner != null)
                     {
                         bool internalOwner = (owner != null && owner.StaffMember != null);
                         List<int> ownerTeamIDs = internalOwner ?

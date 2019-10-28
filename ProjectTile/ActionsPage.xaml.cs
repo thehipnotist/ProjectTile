@@ -38,7 +38,7 @@ namespace ProjectTile
         DateTime toDate = Globals.StartOfTime;
         string nameLike = "";
         bool exactName = false;
-        int completed = 0;
+        int completed = -1;
         CombinedStaffMember selectedPerson = null;
 
         // ------------- Current records ------------ //
@@ -46,11 +46,12 @@ namespace ProjectTile
 
 
         // ------------------ Lists ----------------- //
-        List<string> completedList = null;
+        List<string> completedFilterList = null;
         List<ActionProxy> actionList = null;
         List<TeamProxy> loggedByList = null;
         List<ProjectStages> stageList = null;
         List<CombinedTeamMember> ownerList = null;
+        List<string> completedOptions = null;
 
         // ---------------------------------------------------------- //
         // -------------------- Page Management --------------------- //
@@ -85,10 +86,9 @@ namespace ProjectTile
 
             refreshClientCombo();
             refreshStatusCombo();
-            FromDate.SelectedDate = fromDate = Globals.StartOfMonth;
-            ToDate.SelectedDate = toDate = Globals.Today;
-            ProjectFunctions.SetActionStatusOptions();
-            refreshCompletedList();
+            FromDate.SelectedDate = fromDate = Globals.StartOfTime;
+            ToDate.SelectedDate = toDate = Globals.OneMonthAhead;            
+            setCompletedLists();
 
             Instructions.Content = defaultInstructions;
 
@@ -113,6 +113,7 @@ namespace ProjectTile
                 int clientID = clientSelected ? Globals.SelectedClientProxy.ID : 0;
                 int projectID = projectSelected ? Globals.SelectedProjectProxy.ProjectID : 0;
                 actionList = ProjectFunctions.ActionsList(clientID, Globals.SelectedStatusFilter, projectID, fromDate, toDate, selectedPerson, completed); // TODO: Replace/alternate selectedPerson with non-exact name
+                
 
                 if (projectSelected)
                 {
@@ -203,13 +204,18 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error processing name change", generalException); }
         }
 
-        private void refreshCompletedList()
+        private void setCompletedLists()
         {
             try
             {
-                completedList = ProjectFunctions.ActionCompletedList(true);
-                CompleteCombo.ItemsSource = completedList;
-                CompleteCombo.SelectedValue = Globals.AllRecords;
+                ProjectFunctions.SetActionStatusOptions();
+                
+                completedFilterList = ProjectFunctions.ActionCompletedList(true, true);
+                CompleteCombo.ItemsSource = completedFilterList;
+                CompleteCombo.SelectedValue = "No";
+
+                completedOptions = ProjectFunctions.ActionCompletedList(false, false);
+                CompleteColumn.ItemsSource = completedOptions;
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating action status drop-down list", generalException); }
         }
@@ -414,7 +420,7 @@ namespace ProjectTile
             if (CompleteCombo.SelectedValue != null)
             {
                 string value = (string) CompleteCombo.SelectedValue;
-                completed = ProjectFunctions.GetCompletedCode(value);
+                completed = ProjectFunctions.GetCompletedKey(value);
                 refreshActionsGrid();
             }
         }

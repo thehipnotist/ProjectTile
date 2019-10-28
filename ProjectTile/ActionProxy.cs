@@ -6,12 +6,13 @@ using System.Text;
 
 namespace ProjectTile
 {
-    public class ActionProxy: Globals, INotifyPropertyChanged
+    public class ActionProxy: Globals //, INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-        //private DateTime? nextStageTargetStart = null;
-        
+        //public event PropertyChangedEventHandler PropertyChanged;        
 
+        private int statusNumber;
+        private string statusDescription;        
+        
         public int ID { get; set; }
         public CombinedTeamMember Owner { get; set; }
         public string ActionCode { get; set; }
@@ -23,25 +24,28 @@ namespace ProjectTile
         public TeamProxy LoggedBy { get; set; }
         public int StatusNumber
         {
-            get { return StatusNumber; }
-            set
+            get { return statusNumber; }
+            set 
             {
-                //StatusDescription = ProjectFunctions.GetCompletedDescription(value);
+                statusNumber = value;
+                statusDescription = ProjectFunctions.GetCompletedDescription(value); 
             } 
+        }
+
+        public string StatusDescription
+        {
+            get { return statusDescription; }
+            set 
+            {
+                statusDescription = value;
+                statusNumber = ProjectFunctions.GetCompletedKey(value); 
+            }
         }
         public string Notes { get; set; }
         public ProjectStages LinkedStage
         {
             get;
             set;
-            //get { return LinkedStage; }
-            //set 
-            //{ 
-            //    //if (Project != null && StageNumber >= 0)
-            //    //{
-            //    //    nextStageTargetStart = ProjectFunctions.GetHistoryDate(Project.ID, StageNumber, true); 
-            //    //}
-            //}
         }
         
         //public int StageNumber 
@@ -63,12 +67,6 @@ namespace ProjectTile
             }
             set { TargetCompletion = value; }
         }
-
-        //public string StatusDescription 
-        //{
-        //    get { return StatusDescription; }
-        //    set { StatusNumber = ProjectFunctions.GetCompletedCode(value); } 
-        //}
 
         //public string LoggedByName
         //{

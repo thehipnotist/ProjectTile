@@ -122,7 +122,8 @@ namespace ProjectTile
         public static DateTime Today = DateTime.Today;
         public static DateTime Yesterday = Today.AddDays(-1);
         public static DateTime OneMonthAgo = Today.AddMonths(-1);
-        public static DateTime StartOfTime = Today.AddYears(-999);
+        public static DateTime OneMonthAhead = Today.AddMonths(1);
+        public static DateTime StartOfTime = new DateTime(2000, 1, 1); 
         public static DateTime InfiniteDate = Today.AddYears(999);
         public static DateTime StartOfMonth = new DateTime(Today.Year, Today.Month, 1);
 
