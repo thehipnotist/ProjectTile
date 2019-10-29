@@ -27,18 +27,18 @@ namespace ProjectTile
 
         string pageMode;
         bool pageLoaded = false;
-        const string defaultInstructions = "The top filters refer to the project, the bottom ones to the action and its owner.";
+        string defaultInstructions = "The top filters refer to the project, the bottom ones to the actions.";
         const string defaultHeader = "Project Actions";
         bool projectSelected = false;
         bool clientSelected = false;
         bool canEdit = false;
+        bool editing = false;
 
         // ------------ Current variables ----------- // 
 
         DateTime fromDate = Globals.InfiniteDate;
         DateTime toDate = Globals.StartOfTime;
         string nameLike = "";
-        bool exactName = false;
         int completed = -1;
         CombinedStaffMember selectedPerson = null;
 
@@ -48,9 +48,7 @@ namespace ProjectTile
 
         // ------------------ Lists ----------------- //
         List<string> completedFilterList = null;
-        List<ActionProxy> actionList = null;
         List<int> projectTeamStaffIDs = null;
-        List<TeamProxy> loggedByList = null;
         List<ProjectStages> stageList = null;
         List<CombinedTeamMember> ownerList = null;
         List<string> completedOptions = null;
@@ -73,7 +71,7 @@ namespace ProjectTile
             try
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
-                canEdit = (pageMode != PageFunctions.View && Globals.MyPermissions.Allow("EditActions"));
+                canEdit = (pageMode != PageFunctions.View && Globals.MyPermissions.Allow("EditActions"));                
             }
             catch (Exception generalException)
             {
@@ -87,16 +85,9 @@ namespace ProjectTile
             ToDate.SelectedDate = toDate = Globals.OneMonthAhead;            
             setCompletedLists();
 
-            Instructions.Content = defaultInstructions;
-
             pageLoaded = true;
             refreshActionsGrid();
-
-            if (canEdit) { MessageFunctions.InfoAlert("If you are a team member of an active project, you can edit its actions by selecting the project; the table becomes italic with a thicker border. "
-                + "Further instructions will then appear", "Direct Editing"); }
         }
-
-
 
         // ---------------------------------------------------------- //
         // -------------------- Data Management --------------------- //
@@ -115,56 +106,114 @@ namespace ProjectTile
                 int clientID = Globals.SelectedClientProxy.ID;
                 int projectID = projectSelected ? Globals.SelectedProjectProxy.ProjectID : 0;
                 projectTeamStaffIDs = projectSelected ? ProjectFunctions.GetInternalTeam(projectID).Select(git => git.StaffID).ToList() : null;
+                bool inTeam = (projectSelected && projectTeamStaffIDs.Contains(Globals.MyStaffID));
+                bool isOld = Globals.SelectedProjectProxy.IsOld;
+                ProjectFunctions.ActionCounter = 0;
+                ProjectCodeColumn.Visibility = projectSelected ? Visibility.Collapsed : Visibility.Visible;                
 
-                actionList = ProjectFunctions.ActionsList(clientID, Globals.SelectedStatusFilter, projectID, fromDate, toDate, selectedPerson, completed); // TODO: Replace/alternate selectedPerson with non-exact name
+                ProjectFunctions.SetActionsList(clientID, Globals.SelectedStatusFilter, projectID, fromDate, toDate, selectedPerson, completed);
 
-                if (canEdit && projectSelected && !Globals.SelectedProjectProxy.IsOld && projectTeamStaffIDs.Contains(Globals.MyStaffID))
+                if (canEdit && projectSelected && !isOld && inTeam)
                 {
-                    ActionDataGrid.IsReadOnly = false;
-                    //ActionDataGrid.FontStyle = FontStyles.Italic;                    
-                    ActionDataGrid.BorderThickness = new Thickness(3);
-
-                    loggedByList = ProjectFunctions.GetInternalTeam(projectID);
-                    stageList = ProjectFunctions.GetProjectHistoryStages(projectID);
-                    ownerList = ProjectFunctions.CombinedTeamList(projectID);
-
-                    foreach (ActionProxy action in actionList) // Required for the initial values to display when in 'project mode'
-                    {
-                        int? stageID = action.LinkedStage.ID;
-                        if (stageID != null) { action.LinkedStage = stageList.Where(sl => sl.ID == stageID).FirstOrDefault(); }
-
-                        int loggedByID = action.LoggedBy.ID;
-                        action.LoggedBy = loggedByList.Where(lbl => lbl.ID == loggedByID).FirstOrDefault();
-
-                        bool internalOwner = (action.Owner.InternalTeamMember != null);
-                        int ownerID = internalOwner? action.Owner.InternalTeamMember.ID : action.Owner.ClientTeamMember.ID;
-                        action.Owner = ownerList.Where(ol => (internalOwner && ol.InternalTeamMember.ID == ownerID)
-                                                          || (!internalOwner && ol.ClientTeamMember.ID == ownerID))
-                                                          .FirstOrDefault();
-                    }
-
-                    MessageFunctions.InfoAlert("You can double-click within italicised cells (only) to edit them. Others are set/updated automatically as needed.", "Direct Editing");
+                    bool setUp = setUpEditing(projectID);
+                    if (!setUp) { return; }
                 }
                 else
                 {
-                    ActionDataGrid.IsReadOnly = true;
-                    //ActionDataGrid.FontStyle = FontStyles.Normal;
-                    ActionDataGrid.BorderThickness = new Thickness(1);
-
-                    loggedByList = actionList.Select(al => al.LoggedBy).Distinct().ToList();
-                    stageList = actionList.Select(al => al.LinkedStage).Distinct().ToList();
-                    ownerList = actionList.Select(al => al.Owner).Distinct().ToList();
+                    setUpReadOnly(inTeam, isOld);
                 }
                 
-                LoggedByColumn.ItemsSource = loggedByList;
+                LoggedByColumn.ItemsSource = ProjectFunctions.LoggedByList;
                 StageColumn.ItemsSource = stageList;
                 OwnerColumn.ItemsSource = ownerList;
 
-                ActionDataGrid.ItemsSource = actionList;
+                ActionDataGrid.ItemsSource = ProjectFunctions.ActionList;
                 Globals.LoadingActions = false;
                 
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating the actions data grid", generalException); }
+        }
+
+        private bool setUpReadOnly(bool inTeam, bool isOld)
+        {
+            try
+            {
+                ActionDataGrid.IsReadOnly = true;
+                ActionDataGrid.BorderThickness = new Thickness(1);
+
+                ProjectFunctions.LoggedByList = ProjectFunctions.ActionList.Select(al => al.LoggedBy).Distinct().ToList();
+                stageList = ProjectFunctions.ActionList.Select(al => al.LinkedStage).Distinct().ToList();
+                ownerList = ProjectFunctions.ActionList.Select(al => al.Owner).Distinct().ToList();
+                Instructions.Content = defaultInstructions;
+
+                if (!projectSelected && canEdit)
+                {
+                    Instructions.Content = defaultInstructions + (canEdit ? " Choose a project to edit." : "");
+                    MessageFunctions.InfoAlert("If you are a team member of an active project, you can edit its actions by selecting the project; the table becomes italic with a thicker border. "
+                                                + "Further instructions will then appear.", "'Read-only' Mode");
+                }
+                else
+                {
+                    Instructions.Content = defaultInstructions;
+                    if (projectSelected && canEdit)
+                    {
+                        if (isOld)
+                        {
+                            string caption = (Globals.SelectedProjectProxy.IsCancelled) ? "Project Cancelled" : "Project Completed";
+                            MessageFunctions.InfoAlert("This project is closed, so its actions cannot be edited.", caption);
+                        }
+                        else if (!inTeam)
+                        {
+                            MessageFunctions.InfoAlert("Only members of the project team can edit the actions for this project. Please speak to the Project Manager if you require access.",
+                                "'Read-only' Mode");
+                        }
+                    }
+                }
+                return true;
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error setting up actions view", generalException);
+                return false;
+            }	
+        }
+
+        private bool setUpEditing(int projectID)
+        {
+            try
+            {
+                ActionDataGrid.IsReadOnly = false;
+                ActionDataGrid.BorderThickness = new Thickness(3);
+
+                ProjectFunctions.LoggedByList = ProjectFunctions.GetInternalTeam(projectID);
+                stageList = ProjectFunctions.GetProjectHistoryStages(projectID);
+                ownerList = ProjectFunctions.CombinedTeamList(projectID);
+
+                foreach (ActionProxy action in ProjectFunctions.ActionList) // Required for the initial values to display when in 'project mode'
+                {
+                    int? stageID = action.LinkedStage.ID;
+                    if (stageID != null) { action.LinkedStage = stageList.Where(sl => sl.ID == stageID).FirstOrDefault(); }
+
+                    int loggedByID = action.LoggedBy.ID;
+                    action.LoggedBy = ProjectFunctions.LoggedByList.Where(lbl => lbl.ID == loggedByID).FirstOrDefault();
+
+                    bool internalOwner = (action.Owner.InternalTeamMember != null);
+                    int ownerID = internalOwner ? action.Owner.InternalTeamMember.ID : action.Owner.ClientTeamMember.ID;
+                    action.Owner = ownerList.Where(ol => (internalOwner && ol.InternalTeamMember.ID == ownerID)
+                                                      || (!internalOwner && ol.ClientTeamMember != null && ol.ClientTeamMember.ID == ownerID))
+                                                      .FirstOrDefault();
+                }
+
+                Instructions.Content = "Edit rows by double-clicking cells in italics (others are updated automatically).";
+                MessageFunctions.InfoAlert("To add new rows, scroll to the bottom of the table and edit the first empty row. Each action must have an 'owner' from the project team, "
+                    + "and either a linked stage or a target completion date.", "'Direct Edit' Mode");
+                return true;
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error setting up action editing", generalException);
+                return false;
+            }
         }
 
         private void refreshClientCombo()
@@ -212,7 +261,7 @@ namespace ProjectTile
         {
             try
             {
-                exactName = false;
+                selectedPerson = null;
                 string nameLike = NameLike.Text;
                 if (nameLike == "") { PossibleNames.Visibility = Visibility.Hidden; }
                 else
@@ -304,7 +353,6 @@ namespace ProjectTile
             {
                 selectedPerson = (CombinedStaffMember) PossibleNames.SelectedItem;
                 NameLike.Text = selectedPerson.FullName;
-                exactName = true;
                 nameFilter();
             }
             catch (Exception generalException) { MessageFunctions.Error("Error processing contact name selection", generalException); }
@@ -318,11 +366,11 @@ namespace ProjectTile
                 nameLike = NameLike.Text;
                 if (nameLike == "") 
                 { 
-                    exactName = false;
                     selectedPerson = null;
+                    refreshActionsGrid();
                 }
-                //toggleContactNameColumn();
-                refreshActionsGrid();
+                else if (selectedPerson == null) { NameLike.Text = ""; }
+                else { refreshActionsGrid(); }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error updating filters for contact name selection change", generalException); }
         }

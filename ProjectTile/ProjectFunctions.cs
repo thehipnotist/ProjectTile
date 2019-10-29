@@ -18,6 +18,7 @@ namespace ProjectTile
         public static ReturnToTeamsDelegate SelectProjectForTeam;
         public static ReturnToTeamsDelegate CancelTeamProjectSelection;
         public static Dictionary<int, string> ActionStatusOptions = new Dictionary<int, string>();
+        public static int ActionCounter = 0;
 
         // ------------------ Lists ----------------- //
 
@@ -32,6 +33,7 @@ namespace ProjectTile
         public static List<StaffProxy> PMOptionsList;
         public static List<TeamProxy> FullTeamsList;
         public static List<TeamProxy> TeamsGridList;
+        public static List<TeamProxy> LoggedByList = null;
         public static List<ProjectRoles> FullRolesList;
         public static List<ProjectRoles> RolesFilterList;
         public static List<ClientProxy> FullClientList;
@@ -55,6 +57,7 @@ namespace ProjectTile
         public static List<int> ProductIDsToUpdate = new List<int>();
 
         public static List<int> StageDatesChanged = new List<int>();
+        public static List<ActionProxy> ActionList = new List<ActionProxy>();
 
         // ---------------------------------------------------------- //
         // -------------------- Page Management --------------------- //
@@ -1888,7 +1891,38 @@ namespace ProjectTile
 
         public static string ActionCode(int projectID, DateTime date)
         {
-            return "Test"; // TODO: Build this up from the actions list
+            try
+            {
+                if (date == null || projectID == 0) { return ""; }
+
+                ActionCounter++;               
+                string datePart = date.ToString("yyMMdd.");              
+                List<ActionProxy> sameDayActions = ActionList.Where(al => 
+                        al.Project.ID == projectID 
+                        && al.ActionCode.Length >= datePart.Length
+                        && al.ActionCode.Substring(0, datePart.Length) == datePart)
+                    .OrderBy(al => al.ActionCode).ToList();
+                foreach (ActionProxy a in sameDayActions) // Use this instead of a simple count, just in case of any deletions
+                {                    
+                    string countPart = a.ActionCode.Replace(datePart, "");
+                    int count = 0;
+                    Int32.TryParse(countPart, out count);
+                    if (count == 0) { ActionCounter++; } // Simply increment if couldn't parse the string, just in case
+                    else { ActionCounter = Math.Max(ActionCounter, count + 1); }
+                }
+				if (ActionCounter > 99)
+                {
+                    MessageFunctions.InvalidMessage("The maximum number of actions logged per project each day is 99, to preserve the ActionCode format. "
+                        + "Please cancel your changes and log any further actions on another day.", "Maximum Limit Reached");
+                    return "";
+                }                
+                return datePart + ActionCounter.ToString("D2");
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error setting action code", generalException);
+                return "";
+            }	            
         }
 
         public static bool StageFitsDates(int projectID, int stageNumber, DateTime fromDate, DateTime toDate)
@@ -1949,7 +1983,7 @@ namespace ProjectTile
             }		
         }
 
-        public static List<ActionProxy> ActionsList(int clientID, ProjectStatusFilter filterCode, int projectID, DateTime fromDate, DateTime toDate, CombinedStaffMember owner, int statusNumber)
+        public static void SetActionsList(int clientID, ProjectStatusFilter filterCode, int projectID, DateTime fromDate, DateTime toDate, CombinedStaffMember owner, int statusNumber)
         {
             try
             {                
@@ -1993,7 +2027,7 @@ namespace ProjectTile
                     var dateFilteredActions = actionsWithStage.Where(aws =>   aws.Action.TargetCompletion != null // already filtered above
                                                                              || (aws.Stage != null && StageFitsDates(aws.Project.ID, aws.Stage.StageNumber, fromDate, toDate) ));
 
-                    return dateFilteredActions.Select(dfa => new ActionProxy
+                    ActionList = dateFilteredActions.Select(dfa => new ActionProxy
                         {
                             ID = dfa.Action.ID,
                             Owner = GetOwner(dfa.Project.ID, dfa.Action.InternalOwner, dfa.Action.ClientOwner),
@@ -2014,7 +2048,7 @@ namespace ProjectTile
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error retrieving list of project actions", generalException);
-                return null;
+                ActionList = null;
             }		
         }
 

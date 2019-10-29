@@ -105,6 +105,7 @@ namespace ProjectTile
             {
                 linkedStage = value;
                 handleUpdate("LinkedStage");
+                OnPropertyChanged("EffectiveDue"); // Show updated effective date
             }
         }
         public DateTime? EffectiveDue
@@ -135,13 +136,14 @@ namespace ProjectTile
                     OnPropertyChanged("Project");
                     ActionCode = ProjectFunctions.ActionCode(projectID, Globals.Today);
                     OnPropertyChanged("ActionCode");
-                    LoggedBy = ProjectFunctions.GetInternalTeam(projectID).FirstOrDefault(it => it.StaffID == MyStaffID);
+                    LoggedBy = ProjectFunctions.LoggedByList.FirstOrDefault(it => it.StaffMember.ID == MyStaffID);
                     OnPropertyChanged("LoggedBy");
-                    statusNumber = 0;                    
+                    StatusDescription = "Not Started";                 
                     LoggedDate = Globals.Today;
                     OnPropertyChanged("LoggedDate");
+                    //ProjectFunctions.ActionList.Add(this);
                 }
-                else
+                else if (!created)
                 {
                     updated = true;
                     if (LoggedDate != Globals.Today) { UpdatedDate = Globals.Today; }
