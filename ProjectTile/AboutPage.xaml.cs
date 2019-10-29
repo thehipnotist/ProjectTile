@@ -133,7 +133,7 @@ namespace ProjectTile
                 + newLine
                 + newLine + "Version 1.00          23/10/2019          Initial version"
                 + newLine + "Version 1.10          24/10/2019          Added stage history audit"
-                + newLine + "Version 1.20          28/10/2019          Added project actions, menu icons, version history and GitHub link"; 
+                + newLine + "Version 1.20          30/10/2019          Added project actions, menu icons, version history and GitHub link"; 
         }
 
         // ---------------------- //

@@ -19,6 +19,8 @@ namespace ProjectTile
         public static ReturnToTeamsDelegate CancelTeamProjectSelection;
         public static Dictionary<int, string> ActionStatusOptions = new Dictionary<int, string>();
         public static int ActionCounter = 0;
+        public delegate void ActionsChangedDelegate();
+        public static ActionsChangedDelegate ActionsChanged;
 
         // ------------------ Lists ----------------- //
 

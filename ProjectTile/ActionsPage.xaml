@@ -69,8 +69,8 @@
                     </ComboBox.Resources>
                 </ComboBox>
 
-                <DataGrid x:Name="ActionDataGrid" MinHeight="250" Margin="15,90,15,60" Width="625" MinWidth="400" MaxWidth="625" AutoGenerateColumns="False" IsReadOnly="False" 
-                          BorderBrush="{StaticResource PtBrushProject3}" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionMode="Single"
+                <DataGrid x:Name="ActionDataGrid" MinHeight="250" Margin="15,90,15,60" MinWidth="625" MaxWidth="625" AutoGenerateColumns="False" IsReadOnly="False" 
+                          BorderBrush="{StaticResource PtBrushProject3}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SelectionMode="Single"
                           SelectionChanged="ActionDataGrid_SelectionChanged">
                     <DataGrid.Columns>
                         <DataGridTextColumn x:Name="ProjectCodeColumn" Binding="{Binding Project.ProjectCode, Mode=OneWay}" Header="Project" IsReadOnly="True"/>
@@ -155,6 +155,14 @@
                     <StackPanel x:Name="CancelPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
                         <Image x:Name="CancelImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource CancelIcon}"/>
                         <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Close" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="ProjectButton" HorizontalAlignment="Right" Height="30" Margin="15,15,30,15" VerticalAlignment="Bottom" Width="110" 
+                		FontWeight="Bold" IsEnabled="False" Click="ProjectButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{StaticResource PtBrushProject3}"
+                        ToolTip="Select the Project to allow amending or adding actions">
+                    <StackPanel x:Name="ProjectPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                        <Image x:Name="ProjectImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource ProjectIcon}"/>
+                        <TextBlock x:Name="ProjectButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Set Project" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
                 <Button x:Name="CommitButton" HorizontalAlignment="Right" Height="30" Margin="15,15,15,15" VerticalAlignment="Top" Width="110" Style="{StaticResource RoundedButton}" 

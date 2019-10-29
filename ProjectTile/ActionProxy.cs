@@ -21,8 +21,8 @@ namespace ProjectTile
         private DateTime? updatedDate;
         private string actionCode = "";
 
-        public bool created = false;
-        public bool updated = false;
+        public bool Created = false;
+        public bool Updated = false;
         
         public int ID { get; set; }
         public CombinedTeamMember Owner
@@ -37,7 +37,11 @@ namespace ProjectTile
         public string ActionCode 
         {
             get { return actionCode; }
-            set { actionCode = value; } 
+            set 
+            { 
+                actionCode = value;
+                OnPropertyChanged("ActionCode");
+            } 
         }
         public Projects Project { get; set; }
         public DateTime LoggedDate { get; set; }
@@ -130,25 +134,25 @@ namespace ProjectTile
                 if (Globals.LoadingActions) { return; }
                 if (actionCode == "")
                 {
-                    created = true;
+                    Created = true;
                     int projectID = Globals.SelectedProjectProxy.ProjectID;
                     Project = ProjectFunctions.GetProject(projectID);
                     OnPropertyChanged("Project");
                     ActionCode = ProjectFunctions.ActionCode(projectID, Globals.Today);
-                    OnPropertyChanged("ActionCode");
                     LoggedBy = ProjectFunctions.LoggedByList.FirstOrDefault(it => it.StaffMember.ID == MyStaffID);
                     OnPropertyChanged("LoggedBy");
                     StatusDescription = "Not Started";                 
                     LoggedDate = Globals.Today;
                     OnPropertyChanged("LoggedDate");
-                    //ProjectFunctions.ActionList.Add(this);
+                    ProjectFunctions.ActionsChanged();
                 }
-                else if (!created)
+                else if (!Created && !Updated)
                 {
-                    updated = true;
+                    Updated = true;
                     if (LoggedDate != Globals.Today) { UpdatedDate = Globals.Today; }
+                    ProjectFunctions.ActionsChanged();
                 }
-                OnPropertyChanged(propertyName);
+                OnPropertyChanged(propertyName);                
             }
             catch (Exception generalException) { MessageFunctions.Error("Error processing action update", generalException); }	
         }

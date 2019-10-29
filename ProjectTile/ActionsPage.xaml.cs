@@ -33,6 +33,7 @@ namespace ProjectTile
         bool clientSelected = false;
         bool canEdit = false;
         bool editing = false;
+        bool changesMade = false;
 
         // ------------ Current variables ----------- // 
 
@@ -40,11 +41,11 @@ namespace ProjectTile
         DateTime toDate = Globals.StartOfTime;
         string nameLike = "";
         int completed = -1;
-        CombinedStaffMember selectedPerson = null;
+        ActionProxy selectedAction = null;
 
         // ------------- Current records ------------ //
 
-
+        CombinedStaffMember selectedPerson = null;
 
         // ------------------ Lists ----------------- //
         List<string> completedFilterList = null;
@@ -79,6 +80,7 @@ namespace ProjectTile
                 PageFunctions.ShowTilesPage();
             }
 
+            ProjectButton.Margin = CommitButton.Margin;
             refreshClientCombo();
             refreshStatusCombo();
             FromDate.SelectedDate = fromDate = Globals.StartOfTime;
@@ -87,6 +89,7 @@ namespace ProjectTile
 
             pageLoaded = true;
             refreshActionsGrid();
+            ProjectFunctions.ActionsChanged += actionsAmended;
         }
 
         // ---------------------------------------------------------- //
@@ -102,6 +105,7 @@ namespace ProjectTile
             {
                 if (!pageLoaded) { return; }
                 Globals.LoadingActions = true;
+                ActionProxy currentAction = selectedAction ?? null;
 
                 int clientID = Globals.SelectedClientProxy.ID;
                 int projectID = projectSelected ? Globals.SelectedProjectProxy.ProjectID : 0;
@@ -118,16 +122,18 @@ namespace ProjectTile
                     bool setUp = setUpEditing(projectID);
                     if (!setUp) { return; }
                 }
-                else
-                {
-                    setUpReadOnly(inTeam, isOld);
-                }
+                else { setUpReadOnly(inTeam, isOld); }
                 
                 LoggedByColumn.ItemsSource = ProjectFunctions.LoggedByList;
                 StageColumn.ItemsSource = stageList;
                 OwnerColumn.ItemsSource = ownerList;
 
                 ActionDataGrid.ItemsSource = ProjectFunctions.ActionList;
+                if (currentAction != null && currentAction.ID > 0 && ProjectFunctions.ActionList.Exists(al => al.ID == currentAction.ID))
+                {
+                    ActionDataGrid.SelectedItem = ProjectFunctions.ActionList.FirstOrDefault(al => al.ID == currentAction.ID);
+                    ActionDataGrid.ScrollIntoView(ActionDataGrid.SelectedItem);
+                }
                 Globals.LoadingActions = false;
                 
             }
@@ -138,8 +144,12 @@ namespace ProjectTile
         {
             try
             {
+                editing = false;
                 ActionDataGrid.IsReadOnly = true;
                 ActionDataGrid.BorderThickness = new Thickness(1);
+                ProjectButton.Visibility = Visibility.Visible;
+                ProjectButtonText.Text = projectSelected ? "All Projects" : "Set Project";
+                CommitButton.Visibility = Visibility.Hidden;
 
                 ProjectFunctions.LoggedByList = ProjectFunctions.ActionList.Select(al => al.LoggedBy).Distinct().ToList();
                 stageList = ProjectFunctions.ActionList.Select(al => al.LinkedStage).Distinct().ToList();
@@ -182,6 +192,8 @@ namespace ProjectTile
         {
             try
             {
+                editing = true;
+                ProjectButtonText.Text = "All Projects";
                 ActionDataGrid.IsReadOnly = false;
                 ActionDataGrid.BorderThickness = new Thickness(3);
 
@@ -292,6 +304,17 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error populating action status drop-down list", generalException); }
         }
 
+        private void actionsAmended()
+        {
+            if (!changesMade)
+            {
+                ProjectButton.Visibility = Visibility.Hidden;
+                CommitButton.Visibility = Visibility.Visible;
+                CancelButtonText.Text = "Cancel";
+                changesMade = true;
+            }
+        }
+
         // -------------- Data updates -------------- // 
 
 
@@ -324,13 +347,7 @@ namespace ProjectTile
 
         private void toggleProjectMode(bool specificProject)
         {
-            projectSelected = 
-                //ProjectButton.IsEnabled = 
-                specificProject;
-            //toggleEditButtons(projectSelected);
-            //ProjectButtonText.Text = (!projectSelected) ? "Set Project" : "All Projects";
-            //toggleProjectSearchButton();
-            //toggleProjectColumns();
+            projectSelected = specificProject;
             togglePageHeader();
         }
 
@@ -373,6 +390,24 @@ namespace ProjectTile
                 else { refreshActionsGrid(); }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error updating filters for contact name selection change", generalException); }
+        }
+
+        private void resetChanges()
+        {
+            changesMade = false;
+            CommitButton.Visibility = Visibility.Hidden;
+            ProjectButton.Visibility = Visibility.Visible;
+            CancelButtonText.Text = "Close";
+            refreshActionsGrid();
+        }
+
+        private bool ignoreChanges()
+        {
+            if (!changesMade) { return true; }
+            else 
+            {
+                return MessageFunctions.WarningYesNo("This will clear all unsaved changes you have made. Continue?", "Undo Unsaved Changes?");
+            }
         }
 
         // ---------- Links to other pages ---------- //		
@@ -490,19 +525,41 @@ namespace ProjectTile
 
         private void ActionDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
+            if (ActionDataGrid.SelectedItem == null) { selectedAction = null; }
+            else
+            {
+                selectedAction = ActionDataGrid.SelectedItem as ActionProxy;
+            }
+            ProjectButton.IsEnabled =  (projectSelected || selectedAction != null);
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            // To do: check for changes if appropriate
-
-            PageFunctions.ShowTilesPage();
+            if (!ignoreChanges()) { return; }
+            else if (editing) { resetChanges(); }
+            else { PageFunctions.ShowTilesPage(); }
         }
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
+            // TODO: save changes
 
+            resetChanges();
+        }
+
+        private void ProjectButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (projectSelected)
+            {
+                try
+                {
+                    //if (!rolesCheck()) { return; }
+                    ProjectCombo.SelectedItem = ProjectFunctions.ProjectFilterList.First(pfl => pfl.ProjectID == 0);
+                }
+                catch (Exception generalException) { MessageFunctions.Error("Error processing return to all projects", generalException); }
+            }
+            else if (ActionDataGrid.SelectedItem == null) { return; }
+            else { ProjectCombo.SelectedItem = ProjectFunctions.ProjectFilterList.First(pfl => pfl.ProjectCode == selectedAction.Project.ProjectCode); }
         }
 
 
