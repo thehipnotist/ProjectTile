@@ -110,6 +110,7 @@ namespace ProjectTile
                 linkedStage = value;
                 handleUpdate("LinkedStage");
                 OnPropertyChanged("EffectiveDue"); // Show updated effective date
+                OnPropertyChanged("Overdue");
             }
         }
         public DateTime? EffectiveDue
@@ -124,7 +125,13 @@ namespace ProjectTile
             { 
                 if (!Globals.LoadingActions) { TargetCompletion = value; }
                 OnPropertyChanged("EffectiveDue");
+                OnPropertyChanged("Overdue");
             }
+        }
+
+        public bool Overdue
+        {
+            get { return (StatusNumber != 3 && EffectiveDue != null && EffectiveDue < Today); }
         }
 
         private void handleUpdate(string propertyName)
@@ -135,6 +142,7 @@ namespace ProjectTile
                 if (actionCode == "")
                 {
                     Created = true;
+                    OnPropertyChanged("Created");
                     int projectID = Globals.SelectedProjectProxy.ProjectID;
                     Project = ProjectFunctions.GetProject(projectID);
                     OnPropertyChanged("Project");
@@ -149,6 +157,7 @@ namespace ProjectTile
                 else if (!Created && !Updated)
                 {
                     Updated = true;
+                    OnPropertyChanged("Updated");
                     if (LoggedDate != Globals.Today) { UpdatedDate = Globals.Today; }
                     ProjectFunctions.ActionsChanged();
                 }

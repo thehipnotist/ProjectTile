@@ -91,18 +91,17 @@
                     <DataGrid.Resources>
                         <Style TargetType="DataGridRow">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}" Value="Closed">
+                                <DataTrigger Binding="{Binding Path=StatusNumber}" Value="3">
                                     <Setter Property="Foreground" Value="DarkGray"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding Path=IsHistoric}"  Value="True">
-                                    <Setter Property="Foreground" Value="DarkGray"/>
-                                    <Setter Property="FontWeight" Value="Normal"/>
+                                <DataTrigger Binding="{Binding Path=Created}" Value="True">
+                                    <Setter Property="FontWeight" Value="Bold"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}" Value="Not Started">
-                                    <Setter Property="Foreground" Value="LightBlue"/>
+                                <DataTrigger Binding="{Binding Path=Updated}"  Value="True">
+                                    <Setter Property="FontWeight" Value="Bold"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}" Value="Live">
-                                    <Setter Property="Foreground" Value="Green"/>
+                                <DataTrigger Binding="{Binding Path=Overdue}" Value="True">
+                                    <Setter Property="Foreground" Value="Red"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -118,7 +117,7 @@
 
                 <Label x:Name="DueDateLabel" Content="Due" HorizontalAlignment="Left" Height="30" Margin="15,45,0,15" VerticalAlignment="Bottom" Width="40" FontWeight="Bold"/>
                 <DatePicker x:Name="FromDate" HorizontalAlignment="Left" Height="30" Margin="55,45,0,15" VerticalAlignment="Bottom" Width="105" SelectedDateFormat="Short" Background="White"
-                            Padding="5" LostFocus="FromDate_LostFocus">
+                            Padding="5" SelectedDateChanged="FromDate_SelectedDateChanged">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
                             <Setter Property="Text" Value="From"/>
@@ -126,7 +125,7 @@
                     </DatePicker.Resources>
                 </DatePicker>
                 <DatePicker x:Name="ToDate" HorizontalAlignment="Left" Height="30" Margin="160,45,0,15" VerticalAlignment="Bottom" Width="105" SelectedDateFormat="Short" Background="White"
-                            Padding="5" LostFocus="ToDate_LostFocus">
+                            Padding="5" SelectedDateChanged="ToDate_SelectedDateChanged">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
                             <Setter Property="Text" Value="To"/>
@@ -157,6 +156,13 @@
                         <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Close" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
+                <Button x:Name="NotesButton" HorizontalAlignment="Right" Height="30" Margin="15,15,140,15" VerticalAlignment="Top" Width="110" 
+                		FontWeight="Bold" Click="NotesButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{DynamicResource PtBrushProject3}">
+                    <StackPanel x:Name="NotesPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                        <Image x:Name="NotesImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource NotesIcon}"/>
+                        <TextBlock x:Name="NotesButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Notes" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
                 <Button x:Name="ProjectButton" HorizontalAlignment="Right" Height="30" Margin="15,15,30,15" VerticalAlignment="Bottom" Width="110" 
                 		FontWeight="Bold" IsEnabled="False" Click="ProjectButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{StaticResource PtBrushProject3}"
                         ToolTip="Select the Project to allow amending or adding actions">
@@ -174,5 +180,13 @@
                 </Button>
             </Grid>
         </Border>
+        <TextBox x:Name="NotesBox" HorizontalAlignment="Right" Height="120" Margin="0,0,140,60" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Bottom" Width="250" Background="#FFFFFF"
+                         Grid.RowSpan="2" Grid.Row="1" Grid.Column="1" Style="{DynamicResource PaddedTextBox}" MaxLength="200" LostFocus="NotesBox_LostFocus">
+            <TextBox.Resources>
+                <Style TargetType="TextBox">
+                    <Setter Property="Border.CornerRadius" Value="5"/>
+                </Style>
+            </TextBox.Resources>
+        </TextBox>
     </Grid>
 </Page>

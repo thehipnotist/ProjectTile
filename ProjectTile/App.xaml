@@ -333,6 +333,7 @@
         <BitmapImage x:Key="LoginIcon" UriSource="Keys.png"/>
         <BitmapImage x:Key="MapIcon" UriSource="base_map.png"/>
         <BitmapImage x:Key="NextIcon" UriSource="112_RightArrowShort_Orange_24x24_72.png"/>
+        <BitmapImage x:Key="NotesIcon" UriSource="327_Options_24x24_72.png"/>
         <BitmapImage x:Key="PasswordIcon" UriSource="2608_GoldLock_48x48.png"/>
         <BitmapImage x:Key="PinIcon" UriSource="138_PushPin_24x24_72.png"/>
         <BitmapImage x:Key="PlusIcon" UriSource="112_Plus_Blue_24x24_72.png"/>

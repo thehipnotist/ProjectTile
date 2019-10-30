@@ -34,6 +34,7 @@ namespace ProjectTile
         bool canEdit = false;
         bool editing = false;
         bool changesMade = false;
+        bool firstRefresh = true;
 
         // ------------ Current variables ----------- // 
 
@@ -106,6 +107,8 @@ namespace ProjectTile
                 if (!pageLoaded) { return; }
                 Globals.LoadingActions = true;
                 ActionProxy currentAction = selectedAction ?? null;
+                NotesButton.IsEnabled = true;
+                NotesBox.Visibility = Visibility.Hidden;
 
                 int clientID = Globals.SelectedClientProxy.ID;
                 int projectID = projectSelected ? Globals.SelectedProjectProxy.ProjectID : 0;
@@ -134,8 +137,7 @@ namespace ProjectTile
                     ActionDataGrid.SelectedItem = ProjectFunctions.ActionList.FirstOrDefault(al => al.ID == currentAction.ID);
                     ActionDataGrid.ScrollIntoView(ActionDataGrid.SelectedItem);
                 }
-                Globals.LoadingActions = false;
-                
+                Globals.LoadingActions = firstRefresh = false;                
             }
             catch (Exception generalException) { MessageFunctions.Error("Error populating the actions data grid", generalException); }
         }
@@ -144,17 +146,23 @@ namespace ProjectTile
         {
             try
             {
-                editing = false;
-                ActionDataGrid.IsReadOnly = true;
-                ActionDataGrid.BorderThickness = new Thickness(1);
-                ProjectButton.Visibility = Visibility.Visible;
-                ProjectButtonText.Text = projectSelected ? "All Projects" : "Set Project";
-                CommitButton.Visibility = Visibility.Hidden;
 
+                ProjectButtonText.Text = projectSelected ? "All Projects" : "Set Project";
                 ProjectFunctions.LoggedByList = ProjectFunctions.ActionList.Select(al => al.LoggedBy).Distinct().ToList();
                 stageList = ProjectFunctions.ActionList.Select(al => al.LinkedStage).Distinct().ToList();
                 ownerList = ProjectFunctions.ActionList.Select(al => al.Owner).Distinct().ToList();
-                Instructions.Content = defaultInstructions;
+                //Instructions.Content = defaultInstructions;                
+                
+                if (editing || firstRefresh)
+                {
+                    editing = false;
+                    ActionDataGrid.IsReadOnly = true;
+                    ActionDataGrid.BorderThickness = new Thickness(1);
+                    ProjectButton.Visibility = Visibility.Visible;                    
+                    CommitButton.Visibility = Visibility.Hidden;
+                    NotesButtonText.Text = "View Notes";
+                    NotesButton.IsEnabled = false;
+                }
 
                 if (!projectSelected && canEdit)
                 {
@@ -191,12 +199,7 @@ namespace ProjectTile
         private bool setUpEditing(int projectID)
         {
             try
-            {
-                editing = true;
-                ProjectButtonText.Text = "All Projects";
-                ActionDataGrid.IsReadOnly = false;
-                ActionDataGrid.BorderThickness = new Thickness(3);
-
+            {                
                 ProjectFunctions.LoggedByList = ProjectFunctions.GetInternalTeam(projectID);
                 stageList = ProjectFunctions.GetProjectHistoryStages(projectID);
                 ownerList = ProjectFunctions.CombinedTeamList(projectID);
@@ -216,9 +219,16 @@ namespace ProjectTile
                                                       .FirstOrDefault();
                 }
 
-                Instructions.Content = "Edit rows by double-clicking cells in italics (others are updated automatically).";
-                MessageFunctions.InfoAlert("To add new rows, scroll to the bottom of the table and edit the first empty row. Each action must have an 'owner' from the project team, "
-                    + "and either a linked stage or a target completion date.", "'Direct Edit' Mode");
+                if (!editing || firstRefresh)
+                {
+                    editing = true;
+                    ProjectButtonText.Text = "All Projects";
+                    ActionDataGrid.IsReadOnly = false;
+                    ActionDataGrid.BorderThickness = new Thickness(3);
+                    Instructions.Content = "Edit rows by double-clicking cells in italics (others are updated automatically).";
+                    MessageFunctions.InfoAlert("To add new rows, scroll to the bottom of the table and edit the first empty row. Each action must have an 'owner' from the project team, "
+                        + "and either a linked stage or a target completion date.", "'Direct Edit' Mode");
+                }
                 return true;
             }
             catch (Exception generalException)
@@ -312,6 +322,7 @@ namespace ProjectTile
                 CommitButton.Visibility = Visibility.Visible;
                 CancelButtonText.Text = "Cancel";
                 changesMade = true;
+                //ActionDataGrid.S
             }
         }
 
@@ -403,11 +414,21 @@ namespace ProjectTile
 
         private bool ignoreChanges()
         {
-            if (!changesMade) { return true; }
+            if (!editing || !changesMade) { return true; }
             else 
             {
-                return MessageFunctions.WarningYesNo("This will clear all unsaved changes you have made. Continue?", "Undo Unsaved Changes?");
+                bool ignore = MessageFunctions.WarningYesNo("This will clear all unsaved changes you have made. Continue?", "Undo Unsaved Changes?");
+                if (ignore) { resetChanges(); }
+                return ignore;
             }
+        }
+
+        private void hideNotes()
+        {
+            string notes = NotesBox.Text;
+            selectedAction.Notes = notes;
+            NotesBox.Visibility = Visibility.Hidden;            
+            NotesButtonText.Text = (notes != "") ? "Edit Notes" : "Add Notes";
         }
 
         // ---------- Links to other pages ---------- //		
@@ -429,7 +450,7 @@ namespace ProjectTile
             try
             {
                 if (ClientCombo.SelectedItem == null) { } // Won't be for long
-                else
+                else if (ignoreChanges())
                 {
                     setCurrentClient((ClientProxy)ClientCombo.SelectedItem);
                     refreshActionsGrid();
@@ -443,7 +464,7 @@ namespace ProjectTile
         {
             try
             {
-                if (StatusCombo.SelectedItem != null)
+                if (StatusCombo.SelectedItem != null && ignoreChanges())
                 {
                     string selection = StatusCombo.SelectedItem.ToString();
                     selection = selection.Replace(" ", "");
@@ -458,39 +479,47 @@ namespace ProjectTile
         private void ProjectCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ProjectCombo.SelectedItem == null) { } // Do nothing - won't be for long             
-            else
+            else if ( Globals.SelectedProjectProxy != (ProjectProxy)ProjectCombo.SelectedItem && ignoreChanges())
             {
                 try
                 {
                     Globals.SelectedProjectProxy = (ProjectProxy)ProjectCombo.SelectedItem;
-                    //setCurrentClient(Globals.SelectedProjectProxy.Client ?? null);
                     toggleProjectMode(Globals.SelectedProjectProxy != Globals.AllProjects);
                     refreshActionsGrid();                    
                 }
                 catch (Exception generalException) { MessageFunctions.Error("Error processing project selection", generalException); }
             }
+            else { ProjectCombo.SelectedItem = Globals.SelectedProjectProxy; }
         }
 
-        private void FromDate_LostFocus(object sender, RoutedEventArgs e)
+        private void FromDate_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
             if (FromDate.SelectedDate != null)
             {
-                fromDate = (DateTime)FromDate.SelectedDate;
-                if (toDate != null && toDate < fromDate) { ToDate.SelectedDate = fromDate; }
+                if (FromDate.SelectedDate != fromDate && ignoreChanges())
+                {
+                    fromDate = (DateTime)FromDate.SelectedDate;
+                    if (toDate != null && toDate < fromDate) { ToDate.SelectedDate = fromDate; }
+                    else { refreshActionsGrid(); }
+                }
+                else { FromDate.SelectedDate = fromDate; }
             }
-            else { fromDate = Globals.InfiniteDate; }
-            refreshActionsGrid();
+            else { fromDate = Globals.StartOfTime; }            
         }
 
-        private void ToDate_LostFocus(object sender, RoutedEventArgs e)
+        private void ToDate_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ToDate.SelectedDate != null)
             {
-                toDate = (DateTime)ToDate.SelectedDate;
-                if (fromDate != null && fromDate > toDate) { FromDate.SelectedDate = toDate; }
+                if (ToDate.SelectedDate != toDate && ignoreChanges())
+                {
+                    toDate = (DateTime)ToDate.SelectedDate;
+                    if (fromDate != null && fromDate > toDate) { FromDate.SelectedDate = toDate; }
+                    else { refreshActionsGrid(); }
+                }
+                else { ToDate.SelectedDate = toDate; }
             }
-            else { toDate = Globals.StartOfTime; }
-            refreshActionsGrid();
+            else { toDate = Globals.InfiniteDate; }
         }
 
         private void NameLike_LostFocus(object sender, RoutedEventArgs e)
@@ -510,12 +539,12 @@ namespace ProjectTile
 
         private void PossibleNames_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (PossibleNames.SelectedItem != null) { chooseCombinedStaffMember(); }
+            if (PossibleNames.SelectedItem != null && ignoreChanges()) { chooseCombinedStaffMember(); }
         }
 
         private void CompleteCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (CompleteCombo.SelectedValue != null)
+            if (CompleteCombo.SelectedValue != null && ignoreChanges())
             {
                 string value = (string) CompleteCombo.SelectedValue;
                 completed = ProjectFunctions.GetCompletedKey(value);
@@ -529,14 +558,16 @@ namespace ProjectTile
             else
             {
                 selectedAction = ActionDataGrid.SelectedItem as ActionProxy;
+                bool notesExist = (selectedAction != null && selectedAction.Notes != null && selectedAction.Notes != "");
+                if (editing) { NotesButtonText.Text = notesExist? "Edit Notes" : "Add Notes"; }
+                else { NotesButton.IsEnabled = notesExist; }
             }
             ProjectButton.IsEnabled =  (projectSelected || selectedAction != null);
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!ignoreChanges()) { return; }
-            else if (editing) { resetChanges(); }
+            if (!ignoreChanges()) { return; }            
             else { PageFunctions.ShowTilesPage(); }
         }
 
@@ -560,6 +591,23 @@ namespace ProjectTile
             }
             else if (ActionDataGrid.SelectedItem == null) { return; }
             else { ProjectCombo.SelectedItem = ProjectFunctions.ProjectFilterList.First(pfl => pfl.ProjectCode == selectedAction.Project.ProjectCode); }
+        }
+
+        private void NotesButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (NotesBox.IsVisible) { hideNotes(); }
+            else 
+            {
+                NotesBox.Visibility = Visibility.Visible;
+                NotesBox.Text = selectedAction.Notes;
+                NotesButtonText.Text = "Hide Notes";
+                NotesBox.Focus();
+            }        
+        }
+
+        private void NotesBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            hideNotes();
         }
 
 
