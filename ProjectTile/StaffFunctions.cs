@@ -637,12 +637,12 @@ namespace ProjectTile
                                 select (new StaffProxySmall()
                                 {
                                     ID = (int)s.ID,
-                                    NameAndUser = (string)s.FullName + (s.UserID == null ? "" : " (" + s.UserID + ")"),
+                                    NameAndUser = s.FullName + (s.UserID == null ? "" : " (" + s.UserID + ")"),
                                     Status = (DbFunctions.TruncateTime(s.StartDate) > System.DateTime.Today) ? "Not started" :
                                             (DbFunctions.TruncateTime(s.LeaveDate) < System.DateTime.Today) ? "Left" :
                                             ((bool)s.Active) ? "Active" : 
                                             "Disabled",
-                                    DefaultEntity = (string)de.EntityName
+                                    DefaultEntity = de.EntityName
                                 })
                                ).Distinct().ToList();
 
@@ -673,12 +673,12 @@ namespace ProjectTile
                                    select (new StaffProxySmall()
                                    {
                                        ID = (int)s.ID,
-                                       NameAndUser = (string)s.FullName + (s.UserID == null ? "" : " (" + s.UserID + ")"),
+                                       NameAndUser = s.FullName + (s.UserID == null ? "" : " (" + s.UserID + ")"),
                                        Status = (DbFunctions.TruncateTime(s.StartDate) > System.DateTime.Today) ? "Not started" :
                                                (DbFunctions.TruncateTime(s.LeaveDate) < System.DateTime.Today) ? "Left" :
                                                ((bool)s.Active) ? "Active" :
                                                "Disabled",
-                                       DefaultEntity = (string)de.EntityName
+                                       DefaultEntity = de.EntityName
                                    })
                                ).Distinct().ToList();
 

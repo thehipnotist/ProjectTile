@@ -327,7 +327,7 @@ namespace ProjectTile
 
         private void chooseContactName()
         {
-            ContactLike.Text = (string)PossibleContacts.SelectedItem;
+            ContactLike.Text = PossibleContacts.SelectedItem.ToString();
             contactFilter(true);
             checkForSingleContact(); // In case the client selection doesn't change automatically
         }

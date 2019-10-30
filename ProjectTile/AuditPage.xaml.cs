@@ -160,7 +160,7 @@ namespace ProjectTile
         {
             if (TableCombo.SelectedItem != null)
             {
-                tableName = (string) TableCombo.SelectedValue;
+                tableName = TableCombo.SelectedValue.ToString();
                 refreshAuditDataGrid();
             }
         }

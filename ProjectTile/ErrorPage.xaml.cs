@@ -168,7 +168,7 @@ namespace ProjectTile
         {
             if (TypeCombo.SelectedItem != null)
             {
-                typeName = (string) TypeCombo.SelectedValue;
+                typeName = TypeCombo.SelectedValue.ToString();
                 refreshErrorDataGrid();
             }
         }
