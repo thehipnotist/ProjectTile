@@ -11,8 +11,8 @@ namespace ProjectTile
     {
         public event PropertyChangedEventHandler PropertyChanged;        
 
-        private int statusNumber;
-        private string statusDescription;
+        private int completedNumber;
+        private string completedDescription;
         private CombinedTeamMember owner;
         private DateTime? targetCompletion;
         private string shortDescription;
@@ -73,24 +73,24 @@ namespace ProjectTile
             } 
         }        
         public TeamProxy LoggedBy { get; set; }
-        public int StatusNumber
+        public int CompletedNumber
         {
-            get { return statusNumber; }
+            get { return completedNumber; }
             set 
             {
-                statusNumber = value;
-                statusDescription = ProjectFunctions.GetCompletedDescription(value);
-                handleUpdate("StatusNumber");
+                completedNumber = value;
+                completedDescription = ProjectFunctions.GetCompletedDescription(value);
+                handleUpdate("CompletedNumber");
             } 
         }
-        public string StatusDescription
+        public string CompletedDescription
         {
-            get { return statusDescription; }
+            get { return completedDescription; }
             set
             {
-                statusDescription = value;
-                statusNumber = ProjectFunctions.GetCompletedKey(value);
-                handleUpdate("StatusDescription");
+                completedDescription = value;
+                completedNumber = ProjectFunctions.GetCompletedKey(value);
+                handleUpdate("CompletedDescription");
             }
         }
         public string Notes 
@@ -131,7 +131,7 @@ namespace ProjectTile
 
         public bool Overdue
         {
-            get { return (StatusNumber != 3 && EffectiveDue != null && EffectiveDue < Today); }
+            get { return (CompletedNumber != 3 && EffectiveDue != null && EffectiveDue < Today); }
         }
 
         private void handleUpdate(string propertyName)
@@ -149,7 +149,7 @@ namespace ProjectTile
                     ActionCode = ProjectFunctions.ActionCode(projectID, Globals.Today);
                     LoggedBy = ProjectFunctions.LoggedByList.FirstOrDefault(it => it.StaffMember.ID == MyStaffID);
                     OnPropertyChanged("LoggedBy");
-                    StatusDescription = "Not Started";                 
+                    CompletedDescription = "Not Started";                 
                     LoggedDate = Globals.Today;
                     OnPropertyChanged("LoggedDate");
                     ProjectFunctions.ActionsChanged();

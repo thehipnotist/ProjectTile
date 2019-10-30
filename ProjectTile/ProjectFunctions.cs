@@ -2040,7 +2040,7 @@ namespace ProjectTile
                             UpdatedDate = dfa.Action.UpdatedDate,
                             ShortDescription = dfa.Action.ShortDescription,
                             LoggedBy = GetTeamMember((int)dfa.Action.LoggedBy),
-                            StatusNumber = GetStatusNumber(dfa.Action.StatusCode),
+                            CompletedNumber = GetStatusNumber(dfa.Action.StatusCode),
                             Notes = dfa.Action.Notes,
                             LinkedStage = dfa.Stage ?? null
                         }

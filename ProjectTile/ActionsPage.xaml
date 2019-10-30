@@ -76,13 +76,13 @@
                         <DataGridTextColumn x:Name="ProjectCodeColumn" Binding="{Binding Project.ProjectCode, Mode=OneWay}" Header="Project" IsReadOnly="True"/>
                         <DataGridTextColumn x:Name="ActionCodeColumn" Binding="{Binding ActionCode, Mode=OneWay}" Header="Action" IsReadOnly="True"/>
                         <DataGridTextColumn x:Name="DescriptionColumn" Binding="{Binding ShortDescription, Mode=TwoWay}" Header="Description"/>
+                        <DataGridComboBoxColumn x:Name="CompleteColumn" SelectedItemBinding="{Binding CompletedDescription, Mode=TwoWay}" SortMemberPath="CompletedDescription" Header="Completed"/>                        
                         <DataGridComboBoxColumn x:Name="StageColumn" DisplayMemberPath="StageName" SelectedItemBinding="{Binding Path=LinkedStage, Mode=TwoWay}" 
                                                 Header="Linked Stage" SortMemberPath="LinkedStage.StageNumber">
                         </DataGridComboBoxColumn>
                         <DataGridTextColumn x:Name="DueDateColumn" Binding="{Binding EffectiveDue, StringFormat=dd/MM/yyyy, Mode=TwoWay}" Header="Effective Due"/>
                         <DataGridComboBoxColumn x:Name="OwnerColumn" DisplayMemberPath="FullName" SelectedItemBinding="{Binding Path=Owner, Mode=TwoWay}" Width="*" MinWidth="100" 
                                                 Header="Owner" SortMemberPath="Owner.FullName"/>
-                        <DataGridComboBoxColumn x:Name="CompleteColumn" SelectedItemBinding="{Binding StatusDescription, Mode=TwoWay}" SortMemberPath="StatusDescription" Header="Completed"/>
                         <DataGridTextColumn x:Name="UpdatedDateColumn" Binding="{Binding UpdatedDate, StringFormat=dd/MM/yyyy, Mode=OneWay}" Header="Updated" IsReadOnly="True"/>
                         <DataGridTextColumn x:Name="LoggedDateColumn" Binding="{Binding LoggedDate, StringFormat=dd/MM/yyyy, Mode=OneWay}" Header="Logged" IsReadOnly="True"/>
                         <DataGridComboBoxColumn x:Name="LoggedByColumn" DisplayMemberPath="StaffName" SelectedItemBinding="{Binding Path=LoggedBy, Mode=TwoWay}" SortMemberPath="LoggedBy.StaffName" 

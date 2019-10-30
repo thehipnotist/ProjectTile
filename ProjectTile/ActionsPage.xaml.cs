@@ -41,8 +41,10 @@ namespace ProjectTile
         DateTime fromDate = Globals.InfiniteDate;
         DateTime toDate = Globals.StartOfTime;
         string nameLike = "";
-        int completed = -1;
+        int completedNumber = -1;
+        string completedDescription = "No";
         ActionProxy selectedAction = null;
+        string statusDescription = "";
 
         // ------------- Current records ------------ //
 
@@ -118,7 +120,7 @@ namespace ProjectTile
                 ProjectFunctions.ActionCounter = 0;
                 ProjectCodeColumn.Visibility = projectSelected ? Visibility.Collapsed : Visibility.Visible;                
 
-                ProjectFunctions.SetActionsList(clientID, Globals.SelectedStatusFilter, projectID, fromDate, toDate, selectedPerson, completed);
+                ProjectFunctions.SetActionsList(clientID, Globals.SelectedStatusFilter, projectID, fromDate, toDate, selectedPerson, completedNumber);
 
                 if (canEdit && projectSelected && !isOld && inTeam)
                 {
@@ -306,7 +308,7 @@ namespace ProjectTile
                 
                 completedFilterList = ProjectFunctions.ActionCompletedList(true, true);
                 CompleteCombo.ItemsSource = completedFilterList;
-                CompleteCombo.SelectedValue = "No";
+                CompleteCombo.SelectedItem = "No";
 
                 completedOptions = ProjectFunctions.ActionCompletedList(false, false);
                 CompleteColumn.ItemsSource = completedOptions;
@@ -450,12 +452,13 @@ namespace ProjectTile
             try
             {
                 if (ClientCombo.SelectedItem == null) { } // Won't be for long
-                else if (ignoreChanges())
+                else if ((ClientProxy)ClientCombo.SelectedItem != Globals.SelectedClientProxy && ignoreChanges())
                 {
                     setCurrentClient((ClientProxy)ClientCombo.SelectedItem);
                     refreshActionsGrid();
                     refreshProjectCombo();
                 }
+                else { ClientCombo.SelectedItem = Globals.SelectedClientProxy; }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error processing client selection", generalException); }	
         }
@@ -464,13 +467,17 @@ namespace ProjectTile
         {
             try
             {
-                if (StatusCombo.SelectedItem != null && ignoreChanges())
+                if (StatusCombo.SelectedItem != null)
                 {
-                    string selection = StatusCombo.SelectedItem.ToString();
-                    selection = selection.Replace(" ", "");
-                    Globals.SelectedStatusFilter = (Globals.ProjectStatusFilter)Enum.Parse(typeof(Globals.ProjectStatusFilter), selection);
-                    refreshActionsGrid();
-                    refreshProjectCombo();
+                    if (StatusCombo.SelectedItem.ToString() != statusDescription && ignoreChanges())
+                    {
+                        statusDescription = StatusCombo.SelectedItem.ToString();
+                        string selection = statusDescription.Replace(" ", "");
+                        Globals.SelectedStatusFilter = (Globals.ProjectStatusFilter)Enum.Parse(typeof(Globals.ProjectStatusFilter), selection);
+                        refreshActionsGrid(); // Required as project may not change
+                        refreshProjectCombo();
+                    }
+                    else { StatusCombo.SelectedItem = statusDescription; }
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error processing status filter selection", generalException); }	
@@ -544,11 +551,15 @@ namespace ProjectTile
 
         private void CompleteCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (CompleteCombo.SelectedValue != null && ignoreChanges())
+            if (CompleteCombo.SelectedItem != null)
             {
-                string value = (string) CompleteCombo.SelectedValue;
-                completed = ProjectFunctions.GetCompletedKey(value);
-                refreshActionsGrid();
+                if (CompleteCombo.SelectedItem.ToString() != completedDescription && ignoreChanges())
+                {
+                    completedDescription = CompleteCombo.SelectedItem.ToString();
+                    completedNumber = ProjectFunctions.GetCompletedKey(completedDescription);
+                    refreshActionsGrid();
+                }
+                else { CompleteCombo.SelectedItem = completedDescription; }
             }
         }
 
