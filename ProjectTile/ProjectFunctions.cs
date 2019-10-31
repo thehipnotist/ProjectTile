@@ -1954,7 +1954,7 @@ namespace ProjectTile
             }
         }
 
-        public static bool? GetStatusCode(int statusNumber)
+        public static bool? GetActionStatusCode(int statusNumber)
         {
             try
             {
@@ -1971,7 +1971,7 @@ namespace ProjectTile
             }		
         }
 
-        public static int GetStatusNumber(bool? statusCode)
+        public static int GetActionStatusNumber(bool? statusCode)
         {
             try
             {
@@ -1991,7 +1991,7 @@ namespace ProjectTile
             try
             {                
                 DateTime maxDate = toDate.AddDays(1);
-                bool? statusCode = GetStatusCode(statusNumber);                
+                bool? statusCode = GetActionStatusCode(statusNumber);                
                 
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
@@ -2041,7 +2041,7 @@ namespace ProjectTile
                             UpdatedDate = dfa.Action.UpdatedDate,
                             ShortDescription = dfa.Action.ShortDescription,
                             LoggedBy = GetTeamMember((int)dfa.Action.LoggedBy),
-                            CompletedNumber = GetStatusNumber(dfa.Action.StatusCode),
+                            CompletedNumber = GetActionStatusNumber(dfa.Action.StatusCode),
                             Notes = dfa.Action.Notes,
                             LinkedStage = dfa.Stage ?? null
                         }
@@ -3496,6 +3496,57 @@ namespace ProjectTile
             }
         }
 
+        // Actions
+        public static bool SaveActions()
+        {
+            try
+            {
+                List<ActionProxy> changedActions = ActionList.Where(al => al.Created || al.Updated).ToList();
+                foreach (ActionProxy thisAction in changedActions)
+                {
+                    if (!thisAction.Validate()) { return false; }
+                }
+
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    foreach (ActionProxy thisProxy in changedActions)
+                    {
+                        try 
+                        {
+                            if (thisProxy.Created)
+                            {
+                                Actions newAction = new Actions();
+                                thisProxy.ConvertToAction(ref newAction);
+                                existingPtDb.Actions.Add(newAction);
+                            }
+                            else
+                            {
+                                int projectID = thisProxy.Project.ID;
+                                Actions existingAction = existingPtDb.Actions.FirstOrDefault(a => a.ID == thisProxy.ID && a.ProjectID == projectID);
+                                if (existingAction == null)
+                                {
+                                    MessageFunctions.Error("Error saving changes to action " + thisProxy.ActionCode + ": could not find action with ID " + thisProxy.ID.ToString()
+                                        + " on project ID " + projectID.ToString(), null);
+                                    return false;
+                                }
+                                thisProxy.ConvertToAction(ref existingAction);
+                            }
+                        }
+                        catch (Exception generalException) { MessageFunctions.Error("Error saving action " + thisProxy.ActionCode, generalException); }	
+                    }
+                    existingPtDb.SaveChanges();
+                }
+                MessageFunctions.SuccessAlert("Actions saved successfully. You can now make further changes, select another project to edit (click 'All Projects' to view all) "
+                    + "or close the page.","Action Changes Saved");
+                return true;
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error saving new or amended actions", generalException);
+                return false;
+            }
+        }
 
     } // class
 } // namespace

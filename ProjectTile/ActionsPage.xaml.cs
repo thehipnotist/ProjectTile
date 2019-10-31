@@ -173,7 +173,8 @@ namespace ProjectTile
                     ActionDataGrid.BorderThickness = new Thickness(1);
                     resetButtons();
                     NotesButtonText.Text = "View Notes";
-                    NotesButton.IsEnabled = false;                    
+                    NotesButton.IsEnabled = false;
+                    NotesBox.IsReadOnly = true;
                 }
 
                 if (!projectSelected && canEdit)
@@ -214,6 +215,7 @@ namespace ProjectTile
             {                
                 ProjectFunctions.LoggedByList = ProjectFunctions.GetInternalTeam(projectID);
                 stageList = ProjectFunctions.GetProjectHistoryStages(projectID);
+                stageList.Add(Globals.NoStage);
                 ProjectFunctions.OwnerList = ProjectFunctions.CombinedTeamList(projectID);
 
                 foreach (ActionProxy action in ProjectFunctions.ActionList) // Required for the initial values to display when in 'project mode'
@@ -239,7 +241,8 @@ namespace ProjectTile
                     ActionDataGrid.BorderThickness = new Thickness(3);
                     Instructions.Content = "Double-click cells in italics to edit (others update automatically). Edit the bottom (blank) row to add.";
                     MessageFunctions.InfoAlert("To add new rows, scroll to the bottom of the table and edit the first empty row. Each action must have an 'owner' from the project team, "
-                        + "and either a linked stage or a target completion date.", "'Direct Edit' Mode");                                   
+                        + "and either a linked stage or a target completion date.", "'Direct Edit' Mode");
+                    NotesBox.IsReadOnly = false;         
                 }
                 return true;
             }
@@ -444,10 +447,17 @@ namespace ProjectTile
 
         private void hideNotes()
         {
-            string notes = NotesBox.Text;
-            selectedAction.Notes = notes;
-            NotesBox.Visibility = Visibility.Hidden;            
-            NotesButtonText.Text = (notes != "") ? "Edit Notes" : "Add Notes";
+            if (editing)
+            {
+                string notes = NotesBox.Text;
+                selectedAction.Notes = notes;
+                NotesButtonText.Text = (notes != "") ? "Edit Notes" : "Add Notes";                
+            }
+            else
+            {
+                NotesButtonText.Text = "View Notes";
+            }
+            NotesBox.Visibility = Visibility.Hidden;
         }
 
         private void toggleBackButton(bool showIfValid)
@@ -639,7 +649,7 @@ namespace ProjectTile
 
         private void NotesBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            hideNotes();
+            if (!NotesButton.IsFocused) { hideNotes(); }
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -655,9 +665,8 @@ namespace ProjectTile
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: save changes
-
-            resetChanges();
+            bool success = ProjectFunctions.SaveActions();
+            if (success) { resetChanges(); }
         }
 
     } // class

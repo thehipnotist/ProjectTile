@@ -15,9 +15,9 @@ namespace ProjectTile
         private string completedDescription;
         private CombinedTeamMember owner;
         private DateTime? targetCompletion;
-        private string shortDescription;
+        private string shortDescription = "";
         private ProjectStages linkedStage;
-        private string notes;
+        private string notes = "";
         private DateTime? updatedDate;
         private string actionCode = "";
 
@@ -118,7 +118,7 @@ namespace ProjectTile
             get
             {
                 if (targetCompletion != null) { return targetCompletion; }
-                else if (LinkedStage != null) { return ProjectFunctions.EffectiveStageEndDate(Project.ID, LinkedStage.StageNumber); }
+                else if (LinkedStage != null && LinkedStage.StageNumber >= 0) { return ProjectFunctions.EffectiveStageEndDate(Project.ID, LinkedStage.StageNumber); }
                 else { return null; }                
             }
             set 
@@ -132,6 +132,11 @@ namespace ProjectTile
         public bool Overdue
         {
             get { return (CompletedNumber != 3 && EffectiveDue != null && EffectiveDue < Today); }
+        }
+
+        public bool ClientAction
+        {
+            get { return (Owner != null && Owner.ClientTeamMember != null); }
         }
 
         private void handleUpdate(string propertyName)
@@ -180,6 +185,55 @@ namespace ProjectTile
                 OnPropertyChanged(propertyName);                
             }
             catch (Exception generalException) { MessageFunctions.Error("Error processing action update", generalException); }	
+        }
+
+        public bool Validate()
+        {
+            string invalidMessage = "";
+            ProjectStages projectStage = ProjectFunctions.GetStageByID(Project.StageID);
+
+            if (ActionCode == "") { invalidMessage = "Please ensure all new actions are registered by focusing on a different row or column.|Incomplete Data"; }
+            else if (ShortDescription == "") { invalidMessage = "Please enter a description for action " + ActionCode + ".|Missing Description"; }
+            else if (ProjectFunctions.ActionList.Exists(al => al.ActionCode != ActionCode && al.Project.ID == Project.ID && al.ShortDescription == ShortDescription))
+            {
+                invalidMessage = "Another action exists on this project with the same description as action " + ActionCode + ". Please provide a more specific description."
+                    + "|Duplicate Description";
+            }
+            else if (Owner == null) { invalidMessage = "Please select an owner for action " + ActionCode + ".|Missing Owner"; }
+            else if ((LinkedStage == null || LinkedStage.StageNumber == NoID) && TargetCompletion == null)
+            {
+                invalidMessage = "Please either link action " + ActionCode + " to a stage (meaning it is due before the end of that stage) or specify a target due date. "
+                    + "Incomplete actions can only be linked to the current stage (" + projectStage.StageName + ") or later.|Missing Due Date/Stage"; 
+            }
+            else if (CompletedNumber < 3 && LinkedStage != null && LinkedStage.StageNumber >= 0 && LinkedStage.StageNumber < projectStage.StageNumber) 
+            {
+                invalidMessage = "Action " + ActionCode + " cannot be linked to the " + LinkedStage.StageName + " stage as the project is already in a later stage, "
+                    + "and it is not marked as completed. Please choose the current stage (" + projectStage.StageName + ") or a later stage, if the action is not complete."
+                    + "|Invalid Linked Stage"; 
+            }
+
+            if (invalidMessage != "")
+            {
+                MessageFunctions.SplitInvalid(invalidMessage);
+                return false;
+            }
+            else { return true; }
+        }
+
+        public void ConvertToAction(ref Actions action)
+        {
+            action.ProjectID = Project.ID;
+            action.ActionCode = ActionCode;
+            action.InternalOwner = ClientAction ? null : (int?)Owner.InternalTeamMember.ID;
+            action.ClientOwner = ClientAction ? (int?)Owner.ClientTeamMember.ID : null;
+            action.LoggedBy = LoggedBy.ID;
+            action.LoggedDate = LoggedDate;
+            action.ShortDescription = ShortDescription;
+            action.StatusCode = ProjectFunctions.GetActionStatusCode(CompletedNumber);
+            action.StageID = (LinkedStage != null) ? (int?)LinkedStage.ID : null;
+            action.TargetCompletion = TargetCompletion;
+            action.UpdatedDate = UpdatedDate;
+            action.Notes = Notes;
         }
 
         protected void OnPropertyChanged(string eventName)

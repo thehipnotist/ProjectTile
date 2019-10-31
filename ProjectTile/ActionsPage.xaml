@@ -82,7 +82,18 @@
                                                 MinWidth="100" Header="Owner" SortMemberPath="Owner.FullName"/>                        
                         <DataGridComboBoxColumn x:Name="StageColumn" DisplayMemberPath="StageName" SelectedItemBinding="{Binding Path=LinkedStage, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
                                                 Header="Linked Stage" SortMemberPath="LinkedStage.StageNumber"/>
-                        <DataGridTextColumn x:Name="DueDateColumn" Binding="{Binding EffectiveDue, StringFormat=dd/MM/yyyy, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Header="Effective Due"/>
+                        <DataGridTemplateColumn x:Name="DueDateColumn" Header="Effective Due">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding EffectiveDue, StringFormat=dd/MM/yyyy, Mode=OneWay}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                            <DataGridTemplateColumn.CellEditingTemplate>
+                                <DataTemplate>
+                                    <DatePicker SelectedDate="{Binding EffectiveDue, StringFormat=dd/MM/yyyy, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellEditingTemplate>
+                        </DataGridTemplateColumn>
                         <DataGridTextColumn x:Name="UpdatedDateColumn" Binding="{Binding UpdatedDate, StringFormat=dd/MM/yyyy, Mode=OneWay}" Header="Updated" IsReadOnly="True"/>
                         <DataGridTextColumn x:Name="LoggedDateColumn" Binding="{Binding LoggedDate, StringFormat=dd/MM/yyyy, Mode=OneWay}" Header="Logged" IsReadOnly="True"/>
                         <DataGridComboBoxColumn x:Name="LoggedByColumn" DisplayMemberPath="StaffName" SelectedItemBinding="{Binding Path=LoggedBy, Mode=OneWay}" SortMemberPath="LoggedBy.StaffName" 
