@@ -60,6 +60,7 @@ namespace ProjectTile
 
         public static List<int> StageDatesChanged = new List<int>();
         public static List<ActionProxy> ActionList = new List<ActionProxy>();
+        public static List<CombinedTeamMember> OwnerList = null;
 
         // ---------------------------------------------------------- //
         // -------------------- Page Management --------------------- //

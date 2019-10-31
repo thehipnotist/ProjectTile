@@ -75,37 +75,37 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn x:Name="ProjectCodeColumn" Binding="{Binding Project.ProjectCode, Mode=OneWay}" Header="Project" IsReadOnly="True"/>
                         <DataGridTextColumn x:Name="ActionCodeColumn" Binding="{Binding ActionCode, Mode=OneWay}" Header="Action" IsReadOnly="True"/>
-                        <DataGridTextColumn x:Name="DescriptionColumn" Binding="{Binding ShortDescription, Mode=TwoWay}" Header="Description"/>
-                        <DataGridComboBoxColumn x:Name="CompleteColumn" SelectedItemBinding="{Binding CompletedDescription, Mode=TwoWay}" SortMemberPath="CompletedDescription" Header="Completed"/>                        
-                        <DataGridComboBoxColumn x:Name="StageColumn" DisplayMemberPath="StageName" SelectedItemBinding="{Binding Path=LinkedStage, Mode=TwoWay}" 
-                                                Header="Linked Stage" SortMemberPath="LinkedStage.StageNumber">
-                        </DataGridComboBoxColumn>
-                        <DataGridTextColumn x:Name="DueDateColumn" Binding="{Binding EffectiveDue, StringFormat=dd/MM/yyyy, Mode=TwoWay}" Header="Effective Due"/>
-                        <DataGridComboBoxColumn x:Name="OwnerColumn" DisplayMemberPath="FullName" SelectedItemBinding="{Binding Path=Owner, Mode=TwoWay}" Width="*" MinWidth="100" 
-                                                Header="Owner" SortMemberPath="Owner.FullName"/>
+                        <DataGridTextColumn x:Name="DescriptionColumn" Binding="{Binding ShortDescription, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Header="Description"/>
+                        <DataGridComboBoxColumn x:Name="CompleteColumn" SelectedItemBinding="{Binding CompletedDescription, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
+                                                SortMemberPath="CompletedDescription" Header="Completed"/>
+                        <DataGridComboBoxColumn x:Name="OwnerColumn" DisplayMemberPath="FullName" SelectedItemBinding="{Binding Path=Owner, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Width="*" 
+                                                MinWidth="100" Header="Owner" SortMemberPath="Owner.FullName"/>                        
+                        <DataGridComboBoxColumn x:Name="StageColumn" DisplayMemberPath="StageName" SelectedItemBinding="{Binding Path=LinkedStage, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
+                                                Header="Linked Stage" SortMemberPath="LinkedStage.StageNumber"/>
+                        <DataGridTextColumn x:Name="DueDateColumn" Binding="{Binding EffectiveDue, StringFormat=dd/MM/yyyy, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Header="Effective Due"/>
                         <DataGridTextColumn x:Name="UpdatedDateColumn" Binding="{Binding UpdatedDate, StringFormat=dd/MM/yyyy, Mode=OneWay}" Header="Updated" IsReadOnly="True"/>
                         <DataGridTextColumn x:Name="LoggedDateColumn" Binding="{Binding LoggedDate, StringFormat=dd/MM/yyyy, Mode=OneWay}" Header="Logged" IsReadOnly="True"/>
-                        <DataGridComboBoxColumn x:Name="LoggedByColumn" DisplayMemberPath="StaffName" SelectedItemBinding="{Binding Path=LoggedBy, Mode=TwoWay}" SortMemberPath="LoggedBy.StaffName" 
-                                                Header="Logged By" />
+                        <DataGridComboBoxColumn x:Name="LoggedByColumn" DisplayMemberPath="StaffName" SelectedItemBinding="{Binding Path=LoggedBy, Mode=OneWay}" SortMemberPath="LoggedBy.StaffName" 
+                                                Header="Logged By" IsReadOnly="True"/>
                     </DataGrid.Columns>
                     <DataGrid.Resources>
                         <Style TargetType="DataGridRow">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=StatusNumber}" Value="3">
+                                <DataTrigger Binding="{Binding Path=StatusNumber, UpdateSourceTrigger=LostFocus}" Value="3">
                                     <Setter Property="Foreground" Value="DarkGray"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding Path=Created}" Value="True">
+                                <DataTrigger Binding="{Binding Path=Created, UpdateSourceTrigger=LostFocus}" Value="True">
                                     <Setter Property="FontWeight" Value="Bold"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding Path=Updated}"  Value="True">
+                                <DataTrigger Binding="{Binding Path=Updated, UpdateSourceTrigger=LostFocus}"  Value="True">
                                     <Setter Property="FontWeight" Value="Bold"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding Path=Overdue}" Value="True">
+                                <DataTrigger Binding="{Binding Path=Overdue, UpdateSourceTrigger=LostFocus}" Value="True">
                                     <Setter Property="Foreground" Value="Red"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                        <Style TargetType="DataGridCell">
+                        <Style x:Name="CellStyle" TargetType="DataGridCell">
                             <Style.Triggers>
                                 <Trigger Property="IsReadOnly" Value="False">
                                     <Setter Property="FontStyle" Value="Italic"/>
@@ -156,6 +156,14 @@
                         <TextBlock x:Name="CancelButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Close" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
+                <Button x:Name="BackButton" HorizontalAlignment="Left" Height="30" Margin="130,15,15,15" VerticalAlignment="Top" Width="100" Style="{StaticResource RoundedButton}" 
+                            FontWeight="Bold" Click="BackButton_Click" ToolTip="Return to previous page">
+                    <StackPanel x:Name="BackPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                        <Image x:Name="BackImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource BackIcon}"/>
+                        <TextBlock x:Name="BackButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="Back" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                
                 <Button x:Name="NotesButton" HorizontalAlignment="Right" Height="30" Margin="15,15,140,15" VerticalAlignment="Top" Width="110" 
                 		FontWeight="Bold" Click="NotesButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{DynamicResource PtBrushProject3}">
                     <StackPanel x:Name="NotesPanel" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">

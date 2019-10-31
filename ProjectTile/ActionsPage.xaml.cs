@@ -35,6 +35,8 @@ namespace ProjectTile
         bool editing = false;
         bool changesMade = false;
         bool firstRefresh = true;
+        Style italicStyle = new Style();
+        Style normalStyle = new Style();
 
         // ------------ Current variables ----------- // 
 
@@ -48,13 +50,12 @@ namespace ProjectTile
 
         // ------------- Current records ------------ //
 
-        CombinedStaffMember selectedPerson = null;
+        
 
         // ------------------ Lists ----------------- //
         List<string> completedFilterList = null;
         List<int> projectTeamStaffIDs = null;
-        List<ProjectStages> stageList = null;
-        List<CombinedTeamMember> ownerList = null;
+        List<ProjectStages> stageList = null;        
         List<string> completedOptions = null;
 
         // ---------------------------------------------------------- //
@@ -83,6 +84,7 @@ namespace ProjectTile
                 PageFunctions.ShowTilesPage();
             }
 
+            setUpHeaderStyles();
             ProjectButton.Margin = CommitButton.Margin;
             refreshClientCombo();
             refreshStatusCombo();
@@ -93,6 +95,15 @@ namespace ProjectTile
             pageLoaded = true;
             refreshActionsGrid();
             ProjectFunctions.ActionsChanged += actionsAmended;
+            PageFunctions.ShowFavouriteButton();
+        }
+
+        private void setUpHeaderStyles()
+        {
+            italicStyle.Setters.Add(new Setter(Control.FontStyleProperty, FontStyles.Italic));
+            italicStyle.Setters.Add(new Setter(Control.FontWeightProperty, FontWeights.Bold));
+            normalStyle.Setters.Add(new Setter(Control.FontStyleProperty, FontStyles.Normal));
+            normalStyle.Setters.Add(new Setter(Control.FontWeightProperty, FontWeights.Normal));
         }
 
         // ---------------------------------------------------------- //
@@ -120,7 +131,7 @@ namespace ProjectTile
                 ProjectFunctions.ActionCounter = 0;
                 ProjectCodeColumn.Visibility = projectSelected ? Visibility.Collapsed : Visibility.Visible;                
 
-                ProjectFunctions.SetActionsList(clientID, Globals.SelectedStatusFilter, projectID, fromDate, toDate, selectedPerson, completedNumber);
+                ProjectFunctions.SetActionsList(clientID, Globals.SelectedStatusFilter, projectID, fromDate, toDate, Globals.SelectedOwner, completedNumber);
 
                 if (canEdit && projectSelected && !isOld && inTeam)
                 {
@@ -128,10 +139,11 @@ namespace ProjectTile
                     if (!setUp) { return; }
                 }
                 else { setUpReadOnly(inTeam, isOld); }
+                toggleHeaderStyles();  
                 
                 LoggedByColumn.ItemsSource = ProjectFunctions.LoggedByList;
                 StageColumn.ItemsSource = stageList;
-                OwnerColumn.ItemsSource = ownerList;
+                OwnerColumn.ItemsSource = ProjectFunctions.OwnerList;
 
                 ActionDataGrid.ItemsSource = ProjectFunctions.ActionList;
                 if (currentAction != null && currentAction.ID > 0 && ProjectFunctions.ActionList.Exists(al => al.ID == currentAction.ID))
@@ -152,18 +164,16 @@ namespace ProjectTile
                 ProjectButtonText.Text = projectSelected ? "All Projects" : "Set Project";
                 ProjectFunctions.LoggedByList = ProjectFunctions.ActionList.Select(al => al.LoggedBy).Distinct().ToList();
                 stageList = ProjectFunctions.ActionList.Select(al => al.LinkedStage).Distinct().ToList();
-                ownerList = ProjectFunctions.ActionList.Select(al => al.Owner).Distinct().ToList();
-                //Instructions.Content = defaultInstructions;                
+                ProjectFunctions.OwnerList = ProjectFunctions.ActionList.Select(al => al.Owner).Distinct().ToList();          
                 
                 if (editing || firstRefresh)
                 {
                     editing = false;
                     ActionDataGrid.IsReadOnly = true;
                     ActionDataGrid.BorderThickness = new Thickness(1);
-                    ProjectButton.Visibility = Visibility.Visible;                    
-                    CommitButton.Visibility = Visibility.Hidden;
+                    resetButtons();
                     NotesButtonText.Text = "View Notes";
-                    NotesButton.IsEnabled = false;
+                    NotesButton.IsEnabled = false;                    
                 }
 
                 if (!projectSelected && canEdit)
@@ -204,7 +214,7 @@ namespace ProjectTile
             {                
                 ProjectFunctions.LoggedByList = ProjectFunctions.GetInternalTeam(projectID);
                 stageList = ProjectFunctions.GetProjectHistoryStages(projectID);
-                ownerList = ProjectFunctions.CombinedTeamList(projectID);
+                ProjectFunctions.OwnerList = ProjectFunctions.CombinedTeamList(projectID);
 
                 foreach (ActionProxy action in ProjectFunctions.ActionList) // Required for the initial values to display when in 'project mode'
                 {
@@ -216,7 +226,7 @@ namespace ProjectTile
 
                     bool internalOwner = (action.Owner.InternalTeamMember != null);
                     int ownerID = internalOwner ? action.Owner.InternalTeamMember.ID : action.Owner.ClientTeamMember.ID;
-                    action.Owner = ownerList.Where(ol => (internalOwner && ol.InternalTeamMember.ID == ownerID)
+                    action.Owner = ProjectFunctions.OwnerList.Where(ol => (internalOwner && ol.InternalTeamMember.ID == ownerID)
                                                       || (!internalOwner && ol.ClientTeamMember != null && ol.ClientTeamMember.ID == ownerID))
                                                       .FirstOrDefault();
                 }
@@ -227,9 +237,9 @@ namespace ProjectTile
                     ProjectButtonText.Text = "All Projects";
                     ActionDataGrid.IsReadOnly = false;
                     ActionDataGrid.BorderThickness = new Thickness(3);
-                    Instructions.Content = "Edit rows by double-clicking cells in italics (others are updated automatically).";
+                    Instructions.Content = "Double-click cells in italics to edit (others update automatically). Edit the bottom (blank) row to add.";
                     MessageFunctions.InfoAlert("To add new rows, scroll to the bottom of the table and edit the first empty row. Each action must have an 'owner' from the project team, "
-                        + "and either a linked stage or a target completion date.", "'Direct Edit' Mode");
+                        + "and either a linked stage or a target completion date.", "'Direct Edit' Mode");                                   
                 }
                 return true;
             }
@@ -285,7 +295,7 @@ namespace ProjectTile
         {
             try
             {
-                selectedPerson = null;
+                Globals.SelectedOwner = null;
                 string nameLike = NameLike.Text;
                 if (nameLike == "") { PossibleNames.Visibility = Visibility.Hidden; }
                 else
@@ -322,9 +332,9 @@ namespace ProjectTile
             {
                 ProjectButton.Visibility = Visibility.Hidden;
                 CommitButton.Visibility = Visibility.Visible;
+                toggleBackButton(false);
                 CancelButtonText.Text = "Cancel";
                 changesMade = true;
-                //ActionDataGrid.S
             }
         }
 
@@ -362,6 +372,7 @@ namespace ProjectTile
         {
             projectSelected = specificProject;
             togglePageHeader();
+            ProjectFunctions.ToggleFavouriteButton(projectSelected);
         }
 
         private void togglePageHeader()
@@ -381,8 +392,8 @@ namespace ProjectTile
         {
             try
             {
-                selectedPerson = (CombinedStaffMember) PossibleNames.SelectedItem;
-                NameLike.Text = selectedPerson.FullName;
+                Globals.SelectedOwner = (CombinedStaffMember) PossibleNames.SelectedItem;
+                NameLike.Text = Globals.SelectedOwner.FullName;
                 nameFilter();
             }
             catch (Exception generalException) { MessageFunctions.Error("Error processing contact name selection", generalException); }
@@ -396,10 +407,10 @@ namespace ProjectTile
                 nameLike = NameLike.Text;
                 if (nameLike == "") 
                 { 
-                    selectedPerson = null;
+                    Globals.SelectedOwner = null;
                     refreshActionsGrid();
                 }
-                else if (selectedPerson == null) { NameLike.Text = ""; }
+                else if (Globals.SelectedOwner == null) { NameLike.Text = ""; }
                 else { refreshActionsGrid(); }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error updating filters for contact name selection change", generalException); }
@@ -408,13 +419,19 @@ namespace ProjectTile
         private void resetChanges()
         {
             changesMade = false;
-            CommitButton.Visibility = Visibility.Hidden;
-            ProjectButton.Visibility = Visibility.Visible;
-            CancelButtonText.Text = "Close";
+            resetButtons();
             refreshActionsGrid();
         }
 
-        private bool ignoreChanges()
+        private void resetButtons()
+        {
+            CommitButton.Visibility = Visibility.Hidden;
+            ProjectButton.Visibility = Visibility.Visible;
+            toggleBackButton(true);
+            CancelButtonText.Text = "Close";
+        }
+
+        private bool checkIgnoreChanges()
         {
             if (!editing || !changesMade) { return true; }
             else 
@@ -431,6 +448,18 @@ namespace ProjectTile
             selectedAction.Notes = notes;
             NotesBox.Visibility = Visibility.Hidden;            
             NotesButtonText.Text = (notes != "") ? "Edit Notes" : "Add Notes";
+        }
+
+        private void toggleBackButton(bool showIfValid)
+        {
+            if (showIfValid) { BackButton.Visibility = ProjectFunctions.BackButtonVisibility(); }
+            else { BackButton.Visibility = Visibility.Hidden; }
+        }
+
+        private void toggleHeaderStyles()
+        {
+            Style newStyle = editing ? italicStyle : normalStyle;
+            DescriptionColumn.HeaderStyle = CompleteColumn.HeaderStyle = OwnerColumn.HeaderStyle = StageColumn.HeaderStyle = DueDateColumn.HeaderStyle = newStyle;            
         }
 
         // ---------- Links to other pages ---------- //		
@@ -452,7 +481,7 @@ namespace ProjectTile
             try
             {
                 if (ClientCombo.SelectedItem == null) { } // Won't be for long
-                else if ((ClientProxy)ClientCombo.SelectedItem != Globals.SelectedClientProxy && ignoreChanges())
+                else if ((ClientProxy)ClientCombo.SelectedItem != Globals.SelectedClientProxy && checkIgnoreChanges())
                 {
                     setCurrentClient((ClientProxy)ClientCombo.SelectedItem);
                     refreshActionsGrid();
@@ -469,7 +498,7 @@ namespace ProjectTile
             {
                 if (StatusCombo.SelectedItem != null)
                 {
-                    if (StatusCombo.SelectedItem.ToString() != statusDescription && ignoreChanges())
+                    if (StatusCombo.SelectedItem.ToString() != statusDescription && checkIgnoreChanges())
                     {
                         statusDescription = StatusCombo.SelectedItem.ToString();
                         string selection = statusDescription.Replace(" ", "");
@@ -486,7 +515,7 @@ namespace ProjectTile
         private void ProjectCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ProjectCombo.SelectedItem == null) { } // Do nothing - won't be for long             
-            else if ( Globals.SelectedProjectProxy != (ProjectProxy)ProjectCombo.SelectedItem && ignoreChanges())
+            else if ( Globals.SelectedProjectProxy != (ProjectProxy)ProjectCombo.SelectedItem && checkIgnoreChanges())
             {
                 try
                 {
@@ -503,7 +532,7 @@ namespace ProjectTile
         {
             if (FromDate.SelectedDate != null)
             {
-                if (FromDate.SelectedDate != fromDate && ignoreChanges())
+                if (FromDate.SelectedDate != fromDate && checkIgnoreChanges())
                 {
                     fromDate = (DateTime)FromDate.SelectedDate;
                     if (toDate != null && toDate < fromDate) { ToDate.SelectedDate = fromDate; }
@@ -518,7 +547,7 @@ namespace ProjectTile
         {
             if (ToDate.SelectedDate != null)
             {
-                if (ToDate.SelectedDate != toDate && ignoreChanges())
+                if (ToDate.SelectedDate != toDate && checkIgnoreChanges())
                 {
                     toDate = (DateTime)ToDate.SelectedDate;
                     if (fromDate != null && fromDate > toDate) { FromDate.SelectedDate = toDate; }
@@ -546,14 +575,14 @@ namespace ProjectTile
 
         private void PossibleNames_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (PossibleNames.SelectedItem != null && ignoreChanges()) { chooseCombinedStaffMember(); }
+            if (PossibleNames.SelectedItem != null && checkIgnoreChanges()) { chooseCombinedStaffMember(); }
         }
 
         private void CompleteCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (CompleteCombo.SelectedItem != null)
             {
-                if (CompleteCombo.SelectedItem.ToString() != completedDescription && ignoreChanges())
+                if (CompleteCombo.SelectedItem.ToString() != completedDescription && checkIgnoreChanges())
                 {
                     completedDescription = CompleteCombo.SelectedItem.ToString();
                     completedNumber = ProjectFunctions.GetCompletedKey(completedDescription);
@@ -565,39 +594,31 @@ namespace ProjectTile
 
         private void ActionDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ActionDataGrid.SelectedItem == null) { selectedAction = null; }
+            if (ActionDataGrid.SelectedItem == null) 
+            { 
+                selectedAction = null;
+                //ProjectFunctions.ToggleFavouriteButton(false);
+            }
             else
             {
                 selectedAction = ActionDataGrid.SelectedItem as ActionProxy;
                 bool notesExist = (selectedAction != null && selectedAction.Notes != null && selectedAction.Notes != "");
                 if (editing) { NotesButtonText.Text = notesExist? "Edit Notes" : "Add Notes"; }
                 else { NotesButton.IsEnabled = notesExist; }
+                if (!projectSelected)
+                {
+                    Globals.SelectedProjectProxy = ProjectFunctions.GetProjectProxy(selectedAction.Project.ID);
+                    ProjectFunctions.ToggleFavouriteButton(true);
+                }
             }
             ProjectButton.IsEnabled =  (projectSelected || selectedAction != null);
-        }
-
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (!ignoreChanges()) { return; }            
-            else { PageFunctions.ShowTilesPage(); }
-        }
-
-        private void CommitButton_Click(object sender, RoutedEventArgs e)
-        {
-            // TODO: save changes
-
-            resetChanges();
         }
 
         private void ProjectButton_Click(object sender, RoutedEventArgs e)
         {
             if (projectSelected)
             {
-                try
-                {
-                    //if (!rolesCheck()) { return; }
-                    ProjectCombo.SelectedItem = ProjectFunctions.ProjectFilterList.First(pfl => pfl.ProjectID == 0);
-                }
+                try { ProjectCombo.SelectedItem = ProjectFunctions.ProjectFilterList.First(pfl => pfl.ProjectID == 0); }
                 catch (Exception generalException) { MessageFunctions.Error("Error processing return to all projects", generalException); }
             }
             else if (ActionDataGrid.SelectedItem == null) { return; }
@@ -621,6 +642,23 @@ namespace ProjectTile
             hideNotes();
         }
 
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (checkIgnoreChanges()) { ProjectFunctions.ReturnToSourcePage(pageMode); }
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (editing && changesMade) { checkIgnoreChanges(); }
+            else { PageFunctions.ShowTilesPage(); }
+        }
+
+        private void CommitButton_Click(object sender, RoutedEventArgs e)
+        {
+            // TODO: save changes
+
+            resetChanges();
+        }
 
     } // class
 } // namespace

@@ -372,6 +372,11 @@ namespace ProjectTile
             PageFunctions.ShowTimelinePage(pageMode);
         }
 
+        private void ActionMenu_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowActionsPage(pageMode);
+        }
+
 
     } // class
 } // namespace

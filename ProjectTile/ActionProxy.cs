@@ -153,6 +153,22 @@ namespace ProjectTile
                     LoggedDate = Globals.Today;
                     OnPropertyChanged("LoggedDate");
                     ProjectFunctions.ActionsChanged();
+
+                    if (Owner == null && SelectedOwner != null) // Try to use the owner from the filter, if they are in the team
+                        { 
+                            if (ProjectFunctions.OwnerList.Exists(ol => ol.ClientTeamMember != null && SelectedOwner.ClientContact != null 
+                            && ol.ClientTeamMember.ContactID == SelectedOwner.ClientContact.ID))
+                        {
+                            Owner = ProjectFunctions.OwnerList.FirstOrDefault(ol =>  ol.ClientTeamMember != null && SelectedOwner.ClientContact != null 
+                                && ol.ClientTeamMember.ContactID == SelectedOwner.ClientContact.ID);
+                        }
+                        else if (ProjectFunctions.OwnerList.Exists(ol => ol.InternalTeamMember != null && SelectedOwner.StaffMember != null 
+                            && ol.InternalTeamMember.StaffID == SelectedOwner.StaffMember.ID))
+                        {
+                            Owner = ProjectFunctions.OwnerList.FirstOrDefault(ol => ol.InternalTeamMember != null && SelectedOwner.StaffMember != null
+                                && ol.InternalTeamMember.StaffID == SelectedOwner.StaffMember.ID);
+                        }
+                    }
                 }
                 else if (!Created && !Updated)
                 {

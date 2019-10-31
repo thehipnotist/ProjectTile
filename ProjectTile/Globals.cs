@@ -96,6 +96,7 @@ namespace ProjectTile
         // Selected records affecting multiple pages
         public static Clients SelectedClient = null;
         public static Staff SelectedStaffMember = null;
+        public static CombinedStaffMember SelectedOwner = null;
 
         public static ClientProxy SelectedClientProxy = DefaultClientProxy;
         public static StaffProxy SelectedPMProxy = DefaultPMProxy;
