@@ -642,8 +642,7 @@ namespace ProjectTile
         }
 
         private void RemoveButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (!MessageFunctions.ConfirmOKCancel("Are you sure you want to remove this record from the project?", "Remove Project Team Entry?")) { return; }
+        {            
             bool success = ProjectFunctions.RemoveTeamEntry(selectedTeamRecord);
             if (success) { refreshTeamDataGrid(); }
         }

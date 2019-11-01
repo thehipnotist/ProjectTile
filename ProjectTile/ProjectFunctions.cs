@@ -1954,6 +1954,60 @@ namespace ProjectTile
             }
         }
 
+        public static bool HasProjectActions(TeamProxy teamMember)// Overloaded below
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    Actions firstAction = existingPtDb.Actions.FirstOrDefault(a => a.ProjectID == teamMember.Project.ID && a.InternalOwner == teamMember.ID);
+                    return (firstAction != null);
+				}
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error checking project actions for team member", generalException);
+                return false;
+            }	            
+        }
+
+        public static bool HasProjectActions(ProjectContactProxy clientTeamMember)// Overloaded above
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    Actions firstAction = existingPtDb.Actions.FirstOrDefault(a => a.ProjectID == clientTeamMember.Project.ID && a.ClientOwner == clientTeamMember.ID);
+                    return (firstAction != null);
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error checking project actions for client team member", generalException);
+                return false;
+            }
+        }
+
+        public static bool HasLoggedActions(TeamProxy teamMember) 
+        {
+            try
+            {
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    Actions firstAction = existingPtDb.Actions.FirstOrDefault(a => a.ProjectID == teamMember.Project.ID && a.LoggedBy == teamMember.ID);
+                    return (firstAction != null);
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error checking project actions logged by team member", generalException);
+                return false;
+            }
+        }
+
         public static bool? GetActionStatusCode(int statusNumber)
         {
             try
@@ -2726,6 +2780,17 @@ namespace ProjectTile
                         MessageFunctions.Error("Error removing project team member: this record has a key role", null);
                         return false;
                     }
+                    if (HasProjectActions(unwantedRecord))
+                    {
+                        MessageFunctions.InvalidMessage("This team member has actions on the project, and cannot be removed unless they are moved to another team member.","Actions Logged");
+                        return false;
+                    }
+                    if (HasLoggedActions(unwantedRecord))
+                    {
+                        MessageFunctions.InvalidMessage("This team member has logged actions on the project, and cannot be removed.", "Actions Logged");
+                        return false;
+                    }
+                    if (!MessageFunctions.ConfirmOKCancel("Are you sure you want to remove this record from the project?", "Remove Project Team Entry?")) { return false; }
                     ProjectTeams thisTeam = existingPtDb.ProjectTeams.Where(pt => pt.ID == unwantedRecord.ID).FirstOrDefault();                              
                     existingPtDb.ProjectTeams.Remove(thisTeam);
                     existingPtDb.SaveChanges();
@@ -2742,7 +2807,7 @@ namespace ProjectTile
 
         // Client Teams (updates)
 
-        public static bool updateOtherClientInstances(ProjectContactProxy newRecord)
+        public static bool UpdateOtherClientInstances(ProjectContactProxy newRecord)
         {
             try
             {
@@ -2824,7 +2889,7 @@ namespace ProjectTile
                         return false;
                     }
                     currentVersion.ConvertToClientTeam(ref thisTeam);
-                    if (currentVersion.HasKeyRole) { updateOtherClientInstances(currentVersion); }
+                    if (currentVersion.HasKeyRole) { UpdateOtherClientInstances(currentVersion); }
                     existingPtDb.SaveChanges();
                     MessageFunctions.SuccessAlert("Your changes have been saved successfully.", "Team Membership Amended");
                     return true;
@@ -2849,7 +2914,7 @@ namespace ProjectTile
                 using (existingPtDb)
                 {
                     existingPtDb.ClientTeams.Add(thisTeam);
-                    if (newRecord.HasKeyRole) { updateOtherClientInstances(newRecord); }
+                    if (newRecord.HasKeyRole) { UpdateOtherClientInstances(newRecord); }
                     existingPtDb.SaveChanges();
                     MessageFunctions.SuccessAlert("New client team member added successfully.", "Team Member Added");
                     return thisTeam.ID;
@@ -2874,6 +2939,12 @@ namespace ProjectTile
                         MessageFunctions.Error("Error removing client team member: this record has a key role", null);
                         return false;
                     }
+                    if (HasProjectActions(unwantedRecord))
+                    {
+                        MessageFunctions.InvalidMessage("This team member has actions on the project, and cannot be removed unless they are moved to another team member.", "Actions Logged");
+                        return false;
+                    }
+                    if (!MessageFunctions.ConfirmOKCancel("Are you sure you want to remove this record from the project?", "Remove Client Team Entry?")) { return false; }
                     ClientTeams thisTeam = existingPtDb.ClientTeams.Where(ct => ct.ID == unwantedRecord.ID).FirstOrDefault();
                     existingPtDb.ClientTeams.Remove(thisTeam);
                     existingPtDb.SaveChanges();
