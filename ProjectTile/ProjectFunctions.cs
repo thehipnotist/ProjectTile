@@ -2413,6 +2413,7 @@ namespace ProjectTile
                 using (existingPtDb)
                 {
                     existingPtDb.Projects.Add(thisProject);
+                    UpdateHistoryForStatus(thisProject, true);
                     existingPtDb.SaveChanges();
                     projectProxy.ProjectID = thisProject.ID;
                     SelectedProjectProxy = projectProxy;
@@ -2422,7 +2423,7 @@ namespace ProjectTile
                     existingPtDb.SaveChanges();
                     
                     MessageFunctions.SuccessAlert("New project saved successfully. You can now add products and project team members.", "Project Created");
-                    UpdateHistoryForStatus(thisProject, true);
+                    
                     return true;
                 }
             }
@@ -2513,16 +2514,17 @@ namespace ProjectTile
                     }
 
                     string congratulations = "";
-                    if (originalStageNumber != projectProxy.StageNumber)
+                    bool stageChanged = (originalStageNumber != projectProxy.StageNumber);
+
+                    if (stageChanged)
                     {
-                        bool stageManaged = HandleStageChanges(projectProxy, originalStageNumber, out congratulations);
+                        bool stageManaged = HandleStageChanges(projectProxy, originalStageNumber, out congratulations) && UpdateHistoryForStatus(thisProject, false); 
                         if (!stageManaged) { return false; }
                     }
                     existingPtDb.SaveChanges();
                     SelectedProjectProxy = projectProxy;                                    
                     
                     MessageFunctions.SuccessAlert("Project amendments saved successfully." + congratulations, "Changes Saved");
-                    if (projectProxy.StageNumber != originalStageNumber) { UpdateHistoryForStatus(thisProject, false); }
                     return true;
                 }
             }
@@ -3405,7 +3407,7 @@ namespace ProjectTile
             StageDatesChanged.Clear();
         }
 
-        public static void UpdateHistoryForStatus(Projects thisProject, bool isNew)
+        public static bool UpdateHistoryForStatus(Projects thisProject, bool isNew)
         {
             try
             {
@@ -3422,42 +3424,46 @@ namespace ProjectTile
                             ActualStart = Today
                         };
                         existingPtDb.StageHistory.Add(firstStage);
-                        existingPtDb.SaveChanges();
                     }
                     else
                     {
-                        int currentStage = GetStageNumber(thisProject.StageID);
+                        int newStageNumber = GetStageNumber(thisProject.StageID);
+                        ProjectStages currentStage = ProjectCurrentStage(thisProject.ID);
                         SetFullStageList();
                         foreach (ProjectStages thisStage in FullStageList)
                         {
-                            if (thisStage.StageNumber <= currentStage)
-                            {
-                                DateTime? newActualDate = (thisStage.StageNumber == currentStage) ? (DateTime?) Today : null;
-                                StageHistory stageHist = existingPtDb.StageHistory.FirstOrDefault(sh => sh.ProjectID == thisProject.ID && sh.StageID == thisStage.ID);
-                                if (stageHist == null && thisStage.StageNumber == currentStage)
-                                {
-                                    stageHist = new StageHistory
-                                    {
-                                        ProjectID = thisProject.ID,
-                                        StageID = thisProject.StageID,
-                                        TargetStart = null,
-                                        ActualStart = Today
-                                    };
-                                    existingPtDb.StageHistory.Add(stageHist);
-                                }
-                                else if (stageHist != null && stageHist.ActualStart != newActualDate) { stageHist.ActualStart = newActualDate; }
-                            }
+                            if (thisStage.StageNumber <= currentStage.StageNumber && thisStage.StageNumber < newStageNumber) { continue; }
                             else
-                            {                                
+                            {
                                 StageHistory stageHist = existingPtDb.StageHistory.FirstOrDefault(sh => sh.ProjectID == thisProject.ID && sh.StageID == thisStage.ID);
-                                if (stageHist != null && stageHist.ActualStart != null) { stageHist.ActualStart = null; }
+                                if (thisStage.StageNumber == newStageNumber)
+                                {                                    
+                                    if (stageHist == null)
+                                    {
+                                        stageHist = new StageHistory
+                                        {
+                                            ProjectID = thisProject.ID,
+                                            StageID = thisProject.StageID,
+                                            TargetStart = null,
+                                            ActualStart = Today
+                                        };
+                                        existingPtDb.StageHistory.Add(stageHist);
+                                    }
+                                    else { stageHist.ActualStart = (DateTime?)Today; }
+                                }
+                                else if (stageHist != null && stageHist.ActualStart != null) { stageHist.ActualStart = null; } 
                             }
-                            existingPtDb.SaveChanges();
                         }
                     }
+                    existingPtDb.SaveChanges();
+                    return true;
 				}
             }
-            catch (Exception generalException) { MessageFunctions.Error("Error updating project stage history to match new status", generalException); }	
+            catch (Exception generalException) 
+            { 
+                MessageFunctions.Error("Error updating project stage history to match new status", generalException);
+                return false;
+            }	
         }
 
         public static bool UpdateHistory(TimelineProxy thisTimeline, bool stageChanged)
