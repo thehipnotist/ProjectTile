@@ -35,7 +35,7 @@ namespace ProjectTile
         TimelineProxy currentTimeline = new TimelineProxy();
         Globals.TimelineType currentType = Globals.TimelineType.Effective;
         bool stageChanged = false;
-        int initialStage = 0;
+        int currentStageNumber = 0;
 
         // ------------- Current records ------------ //
 
@@ -96,7 +96,7 @@ namespace ProjectTile
             {
                 currentTimeline = ProjectFunctions.GetProjectTimeline(Globals.SelectedProjectProxy.ProjectID, currentType);
                 this.DataContext = currentTimeline;
-                initialStage = currentTimeline.StageNumber;
+                currentStageNumber = currentTimeline.StageNumber;
                 displaySelectedStage();
                 formatDatePickers();
             }
@@ -152,16 +152,16 @@ namespace ProjectTile
         {
             try
             {
-                if (newStageNumber != initialStage) // Allows looping round again if undoing the change
+                if (newStageNumber != currentStageNumber) // Allows looping round again if undoing the change
                 {
                     bool confirm = MessageFunctions.ConfirmOKCancel("This will update the start dates of any future-dated stages that are now complete or in progress. Are you sure? "
                         + "If the results are not as expected, use the 'Back' or 'Close' button afterwards to undo all changes.");
                     if (!confirm)
                     {
-                        if (alreadyUpdated) { currentTimeline.Stage = ProjectFunctions.GetStageByNumber(initialStage); }
+                        if (alreadyUpdated) { currentTimeline.Stage = ProjectFunctions.GetStageByNumber(currentStageNumber); }
                         return;
                     }
-                    initialStage = newStageNumber;
+                    currentStageNumber = newStageNumber;
                     if (!alreadyUpdated)
                     {
                         currentTimeline.Stage = ProjectFunctions.GetStageByNumber(newStageNumber);
@@ -171,7 +171,7 @@ namespace ProjectTile
                     updateAffectedDates();
                     formatDatePickers();
                     NextButton.IsEnabled = (!ProjectFunctions.IsLastStage(newStageNumber));
-                    CommitButton.IsEnabled = true;
+                    CommitButton.IsEnabled = true;                    
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error updating current project stage", generalException); }	     
@@ -249,7 +249,7 @@ namespace ProjectTile
 
         public void clearChanges()
         {
-            stageChanged = false;
+            stageChanged = false;            
             ProjectFunctions.ClearHistoryChanges();
         }
 
@@ -411,17 +411,10 @@ namespace ProjectTile
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
-            //foreach (int stageNo in ProjectFunctions.StageDatesChanged)
-            //{
-            //    MessageBox.Show(stageNo.ToString());
-            //}
-            
+            Globals.SelectedProjectProxy.Stage = ProjectFunctions.GetStageByNumber(currentStageNumber);
             bool success = ProjectFunctions.UpdateHistory(currentTimeline, stageChanged);
-            if (success)
-            {
-                MessageFunctions.SuccessAlert("Changes saved successfully. You can make further changes in this screen, or use the 'Back' or 'Close' buttons to exit.", "Timeline Changes Saved");
-                clearChanges();
-            }
+            if (success) { clearChanges(); }
+            else if (stageChanged) { Globals.SelectedProjectProxy.Stage = ProjectFunctions.ProjectCurrentStage(Globals.SelectedProjectProxy.ProjectID); }
         }
 
     } // class
