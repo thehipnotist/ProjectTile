@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -120,7 +121,7 @@ namespace ProjectTile
                 if (!pageLoaded) { return; }
                 Globals.LoadingActions = true;
                 ActionProxy currentAction = selectedAction ?? null;
-                NotesButton.IsEnabled = true;
+                ShowNotesButton.IsEnabled = true;
                 NotesBox.Visibility = Visibility.Hidden;
 
                 int clientID = Globals.SelectedClientProxy.ID;
@@ -172,8 +173,8 @@ namespace ProjectTile
                     ActionDataGrid.IsReadOnly = true;
                     ActionDataGrid.BorderThickness = new Thickness(1);
                     resetButtons();
-                    NotesButtonText.Text = "View Notes";
-                    NotesButton.IsEnabled = false;
+                    ShowNotesButtonText.Text = "View Notes";
+                    ShowNotesButton.IsEnabled = false;
                     NotesBox.IsReadOnly = true;
                 }
 
@@ -451,13 +452,10 @@ namespace ProjectTile
             {
                 string notes = NotesBox.Text;
                 selectedAction.Notes = notes;
-                NotesButtonText.Text = (notes != "") ? "Edit Notes" : "Add Notes";                
+                ShowNotesButtonText.Text = (notes != "") ? "Edit Notes" : "Add Notes";                
             }
-            else
-            {
-                NotesButtonText.Text = "View Notes";
-            }
-            NotesBox.Visibility = Visibility.Hidden;
+            NotesBox.Visibility = HideNotesButton.Visibility = Visibility.Hidden;
+            ShowNotesButton.Visibility = Visibility.Visible;
         }
 
         private void toggleBackButton(bool showIfValid)
@@ -613,8 +611,8 @@ namespace ProjectTile
             {
                 selectedAction = ActionDataGrid.SelectedItem as ActionProxy;
                 bool notesExist = (selectedAction != null && selectedAction.Notes != null && selectedAction.Notes != "");
-                if (editing) { NotesButtonText.Text = notesExist? "Edit Notes" : "Add Notes"; }
-                else { NotesButton.IsEnabled = notesExist; }
+                if (editing) { ShowNotesButtonText.Text = notesExist? "Edit Notes" : "Add Notes"; }
+                else { ShowNotesButton.IsEnabled = notesExist; }
                 if (!projectSelected)
                 {
                     Globals.SelectedProjectProxy = ProjectFunctions.GetProjectProxy(selectedAction.Project.ID);
@@ -635,21 +633,23 @@ namespace ProjectTile
             else { ProjectCombo.SelectedItem = ProjectFunctions.ProjectFilterList.First(pfl => pfl.ProjectCode == selectedAction.Project.ProjectCode); }
         }
 
-        private void NotesButton_Click(object sender, RoutedEventArgs e)
+        private void ShowNotesButton_Click(object sender, RoutedEventArgs e)
         {
-            if (NotesBox.IsVisible) { hideNotes(); }
-            else 
-            {
-                NotesBox.Visibility = Visibility.Visible;
-                NotesBox.Text = selectedAction.Notes;
-                NotesButtonText.Text = "Hide Notes";
-                NotesBox.Focus();
-            }        
+            NotesBox.Visibility = Visibility.Visible;
+            NotesBox.Text = selectedAction.Notes;                
+            NotesBox.Focus();
+            HideNotesButton.Visibility = Visibility.Visible;
+            ShowNotesButton.Visibility = Visibility.Hidden;
+        }
+
+        private void HideNotesButton_Click(object sender, RoutedEventArgs e)
+        {
+            hideNotes();
         }
 
         private void NotesBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (!NotesButton.IsFocused) { hideNotes(); }
+            hideNotes();
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)

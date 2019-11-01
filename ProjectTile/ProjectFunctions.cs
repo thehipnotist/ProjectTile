@@ -2155,6 +2155,7 @@ namespace ProjectTile
                 List<string> currentClientRoles = new List<string>();
                 string missingClientRoles = "";
                 int projectID = proxy.ProjectID;
+                int countDueActions = 0;
 
                 try
                 {
@@ -2214,6 +2215,13 @@ namespace ProjectTile
                                     existingProjectRecord = existingPtDb.Projects.Where(p => p.ID == projectID).FirstOrDefault();
                                     countLinkedProducts = existingPtDb.ProjectProducts.Where(pp => pp.ProjectID == projectID).Count();
                                     countLinkedContacts = existingPtDb.ClientTeams.Where(ct => ct.ProjectID == projectID).Count();
+                                    countDueActions = (from a in existingPtDb.Actions
+                                                       join ps in existingPtDb.ProjectStages on a.StageID equals ps.ID
+                                                       where a.ProjectID == projectID
+                                                            && a.StatusCode != true
+                                                            && ps.StageNumber < stageNumber
+                                                       select a)
+                                                        .Count();
                                     currentInternalRoles = existingPtDb.ProjectTeams.Where(
                                         pt => pt.ProjectID == projectID 
                                         && (pt.FromDate == null || pt.FromDate <= Today)
@@ -2280,6 +2288,11 @@ namespace ProjectTile
                             {
                                 errorDetails = ". The client cannot be removed, as products have been linked to the project (this may cause version/compatibility errors). If this change is "
                                     + "necessary, please first clear all linked products from the project via 'Project Products'.|Cannot Remove Client";
+                            }
+                            else if (countDueActions > 0)
+                            {
+                                errorDetails = ". This project has open actions linked to earlier stages that must be completed before the project can progress to the selected stage. Please "
+                                    + "reset the project stage (or cancel) and review the project's linked actions.|Outstanding Actions";
                             }
                         }
                         catch (Exception generalException)
@@ -2421,8 +2434,7 @@ namespace ProjectTile
         }
 
         public static bool SaveProjectChanges(ProjectProxy projectProxy, bool managerChanged, int originalStageNumber)
-        {
-                   
+        {                 
             if (!ValidateProject(projectProxy, true, managerChanged)) { return false; }
             try
             {
@@ -2500,49 +2512,14 @@ namespace ProjectTile
                         }
                     }
 
-                    bool goLive = IsGoLive(originalStageNumber, projectProxy.StageNumber);
-                    bool reversal = goLive ? false : IsLiveReversal(originalStageNumber, projectProxy.StageNumber);
-                    bool completion = (projectProxy.StageNumber == CompletedStage && originalStageNumber != CompletedStage);                    
-                    if (goLive || reversal)
-                    {
-                        // TODO: handle internal projects - should we update linked master versions?
-                        try
-                        {
-                                var linkedProducts = from p in existingPtDb.Projects
-                                                     join pp in existingPtDb.ProjectProducts on p.ID equals pp.ProjectID
-                                                     join cp in existingPtDb.ClientProducts on pp.ProductID equals cp.ProductID
-                                                     where p.ID == projectID && cp.ClientID == p.ClientID
-                                                     select new { ProjectProducts = pp, ClientProducts = cp };
-                                                    
-                                foreach (var product in linkedProducts)
-                                {
-                                    if (goLive)
-                                    {
-                                        product.ClientProducts.Live = true;
-                                        product.ClientProducts.ProductVersion = product.ProjectProducts.NewVersion;
-                                    }
-                                    else
-                                    {
-                                        if (Array.IndexOf(NewProductTypeCodes, projectProxy.Type.TypeCode) >= 0) { product.ClientProducts.Live = false; }
-                                        if (product.ClientProducts.ProductVersion == product.ProjectProducts.NewVersion) 
-                                        { 
-                                            product.ClientProducts.ProductVersion = product.ProjectProducts.OldVersion; 
-                                        }
-                                    }                                                                      
-                                }
-                            }
-                        catch (Exception generalException)
-                        {
-                            MessageFunctions.Error("Error updating linked products", generalException);
-                            return false;
-                        }
-                    }	
-
-                    existingPtDb.SaveChanges();
-                    SelectedProjectProxy = projectProxy;
                     string congratulations = "";
-                    if (completion) { congratulations = " Congratulations on completing the project."; }
-                    else if (goLive) { congratulations = " Congratulations on going Live.";  }
+                    if (originalStageNumber != projectProxy.StageNumber)
+                    {
+                        bool stageManaged = HandleStageChanges(projectProxy, originalStageNumber, out congratulations);
+                        if (!stageManaged) { return false; }
+                    }
+                    existingPtDb.SaveChanges();
+                    SelectedProjectProxy = projectProxy;                                    
                     
                     MessageFunctions.SuccessAlert("Project amendments saved successfully." + congratulations, "Changes Saved");
                     if (projectProxy.StageNumber != originalStageNumber) { UpdateHistoryForStatus(thisProject, false); }
@@ -2556,9 +2533,66 @@ namespace ProjectTile
             }		            
         }
 
+        private static bool HandleStageChanges(ProjectProxy projectProxy, int originalStageNumber, out string congratulations)
+        {
+            congratulations = "";
+            bool goLive = IsGoLive(originalStageNumber, projectProxy.StageNumber);
+            bool reversal = goLive ? false : IsLiveReversal(originalStageNumber, projectProxy.StageNumber);
+            bool completion = (projectProxy.StageNumber == CompletedStage && originalStageNumber != CompletedStage);
+            if (goLive || reversal) 
+            { 
+                bool productsUpdated = UpdateLinkedProducts(projectProxy, goLive);
+                if (!productsUpdated) { return false; }
+            }
+            if (completion) { congratulations = " Congratulations on completing the project."; }
+            else if (goLive) { congratulations = " Congratulations on going Live."; }
+            return true;
+        }
+
+        private static bool UpdateLinkedProducts(ProjectProxy projectProxy, bool isGoLive)
+        {
+            ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+            using (existingPtDb)
+            {                
+                // TODO: handle internal projects - should we update linked master versions?
+                try
+                {
+                    var linkedProducts = from p in existingPtDb.Projects
+                                            join pp in existingPtDb.ProjectProducts on p.ID equals pp.ProjectID
+                                            join cp in existingPtDb.ClientProducts on pp.ProductID equals cp.ProductID
+                                            where p.ID == projectProxy.ProjectID && cp.ClientID == p.ClientID
+                                            select new { ProjectProducts = pp, ClientProducts = cp };
+
+                    foreach (var product in linkedProducts)
+                    {
+                        if (isGoLive)
+                        {
+                            product.ClientProducts.Live = true;
+                            product.ClientProducts.ProductVersion = product.ProjectProducts.NewVersion;
+                        }
+                        else
+                        {
+                            if (Array.IndexOf(NewProductTypeCodes, projectProxy.Type.TypeCode) >= 0) { product.ClientProducts.Live = false; }
+                            if (product.ClientProducts.ProductVersion == product.ProjectProducts.NewVersion)
+                            {
+                                product.ClientProducts.ProductVersion = product.ProjectProducts.OldVersion;
+                            }
+                        }
+                    }
+                    existingPtDb.SaveChanges();
+                    return true;
+                }
+                catch (Exception generalException)
+                {
+                    MessageFunctions.Error("Error updating linked products", generalException);
+                    return false;
+                }                
+            }
+        }
+
         // Project Teams (updates)
         
-        public static bool updateOtherInstances(TeamProxy newRecord)
+        public static bool UpdateOtherInstances(TeamProxy newRecord)
         {
             try
             {
@@ -2640,7 +2674,7 @@ namespace ProjectTile
                         return false;
                     }
                     currentVersion.ConvertToProjectTeam(ref thisTeam);
-                    if (currentVersion.HasKeyRole) { updateOtherInstances(currentVersion); }
+                    if (currentVersion.HasKeyRole) { UpdateOtherInstances(currentVersion); }
                     existingPtDb.SaveChanges();
                     MessageFunctions.SuccessAlert("Your changes have been saved successfully.", "Team Membership Amended");
                     return true;
@@ -2665,7 +2699,7 @@ namespace ProjectTile
                 using (existingPtDb)
                 {
                     existingPtDb.ProjectTeams.Add(thisTeam);
-                    if (newRecord.HasKeyRole) { updateOtherInstances(newRecord); }
+                    if (newRecord.HasKeyRole) { UpdateOtherInstances(newRecord); }
                     existingPtDb.SaveChanges();
                     MessageFunctions.SuccessAlert("New project team member added successfully.", "Team Member Added");
                     return thisTeam.ID;
@@ -3430,6 +3464,7 @@ namespace ProjectTile
         {
             try
             {
+                string congratulations = "";
                 if (stageChanged && !ValidateProject(Globals.SelectedProjectProxy, true, false)) { return false; }
                 int projectID = Globals.SelectedProjectProxy.ProjectID;
 
@@ -3446,7 +3481,10 @@ namespace ProjectTile
                                 MessageFunctions.Error("Error saving project amendments to the database: no matching project found.", null);
                                 return false;
                             }
+                            int originalStageNumber = ProjectCurrentStage(projectID).StageNumber;
                             thisProject.StageID = thisTimeline.StageID;
+                            bool stageManaged = HandleStageChanges(Globals.SelectedProjectProxy, originalStageNumber, out congratulations);                            
+                            if (!stageManaged) { return false; }
                             existingPtDb.SaveChanges();
                         }
                     }
@@ -3486,6 +3524,8 @@ namespace ProjectTile
                     }
                     existingPtDb.SaveChanges();
                     ClearHistoryChanges();
+                    MessageFunctions.SuccessAlert("Changes saved successfully. You can make further changes in this screen, or use the 'Back' or 'Close' buttons to exit." + congratulations, 
+                        "Timeline Changes Saved");
                     return true;
                 }
             }
