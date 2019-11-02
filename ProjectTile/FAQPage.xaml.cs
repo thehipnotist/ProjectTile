@@ -56,15 +56,12 @@ namespace ProjectTile
             MainText.Document = thisDoc;
 
             addTileQuestions();
+            addActionsQuestions();
             addFunctionalityQuestions();
             addDevelopmentQuestions();
             addYourQuestions();
             
         }
-
-
-
-
 
         // ---------------------- //
         // -- Data Management --- //
@@ -117,6 +114,33 @@ namespace ProjectTile
             addQuestion("I've expanded a tile and now it's stuck - how do I reset it?",
                 "Click anywhere in the background within the border around the tiles. Alternatively, if you want to expand another tile and can see it, you can "
                 + "simply click on that tile instead.");      
+        }
+
+        private void addActionsQuestions()
+        {
+            addHeader("Actions Questions");
+            addQuestion("How do project actions work?",
+                "Actions are tasks that need to be completed. They can be linked to a project stage so they are due when that stage should finish (the start of "
+                + "the next stage, set in the 'Timelines' section) or given a specific due date. The 'Effective Due' date is therefore either a specified date, "
+                + "or the linked stage end date. Each action must also have an owner, who must be part of the combined project team.");
+            addQuestion("How can I edit actions?",
+                "You can only edit actions if you have a role that allows edit permissions, and only for open projects on which you are part of the team. In those "
+                + "circumstances, you must select the project to begin editing. You could select the project in the 'Amend or Manage Projects' screen and then "
+                + "choose 'More' -> 'Actions'. Alternatively, open 'Project Actions' and either choose the project in the drop-down list, or select an action for "
+                + "the project and click 'Set Project' to choose it. In 'edit mode', the actions table has a thicker border and editable columns are in italic. "
+                + "Double-click on an editable cell to change it; this may involve typing, picking a date or choosing a value from a drop-down.");
+            addQuestion("Why can't I edit actions for a certain project?",
+                "This could be because (a) your role does not allow editing, (b) you have opened Actions from 'View Projects', (c) you have not selected a project, "
+                + "(d) the project is closed, or (e) you are not a member of the project team. The notifications on the page will guide you. If you are not on the "
+                + "team but have the ability to amend project teams, you could go to 'Project Teams (Staff)' (or 'Staff Team' from the main projects page) to add "
+                + "yourself to it.");
+            addQuestion("How do I add a new action?",
+                "If you can edit the project actions (see above) then select the project in the Actions page and then scroll to the last line, which should be empty."
+                + "Type in an editable field - e.g. the action description, owner or linked stage - to start. Then tab or click away from that field and the non-"
+                + "editable fields will be filled in automatically, as the action is 'registered'.");
+            addQuestion("Why can I only pick certain project stages to link to?",
+                "Only stages that have been passed or forecast in the 'Timeline' section are available, so that effective dates will exist. It is possible to pick "
+                + " the last forecast stage, however, meaning that an effective date will only appear when the next stage is forecast, or if a specific date is picked.");
         }
 
         private void addFunctionalityQuestions()

@@ -2055,7 +2055,7 @@ namespace ProjectTile
                                             join ps in existingPtDb.ProjectStages on a.StageID equals ps.ID
                                                 into GroupJoin from gps in GroupJoin.DefaultIfEmpty()
                                             where (a.ProjectID == projectID 
-                                                    || (projectID <= 0 && (clientID == 0 || (clientID == -1 && p.ClientID == null) || p.ClientID == clientID)))
+                                                    || (projectID <= 0 && p.EntityID == CurrentEntityID && (clientID == 0 || (clientID == -1 && p.ClientID == null) || p.ClientID == clientID)))
                                                 && (a.TargetCompletion == null || (a.TargetCompletion >= fromDate && a.TargetCompletion < maxDate))
                                                 && (statusNumber == 0 || a.StatusCode == statusCode || (statusNumber == -1 && a.StatusCode != true))
                                             select new { Action = a, Stage = gps ?? null, Project  = p }
