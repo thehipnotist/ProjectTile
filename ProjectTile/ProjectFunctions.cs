@@ -1465,6 +1465,26 @@ namespace ProjectTile
             }
         }
 
+        public static CombinedStaffMember GetCombinedStaffMember(int? staffID, int? contactID)
+        {
+            try
+            {
+                List<CombinedStaffMember> allStaffMembers = CombinedStaffList("", 0, 0);
+                if (staffID > 0) { return allStaffMembers.FirstOrDefault(asm => asm.StaffMember.ID == staffID); }
+                else if (contactID > 0) { return allStaffMembers.FirstOrDefault(asm => asm.ClientContact.ID == contactID); }
+                else
+                {
+                    MessageFunctions.Error("Error retrieving combined staff member: no internal or client staff ID provided.", null);
+                    return null;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving combined staff member", generalException);
+                return null;
+            }
+        }
+
         public static List<CombinedTeamMember> CombinedTeamList(int projectID)
         {
             try

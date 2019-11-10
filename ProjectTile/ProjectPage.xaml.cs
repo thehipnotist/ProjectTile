@@ -63,6 +63,7 @@ namespace ProjectTile
                 Instructions.Content = "Use filters to restrict results and column headers to sort them, then choose the required option.";
                 HeaderImage2.SetResourceReference(Image.SourceProperty, "AmendIcon");
                 CommitButton.Visibility = Visibility.Hidden;
+                AddButton.Visibility = Globals.MyPermissions.ShowOrCollapse("AddProjects");
             }
             else if (pageMode == PageFunctions.Lookup)
             {

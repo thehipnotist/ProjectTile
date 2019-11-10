@@ -131,9 +131,10 @@ namespace ProjectTile
 
             HistoryText = "A summary of the key changes is as follows:"
                 + newLine
-                + newLine + "Version 1.00          23/10/2019          Initial version"
-                + newLine + "Version 1.10          24/10/2019          Added stage history audit"
-                + newLine + "Version 1.20          02/11/2019          Project actions, menu icons, timeline fixes, version history, GitHub link"; 
+                + newLine + "Version 1.00      23/10/2019      Initial version"
+                + newLine + "Version 1.10      24/10/2019      Added stage history audit"
+                + newLine + "Version 1.20      02/11/2019      Project actions, menu icons, timeline fixes, version history, GitHub link"
+                + newLine + "Version 1.30      12/11/2019      Timeline start page, 'My actions', invalid username fix, permission fixes"; 
         }
 
         // ---------------------- //

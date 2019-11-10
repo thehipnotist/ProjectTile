@@ -221,16 +221,22 @@ namespace ProjectTile
             ChangePage("ProjectContactsPage.xaml?Mode=" + pageMode + ",ContactID=" + selectedContactID.ToString());
         }
 
+        public static void ShowStageHistoryPage()
+        {
+            string pageMode = MyPermissions.Allow("EditStageHistory") ? Amend : View;
+            ChangePage("StageHistoryPage.xaml?Mode=" + pageMode);
+        }
+
         public static void ShowTimelinePage(string pageMode = "")
         {
             if (pageMode == "" || pageMode == Amend) { pageMode = MyPermissions.Allow("EditStageHistory") ? Amend : View; }
             ChangePage("TimelinePage.xaml?Mode=" + pageMode);
         }
 
-        public static void ShowActionsPage(string pageMode = "")
+        public static void ShowActionsPage(string pageMode = "", int staffID = 0)
         {
             if (pageMode == "" || pageMode == Amend) { pageMode = MyPermissions.Allow("EditActions") ? Amend : View; }
-            ChangePage("ActionsPage.xaml?Mode=" + pageMode);
+            ChangePage("ActionsPage.xaml?Mode=" + pageMode + ",StaffID=" + staffID.ToString());
         }
 
         public static void ShowAboutPage()

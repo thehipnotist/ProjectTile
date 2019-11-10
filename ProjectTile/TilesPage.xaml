@@ -369,6 +369,15 @@
                     </Grid>
                 </Label>
             </Button>
+            <Button x:Name="ProjectButton_Timeline" Margin="45,15,0,0" Background="{DynamicResource PtBrushProject1}" MouseLeave="buttonMouseOut" 
+                        Grid.Column="2" Visibility="Hidden" Click="ProjectButton_Timeline_Click" Style="{DynamicResource TileStyle}">
+                <Label  Background="{DynamicResource PtGradientProject1}" Style="{DynamicResource TileLabelStyle}">
+                    <Grid Height="95" Width="95" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Image Source="{DynamicResource TimelineIcon}" Height="20" Width="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,2,2"/>
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Project Timelines" VerticalAlignment="Center" Margin="2,0,2,0"/>
+                    </Grid>
+                </Label>
+            </Button>            
             <Button x:Name="ProjectButton_Action" Margin="285,15,0,0" Background="{DynamicResource PtBrushProject1}" MouseLeave="buttonMouseOut" 
                         Grid.Column="2" Visibility="Hidden" Click="ProjectButton_Action_Click" Style="{DynamicResource TileStyle}">
                 <Label  Background="{DynamicResource PtGradientProject1}" Style="{DynamicResource TileLabelStyle}">
