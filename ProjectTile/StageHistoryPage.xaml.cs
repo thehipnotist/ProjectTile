@@ -33,13 +33,16 @@ namespace ProjectTile
         DateTime fromDate = Globals.InfiniteDate;
         DateTime toDate = Globals.StartOfTime;
         private string statusDescription;
+        private int stageNumber = -1;
 
         // ------------- Current records ------------ //
 
-
+        Globals.TimelineType currentType = Globals.TimelineType.Effective;
 
         // ------------------ Lists ----------------- //
-
+        
+        private List<ProjectStages> stageList;
+        private List<StageHistoryProxy> stageHistoryList;
 
         // ---------------------------------------------------------- //
         // -------------------- Page Management --------------------- //
@@ -65,7 +68,10 @@ namespace ProjectTile
                 MessageFunctions.Error("Error retrieving query details", generalException);
                 PageFunctions.ShowTilesPage();
             }
-            
+
+            refreshClientCombo();
+            refreshStatusCombo();
+            refreshStageCombo();
             FromDate.SelectedDate = fromDate = Globals.StartOfTime;
             ToDate.SelectedDate = toDate = Globals.OneMonthAhead;            
             PageFunctions.ShowFavouriteButton();
@@ -76,6 +82,17 @@ namespace ProjectTile
         // ---------------------------------------------------------- //  
 
         // ------------- Data retrieval ------------- // 		
+        
+        private void refreshHistoryDataGrid()
+        {
+            int clientID = (Globals.SelectedClientProxy != null) ? Globals.SelectedClientProxy.ID : 0;
+            int projectID = (Globals.SelectedProjectProxy != null) ? Globals.SelectedProjectProxy.ProjectID : 0;
+
+            stageHistoryList = ProjectFunctions.StageHistoryList(clientID: clientID, statusFilter: Globals.SelectedStatusFilter, projectID: projectID, timelineType: currentType,
+                fromDate: fromDate, toDate: toDate, stageNumber: stageNumber);
+
+            StageHistoryDataGrid.ItemsSource = stageHistoryList;
+        }        
         
         private void refreshClientCombo()
         {
@@ -118,6 +135,14 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error populating projects drop-down list", generalException); }
         }
 
+        private void refreshStageCombo()
+        {
+            stageList = ProjectFunctions.StageFilterList();
+            StageCombo.ItemsSource = stageList;
+            //StageCombo.SelectedItem = stageList.FirstOrDefault(sl => sl.ID == Globals.AllStages.ID);
+            StageCombo.SelectedItem = Globals.AllStages;
+        }
+
         // -------------- Data updates -------------- // 
 
 
@@ -133,9 +158,36 @@ namespace ProjectTile
                     ProjectCombo.SelectedItem = ProjectFunctions.ProjectFilterList.First(pfl => pfl.ProjectID == projectID);
                 }
                 else ProjectCombo.SelectedItem = ProjectFunctions.ProjectFilterList.First(pfl => pfl.ProjectID == 0);
+                refreshHistoryDataGrid();
             }
             catch (Exception generalException) { MessageFunctions.Error("Error selecting current project in the list", generalException); }
         }
+
+        private void changeTimelineType(Globals.TimelineType type)
+        {
+            try
+            {
+                if (ProjectFunctions.FullStageList == null || ProjectFunctions.FullStageList.Count() == 0) { return; } // Too early
+                else if (type == currentType) { return; } // Cancelling the earlier change
+                else
+                {
+                    currentType = type;
+                    refreshHistoryDataGrid();
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error changing timeline type", generalException); }
+        }
+
+        //private void setTimelineType(Globals.TimelineType type)
+        //{
+        //    switch (type)
+        //    {
+        //        case Globals.TimelineType.Actual: ActualRadio.IsChecked = true; break;
+        //        case Globals.TimelineType.Effective: EffectiveRadio.IsChecked = true; break;
+        //        case Globals.TimelineType.Target: TargetRadio.IsChecked = true; break;
+        //        default: EffectiveRadio.IsChecked = true; break;
+        //    }
+        //}
 
         // ---------- Links to other pages ---------- //		
 
@@ -156,12 +208,11 @@ namespace ProjectTile
             try
             {
                 if (ClientCombo.SelectedItem == null) { } // Won't be for long
-                else if ((ClientProxy)ClientCombo.SelectedItem != Globals.SelectedClientProxy)
+                else
                 {
-                    //
+                    Globals.SelectedClientProxy = (ClientProxy)ClientCombo.SelectedItem;
                     refreshProjectCombo();
                 }
-                else { ClientCombo.SelectedItem = Globals.SelectedClientProxy; }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error processing client selection", generalException); }	
         }
@@ -172,15 +223,11 @@ namespace ProjectTile
             {
                 if (StatusCombo.SelectedItem != null)
                 {
-                    if (StatusCombo.SelectedItem.ToString() != statusDescription)
-                    {
-                        statusDescription = StatusCombo.SelectedItem.ToString();
-                        string selection = statusDescription.Replace(" ", "");
-                        Globals.SelectedStatusFilter = (Globals.ProjectStatusFilter)Enum.Parse(typeof(Globals.ProjectStatusFilter), selection);
-                        //
-                        refreshProjectCombo();
-                    }
-                    else { StatusCombo.SelectedItem = statusDescription; }
+                    statusDescription = StatusCombo.SelectedItem.ToString();
+                    string selection = statusDescription.Replace(" ", "");
+                    Globals.SelectedStatusFilter = (Globals.ProjectStatusFilter)Enum.Parse(typeof(Globals.ProjectStatusFilter), selection);
+                    refreshProjectCombo();
+                    refreshHistoryDataGrid();
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error processing status filter selection", generalException); }	
@@ -189,16 +236,15 @@ namespace ProjectTile
         private void ProjectCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ProjectCombo.SelectedItem == null) { } // Do nothing - won't be for long             
-            else if ( Globals.SelectedProjectProxy != (ProjectProxy)ProjectCombo.SelectedItem)
+            else 
             {
                 try
                 {
                     Globals.SelectedProjectProxy = (ProjectProxy)ProjectCombo.SelectedItem;
-                    //                 
+                    refreshHistoryDataGrid();
                 }
                 catch (Exception generalException) { MessageFunctions.Error("Error processing project selection", generalException); }
             }
-            else { ProjectCombo.SelectedItem = Globals.SelectedProjectProxy; }
         }
 
         private void FromDate_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
@@ -209,9 +255,8 @@ namespace ProjectTile
                 {
                     fromDate = (DateTime)FromDate.SelectedDate;
                     if (toDate != null && toDate < fromDate) { ToDate.SelectedDate = fromDate; }
-                    else { ; } //
+                    else { refreshHistoryDataGrid(); }
                 }
-                else { FromDate.SelectedDate = fromDate; }
             }
             else { fromDate = Globals.StartOfTime; }            
         }
@@ -224,9 +269,8 @@ namespace ProjectTile
                 {
                     toDate = (DateTime)ToDate.SelectedDate;
                     if (fromDate != null && fromDate > toDate) { FromDate.SelectedDate = toDate; }
-                    else { ; } //
+                    else { refreshHistoryDataGrid(); }
                 }
-                else { ToDate.SelectedDate = toDate; }
             }
             else { toDate = Globals.InfiniteDate; }
         }
@@ -240,5 +284,35 @@ namespace ProjectTile
         {
 
         }
+
+        private void TargetRadio_Checked(object sender, RoutedEventArgs e)
+        {
+            changeTimelineType(Globals.TimelineType.Target);
+        }
+
+        private void ActualRadio_Checked(object sender, RoutedEventArgs e)
+        {
+            changeTimelineType(Globals.TimelineType.Actual);
+        }
+
+        private void EffectiveRadio_Checked(object sender, RoutedEventArgs e)
+        {
+            changeTimelineType(Globals.TimelineType.Effective);
+        }
+
+        private void StageCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                if (StageCombo.SelectedItem != null)
+                {
+                    ProjectStages stageFilter = StageCombo.SelectedItem as ProjectStages;
+                    stageNumber = (stageFilter != null) ? stageFilter.StageNumber : -1;
+                    refreshHistoryDataGrid();
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error handling stage selection", generalException); }
+        }
+
     } // class
 } // namespace

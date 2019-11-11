@@ -453,6 +453,14 @@ namespace ProjectTile
             catch (Exception generalException) { MessageFunctions.Error("Error retrieving list of project stages", generalException); }
         }
 
+        public static List<ProjectStages> StageFilterList()
+        {
+            SetFullStageList();
+            List<ProjectStages> returnList = FullStageList;
+            returnList.Add(AllStages);
+            return returnList;
+        }
+
         public static ProjectStages GetStageByNumber(int stageNumber)
         {
             try
@@ -1863,6 +1871,67 @@ namespace ProjectTile
             DateTime? nextStageStart = GetStageStartDate(projectID, nextStage, null);
             if (nextStageStart == null) { return null; }
             else { return ((DateTime)nextStageStart).AddDays(-1); }
+        }
+
+        public static List<StageHistoryProxy> StageHistoryList(int clientID, ProjectStatusFilter statusFilter, int projectID, TimelineType timelineType, 
+                                                                DateTime fromDate, DateTime toDate, int stageNumber)
+        {
+            try
+            {
+                bool actual = (timelineType == TimelineType.Actual);
+                bool target = (timelineType == TimelineType.Target);
+                bool effective = (timelineType == TimelineType.Effective);
+
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    List<StageHistory> initialList;
+                    if (projectID > 0) { initialList = existingPtDb.StageHistory.Where(sh => sh.ProjectID == projectID).ToList(); }
+                    else
+                    {
+                        SetProjectFilterList(statusFilter, true, clientID, false);
+                        List<int> projectIDs = ProjectFilterList.Select(pfl => pfl.ProjectID).ToList();
+
+                        initialList = (from sh in existingPtDb.StageHistory
+                                       where projectIDs.Contains(sh.ProjectID)
+                                       select sh)
+                                       .ToList();
+                    }
+
+                    int stageID = (stageNumber < 0) ? stageNumber : GetStageByNumber(stageNumber).ID;
+                    DateTime maxDate = toDate.AddDays(1);
+                    List<StageHistory> filteredList = initialList.Where(il => (stageNumber < 0 || il.StageID == stageID) &&
+                        (
+                            (actual && il.ActualStart != null && il.ActualStart >= fromDate && il.ActualStart < maxDate)
+                            || (target && il.TargetStart != null && il.TargetStart >= fromDate && il.TargetStart < maxDate)
+                            || (effective && il.EffectiveStart != null && il.EffectiveStart >= fromDate && il.EffectiveStart < maxDate)
+                        )
+                    ).ToList();
+
+                    List<StageHistoryProxy> returnList = new List<StageHistoryProxy>();
+                    foreach (StageHistory sh in filteredList)
+                    {
+                        Projects thisProject = GetProject(sh.ProjectID);
+                        ProjectStages thisStage = GetStageByID(sh.StageID);
+                        StageHistoryProxy thisProxy = new StageHistoryProxy
+                        {
+                            ID = sh.ID,
+                            Project = thisProject,
+                            Stage = thisStage,
+                            Type = timelineType,
+                            StartDate = actual? sh.ActualStart : (target? sh.TargetStart : sh.EffectiveStart)
+                        };
+                        returnList.Add(thisProxy);
+                    };
+
+                    return returnList;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving stage history details for the set filters", generalException);
+                return null;
+            }
         }
 
         // Actions

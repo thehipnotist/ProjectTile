@@ -51,6 +51,7 @@ namespace ProjectTile
         public static ClientTeamRoles AllClientRoles = new ClientTeamRoles { RoleCode = AllCodes, RoleDescription = AllRecords };
         public static StaffProxy AllStaff = new StaffProxy { ID = 0, FirstName = AllRecords, Surname = "", Active = true, UserID = AllCodes };
         public static ProjectStages NoStage = new ProjectStages { ID = NoID, StageNumber = NoID, StageName = "", StageDescription = "" };
+        public static ProjectStages AllStages = new ProjectStages { ID = NoID, StageNumber = NoID, StageName = "<All Stages>", StageDescription = "<All Stages>" };
 
         // Project roles
         public const string AccountManagerCode = "AM";

@@ -31,7 +31,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="{Binding ElementName=MiddleRow, Path=ActualHeight}" MinHeight="400"/>
                 </Grid.RowDefinitions>
-                <Label x:Name="Instructions" Content="Set at runtime." HorizontalAlignment="Left" Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+                <Label x:Name="Instructions" Content="Controls at the top filter the projects. Controls at the bottom filter timeline stages and dates." HorizontalAlignment="Left" Margin="15,15,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
 
                 <Label x:Name="ClientLabel" Content="Client" HorizontalAlignment="Left" Height="30" Margin="15,45,0,0" VerticalAlignment="Top" Width="Auto" FontWeight="Bold"/>
                 <ComboBox x:Name="ClientCombo" HorizontalAlignment="Left" Height="30" Margin="65,45,15,0" VerticalAlignment="Top" Width="150" SelectionChanged="ClientCombo_SelectionChanged"
@@ -69,19 +69,35 @@
                     </ComboBox.Resources>
                 </ComboBox>
 
-                <DataGrid x:Name="StageHistoryDataGrid" MinHeight="250" Margin="15,90,15,60" MinWidth="625" MaxWidth="625" AutoGenerateColumns="False" IsReadOnly="False" 
+                <DataGrid x:Name="StageHistoryDataGrid" MinHeight="250" Margin="15,90,15,60" MinWidth="625" MaxWidth="625" AutoGenerateColumns="False" IsReadOnly="True" 
                           BorderBrush="{StaticResource PtBrushProject3}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SelectionMode="Single"
                           SelectionChanged="StageHistoryDataGrid_SelectionChanged">
                     <DataGrid.Columns>
-                        
+                        <DataGridTextColumn x:Name="ProjectCodeColumn" Binding="{Binding Project.ProjectCode, Mode=OneWay}" Header="Project"/>
+                        <DataGridTextColumn x:Name="StageColumn" Binding="{Binding Stage.StageName, Mode=OneWay}" Header="Timeline Stage"/>
+                        <DataGridTextColumn x:Name="StartColumn" Binding="{Binding StartDate, Mode=OneWay, StringFormat=dd/MM/yy}" Header="Start Date"/>
+                        <DataGridTextColumn x:Name="EndColumn" Binding="{Binding EndDate, Mode=OneWay, StringFormat=dd/MM/yy}" Header="End Date"/>
+                        <DataGridTextColumn x:Name="ProjectNameColumn" Binding="{Binding Project.ProjectName, Mode=OneWay}" Header="Project Name"/>
+                        <DataGridTextColumn x:Name="CurrentStageColumn" Binding="{Binding CurrentStageName, Mode=OneWay}" Header="Current Stage"/>
                     </DataGrid.Columns>
                     <DataGrid.Resources>
-                      
+
                     </DataGrid.Resources>
                 </DataGrid>
 
-                <Label x:Name="DueDateLabel" Content="Due" HorizontalAlignment="Left" Height="30" Margin="15,45,0,15" VerticalAlignment="Bottom" Width="40" FontWeight="Bold"/>
-                <DatePicker x:Name="FromDate" HorizontalAlignment="Left" Height="30" Margin="55,45,0,15" VerticalAlignment="Bottom" Width="105" SelectedDateFormat="Short" Background="White"
+                <GroupBox x:Name="ModeGroup"  HorizontalAlignment="Left" Height="30" Margin="15,0,0,15" VerticalAlignment="Bottom" Width="215" Padding="0">
+                    <DockPanel FlowDirection="LeftToRight" HorizontalAlignment="Right" LastChildFill="False">
+                        <RadioButton x:Name="TargetRadio" Content="Target" Height="30" Width="Auto" FontWeight="Normal" Padding="5" HorizontalAlignment="Right"
+                                 VerticalContentAlignment="Center" Checked="TargetRadio_Checked" FontStyle="Italic"/>
+                        <RadioButton x:Name="ActualRadio" Content="Actual" Height="30" Width="Auto" FontWeight="Bold" Padding="5" HorizontalAlignment="Right"
+                                 VerticalContentAlignment="Center" Checked="ActualRadio_Checked"/>
+                        <RadioButton x:Name="EffectiveRadio" Content="Effective" Height="30" Width="Auto" FontWeight="Bold" Padding="5" HorizontalAlignment="Right"
+                                 VerticalContentAlignment="Center" Checked="EffectiveRadio_Checked" FontStyle="Italic" IsChecked="True"/>
+                    </DockPanel>
+                </GroupBox>
+
+                <Label x:Name="DueDateLabel" Content="Start" HorizontalAlignment="Center" Height="30" Margin="242,0,373,15" VerticalAlignment="Bottom" Width="40" FontWeight="Bold"/>
+                <DatePicker x:Name="FromDate" HorizontalAlignment="Center" Height="30" Margin="280,0,270,15" VerticalAlignment="Bottom" Width="105" SelectedDateFormat="Short" Background="White"
                             Padding="5" SelectedDateChanged="FromDate_SelectedDateChanged">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
@@ -89,7 +105,7 @@
                         </Style>
                     </DatePicker.Resources>
                 </DatePicker>
-                <DatePicker x:Name="ToDate" HorizontalAlignment="Left" Height="30" Margin="160,45,0,15" VerticalAlignment="Bottom" Width="105" SelectedDateFormat="Short" Background="White"
+                <DatePicker x:Name="ToDate" HorizontalAlignment="Center" Height="30" Margin="385,0,165,15" VerticalAlignment="Bottom" Width="105" SelectedDateFormat="Short" Background="White"
                             Padding="5" SelectedDateChanged="ToDate_SelectedDateChanged">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
@@ -97,6 +113,9 @@
                         </Style>
                     </DatePicker.Resources>
                 </DatePicker>
+
+                <ComboBox x:Name="StageCombo" HorizontalAlignment="Right" Height="30" Margin="115,0,15,15" VerticalAlignment="Bottom" Width="130"  DisplayMemberPath="StageName" 
+                          SelectionChanged="StageCombo_SelectionChanged" Style="{DynamicResource PaddedCombo}"/>
 
             </Grid>
         </Border>
