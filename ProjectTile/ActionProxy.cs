@@ -118,7 +118,7 @@ namespace ProjectTile
             get
             {
                 if (targetCompletion != null) { return targetCompletion; }
-                else if (LinkedStage != null && LinkedStage.StageNumber >= 0) { return ProjectFunctions.EffectiveStageEndDate(Project.ID, LinkedStage.StageNumber); }
+                else if (LinkedStage != null && LinkedStage.StageNumber >= 0) { return ProjectFunctions.StageEndDate(Project.ID, LinkedStage.StageNumber); }
                 else { return null; }                
             }
             set 

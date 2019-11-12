@@ -26,7 +26,8 @@ namespace ProjectTile
 
         // --------- Global/page parameters --------- // 
 
-        string pageMode;        
+        string pageMode;
+        bool pageLoaded = false;
 
         // ------------ Current variables ----------- // 
 
@@ -72,9 +73,12 @@ namespace ProjectTile
             refreshClientCombo();
             refreshStatusCombo();
             refreshStageCombo();
-            FromDate.SelectedDate = fromDate = Globals.StartOfTime;
+            FromDate.SelectedDate = fromDate = Globals.OneMonthAgo;
             ToDate.SelectedDate = toDate = Globals.OneMonthAhead;            
             PageFunctions.ShowFavouriteButton();
+
+            pageLoaded = true;
+            refreshHistoryDataGrid();
         }
 
         // ---------------------------------------------------------- //
@@ -85,6 +89,7 @@ namespace ProjectTile
         
         private void refreshHistoryDataGrid()
         {
+            if (!pageLoaded) { return; }
             int clientID = (Globals.SelectedClientProxy != null) ? Globals.SelectedClientProxy.ID : 0;
             int projectID = (Globals.SelectedProjectProxy != null) ? Globals.SelectedProjectProxy.ProjectID : 0;
 

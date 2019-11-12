@@ -1865,10 +1865,15 @@ namespace ProjectTile
             }
         }
 
-        public static DateTime? EffectiveStageEndDate(int projectID, int stageNumber)
+        public static DateTime? StageEndDate(int projectID, int stageNumber, bool? target = null)
         {
-            int nextStage = (stageNumber == MaxNonCancelledStage())? CancelledStage : stageNumber + 1;
-            DateTime? nextStageStart = GetStageStartDate(projectID, nextStage, null);
+            int nextStage = stageNumber;
+            DateTime? nextStageStart = null;
+            while (nextStageStart == null && nextStage < CancelledStage)
+            {
+                nextStage = (nextStage == MaxNonCancelledStage()) ? CancelledStage : nextStage + 1;
+                nextStageStart = GetStageStartDate(projectID, nextStage, target);
+            }
             if (nextStageStart == null) { return null; }
             else { return ((DateTime)nextStageStart).AddDays(-1); }
         }
@@ -2019,7 +2024,7 @@ namespace ProjectTile
 
         public static bool StageFitsDates(int projectID, int stageNumber, DateTime fromDate, DateTime toDate)
         {
-            DateTime? stageEnd = EffectiveStageEndDate(projectID, stageNumber);
+            DateTime? stageEnd = StageEndDate(projectID, stageNumber);
             if (stageEnd == null) { return true; } // Shouldn't happen, but if no stage end is set the action should not be lost
             else 
             {

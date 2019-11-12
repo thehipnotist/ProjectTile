@@ -77,11 +77,26 @@
                         <DataGridTextColumn x:Name="StageColumn" Binding="{Binding Stage.StageName, Mode=OneWay}" Header="Timeline Stage"/>
                         <DataGridTextColumn x:Name="StartColumn" Binding="{Binding StartDate, Mode=OneWay, StringFormat=dd/MM/yy}" Header="Start Date"/>
                         <DataGridTextColumn x:Name="EndColumn" Binding="{Binding EndDate, Mode=OneWay, StringFormat=dd/MM/yy}" Header="End Date"/>
-                        <DataGridTextColumn x:Name="ProjectNameColumn" Binding="{Binding Project.ProjectName, Mode=OneWay}" Header="Project Name"/>
+                        <DataGridTextColumn x:Name="ProjectNameColumn" Binding="{Binding Project.ProjectName, Mode=OneWay}" Header="Project Name" Width="*" MinWidth="100"/>
                         <DataGridTextColumn x:Name="CurrentStageColumn" Binding="{Binding CurrentStageName, Mode=OneWay}" Header="Current Stage"/>
                     </DataGrid.Columns>
                     <DataGrid.Resources>
-
+                        <Style TargetType="DataGridRow">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=IsTarget}" Value="True">
+                                    <Setter Property="FontStyle" Value="Italic"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}"  Value="Closed">
+                                    <Setter Property="Foreground" Value="DarkGray"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}"  Value="Not Started">
+                                    <Setter Property="Foreground" Value="LightBlue"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}"  Value="Live">
+                                    <Setter Property="Foreground" Value="Green"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
                     </DataGrid.Resources>
                 </DataGrid>
 
