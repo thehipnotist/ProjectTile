@@ -33,7 +33,7 @@ namespace ProjectTile
         // ------------ Current variables ----------- // 
 
         TimelineProxy currentTimeline = new TimelineProxy();
-        Globals.TimelineType currentType = Globals.TimelineType.Effective;
+        //Globals.TimelineType currentType = Globals.TimelineType.Effective;
         bool stageChanged = false;
         int currentStageNumber = 0;
 
@@ -79,6 +79,7 @@ namespace ProjectTile
             PageHeader.Content = "Project Timeline for Project " + Globals.SelectedProjectProxy.ProjectCode;
             createControlArrays();
             refreshStageCombo();
+            setTimelineType(Globals.SelectedTimelineType);
             refreshTimeData();
             MessageFunctions.InfoAlert("Effective date is the actual date for previous stages, and the target date for future ones. If targets are out of date, this can mean that "
                 + "future stages show an earlier (target) date than historic ones.", "Please note");
@@ -94,7 +95,7 @@ namespace ProjectTile
         {
             try
             {
-                currentTimeline = ProjectFunctions.GetProjectTimeline(Globals.SelectedProjectProxy.ProjectID, currentType);
+                currentTimeline = ProjectFunctions.GetProjectTimeline(Globals.SelectedProjectProxy.ProjectID, Globals.SelectedTimelineType);
                 this.DataContext = currentTimeline;
                 currentStageNumber = currentTimeline.StageNumber;
                 displaySelectedStage();
@@ -115,14 +116,14 @@ namespace ProjectTile
             try
             {
                 if (ProjectFunctions.FullStageList == null || ProjectFunctions.FullStageList.Count() == 0) { return; } // Too early
-                else if (type == currentType) { return; } // Cancelling the earlier change
+                else if (type == Globals.SelectedTimelineType) { return; } // Cancelling the earlier change
                 else if (checkForChanges())
                 {
-                    currentType = type;
+                    Globals.SelectedTimelineType = type;
                     clearChanges();
                     refreshTimeData();
                 }
-                else { setTimelineType(currentType); }
+                else { setTimelineType(Globals.SelectedTimelineType); }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error changing timeline type", generalException); }	
         }
@@ -181,7 +182,7 @@ namespace ProjectTile
         {
             try
             {
-                if (currentType == Globals.TimelineType.Target) { return; }
+                if (Globals.SelectedTimelineType == Globals.TimelineType.Target) { return; }
                 for (int i = 0; i < ProjectFunctions.MaxNonCancelledStage(); i++) { updateDate(i); }
                 updateDate(Globals.CancelledStage);
             }
@@ -207,7 +208,7 @@ namespace ProjectTile
                 }
                 else if (i > currentTimeline.StageNumber && thisDate <= Globals.Today) 
                 {                    
-                    datePickers[position].SelectedDate = (currentType == Globals.TimelineType.Effective)? 
+                    datePickers[position].SelectedDate = (Globals.SelectedTimelineType == Globals.TimelineType.Effective)? 
                         ProjectFunctions.GetStageStartDate(Globals.SelectedProjectProxy.ProjectID, i, true) :
                         datePickers[position].SelectedDate = null;                     
                     ProjectFunctions.QueueDateChange(i);
@@ -300,9 +301,9 @@ namespace ProjectTile
             {
                 if (datePickers.Count <= 0) { return;  }
                 int stageNumber = currentTimeline.StageNumber;
-                bool actual = (currentType == Globals.TimelineType.Actual);
-                bool effective = (currentType == Globals.TimelineType.Effective);
-                bool target = (currentType == Globals.TimelineType.Target);
+                bool actual = (Globals.SelectedTimelineType == Globals.TimelineType.Actual);
+                bool effective = (Globals.SelectedTimelineType == Globals.TimelineType.Effective);
+                bool target = (Globals.SelectedTimelineType == Globals.TimelineType.Target);
                 int cancelledPosition = datePickers.Count - 1;                
 
                 for (int i = 0; i < cancelledPosition; i++)
@@ -347,7 +348,8 @@ namespace ProjectTile
                 DateTime? oldDate = (DateTime?)currentTimeline.InitialDates[stageNumber];
 
                 if (newDate == (DateTime?)oldDate) { return; } // No change
-                bool target = (currentType == Globals.TimelineType.Target || (currentType == Globals.TimelineType.Effective && stageNumber > currentTimeline.StageNumber));
+                bool target = (Globals.SelectedTimelineType == Globals.TimelineType.Target 
+                    || (Globals.SelectedTimelineType == Globals.TimelineType.Effective && stageNumber > currentTimeline.StageNumber));
                 bool dateOK = ProjectFunctions.ProcessDateChange(stageNumber, currentTimeline.StageNumber, newDate, target);
                 if (dateOK) 
                 { 

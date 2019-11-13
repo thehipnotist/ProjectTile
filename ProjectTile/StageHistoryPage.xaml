@@ -107,7 +107,7 @@
                         <RadioButton x:Name="ActualRadio" Content="Actual" Height="30" Width="Auto" FontWeight="Bold" Padding="5" HorizontalAlignment="Right"
                                  VerticalContentAlignment="Center" Checked="ActualRadio_Checked"/>
                         <RadioButton x:Name="EffectiveRadio" Content="Effective" Height="30" Width="Auto" FontWeight="Bold" Padding="5" HorizontalAlignment="Right"
-                                 VerticalContentAlignment="Center" Checked="EffectiveRadio_Checked" FontStyle="Italic" IsChecked="True"/>
+                                 VerticalContentAlignment="Center" Checked="EffectiveRadio_Checked" FontStyle="Italic"/>
                     </DockPanel>
                 </GroupBox>
 

@@ -31,15 +31,11 @@ namespace ProjectTile
 
         // ------------ Current variables ----------- // 
 
-        DateTime fromDate = Globals.InfiniteDate;
-        DateTime toDate = Globals.StartOfTime;
         private string statusDescription;
         private int stageNumber = -1;
         private StageHistoryProxy selectedHistory = null;
 
-        // ------------- Current records ------------ //
-
-        Globals.TimelineType currentType = Globals.TimelineType.Effective;
+        // ------------- Current records ------------ //        
 
         // ------------------ Lists ----------------- //
         
@@ -75,8 +71,9 @@ namespace ProjectTile
             refreshClientCombo();
             refreshStatusCombo();
             refreshStageCombo();
-            FromDate.SelectedDate = fromDate = Globals.OneMonthAgo;
-            ToDate.SelectedDate = toDate = Globals.OneMonthAhead;            
+            setTimelineType(Globals.SelectedTimelineType);
+            FromDate.SelectedDate = Globals.SelectedFromDate;
+            ToDate.SelectedDate = Globals.SelectedToDate;            
             PageFunctions.ShowFavouriteButton();
             if (pageMode == PageFunctions.View)
             {                
@@ -102,8 +99,8 @@ namespace ProjectTile
             int clientID = (Globals.SelectedClientProxy != null) ? Globals.SelectedClientProxy.ID : 0;
             int projectID = (Globals.SelectedProjectProxy != null) ? Globals.SelectedProjectProxy.ProjectID : 0;
 
-            stageHistoryList = ProjectFunctions.StageHistoryList(clientID: clientID, statusFilter: Globals.SelectedStatusFilter, projectID: projectID, timelineType: currentType,
-                fromDate: fromDate, toDate: toDate, stageNumber: stageNumber);
+            stageHistoryList = ProjectFunctions.StageHistoryList(clientID: clientID, statusFilter: Globals.SelectedStatusFilter, projectID: projectID, 
+                timelineType: Globals.SelectedTimelineType, fromDate: Globals.SelectedFromDate, toDate: Globals.SelectedToDate, stageNumber: stageNumber);
 
             StageHistoryDataGrid.ItemsSource = stageHistoryList;
         }        
@@ -153,8 +150,7 @@ namespace ProjectTile
         {
             stageList = ProjectFunctions.StageFilterList();
             StageCombo.ItemsSource = stageList;
-            //StageCombo.SelectedItem = stageList.FirstOrDefault(sl => sl.ID == Globals.AllStages.ID);
-            StageCombo.SelectedItem = Globals.AllStages;
+            StageCombo.SelectedItem = Globals.SelectedStage;
         }
 
         // -------------- Data updates -------------- // 
@@ -182,26 +178,25 @@ namespace ProjectTile
             try
             {
                 if (ProjectFunctions.FullStageList == null || ProjectFunctions.FullStageList.Count() == 0) { return; } // Too early
-                else if (type == currentType) { return; } // Cancelling the earlier change
                 else
                 {
-                    currentType = type;
+                    Globals.SelectedTimelineType = type;
                     refreshHistoryDataGrid();
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error changing timeline type", generalException); }
         }
 
-        //private void setTimelineType(Globals.TimelineType type)
-        //{
-        //    switch (type)
-        //    {
-        //        case Globals.TimelineType.Actual: ActualRadio.IsChecked = true; break;
-        //        case Globals.TimelineType.Effective: EffectiveRadio.IsChecked = true; break;
-        //        case Globals.TimelineType.Target: TargetRadio.IsChecked = true; break;
-        //        default: EffectiveRadio.IsChecked = true; break;
-        //    }
-        //}
+        private void setTimelineType(Globals.TimelineType type)
+        {
+            switch (type)
+            {
+                case Globals.TimelineType.Actual: ActualRadio.IsChecked = true; break;
+                case Globals.TimelineType.Effective: EffectiveRadio.IsChecked = true; break;
+                case Globals.TimelineType.Target: TargetRadio.IsChecked = true; break;
+                default: EffectiveRadio.IsChecked = true; break;
+            }
+        }
 
         // ---------- Links to other pages ---------- //		
 
@@ -266,28 +261,20 @@ namespace ProjectTile
         {
             if (FromDate.SelectedDate != null)
             {
-                if (FromDate.SelectedDate != fromDate)
-                {
-                    fromDate = (DateTime)FromDate.SelectedDate;
-                    if (toDate != null && toDate < fromDate) { ToDate.SelectedDate = fromDate; }
-                    else { refreshHistoryDataGrid(); }
-                }
-            }
-            else { fromDate = Globals.StartOfTime; }            
+                Globals.SelectedFromDate = (DateTime)FromDate.SelectedDate;
+                if (Globals.SelectedToDate != null && Globals.SelectedToDate < Globals.SelectedFromDate) { ToDate.SelectedDate = Globals.SelectedFromDate; }
+                else { refreshHistoryDataGrid(); }
+            }      
         }
 
         private void ToDate_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ToDate.SelectedDate != null)
             {
-                if (ToDate.SelectedDate != toDate)
-                {
-                    toDate = (DateTime)ToDate.SelectedDate;
-                    if (fromDate != null && fromDate > toDate) { FromDate.SelectedDate = toDate; }
-                    else { refreshHistoryDataGrid(); }
-                }
+                Globals.SelectedToDate = (DateTime)ToDate.SelectedDate;
+                if (Globals.SelectedFromDate != null && Globals.SelectedFromDate > Globals.SelectedToDate) { FromDate.SelectedDate = Globals.SelectedToDate; }
+                else { refreshHistoryDataGrid(); }
             }
-            else { toDate = Globals.InfiniteDate; }
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -323,7 +310,16 @@ namespace ProjectTile
                 if (StageCombo.SelectedItem != null)
                 {
                     ProjectStages stageFilter = StageCombo.SelectedItem as ProjectStages;
-                    stageNumber = (stageFilter != null) ? stageFilter.StageNumber : -1;
+                    if (stageFilter != null)
+                    {
+                        Globals.SelectedStage = stageFilter;
+                        stageNumber = stageFilter.StageNumber;
+                    }
+                    else 
+                    {
+                        Globals.SelectedStage = Globals.AllStages;
+                        stageNumber = -1; 
+                    }
                     refreshHistoryDataGrid();
                 }
             }
