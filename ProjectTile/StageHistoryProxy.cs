@@ -13,8 +13,10 @@ namespace ProjectTile
         {
             get
             {
-                if (Type == TimelineType.Target || Stage.StageNumber > CurrentStageNumber) { return true; }
-                else if (Type == TimelineType.Actual || Stage.StageNumber <= CurrentStageNumber) { return false; }
+                if (Type == TimelineType.Actual) { return false; }
+                else if (Type == TimelineType.Target) { return true; }
+                else if (Stage.StageNumber <= CurrentStageNumber) { return false; }
+                else if (Stage.StageNumber > CurrentStageNumber) { return true; }
                 else { return null; }
             }
         }
@@ -39,6 +41,22 @@ namespace ProjectTile
             get
             {
                 return (Project != null) ? ProjectFunctions.ProjectCurrentStage(Project.ID).StageName : "";
+            }
+        }
+
+        public string CurrentProjectStatus
+        {
+            get
+            {
+                return (Project != null) ? ProjectFunctions.ProjectCurrentStage(Project.ID).ProjectStatus : "";
+            }
+        }
+
+        public bool IsOverdue
+        {
+            get
+            {
+                return (IsTarget == true && Stage.StageNumber > CurrentStageNumber && StartDate < Today);
             }
         }
 

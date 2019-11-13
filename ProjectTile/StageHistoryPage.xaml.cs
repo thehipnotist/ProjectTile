@@ -33,7 +33,6 @@ namespace ProjectTile
 
         private string statusDescription;
         private int stageNumber = -1;
-        private StageHistoryProxy selectedHistory = null;
 
         // ------------- Current records ------------ //        
 
@@ -95,14 +94,38 @@ namespace ProjectTile
         
         private void refreshHistoryDataGrid()
         {
-            if (!pageLoaded) { return; }
-            int clientID = (Globals.SelectedClientProxy != null) ? Globals.SelectedClientProxy.ID : 0;
-            int projectID = (Globals.SelectedProjectProxy != null) ? Globals.SelectedProjectProxy.ProjectID : 0;
+            try
+            {
+                if (!pageLoaded) { return; }
+                int clientID = (Globals.SelectedClientProxy != null) ? Globals.SelectedClientProxy.ID : 0;
+                int projectID = (Globals.SelectedProjectProxy != null) ? Globals.SelectedProjectProxy.ProjectID : 0;
 
-            stageHistoryList = ProjectFunctions.StageHistoryList(clientID: clientID, statusFilter: Globals.SelectedStatusFilter, projectID: projectID, 
-                timelineType: Globals.SelectedTimelineType, fromDate: Globals.SelectedFromDate, toDate: Globals.SelectedToDate, stageNumber: stageNumber);
+                stageHistoryList = ProjectFunctions.StageHistoryList(clientID: clientID, statusFilter: Globals.SelectedStatusFilter, projectID: projectID,
+                    timelineType: Globals.SelectedTimelineType, fromDate: Globals.SelectedFromDate, toDate: Globals.SelectedToDate, stageNumber: stageNumber);
 
-            StageHistoryDataGrid.ItemsSource = stageHistoryList;
+                int currentID = (Globals.SelectedHistory != null)? Globals.SelectedHistory.ID : 0;
+                StageHistoryProxy currentRecord = null;
+                StageHistoryDataGrid.ItemsSource = stageHistoryList;
+
+                if (stageHistoryList.Count > 0)
+                {
+                    try
+                    {
+                        if (currentID > 0 && stageHistoryList.Exists(shl => shl.ID == currentID))
+                        {
+                            currentRecord = stageHistoryList.FirstOrDefault(shl => shl.ID == currentID);
+                        }
+                        else
+                        {
+                            currentRecord = stageHistoryList.OrderBy(shl => Math.Abs(((DateTime)shl.StartDate - Globals.Today).Days)).FirstOrDefault();
+                        }
+                        StageHistoryDataGrid.SelectedItem = stageHistoryList.FirstOrDefault(shl => shl.ID == currentRecord.ID);
+                        StageHistoryDataGrid.ScrollIntoView(currentRecord);
+                    }
+                    catch { } // Do nothing, only the selection is affected
+                }
+            }
+            catch (Exception generalException) { MessageFunctions.Error("Error populating stage history (timeline) data", generalException); }
         }        
         
         private void refreshClientCombo()
@@ -251,7 +274,7 @@ namespace ProjectTile
                 {
                     Globals.SelectedProjectProxy = (ProjectProxy)ProjectCombo.SelectedItem;
                     refreshHistoryDataGrid();
-                    AmendButton.IsEnabled = (Globals.SelectedProjectProxy != Globals.AllProjects || selectedHistory != null);
+                    AmendButton.IsEnabled = (Globals.SelectedProjectProxy != Globals.AllProjects || Globals.SelectedHistory != null);
                 }
                 catch (Exception generalException) { MessageFunctions.Error("Error processing project selection", generalException); }
             }
@@ -284,8 +307,13 @@ namespace ProjectTile
 
         private void StageHistoryDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            selectedHistory = StageHistoryDataGrid.SelectedItem as StageHistoryProxy;
-            AmendButton.IsEnabled = (selectedHistory != null);
+            StageHistoryProxy currentRecord = StageHistoryDataGrid.SelectedItem as StageHistoryProxy;
+            if (currentRecord != null)
+            {
+                Globals.SelectedHistory = ProjectFunctions.GetHistoryRecord(currentRecord.ID);
+                AmendButton.IsEnabled = true;
+            }
+            else { AmendButton.IsEnabled = false; }
         }
 
         private void TargetRadio_Checked(object sender, RoutedEventArgs e)
@@ -328,7 +356,7 @@ namespace ProjectTile
 
         private void AmendButton_Click(object sender, RoutedEventArgs e)
         {
-            if (Globals.SelectedProjectProxy.ProjectID <= 0) { Globals.SelectedProjectProxy = ProjectFunctions.GetProjectProxy(selectedHistory.Project.ID); }
+            if (Globals.SelectedProjectProxy.ProjectID <= 0) { Globals.SelectedProjectProxy = ProjectFunctions.GetProjectProxy(Globals.SelectedHistory.ProjectID); }
             PageFunctions.ShowTimelinePage(pageMode);
         }
 

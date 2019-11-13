@@ -1829,7 +1829,7 @@ namespace ProjectTile
             }
         }
 
-        public static StageHistory GetHistoryRecord(int historyID)
+        public static StageHistory GetHistoryRecord(int historyID) // Overloaded below
         {
             try
             {
@@ -1842,6 +1842,25 @@ namespace ProjectTile
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error retrieving stage history details with ID " + historyID.ToString(), generalException);
+                return null;
+            }
+        }
+
+        public static StageHistory GetHistoryRecord(int projectID, int stageNumber) // Overloads above
+        {
+            try
+            {
+                int stageID = GetStageByNumber(stageNumber).ID;
+                
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return existingPtDb.StageHistory.FirstOrDefault(sh => sh.ProjectID == projectID && sh.StageID == stageID);
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving stage history details for project ID " + projectID.ToString() + " and stage number " + stageNumber.ToString(), generalException);
                 return null;
             }
         }

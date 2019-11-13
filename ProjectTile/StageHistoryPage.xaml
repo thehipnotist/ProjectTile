@@ -86,14 +86,17 @@
                                 <DataTrigger Binding="{Binding Path=IsTarget}" Value="True">
                                     <Setter Property="FontStyle" Value="Italic"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}"  Value="Closed">
+                                <DataTrigger Binding="{Binding Path=CurrentProjectStatus}"  Value="Closed">
                                     <Setter Property="Foreground" Value="DarkGray"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}"  Value="Not Started">
+                                <DataTrigger Binding="{Binding Path=CurrentProjectStatus}"  Value="Not Started">
                                     <Setter Property="Foreground" Value="LightBlue"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding Path=Stage.ProjectStatus}"  Value="Live">
+                                <DataTrigger Binding="{Binding Path=CurrentProjectStatus}"  Value="Live">
                                     <Setter Property="Foreground" Value="Green"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=IsOverdue}" Value="True">
+                                    <Setter Property="Foreground" Value="Red"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>

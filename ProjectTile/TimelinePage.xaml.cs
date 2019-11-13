@@ -36,6 +36,7 @@ namespace ProjectTile
         //Globals.TimelineType currentType = Globals.TimelineType.Effective;
         bool stageChanged = false;
         int currentStageNumber = 0;
+        int focusStage = 0;
 
         // ------------- Current records ------------ //
 
@@ -99,6 +100,7 @@ namespace ProjectTile
                 this.DataContext = currentTimeline;
                 currentStageNumber = currentTimeline.StageNumber;
                 displaySelectedStage();
+                if (Globals.SelectedHistory != null) { focusStage = ProjectFunctions.GetStageNumber(Globals.SelectedHistory.StageID); }
                 formatDatePickers();
             }
             catch (Exception generalException) { MessageFunctions.Error("Error displaying project status history timeline", generalException); }	
@@ -310,13 +312,16 @@ namespace ProjectTile
                 {
                     dateLabels[i].FontWeight = datePickers[i].FontWeight = (actual || (effective && i <= stageNumber)) ? FontWeights.Bold : FontWeights.Normal;
                     dateLabels[i].FontStyle = datePickers[i].FontStyle = (actual || (effective && i <= stageNumber)) ? FontStyles.Normal : FontStyles.Italic;
-                    datePickers[i].IsEnabled = (!viewOnly && (actual && i <= stageNumber || effective || target && i > stageNumber));
+                    datePickers[i].IsEnabled = (!viewOnly && (actual && i <= stageNumber || effective || target && i > stageNumber));                    
                 }
                 dateLabels[cancelledPosition].FontWeight = datePickers[cancelledPosition].FontWeight = (actual || (effective && stageNumber == Globals.CancelledStage)) ?
                     FontWeights.Bold : FontWeights.Normal;
                 dateLabels[cancelledPosition].FontStyle = datePickers[cancelledPosition].FontStyle = (actual || (effective && stageNumber == Globals.CancelledStage)) ?
                     FontStyles.Normal : FontStyles.Italic;
                 datePickers[cancelledPosition].IsEnabled = (!viewOnly && stageNumber == Globals.CancelledStage);
+
+                if (focusStage == Globals.CancelledStage) { datePickers[cancelledPosition].Focus(); }
+                else { datePickers[focusStage].Focus(); }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error highlighing date statuses", generalException); }	
         }
@@ -355,6 +360,7 @@ namespace ProjectTile
                 { 
                     currentTimeline.InitialDates[stageNumber] = newDate; // Update for future comparisons
                     CommitButton.IsEnabled = true;
+                    Globals.SelectedHistory = ProjectFunctions.GetHistoryRecord(Globals.SelectedProjectProxy.ProjectID, stageNumber);
                 } 
                 else { thisPicker.SelectedDate = oldDate; } // Undo change
             }

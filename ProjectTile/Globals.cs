@@ -129,6 +129,7 @@ namespace ProjectTile
         public static TimelineType SelectedTimelineType = DefaultTimelineType;
         public static DateTime SelectedFromDate = DefaultFromDate;
         public static DateTime SelectedToDate = DefaultToDate;
+        public static StageHistory SelectedHistory = null;
 
         // Page references
         public static string TilesPageName = "TilesPage";
@@ -165,14 +166,16 @@ namespace ProjectTile
             SelectedProjectRole = DefaultProjectRole;
             SelectedClientRole = DefaultClientRole;
 
-            SelectedTeamTimeFilter = DefaultTeamTimeFilter;
             ProjectSourcePage = TilesPageName;
             ProjectSourceMode = PageFunctions.None;
+
+            SelectedTeamTimeFilter = DefaultTeamTimeFilter;
             SelectedStage = DefaultStage;
             SelectedTimelineType = DefaultTimelineType;
             SelectedFromDate = DefaultFromDate;
             SelectedToDate = DefaultToDate;
-    }
+            SelectedHistory = null;
+        }
 
     } // class
 } // namespace
