@@ -35,6 +35,7 @@ namespace ProjectTile
         DateTime toDate = Globals.StartOfTime;
         private string statusDescription;
         private int stageNumber = -1;
+        private StageHistoryProxy selectedHistory = null;
 
         // ------------- Current records ------------ //
 
@@ -63,6 +64,7 @@ namespace ProjectTile
             try
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
+                Globals.ProjectSourceMode = pageMode;
             }
             catch (Exception generalException)
             {
@@ -76,9 +78,16 @@ namespace ProjectTile
             FromDate.SelectedDate = fromDate = Globals.OneMonthAgo;
             ToDate.SelectedDate = toDate = Globals.OneMonthAhead;            
             PageFunctions.ShowFavouriteButton();
+            if (pageMode == PageFunctions.View)
+            {                
+                AmendImage.SetResourceReference(Image.SourceProperty, "ViewIcon");
+                Instructions.Content += " Click 'Details' to see a project's full timeline.";
+            }
+            else { Instructions.Content += " Click 'Details' to amend a project's timeline."; }
 
             pageLoaded = true;
             refreshHistoryDataGrid();
+            Globals.ProjectSourcePage = "StageHistoryPage";
         }
 
         // ---------------------------------------------------------- //
@@ -240,13 +249,14 @@ namespace ProjectTile
 
         private void ProjectCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ProjectCombo.SelectedItem == null) { } // Do nothing - won't be for long             
+            if (ProjectCombo.SelectedItem == null) { AmendButton.IsEnabled = false; }     
             else 
             {
                 try
                 {
                     Globals.SelectedProjectProxy = (ProjectProxy)ProjectCombo.SelectedItem;
                     refreshHistoryDataGrid();
+                    AmendButton.IsEnabled = (Globals.SelectedProjectProxy != Globals.AllProjects || selectedHistory != null);
                 }
                 catch (Exception generalException) { MessageFunctions.Error("Error processing project selection", generalException); }
             }
@@ -287,7 +297,8 @@ namespace ProjectTile
 
         private void StageHistoryDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            selectedHistory = StageHistoryDataGrid.SelectedItem as StageHistoryProxy;
+            AmendButton.IsEnabled = (selectedHistory != null);
         }
 
         private void TargetRadio_Checked(object sender, RoutedEventArgs e)
@@ -317,6 +328,12 @@ namespace ProjectTile
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error handling stage selection", generalException); }
+        }
+
+        private void AmendButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (Globals.SelectedProjectProxy.ProjectID <= 0) { Globals.SelectedProjectProxy = ProjectFunctions.GetProjectProxy(selectedHistory.Project.ID); }
+            PageFunctions.ShowTimelinePage(pageMode);
         }
 
     } // class

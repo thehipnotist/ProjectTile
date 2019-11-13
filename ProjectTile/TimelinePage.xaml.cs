@@ -244,7 +244,7 @@ namespace ProjectTile
             MessageFunctions.CancelInfoAlert();
             bool closeFully = closeAll ? true : !fromProjectPage;
             if (closeFully) { ProjectFunctions.ReturnToTilesPage(); }
-            else { ProjectFunctions.ReturnToProjectPage(); }
+            else { ProjectFunctions.ReturnToSourcePage(pageMode); }
         }
 
         public void clearChanges()

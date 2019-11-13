@@ -91,6 +91,11 @@ namespace ProjectTile
             PageFunctions.ShowProjectPage(ProjectSourceMode, ProjectSourcePage);
         }
 
+        public static void ReturnToStageHistoryPage()
+        {
+            PageFunctions.ShowStageHistoryPage(ProjectSourceMode);
+        }
+
         public static void ReturnToSourcePage(string pageMode, int selectedID = 0)
         {
             switch(ProjectSourcePage)
@@ -106,6 +111,9 @@ namespace ProjectTile
                     break;
                 case "ProjectPage":
                     ReturnToProjectPage();
+                    break;
+                case "StageHistoryPage":
+                    ReturnToStageHistoryPage();
                     break;
                 default:
                     ReturnToProjectPage();

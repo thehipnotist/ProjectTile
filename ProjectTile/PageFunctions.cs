@@ -221,9 +221,9 @@ namespace ProjectTile
             ChangePage("ProjectContactsPage.xaml?Mode=" + pageMode + ",ContactID=" + selectedContactID.ToString());
         }
 
-        public static void ShowStageHistoryPage()
+        public static void ShowStageHistoryPage(string pageMode = "")
         {
-            string pageMode = MyPermissions.Allow("EditStageHistory") ? Amend : View;
+            if (pageMode == "" || pageMode == Amend) { pageMode = MyPermissions.Allow("EditStageHistory") ? Amend : View; }
             ChangePage("StageHistoryPage.xaml?Mode=" + pageMode);
         }
 
