@@ -2407,8 +2407,8 @@ namespace ProjectTile
                                         && (ct.FromDate == null || ct.FromDate <= Today)
                                         && (ct.ToDate == null || ct.ToDate >= Today)).Select(ct => ct.ClientTeamRoleCode).ToList();
                                     missingClientRoles = proxy.IsInternal ? "" : MissingTeamMembers(currentClientRoles, true);
-                                    clientAdded = ((existingProjectRecord.ClientID ?? 0) == 0 && client != null);
-                                    clientRemoved = ((existingProjectRecord.ClientID ?? 0) > 0 && client == null);
+                                    clientAdded = ((existingProjectRecord.ClientID ?? 0) == 0 && client != null && client.ID > 0);
+                                    clientRemoved = ((existingProjectRecord.ClientID ?? 0) > 0 && (client == null || client.ID <= 0));
                                     clientChanged = ((existingProjectRecord.ClientID ?? 0) > 0 && client != null && client.ID != existingProjectRecord.ClientID);
                                 }
                                 else
@@ -2464,7 +2464,7 @@ namespace ProjectTile
                                 errorDetails = ". The client cannot be removed, as products have been linked to the project (this may cause version/compatibility errors). If this change is "
                                     + "necessary, please first clear all linked products from the project via 'Project Products'.|Cannot Remove Client";
                             }
-                            else if (countDueActions > 0)
+                            else if (countDueActions > 0 && !proxy.IsCancelled)
                             {
                                 errorDetails = ". This project has open actions linked to earlier stages that must be completed before the project can progress to the selected stage. Please "
                                     + "reset the project stage (or cancel) and review the project's linked actions.|Outstanding Actions";
