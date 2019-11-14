@@ -88,6 +88,8 @@ namespace ProjectTile
                 ProjectStaff.Visibility = myPermissions.ShowOrCollapse("ViewProjectTeams");
                 ProjectContact.Visibility = myPermissions.ShowOrCollapse("ViewClientTeams");
                 ProjectProduct.Visibility = myPermissions.ShowOrCollapse("ViewProjectProducts");
+                ProjectTimeline.Visibility = myPermissions.ShowOrCollapse("ViewStageHistory");
+                ProjectAction.Visibility = myPermissions.ShowOrCollapse("ViewActions");
 
                 AuditLog.Visibility = myPermissions.ShowOrCollapse("ViewAuditEntries");
                 ErrorLog.Visibility = myPermissions.ShowOrCollapse("ViewErrorLog");
@@ -186,14 +188,17 @@ namespace ProjectTile
         {
             if (TilesPage)
             {
-                if (Globals.MyPermissions.Allow("ViewProjects") || Globals.MyPermissions.Allow("EditProjects")) { ProjectButton.Visibility = FavouriteButton.Visibility = Visibility.Visible; }
+                if (Globals.MyPermissions.Allow("ViewProjects") || Globals.MyPermissions.Allow("EditProjects")) 
+                { 
+                    ProjectButton.Visibility = ActionButton.Visibility = FavouriteButton.Visibility = Visibility.Visible; 
+                }
                 FavouriteButton.IsEnabled = (Globals.FavouriteProjectID > 0);
                 FavouriteButtonText.Text = "Main Project";
                 setFavouriteMode = false;
             }
             else
             {
-                ProjectButton.Visibility = FavouriteButton.Visibility = Visibility.Hidden;
+                ProjectButton.Visibility = ActionButton.Visibility = FavouriteButton.Visibility = Visibility.Hidden;
             }
         }
 
@@ -431,6 +436,11 @@ namespace ProjectTile
             PageFunctions.ShowProjectProductsPage();
         }
 
+        private void ProjectTimeline_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowStageHistoryPage();
+        }
+
         private void ProjectAction_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowActionsPage();
@@ -472,6 +482,11 @@ namespace ProjectTile
         private void ErrorLog_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowErrorPage();
+        }
+
+        private void ActionButton_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowActionsPage(pageMode:"", staffID: Globals.MyStaffID);
         }
 
 

@@ -72,6 +72,9 @@
     <Compile Include="Actions.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="StageHistoryPage.xaml.cs">
+      <DependentUpon>StageHistoryPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AdminFunctions.cs" />
     <Compile Include="AuditEntries.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
@@ -209,6 +212,7 @@
     <Compile Include="StageHistory.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="StageHistoryProxy.cs" />
     <Compile Include="stf_GetStaffByID_Result.cs">
       <DependentUpon>ProjectTileDataModel.tt</DependentUpon>
     </Compile>
@@ -306,6 +310,10 @@
       <DependentUpon>TilesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="TimelineProxy.cs" />
+    <Page Include="StageHistoryPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="ErrorPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

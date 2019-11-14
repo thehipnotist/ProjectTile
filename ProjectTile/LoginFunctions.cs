@@ -20,7 +20,8 @@ namespace ProjectTile
                 ProjectTileSqlDatabase defaultPtDb = SqlServerConnection.DefaultPtDbConnection();
                 using (defaultPtDb)
                 {
-                    Staff thisUser = defaultPtDb.Staff.First(s => s.UserID == userID);
+                    Staff thisUser = defaultPtDb.Staff.FirstOrDefault(s => s.UserID == userID);
+                    if (thisUser == null) { return false; }
                     var checkPasswordResults = defaultPtDb.stf_CheckHashedPassword(userID, password).ToList();
                     bool passwordMatches = (checkPasswordResults[0] == true);
                     return passwordMatches;

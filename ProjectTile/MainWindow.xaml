@@ -149,6 +149,11 @@
                         <Image Source="{DynamicResource ProductIcon}"/>
                     </MenuItem.Icon>
                 </MenuItem>
+                <MenuItem x:Name="ProjectTimeline" Header="Project Timelines" FontWeight="Normal" Background="{StaticResource PtBrushProject1}" Foreground="Black" Click="ProjectTimeline_Click">
+                    <MenuItem.Icon>
+                        <Image Source="{DynamicResource TimelineIcon}"/>
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem x:Name="ProjectAction" Header="Project Actions" FontWeight="Normal" Background="{StaticResource PtBrushProject1}" Foreground="Black" Click="ProjectAction_Click">
                     <MenuItem.Icon>
                         <Image Source="{DynamicResource ActionIcon}"/>
@@ -227,6 +232,14 @@
                 <TextBlock x:Name="ProjectButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="My Projects" Margin="5,0,0,0" VerticalAlignment="Center"/>
             </StackPanel>
         </Button>
+        <Button x:Name="ActionButton" HorizontalAlignment="Center" Height="30" Margin="18,0,17,165" VerticalAlignment="Bottom" Width="110" 
+            FontWeight="Bold" IsEnabled="True" Click="ActionButton_Click" Style="{StaticResource RoundedButton}" BorderBrush="{StaticResource PtBrushProject3}"
+            Grid.Column="1">
+            <StackPanel x:Name="ActionPanel" HorizontalAlignment="Left" VerticalAlignment="Center" Orientation="Horizontal">
+                <Image x:Name="ActionImage" HorizontalAlignment="Left" Height="20" VerticalAlignment="Center" Width="20" Source="{DynamicResource ActionIcon}"/>
+                <TextBlock x:Name="ActionButtonText" TextAlignment="Left" TextWrapping="Wrap" Text="My Actions" Margin="5,0,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Button>        
 
         <Border x:Name="FullBorder" BorderThickness="5" BorderBrush="{StaticResource PtBrushFrameBlue}" Grid.ColumnSpan="2" Width="Auto" MinHeight="580" MinWidth="840" HorizontalAlignment="Left" 
                 VerticalAlignment="Bottom">

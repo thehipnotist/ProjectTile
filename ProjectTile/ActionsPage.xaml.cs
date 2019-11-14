@@ -48,6 +48,7 @@ namespace ProjectTile
         string completedDescription = "No";
         ActionProxy selectedAction = null;
         string statusDescription = "";
+        int staffID = 0;
 
         // ------------- Current records ------------ //
 
@@ -77,7 +78,8 @@ namespace ProjectTile
             try
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
-                canEdit = (pageMode != PageFunctions.View && Globals.MyPermissions.Allow("EditActions"));                
+                canEdit = (pageMode != PageFunctions.View && Globals.MyPermissions.Allow("EditActions"));
+                staffID = Int32.Parse(PageFunctions.pageParameter(this, "StaffID"));
             }
             catch (Exception generalException)
             {
@@ -92,6 +94,7 @@ namespace ProjectTile
             FromDate.SelectedDate = fromDate = Globals.StartOfTime;
             ToDate.SelectedDate = toDate = Globals.OneMonthAhead;            
             setCompletedLists();
+            if (staffID > 0) { chooseCombinedStaffMember(staffID); }
 
             pageLoaded = true;
             refreshActionsGrid();
@@ -392,11 +395,12 @@ namespace ProjectTile
             else { PageHeader.Content = defaultHeader; }
         }
 
-        private void chooseCombinedStaffMember()
+        private void chooseCombinedStaffMember(int staffID = 0)
         {
             try
             {
-                Globals.SelectedOwner = (CombinedStaffMember) PossibleNames.SelectedItem;
+                if (staffID > 0) { Globals.SelectedOwner = ProjectFunctions.GetCombinedStaffMember(staffID, null); }
+                else { Globals.SelectedOwner = (CombinedStaffMember)PossibleNames.SelectedItem; }
                 NameLike.Text = Globals.SelectedOwner.FullName;
                 nameFilter();
             }

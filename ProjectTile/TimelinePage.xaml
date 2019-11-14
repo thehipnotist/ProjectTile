@@ -34,7 +34,7 @@
 
                 <Label x:Name="PreProjectLabel" Content="Pre-Project" HorizontalAlignment="Left" Height="30" Margin="15,50,0,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
                 <DatePicker x:Name="PreProject" HorizontalAlignment="Left" Height="30" Margin="95,50,0,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage0Date, Mode=TwoWay}" LostFocus="CheckDate">
+                            Padding="5" SelectedDate="{Binding Path=Stage0Date, Mode=TwoWay}" SelectedDateChanged="CheckDate">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
                             <Setter Property="Text" Value=" "/>
@@ -51,7 +51,7 @@
                 <Label x:Name="InitiationLabel" Content="Initiation" HorizontalAlignment="Center" Height="30" Margin="230,50,345,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"
                        Foreground="Blue"/>
                 <DatePicker x:Name="Initiation" HorizontalAlignment="Center" Height="30" Margin="310,50,230,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage1Date, Mode=TwoWay}" LostFocus="CheckDate" Foreground="Blue" BorderBrush="Blue">
+                            Padding="5" SelectedDate="{Binding Path=Stage1Date, Mode=TwoWay}" SelectedDateChanged="CheckDate" Foreground="Blue" BorderBrush="Blue">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
                             <Setter Property="Text" Value=" "/>
@@ -67,7 +67,7 @@
                 </DatePicker>
                 <Label x:Name="TechPrepLabel" Content="Tech Prep" HorizontalAlignment="Right" Height="30" Margin="0,50,130,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
                 <DatePicker x:Name="TechPrep" HorizontalAlignment="Right" Height="30" Margin="0,50,15,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage2Date, Mode=TwoWay}" LostFocus="CheckDate">
+                            Padding="5" SelectedDate="{Binding Path=Stage2Date, Mode=TwoWay}" SelectedDateChanged="CheckDate">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
                             <Setter Property="Text" Value=" "/>
@@ -84,7 +84,7 @@
 
                 <Label x:Name="DesignLabel" Content="Design" HorizontalAlignment="Left" Height="30" Margin="15,95,0,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
                 <DatePicker x:Name="Design" HorizontalAlignment="Left" Height="30" Margin="95,95,0,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage3Date, Mode=TwoWay}" LostFocus="CheckDate">
+                            Padding="5" SelectedDate="{Binding Path=Stage3Date, Mode=TwoWay}" SelectedDateChanged="CheckDate">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
                             <Setter Property="Text" Value=" "/>
@@ -100,7 +100,7 @@
                 </DatePicker>
                 <Label x:Name="InstallationLabel" Content="Installation" HorizontalAlignment="Center" Height="30" Margin="230,95,345,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
                 <DatePicker x:Name="Installation" HorizontalAlignment="Center" Height="30" Margin="310,95,230,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage4Date, Mode=TwoWay}" LostFocus="CheckDate">
+                            Padding="5" SelectedDate="{Binding Path=Stage4Date, Mode=TwoWay}" SelectedDateChanged="CheckDate">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
                             <Setter Property="Text" Value=" "/>
@@ -116,7 +116,7 @@
                 </DatePicker>
                 <Label x:Name="DataMigrationLabel" Content="Migration" HorizontalAlignment="Right" Height="30" Margin="0,95,130,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
                 <DatePicker x:Name="DataMigration" HorizontalAlignment="Right" Height="30" Margin="0,95,15,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage5Date, Mode=TwoWay}" LostFocus="CheckDate">
+                            Padding="5" SelectedDate="{Binding Path=Stage5Date, Mode=TwoWay}" SelectedDateChanged="CheckDate">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
                             <Setter Property="Text" Value=" "/>
@@ -133,7 +133,7 @@
 
                 <Label x:Name="ConfigurationLabel" Content="Configure" HorizontalAlignment="Left" Height="30" Margin="15,140,0,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
                 <DatePicker x:Name="Configuration" HorizontalAlignment="Left" Height="30" Margin="95,140,0,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage6Date, Mode=TwoWay}" LostFocus="CheckDate">
+                            Padding="5" SelectedDate="{Binding Path=Stage6Date, Mode=TwoWay}" SelectedDateChanged="CheckDate">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
                             <Setter Property="Text" Value=" "/>
@@ -149,7 +149,7 @@
                 </DatePicker>
                 <Label x:Name="SystemTestLabel" Content="System Test" HorizontalAlignment="Center" Height="30" Margin="230,140,345,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
                 <DatePicker x:Name="SystemTest" HorizontalAlignment="Center" Height="30" Margin="310,140,230,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage7Date, Mode=TwoWay}" LostFocus="CheckDate">
+                            Padding="5" SelectedDate="{Binding Path=Stage7Date, Mode=TwoWay}" SelectedDateChanged="CheckDate">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
                             <Setter Property="Text" Value=" "/>
@@ -165,7 +165,7 @@
                 </DatePicker>
                 <Label x:Name="TrainAdminLabel" Content="Train Admin" HorizontalAlignment="Right" Height="30" Margin="0,140,130,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
                 <DatePicker x:Name="TrainAdmin" HorizontalAlignment="Right" Height="30" Margin="0,140,15,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage8Date, Mode=TwoWay}" LostFocus="CheckDate">
+                            Padding="5" SelectedDate="{Binding Path=Stage8Date, Mode=TwoWay}" SelectedDateChanged="CheckDate">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
                             <Setter Property="Text" Value=" "/>
@@ -182,7 +182,7 @@
 
                 <Label x:Name="UserTestLabel" Content="User Test" HorizontalAlignment="Left" Height="30" Margin="15,185,0,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
                 <DatePicker x:Name="UserTest" HorizontalAlignment="Left" Height="30" Margin="95,185,0,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage9Date, Mode=TwoWay}" LostFocus="CheckDate">
+                            Padding="5" SelectedDate="{Binding Path=Stage9Date, Mode=TwoWay}" SelectedDateChanged="CheckDate">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
                             <Setter Property="Text" Value=" "/>
@@ -198,7 +198,7 @@
                 </DatePicker>
                 <Label x:Name="TrainUsersLabel" Content="Train Users" HorizontalAlignment="Center" Height="30" Margin="230,185,345,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
                 <DatePicker x:Name="TrainUsers" HorizontalAlignment="Center" Height="30" Margin="310,185,230,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage10Date, Mode=TwoWay}" LostFocus="CheckDate">
+                            Padding="5" SelectedDate="{Binding Path=Stage10Date, Mode=TwoWay}" SelectedDateChanged="CheckDate">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
                             <Setter Property="Text" Value=" "/>
@@ -214,7 +214,7 @@
                 </DatePicker>
                 <Label x:Name="LivePrepLabel" Content="Live Prep" HorizontalAlignment="Right" Height="30" Margin="0,185,130,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
                 <DatePicker x:Name="LivePrep" HorizontalAlignment="Right" Height="30" Margin="0,185,15,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage11Date, Mode=TwoWay}" LostFocus="CheckDate">
+                            Padding="5" SelectedDate="{Binding Path=Stage11Date, Mode=TwoWay}" SelectedDateChanged="CheckDate">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
                             <Setter Property="Text" Value=" "/>
@@ -231,7 +231,7 @@
 
                 <Label x:Name="GoLiveLabel" Content="Go-Live" HorizontalAlignment="Left" Height="30" Margin="15,230,0,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
                 <DatePicker x:Name="GoLive" HorizontalAlignment="Left" Height="30" Margin="95,230,0,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage12Date, Mode=TwoWay, TargetNullValue=''}" LostFocus="CheckDate">
+                            Padding="5" SelectedDate="{Binding Path=Stage12Date, Mode=TwoWay, TargetNullValue=''}" SelectedDateChanged="CheckDate">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
                             <Setter Property="Text" Value=" "/>
@@ -248,7 +248,7 @@
                 <Label x:Name="LiveRunningLabel" Content="Live Run" HorizontalAlignment="Center" Height="30" Margin="230,230,345,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"
                         Foreground="Green"/>
                 <DatePicker x:Name="LiveRunning" HorizontalAlignment="Center" Height="30" Margin="310,230,230,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage13Date, Mode=TwoWay}" LostFocus="CheckDate" Foreground="Green" BorderBrush="Green">
+                            Padding="5" SelectedDate="{Binding Path=Stage13Date, Mode=TwoWay}" SelectedDateChanged="CheckDate" Foreground="Green" BorderBrush="Green">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
                             <Setter Property="Text" Value=" "/>
@@ -264,7 +264,7 @@
                 </DatePicker>
                 <Label x:Name="PostLiveLabel" Content="Post-Live" HorizontalAlignment="Right" Height="30" Margin="0,230,130,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
                 <DatePicker x:Name="PostLive" HorizontalAlignment="Right" Height="30" Margin="0,230,15,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage14Date, Mode=TwoWay}" LostFocus="CheckDate">
+                            Padding="5" SelectedDate="{Binding Path=Stage14Date, Mode=TwoWay}" SelectedDateChanged="CheckDate">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
                             <Setter Property="Text" Value=" "/>
@@ -281,7 +281,7 @@
 
                 <Label x:Name="ClosureLabel" Content="Closure" HorizontalAlignment="Left" Height="30" Margin="15,275,0,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"/>
                 <DatePicker x:Name="Closure" HorizontalAlignment="Left" Height="30" Margin="95,275,0,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage15Date, Mode=TwoWay}" LostFocus="CheckDate">
+                            Padding="5" SelectedDate="{Binding Path=Stage15Date, Mode=TwoWay}" SelectedDateChanged="CheckDate">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
                             <Setter Property="Text" Value=" "/>
@@ -298,7 +298,7 @@
                 <Label x:Name="CompletedLabel" Content="Completed" HorizontalAlignment="Center" Height="30" Margin="230,275,345,0" VerticalAlignment="Top" Width="85" FontWeight="Bold"
                        Foreground="Blue"/>
                 <DatePicker x:Name="Completed" HorizontalAlignment="Center" Height="30" Margin="310,275,230,0" VerticalAlignment="Top" Width="110" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage16Date, Mode=TwoWay}" LostFocus="CheckDate" Foreground="Blue" BorderBrush="Blue">
+                            Padding="5" SelectedDate="{Binding Path=Stage16Date, Mode=TwoWay}" SelectedDateChanged="CheckDate" Foreground="Blue" BorderBrush="Blue">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
                             <Setter Property="Text" Value=" "/>
@@ -315,7 +315,7 @@
                 <Label x:Name="CancelledLabel" Content="Cancelled" HorizontalAlignment="Right" Height="30" Margin="0,315,130,60" VerticalAlignment="Bottom" Width="85" FontWeight="Bold"
                        Foreground="Red"/>
                 <DatePicker x:Name="Cancelled" HorizontalAlignment="Right" Height="30" Margin="0,0,15,60" VerticalAlignment="Bottom" Width="110" SelectedDateFormat="Short" Background="White"
-                            Padding="5" SelectedDate="{Binding Path=Stage99Date, Mode=TwoWay}" LostFocus="CheckDate" Foreground="Red" BorderBrush="Red">
+                            Padding="5" SelectedDate="{Binding Path=Stage99Date, Mode=TwoWay}" SelectedDateChanged="CheckDate" Foreground="Red" BorderBrush="Red">
                     <DatePicker.Resources>
                         <Style TargetType="{x:Type DatePickerTextBox}">
                             <Setter Property="Text" Value=" "/>
@@ -337,7 +337,7 @@
                         <RadioButton x:Name="ActualRadio" Content="Actual" Height="30" Width="Auto" FontWeight="Bold" Padding="5" HorizontalAlignment="Right"
                                  VerticalContentAlignment="Center" Checked="ActualRadio_Checked"/>
                         <RadioButton x:Name="EffectiveRadio" Content="Effective" Height="30" Width="Auto" FontWeight="Bold" Padding="5" HorizontalAlignment="Right"
-                                 VerticalContentAlignment="Center" Checked="EffectiveRadio_Checked" FontStyle="Italic" IsChecked="True"/>
+                                 VerticalContentAlignment="Center" Checked="EffectiveRadio_Checked" FontStyle="Italic"/>
                     </DockPanel>
                 </GroupBox>
 

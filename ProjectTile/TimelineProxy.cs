@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 
 namespace ProjectTile
 {
@@ -14,6 +11,8 @@ namespace ProjectTile
         public Hashtable InitialDates = new Hashtable();
         private ProjectStages stage;
 
+        public int ProjectID { get; set; }
+        
         public TimelineType TimeType { get; set; }
         public ProjectStages Stage
         {

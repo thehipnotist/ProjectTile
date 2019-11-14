@@ -51,6 +51,7 @@ namespace ProjectTile
         public static ClientTeamRoles AllClientRoles = new ClientTeamRoles { RoleCode = AllCodes, RoleDescription = AllRecords };
         public static StaffProxy AllStaff = new StaffProxy { ID = 0, FirstName = AllRecords, Surname = "", Active = true, UserID = AllCodes };
         public static ProjectStages NoStage = new ProjectStages { ID = NoID, StageNumber = NoID, StageName = "", StageDescription = "" };
+        public static ProjectStages AllStages = new ProjectStages { ID = NoID, StageNumber = NoID, StageName = "<All Stages>", StageDescription = "<All Stages>" };
 
         // Project roles
         public const string AccountManagerCode = "AM";
@@ -85,14 +86,30 @@ namespace ProjectTile
         public const string LiveStatus = "Live";
         public const string ClosedStatus = "Closed";
 
+        // Dates
+        public static DateTime Today = DateTime.Today;
+        public static DateTime Yesterday = Today.AddDays(-1);
+        public static DateTime OneMonthAgo = Today.AddMonths(-1);
+        public static DateTime OneMonthAhead = Today.AddMonths(1);
+        public static DateTime StartOfTime = new DateTime(2000, 1, 1);
+        public static DateTime InfiniteDate = DateTime.MaxValue;
+        public static DateTime StartOfMonth = new DateTime(Today.Year, Today.Month, 1);
+        public static DateTime StartOfYear = new DateTime(Today.Year, 1, 1);
+        public static DateTime EndOfYear = new DateTime(Today.Year, 12, 31);
+
         // Default records
         public static ClientProxy DefaultClientProxy = AnyClient;
         public static StaffProxy DefaultPMProxy = AllPMs;
         public static ProjectStatusFilter DefaultStatusFilter = ProjectStatusFilter.Current;
         public static ProjectRoles DefaultProjectRole = AllProjectRoles;
         public static ClientTeamRoles DefaultClientRole = AllClientRoles;
+
         public static ProjectProxy DefaultProjectProxy = AllProjects;
         public static TeamTimeFilter DefaultTeamTimeFilter = TeamTimeFilter.Future;
+        public static ProjectStages DefaultStage = AllStages;
+        public static TimelineType DefaultTimelineType = TimelineType.Effective;
+        public static DateTime DefaultFromDate = (StartOfYear < OneMonthAgo)? StartOfYear : OneMonthAgo;
+        public static DateTime DefaultToDate = (EndOfYear > OneMonthAhead)? EndOfYear : OneMonthAhead;
 
         // Selected records affecting multiple pages
         public static Clients SelectedClient = null;
@@ -108,6 +125,12 @@ namespace ProjectTile
         public static ClientTeamRoles SelectedClientRole = DefaultClientRole;
         public static TeamTimeFilter SelectedTeamTimeFilter = DefaultTeamTimeFilter;
 
+        public static ProjectStages SelectedStage = DefaultStage;
+        public static TimelineType SelectedTimelineType = DefaultTimelineType;
+        public static DateTime SelectedFromDate = DefaultFromDate;
+        public static DateTime SelectedToDate = DefaultToDate;
+        public static StageHistory SelectedHistory = null;
+
         // Page references
         public static string TilesPageName = "TilesPage";
         public const string TilesPageURI = "TilesPage.xaml";
@@ -120,15 +143,6 @@ namespace ProjectTile
         // Formats
         public static Regex ClientVersionFormat = new Regex("^[0-9]{0,2}[.]{0,1}[0-9]{0,1}$");
         public static Regex LatestVersionFormat = new Regex("^[0-9]{0,2}[.]{0,1}[0-9]{0,2}$");
-
-        // Dates
-        public static DateTime Today = DateTime.Today;
-        public static DateTime Yesterday = Today.AddDays(-1);
-        public static DateTime OneMonthAgo = Today.AddMonths(-1);
-        public static DateTime OneMonthAhead = Today.AddMonths(1);
-        public static DateTime StartOfTime = new DateTime(2000, 1, 1); 
-        public static DateTime InfiniteDate = Today.AddYears(999);
-        public static DateTime StartOfMonth = new DateTime(Today.Year, Today.Month, 1);
 
         // Shared methods
         public static void ResetProductParameters()
@@ -151,9 +165,16 @@ namespace ProjectTile
             SelectedProjectProxy = DefaultProjectProxy;
             SelectedProjectRole = DefaultProjectRole;
             SelectedClientRole = DefaultClientRole;
-            SelectedTeamTimeFilter = DefaultTeamTimeFilter;
+
             ProjectSourcePage = TilesPageName;
             ProjectSourceMode = PageFunctions.None;
+
+            SelectedTeamTimeFilter = DefaultTeamTimeFilter;
+            SelectedStage = DefaultStage;
+            SelectedTimelineType = DefaultTimelineType;
+            SelectedFromDate = DefaultFromDate;
+            SelectedToDate = DefaultToDate;
+            SelectedHistory = null;
         }
 
     } // class

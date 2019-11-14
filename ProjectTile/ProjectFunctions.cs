@@ -91,6 +91,11 @@ namespace ProjectTile
             PageFunctions.ShowProjectPage(ProjectSourceMode, ProjectSourcePage);
         }
 
+        public static void ReturnToStageHistoryPage()
+        {
+            PageFunctions.ShowStageHistoryPage(ProjectSourceMode);
+        }
+
         public static void ReturnToSourcePage(string pageMode, int selectedID = 0)
         {
             switch(ProjectSourcePage)
@@ -106,6 +111,9 @@ namespace ProjectTile
                     break;
                 case "ProjectPage":
                     ReturnToProjectPage();
+                    break;
+                case "StageHistoryPage":
+                    ReturnToStageHistoryPage();
                     break;
                 default:
                     ReturnToProjectPage();
@@ -127,7 +135,7 @@ namespace ProjectTile
         
         public static Visibility BackButtonVisibility(string thisPage = "")
         {
-            return (ProjectSourcePage != Globals.TilesPageName && ProjectSourcePage != thisPage)? Visibility.Visible : Visibility.Hidden;
+            return (ProjectSourcePage != TilesPageName && ProjectSourcePage != thisPage)? Visibility.Visible : Visibility.Hidden;
         }
 
         public static string BackButtonTooltip()
@@ -374,7 +382,7 @@ namespace ProjectTile
                 else { return; }
             }
 
-            Globals.SelectedProjectProxy = GetProjectProxy(FavouriteProjectID);
+            SelectedProjectProxy = GetProjectProxy(FavouriteProjectID);
             PageFunctions.ShowProjectPage(PageFunctions.Amend);
         }
 
@@ -451,6 +459,14 @@ namespace ProjectTile
                 }
             }
             catch (Exception generalException) { MessageFunctions.Error("Error retrieving list of project stages", generalException); }
+        }
+
+        public static List<ProjectStages> StageFilterList()
+        {
+            SetFullStageList();
+            List<ProjectStages> returnList = FullStageList;
+            returnList.Add(AllStages);
+            return returnList;
         }
 
         public static ProjectStages GetStageByNumber(int stageNumber)
@@ -1250,7 +1266,7 @@ namespace ProjectTile
             {
                 return new ProjectContactProxy
                 {
-                    ID = Globals.NoID,
+                    ID = NoID,
                     Project = thisProject,
                     Contact = new ContactProxy
                     {
@@ -1461,6 +1477,26 @@ namespace ProjectTile
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error retrieving list of combined staff members", generalException);
+                return null;
+            }
+        }
+
+        public static CombinedStaffMember GetCombinedStaffMember(int? staffID, int? contactID)
+        {
+            try
+            {
+                List<CombinedStaffMember> allStaffMembers = CombinedStaffList("", 0, 0);
+                if (staffID > 0) { return allStaffMembers.FirstOrDefault(asm => asm.StaffMember.ID == staffID); }
+                else if (contactID > 0) { return allStaffMembers.FirstOrDefault(asm => asm.ClientContact.ID == contactID); }
+                else
+                {
+                    MessageFunctions.Error("Error retrieving combined staff member: no internal or client staff ID provided.", null);
+                    return null;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving combined staff member", generalException);
                 return null;
             }
         }
@@ -1762,6 +1798,7 @@ namespace ProjectTile
                 maxNonCancelledStage = MaxNonCancelledStage();
 
                 TimelineProxy timeline = new TimelineProxy();
+                timeline.ProjectID = projectID;
                 timeline.Stage = stage;
                 timeline.TimeType = type;
                 for (int i=0; i<=maxNonCancelledStage; i++)
@@ -1793,7 +1830,7 @@ namespace ProjectTile
             }
         }
 
-        public static StageHistory GetHistoryRecord(int historyID)
+        public static StageHistory GetHistoryRecord(int historyID) // Overloaded below
         {
             try
             {
@@ -1806,6 +1843,25 @@ namespace ProjectTile
             catch (Exception generalException)
             {
                 MessageFunctions.Error("Error retrieving stage history details with ID " + historyID.ToString(), generalException);
+                return null;
+            }
+        }
+
+        public static StageHistory GetHistoryRecord(int projectID, int stageNumber) // Overloads above
+        {
+            try
+            {
+                int stageID = GetStageByNumber(stageNumber).ID;
+                
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    return existingPtDb.StageHistory.FirstOrDefault(sh => sh.ProjectID == projectID && sh.StageID == stageID);
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving stage history details for project ID " + projectID.ToString() + " and stage number " + stageNumber.ToString(), generalException);
                 return null;
             }
         }
@@ -1837,12 +1893,78 @@ namespace ProjectTile
             }
         }
 
-        public static DateTime? EffectiveStageEndDate(int projectID, int stageNumber)
+        public static DateTime? StageEndDate(int projectID, int stageNumber, bool? target = null)
         {
-            int nextStage = (stageNumber == MaxNonCancelledStage())? CancelledStage : stageNumber + 1;
-            DateTime? nextStageStart = GetStageStartDate(projectID, nextStage, null);
+            int nextStage = stageNumber;
+            DateTime? nextStageStart = null;
+            while (nextStageStart == null && nextStage < CancelledStage)
+            {
+                nextStage = (nextStage == MaxNonCancelledStage()) ? CancelledStage : nextStage + 1;
+                nextStageStart = GetStageStartDate(projectID, nextStage, target);
+            }
             if (nextStageStart == null) { return null; }
             else { return ((DateTime)nextStageStart).AddDays(-1); }
+        }
+
+        public static List<StageHistoryProxy> StageHistoryList(int clientID, ProjectStatusFilter statusFilter, int projectID, TimelineType timelineType, 
+                                                                DateTime fromDate, DateTime toDate, int stageNumber)
+        {
+            try
+            {
+                bool actual = (timelineType == TimelineType.Actual);
+                bool target = (timelineType == TimelineType.Target);
+                bool effective = (timelineType == TimelineType.Effective);
+
+                ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
+                using (existingPtDb)
+                {
+                    List<StageHistory> initialList;
+                    if (projectID > 0) { initialList = existingPtDb.StageHistory.Where(sh => sh.ProjectID == projectID).ToList(); }
+                    else
+                    {
+                        SetProjectFilterList(statusFilter, true, clientID, false);
+                        List<int> projectIDs = ProjectFilterList.Select(pfl => pfl.ProjectID).ToList();
+
+                        initialList = (from sh in existingPtDb.StageHistory
+                                       where projectIDs.Contains(sh.ProjectID)
+                                       select sh)
+                                       .ToList();
+                    }
+
+                    int stageID = (stageNumber < 0) ? stageNumber : GetStageByNumber(stageNumber).ID;
+                    DateTime maxDate = toDate.AddDays(1);
+                    List<StageHistory> filteredList = initialList.Where(il => (stageNumber < 0 || il.StageID == stageID) &&
+                        (
+                            (actual && il.ActualStart != null && il.ActualStart >= fromDate && il.ActualStart < maxDate)
+                            || (target && il.TargetStart != null && il.TargetStart >= fromDate && il.TargetStart < maxDate)
+                            || (effective && il.EffectiveStart != null && il.EffectiveStart >= fromDate && il.EffectiveStart < maxDate)
+                        )
+                    ).ToList();
+
+                    List<StageHistoryProxy> returnList = new List<StageHistoryProxy>();
+                    foreach (StageHistory sh in filteredList)
+                    {
+                        Projects thisProject = GetProject(sh.ProjectID);
+                        ProjectStages thisStage = GetStageByID(sh.StageID);
+                        StageHistoryProxy thisProxy = new StageHistoryProxy
+                        {
+                            ID = sh.ID,
+                            Project = thisProject,
+                            Stage = thisStage,
+                            Type = timelineType,
+                            StartDate = actual? sh.ActualStart : (target? sh.TargetStart : sh.EffectiveStart)
+                        };
+                        returnList.Add(thisProxy);
+                    };
+
+                    return returnList;
+                }
+            }
+            catch (Exception generalException)
+            {
+                MessageFunctions.Error("Error retrieving stage history details for the set filters", generalException);
+                return null;
+            }
         }
 
         // Actions
@@ -1930,7 +2052,7 @@ namespace ProjectTile
 
         public static bool StageFitsDates(int projectID, int stageNumber, DateTime fromDate, DateTime toDate)
         {
-            DateTime? stageEnd = EffectiveStageEndDate(projectID, stageNumber);
+            DateTime? stageEnd = StageEndDate(projectID, stageNumber);
             if (stageEnd == null) { return true; } // Shouldn't happen, but if no stage end is set the action should not be lost
             else 
             {
@@ -2286,8 +2408,8 @@ namespace ProjectTile
                                         && (ct.FromDate == null || ct.FromDate <= Today)
                                         && (ct.ToDate == null || ct.ToDate >= Today)).Select(ct => ct.ClientTeamRoleCode).ToList();
                                     missingClientRoles = proxy.IsInternal ? "" : MissingTeamMembers(currentClientRoles, true);
-                                    clientAdded = ((existingProjectRecord.ClientID ?? 0) == 0 && client != null);
-                                    clientRemoved = ((existingProjectRecord.ClientID ?? 0) > 0 && client == null);
+                                    clientAdded = ((existingProjectRecord.ClientID ?? 0) == 0 && client != null && client.ID > 0);
+                                    clientRemoved = ((existingProjectRecord.ClientID ?? 0) > 0 && (client == null || client.ID <= 0));
                                     clientChanged = ((existingProjectRecord.ClientID ?? 0) > 0 && client != null && client.ID != existingProjectRecord.ClientID);
                                 }
                                 else
@@ -2343,7 +2465,7 @@ namespace ProjectTile
                                 errorDetails = ". The client cannot be removed, as products have been linked to the project (this may cause version/compatibility errors). If this change is "
                                     + "necessary, please first clear all linked products from the project via 'Project Products'.|Cannot Remove Client";
                             }
-                            else if (countDueActions > 0)
+                            else if (countDueActions > 0 && !proxy.IsCancelled)
                             {
                                 errorDetails = ". This project has open actions linked to earlier stages that must be completed before the project can progress to the selected stage. Please "
                                     + "reset the project stage (or cancel) and review the project's linked actions.|Outstanding Actions";
@@ -3541,9 +3663,13 @@ namespace ProjectTile
         {
             try
             {
+                ProjectProxy projectProxy = GetProjectProxy(thisTimeline.ProjectID);
                 string congratulations = "";
-                if (stageChanged && !ValidateProject(Globals.SelectedProjectProxy, true, false)) { return false; }
-                int projectID = Globals.SelectedProjectProxy.ProjectID;
+                if (stageChanged)
+                {
+                    projectProxy.Stage = GetStageByID(thisTimeline.Stage.ID);
+                    if (!ValidateProject(projectProxy, true, false)) { return false; }
+                }
 
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
@@ -3552,15 +3678,15 @@ namespace ProjectTile
                     {
                         if (stageChanged)
                         {
-                            Projects thisProject = existingPtDb.Projects.Where(p => p.ID == projectID).FirstOrDefault();
+                            Projects thisProject = existingPtDb.Projects.Where(p => p.ID == thisTimeline.ProjectID).FirstOrDefault();
                             if (thisProject == null)
                             {
                                 MessageFunctions.Error("Error saving project amendments to the database: no matching project found.", null);
                                 return false;
                             }
-                            int originalStageNumber = ProjectCurrentStage(projectID).StageNumber;
+                            int originalStageNumber = ProjectCurrentStage(thisTimeline.ProjectID).StageNumber;
                             thisProject.StageID = thisTimeline.StageID;
-                            bool stageManaged = HandleStageChanges(Globals.SelectedProjectProxy, originalStageNumber, out congratulations);                            
+                            bool stageManaged = HandleStageChanges(projectProxy, originalStageNumber, out congratulations);                            
                             if (!stageManaged) { return false; }
                             existingPtDb.SaveChanges();
                         }
@@ -3579,12 +3705,12 @@ namespace ProjectTile
                         bool target = (thisTimeline.TimeType == TimelineType.Target || (thisTimeline.TimeType == TimelineType.Effective && thisStage.StageNumber > currentStage));                        
 
                         DateTime? newDate = (DateTime?) thisTimeline.DateHash[thisStage.StageNumber];
-                        StageHistory stageHist = existingPtDb.StageHistory.FirstOrDefault(sh => sh.ProjectID == projectID && sh.StageID == thisStage.ID);
+                        StageHistory stageHist = existingPtDb.StageHistory.FirstOrDefault(sh => sh.ProjectID == thisTimeline.ProjectID && sh.StageID == thisStage.ID);
                         if (stageHist == null)
                         {
                             stageHist = new StageHistory
                             {
-                                ProjectID = projectID,
+                                ProjectID = thisTimeline.ProjectID,
                                 StageID = thisStage.ID,
                                 TargetStart = target? newDate : null,
                                 ActualStart = target? null : newDate

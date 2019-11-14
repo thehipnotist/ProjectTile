@@ -118,12 +118,17 @@ namespace ProjectTile
 
                 if (myPermissions.Allow("ViewProjects")) { projectButtons.Add(ProjectButton_View); }
                 if (myPermissions.Allow("AddProjects")) { projectButtons.Add(ProjectButton_New); }
-                else { ProjectButton_Amend.Margin = ProjectButton_New.Margin; }
+                else 
+                {
+                    ProjectButton_Action.Margin = ProjectButton_Amend.Margin;
+                    ProjectButton_Amend.Margin = ProjectButton_New.Margin;
+                }
                 if (myPermissions.Allow("EditProjects")) { projectButtons.Add(ProjectButton_Amend); }
                 if (myPermissions.Allow("ViewProjectTeams")) { projectButtons.Add(ProjectButton_Staff); }
                 if (myPermissions.Allow("ViewProjectProducts")) { projectButtons.Add(ProjectButton_Product); }
                 else { ProjectButton_Contact.Margin = ProjectButton_Product.Margin; }
                 if (myPermissions.Allow("ViewClientTeams")) { projectButtons.Add(ProjectButton_Contact); }
+                if (myPermissions.Allow("ViewStageHistory")) { projectButtons.Add(ProjectButton_Timeline); }
                 if (myPermissions.Allow("ViewActions")) { projectButtons.Add(ProjectButton_Action); }
 
                 helpButtons.Add(HelpButton_About);
@@ -428,6 +433,11 @@ namespace ProjectTile
             PageFunctions.ShowProjectTeamsPage();
         }
 
+        private void ProjectButton_Timeline_Click(object sender, RoutedEventArgs e)
+        {
+            PageFunctions.ShowStageHistoryPage();
+        }
+
         private void ProjectButton_Action_Click(object sender, RoutedEventArgs e)
         {
             PageFunctions.ShowActionsPage();
@@ -452,6 +462,7 @@ namespace ProjectTile
         {
             PageFunctions.ShowErrorPage();
         }
+
 
     } // class
 } // namespace
