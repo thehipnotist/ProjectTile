@@ -135,7 +135,7 @@ namespace ProjectTile
         
         public static Visibility BackButtonVisibility(string thisPage = "")
         {
-            return (ProjectSourcePage != Globals.TilesPageName && ProjectSourcePage != thisPage)? Visibility.Visible : Visibility.Hidden;
+            return (ProjectSourcePage != TilesPageName && ProjectSourcePage != thisPage)? Visibility.Visible : Visibility.Hidden;
         }
 
         public static string BackButtonTooltip()
@@ -382,7 +382,7 @@ namespace ProjectTile
                 else { return; }
             }
 
-            Globals.SelectedProjectProxy = GetProjectProxy(FavouriteProjectID);
+            SelectedProjectProxy = GetProjectProxy(FavouriteProjectID);
             PageFunctions.ShowProjectPage(PageFunctions.Amend);
         }
 
@@ -1266,7 +1266,7 @@ namespace ProjectTile
             {
                 return new ProjectContactProxy
                 {
-                    ID = Globals.NoID,
+                    ID = NoID,
                     Project = thisProject,
                     Contact = new ContactProxy
                     {
@@ -1798,6 +1798,7 @@ namespace ProjectTile
                 maxNonCancelledStage = MaxNonCancelledStage();
 
                 TimelineProxy timeline = new TimelineProxy();
+                timeline.ProjectID = projectID;
                 timeline.Stage = stage;
                 timeline.TimeType = type;
                 for (int i=0; i<=maxNonCancelledStage; i++)
@@ -3662,9 +3663,13 @@ namespace ProjectTile
         {
             try
             {
+                ProjectProxy projectProxy = GetProjectProxy(thisTimeline.ProjectID);
                 string congratulations = "";
-                if (stageChanged && !ValidateProject(Globals.SelectedProjectProxy, true, false)) { return false; }
-                int projectID = Globals.SelectedProjectProxy.ProjectID;
+                if (stageChanged)
+                {
+                    projectProxy.Stage = GetStageByID(thisTimeline.Stage.ID);
+                    if (!ValidateProject(projectProxy, true, false)) { return false; }
+                }
 
                 ProjectTileSqlDatabase existingPtDb = SqlServerConnection.ExistingPtDbConnection();
                 using (existingPtDb)
@@ -3673,15 +3678,15 @@ namespace ProjectTile
                     {
                         if (stageChanged)
                         {
-                            Projects thisProject = existingPtDb.Projects.Where(p => p.ID == projectID).FirstOrDefault();
+                            Projects thisProject = existingPtDb.Projects.Where(p => p.ID == thisTimeline.ProjectID).FirstOrDefault();
                             if (thisProject == null)
                             {
                                 MessageFunctions.Error("Error saving project amendments to the database: no matching project found.", null);
                                 return false;
                             }
-                            int originalStageNumber = ProjectCurrentStage(projectID).StageNumber;
+                            int originalStageNumber = ProjectCurrentStage(thisTimeline.ProjectID).StageNumber;
                             thisProject.StageID = thisTimeline.StageID;
-                            bool stageManaged = HandleStageChanges(Globals.SelectedProjectProxy, originalStageNumber, out congratulations);                            
+                            bool stageManaged = HandleStageChanges(projectProxy, originalStageNumber, out congratulations);                            
                             if (!stageManaged) { return false; }
                             existingPtDb.SaveChanges();
                         }
@@ -3700,12 +3705,12 @@ namespace ProjectTile
                         bool target = (thisTimeline.TimeType == TimelineType.Target || (thisTimeline.TimeType == TimelineType.Effective && thisStage.StageNumber > currentStage));                        
 
                         DateTime? newDate = (DateTime?) thisTimeline.DateHash[thisStage.StageNumber];
-                        StageHistory stageHist = existingPtDb.StageHistory.FirstOrDefault(sh => sh.ProjectID == projectID && sh.StageID == thisStage.ID);
+                        StageHistory stageHist = existingPtDb.StageHistory.FirstOrDefault(sh => sh.ProjectID == thisTimeline.ProjectID && sh.StageID == thisStage.ID);
                         if (stageHist == null)
                         {
                             stageHist = new StageHistory
                             {
-                                ProjectID = projectID,
+                                ProjectID = thisTimeline.ProjectID,
                                 StageID = thisStage.ID,
                                 TargetStart = target? newDate : null,
                                 ActualStart = target? null : newDate

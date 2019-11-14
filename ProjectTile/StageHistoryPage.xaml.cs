@@ -173,7 +173,7 @@ namespace ProjectTile
         {
             stageList = ProjectFunctions.StageFilterList();
             StageCombo.ItemsSource = stageList;
-            StageCombo.SelectedItem = Globals.SelectedStage;
+            StageCombo.SelectedItem = stageList.FirstOrDefault(sl => sl.StageNumber == Globals.SelectedStage.StageNumber);
         }
 
         // -------------- Data updates -------------- // 
@@ -356,8 +356,8 @@ namespace ProjectTile
 
         private void AmendButton_Click(object sender, RoutedEventArgs e)
         {
-            if (Globals.SelectedProjectProxy.ProjectID <= 0) { Globals.SelectedProjectProxy = ProjectFunctions.GetProjectProxy(Globals.SelectedHistory.ProjectID); }
-            PageFunctions.ShowTimelinePage(pageMode);
+            int projectID = (Globals.SelectedProjectProxy.ProjectID > 0)? Globals.SelectedProjectProxy.ProjectID : Globals.SelectedHistory.ProjectID;
+            PageFunctions.ShowTimelinePage(projectID, pageMode);
         }
 
     } // class

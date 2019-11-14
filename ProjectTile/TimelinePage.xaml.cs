@@ -26,6 +26,7 @@ namespace ProjectTile
         // --------- Global/page parameters --------- // 
 
         string pageMode;
+        int projectID;
         bool fromProjectPage = (Globals.ProjectSourcePage != Globals.TilesPageName);
         bool stagesLoaded = false;
         bool viewOnly = false;
@@ -65,6 +66,7 @@ namespace ProjectTile
             try
             {
                 pageMode = PageFunctions.pageParameter(this, "Mode");
+                projectID = Int32.Parse(PageFunctions.pageParameter(this, "ProjectID"));
             }
             catch (Exception generalException)
             {
@@ -78,7 +80,7 @@ namespace ProjectTile
                 StageCombo.IsEnabled = false;
             }
 
-            PageHeader.Content = "Project Timeline for Project " + Globals.SelectedProjectProxy.ProjectCode;
+            PageHeader.Content = "Project Timeline for Project " + ProjectFunctions.GetProject(projectID).ProjectCode;
             createControlArrays();
             refreshStageCombo();
             setTimelineType(Globals.SelectedTimelineType);
@@ -97,7 +99,7 @@ namespace ProjectTile
         {
             try
             {
-                currentTimeline = ProjectFunctions.GetProjectTimeline(Globals.SelectedProjectProxy.ProjectID, Globals.SelectedTimelineType);
+                currentTimeline = ProjectFunctions.GetProjectTimeline(projectID, Globals.SelectedTimelineType);
                 this.DataContext = currentTimeline;
                 currentStageNumber = currentTimeline.StageNumber;
                 displaySelectedStage();
@@ -212,7 +214,7 @@ namespace ProjectTile
                 else if (i > currentTimeline.StageNumber && thisDate <= Globals.Today)
                 {
                     datePickers[position].SelectedDate = (Globals.SelectedTimelineType == Globals.TimelineType.Effective) ?
-                        ProjectFunctions.GetStageStartDate(Globals.SelectedProjectProxy.ProjectID, i, true) :
+                        ProjectFunctions.GetStageStartDate(projectID, i, true) :
                         datePickers[position].SelectedDate = null;
                     ProjectFunctions.QueueDateChange(i);
                 }
@@ -247,7 +249,7 @@ namespace ProjectTile
             clearChanges();
             MessageFunctions.CancelInfoAlert();
 
-            Globals.SelectedHistory = ProjectFunctions.GetHistoryRecord(Globals.SelectedProjectProxy.ProjectID, focusStage);
+            Globals.SelectedHistory = ProjectFunctions.GetHistoryRecord(projectID, focusStage);
             bool closeFully = closeAll ? true : !fromProjectPage;
             if (closeFully) { ProjectFunctions.ReturnToTilesPage(); }
             else { ProjectFunctions.ReturnToSourcePage(pageMode); }
@@ -440,10 +442,10 @@ namespace ProjectTile
 
         private void CommitButton_Click(object sender, RoutedEventArgs e)
         {
-            Globals.SelectedProjectProxy.Stage = ProjectFunctions.GetStageByNumber(currentStageNumber);
+            //Globals.SelectedProjectProxy.Stage = ProjectFunctions.GetStageByNumber(currentStageNumber);
             bool success = ProjectFunctions.UpdateHistory(currentTimeline, stageChanged);
             if (success) { clearChanges(); }
-            else if (stageChanged) { Globals.SelectedProjectProxy.Stage = ProjectFunctions.ProjectCurrentStage(Globals.SelectedProjectProxy.ProjectID); }
+            //else if (stageChanged) { Globals.SelectedProjectProxy.Stage = ProjectFunctions.ProjectCurrentStage(projectID); }
         }
 
     } // class

@@ -370,7 +370,7 @@ namespace ProjectTile
 
         private void TimelineMenu_Click(object sender, RoutedEventArgs e)
         {
-            PageFunctions.ShowTimelinePage(pageMode);
+            PageFunctions.ShowTimelinePage(Globals.SelectedProjectProxy.ProjectID, pageMode);
         }
 
         private void ActionMenu_Click(object sender, RoutedEventArgs e)

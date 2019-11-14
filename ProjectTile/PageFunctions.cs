@@ -227,10 +227,10 @@ namespace ProjectTile
             ChangePage("StageHistoryPage.xaml?Mode=" + pageMode);
         }
 
-        public static void ShowTimelinePage(string pageMode = "")
+        public static void ShowTimelinePage(int projectID, string pageMode = "")
         {
             if (pageMode == "" || pageMode == Amend) { pageMode = MyPermissions.Allow("EditStageHistory") ? Amend : View; }
-            ChangePage("TimelinePage.xaml?Mode=" + pageMode);
+            ChangePage("TimelinePage.xaml?Mode=" + pageMode + ",ProjectID=" + projectID.ToString());
         }
 
         public static void ShowActionsPage(string pageMode = "", int staffID = 0)
